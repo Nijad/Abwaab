@@ -1,0 +1,6 @@
+@Abwaab.Server_HostAddress = http://localhost:5073
+
+GET {{Abwaab.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
