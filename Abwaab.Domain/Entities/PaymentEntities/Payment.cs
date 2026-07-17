@@ -18,7 +18,7 @@ namespace Abwaab.Domain.Entities.PaymentEntities
         //public Guid? UserId { get; set; }
         //public Property? Property { get; set; }
         //public Guid? PropertyId { get; set; }
-        public Guid UserPlandId { get; set; }
+        public Guid? UserPlandId { get; set; }
         public UserPlan? UserPlan { get; set; }
         public Guid? AdvertismentId { get; set; }
         public Advertisment? Advertisment { get; set; }

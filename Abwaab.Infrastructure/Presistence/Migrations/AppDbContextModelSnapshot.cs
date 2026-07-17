@@ -459,7 +459,7 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
                     b.Property<Guid>("ServiceTypeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("UserPlandId")
+                    b.Property<Guid?>("UserPlandId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -1384,8 +1384,7 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
                     b.HasOne("Abwaab.Domain.Entities.UserEntities.UserPlan", "UserPlan")
                         .WithMany("Payments")
                         .HasForeignKey("UserPlandId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Advertisment");
 

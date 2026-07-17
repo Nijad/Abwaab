@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Abwaab.Infrastructure.Presistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260619211201_initial")]
-    partial class initial
+    [Migration("20260717125814_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -459,13 +459,10 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
                     b.Property<Guid>("PaymentStateId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PropertyId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("ServiceTypeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid?>("UserPlandId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -478,11 +475,9 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
 
                     b.HasIndex("PaymentStateId");
 
-                    b.HasIndex("PropertyId");
-
                     b.HasIndex("ServiceTypeId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserPlandId");
 
                     b.ToTable("Payments", (string)null);
                 });
@@ -708,7 +703,7 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("UserPlandId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -721,7 +716,7 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
 
                     b.HasIndex("PropertyTypeId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserPlandId");
 
                     b.ToTable("Properties", (string)null);
                 });
@@ -957,9 +952,6 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
                     b.Property<DateTime?>("PlanExpieryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("PlanId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("RefreshToken")
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");
@@ -993,8 +985,6 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("PlanId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -1105,6 +1095,47 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
                     b.HasIndex("Name");
 
                     b.ToTable("Plans", (string)null);
+                });
+
+            modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.UserPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("SubscriptionDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserPlans", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -1347,31 +1378,24 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Abwaab.Domain.Entities.PropertyEntities.Property", "Property")
-                        .WithMany("Payments")
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("Abwaab.Domain.Entities.PaymentEntities.ServiceType", "ServiceType")
                         .WithMany("Payments")
                         .HasForeignKey("ServiceTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Abwaab.Domain.Entities.UserEntities.ApplicationUser", "User")
+                    b.HasOne("Abwaab.Domain.Entities.UserEntities.UserPlan", "UserPlan")
                         .WithMany("Payments")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserPlandId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Advertisment");
 
                     b.Navigation("PaymentState");
 
-                    b.Navigation("Property");
-
                     b.Navigation("ServiceType");
 
-                    b.Navigation("User");
+                    b.Navigation("UserPlan");
                 });
 
             modelBuilder.Entity("Abwaab.Domain.Entities.PropertyEntities.AttributePossibleValue", b =>
@@ -1409,9 +1433,9 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Abwaab.Domain.Entities.UserEntities.ApplicationUser", "User")
+                    b.HasOne("Abwaab.Domain.Entities.UserEntities.UserPlan", "UserPlan")
                         .WithMany("Properties")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserPlandId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1423,7 +1447,7 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
 
                     b.Navigation("PropertyType");
 
-                    b.Navigation("User");
+                    b.Navigation("UserPlan");
                 });
 
             modelBuilder.Entity("Abwaab.Domain.Entities.PropertyEntities.PropertyAttribute", b =>
@@ -1456,17 +1480,6 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
                     b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.ApplicationUser", b =>
-                {
-                    b.HasOne("Abwaab.Domain.Entities.UserEntities.Plan", "Plan")
-                        .WithMany("Users")
-                        .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Plan");
-                });
-
             modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.OTP", b =>
                 {
                     b.HasOne("Abwaab.Domain.Entities.UserEntities.ApplicationUser", "User")
@@ -1474,6 +1487,25 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.UserPlan", b =>
+                {
+                    b.HasOne("Abwaab.Domain.Entities.UserEntities.Plan", "Plan")
+                        .WithMany("UserPlans")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Abwaab.Domain.Entities.UserEntities.ApplicationUser", "User")
+                        .WithMany("UserPlans")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
 
                     b.Navigation("User");
                 });
@@ -1592,8 +1624,6 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
 
                     b.Navigation("MediaList");
 
-                    b.Navigation("Payments");
-
                     b.Navigation("PropertyAttributes");
 
                     b.Navigation("TimeSlots");
@@ -1617,14 +1647,19 @@ namespace Abwaab.Infrastructure.Presistence.Migrations
 
                     b.Navigation("OTPs");
 
-                    b.Navigation("Payments");
-
-                    b.Navigation("Properties");
+                    b.Navigation("UserPlans");
                 });
 
             modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.Plan", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("UserPlans");
+                });
+
+            modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.UserPlan", b =>
+                {
+                    b.Navigation("Payments");
+
+                    b.Navigation("Properties");
                 });
 #pragma warning restore 612, 618
         }
