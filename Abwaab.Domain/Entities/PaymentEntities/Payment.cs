@@ -14,11 +14,13 @@ namespace Abwaab.Domain.Entities.PaymentEntities
         public Guid PaymentStateId { get; set; }
         public ServiceType ServiceType { get; set; } = null!;
         public Guid ServiceTypeId { get; set; }
-        public ApplicationUser? User { get; set; }
-        public Guid? UserId { get; set; }
-        public Property? Property { get; set; }
-        public Guid? PropertyId { get; set; }
-        public Advertisment? Advertisment { get; set; }
+        //public ApplicationUser? User { get; set; }
+        //public Guid? UserId { get; set; }
+        //public Property? Property { get; set; }
+        //public Guid? PropertyId { get; set; }
+        public Guid UserPlandId { get; set; }
+        public UserPlan? UserPlan { get; set; }
         public Guid? AdvertismentId { get; set; }
+        public Advertisment? Advertisment { get; set; }
     }
 }

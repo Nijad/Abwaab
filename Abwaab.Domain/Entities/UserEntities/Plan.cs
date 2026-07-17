@@ -13,6 +13,7 @@
         public int MaxImagesCount { get; set; }
         public int MaxVideosCount { get; set; }
         public bool IsDisabled { get; set; }
-        public List<ApplicationUser>? Users { get; set; }
+        //public List<ApplicationUser>? Users { get; set; }
+        public List<UserPlan>? UserPlans { get; set; }
     }
 }

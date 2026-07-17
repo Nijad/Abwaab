@@ -32,9 +32,9 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .HasDefaultValue(false);
 
             // Relationships
-            builder.HasOne(p => p.User)
+            builder.HasOne(p => p.UserPlan)
                    .WithMany(u => u.Properties)
-                   .HasForeignKey(p => p.UserId)
+                   .HasForeignKey(p => p.UserPlandId)
                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(p => p.PropertyType)
@@ -52,23 +52,8 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .HasForeignKey(p => p.FinishingId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            //builder.HasMany(p => p.MediaList)
-            //       .WithOne(ml => ml.Property)
-            //       .HasForeignKey(m => m.PropertyId)
-            //       .OnDelete(DeleteBehavior.Cascade);
-
-            //builder.HasMany(p => p.Appointments)
-            //       .WithOne(a => a.Property)
-            //       .HasForeignKey(a => a.PropertyId)
-            //       .OnDelete(DeleteBehavior.Cascade);
-
-            //builder.HasMany(p => p.TimeSlots)
-            //       .WithOne(ts => ts.Property)
-            //       .HasForeignKey(ts => ts.PropertyId)
-            //       .OnDelete(DeleteBehavior.Cascade);
-
             // Indexes
-            builder.HasIndex(p => p.UserId);
+            builder.HasIndex(p => p.UserPlandId);
             builder.HasIndex(p => p.PropertyTypeId);
             builder.HasIndex(p => p.PropertyStateId);
         }

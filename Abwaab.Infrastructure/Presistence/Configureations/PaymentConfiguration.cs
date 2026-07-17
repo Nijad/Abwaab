@@ -1,7 +1,4 @@
 using Abwaab.Domain.Entities.PaymentEntities;
-using Abwaab.Domain.Entities.MediaEntities;
-using Abwaab.Domain.Entities.PropertyEntities;
-using Abwaab.Domain.Entities.UserEntities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -41,14 +38,9 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .OnDelete(DeleteBehavior.Restrict);
 
             // Optional relationships - keep payments if related entity is removed
-            builder.HasOne(p => p.User)
+            builder.HasOne(p => p.UserPlan)
                    .WithMany(u => u.Payments)
-                   .HasForeignKey(p => p.UserId)
-                   .OnDelete(DeleteBehavior.SetNull);
-
-            builder.HasOne(p => p.Property)
-                   .WithMany(p => p.Payments)
-                   .HasForeignKey(p => p.PropertyId)
+                   .HasForeignKey(p => p.UserPlandId)
                    .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(p => p.Advertisment)
@@ -59,8 +51,7 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
             // Indexes
             builder.HasIndex(p => p.PaymentStateId);
             builder.HasIndex(p => p.ServiceTypeId);
-            builder.HasIndex(p => p.UserId);
-            builder.HasIndex(p => p.PropertyId);
+            builder.HasIndex(p => p.UserPlandId);
             builder.HasIndex(p => p.AdvertismentId);
             builder.HasIndex(p => p.PaymentCode);
             builder.HasIndex(p => p.PayedAt);

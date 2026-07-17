@@ -15,8 +15,10 @@ namespace Abwaab.Domain.Entities.PropertyEntities
         public string Address { get; set; } = null!;
         public decimal Price { get; set; }
         public bool IsStard { get; set; }
-        public ApplicationUser User { get; set; } = null!;
-        public Guid UserId { get; set; }
+        //public ApplicationUser User { get; set; } = null!;
+        //public Guid UserId { get; set; }
+        public Guid UserPlandId { get; set; }
+        public UserPlan? UserPlan { get; set; }
         public PropertyType PropertyType { get; set; } = null!;
         public Guid PropertyTypeId { get; set; }
         public PropertyState PropertyState { get; set; } = null!;
@@ -29,6 +31,6 @@ namespace Abwaab.Domain.Entities.PropertyEntities
         public List<Appointment>? Appointments { get; set; }
         public List<TimeSlot>? TimeSlots { get; set; }
         public List<PropertyAttribute>? PropertyAttributes { get; set; }
-        public List<Payment>? Payments { get; set; }
+        //public List<Payment>? Payments { get; set; }
     }
 }
