@@ -6,13 +6,12 @@ using Abwaab.Server.Exceptions;
 using FluentValidation;
 using MediatR;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 
 namespace Abwaab.Server
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddProblemDetails();
@@ -72,6 +71,7 @@ namespace Abwaab.Server
             //app.UseMiddleware<GlobalExceptionMiddleware>();
             if (app.Environment.IsDevelopment())
             {
+                await app.InitialiseDatabaseAsync();
                 app.UseSwagger();
                 app.UseSwaggerUI(/*c =>
                 {

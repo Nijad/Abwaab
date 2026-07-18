@@ -4,14 +4,13 @@ using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.PaymentEntities;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace Abwaab.Infrastructure.Presistence.Context
 {
-    public class AppDbContext : IdentityDbContext<ApplicationUser,IdentityRole<Guid>, Guid>
+    public class AppDbContext : IdentityDbContext<ApplicationUser,ApplicationRole, Guid>
     {
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }

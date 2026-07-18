@@ -1,7 +1,5 @@
 ﻿using Abwaab.Domain.Entities.AppointmentEntities;
 using Abwaab.Domain.Entities.NotificationEntities;
-using Abwaab.Domain.Entities.PaymentEntities;
-using Abwaab.Domain.Entities.PropertyEntities;
 using Microsoft.AspNetCore.Identity;
 
 namespace Abwaab.Domain.Entities.UserEntities

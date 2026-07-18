@@ -2,6 +2,7 @@
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Identity;
 using Abwaab.Infrastructure.Identity.Services;
+using Abwaab.Infrastructure.Presistence;
 using Abwaab.Infrastructure.Presistence.Context;
 using FluentValidation;
 using MediatR;
@@ -36,9 +37,9 @@ namespace Abwaab.Infrastructure
             var jwtSettings = config.GetSection(nameof(JwtSettings)).Get<JwtSettings>()
     ?? throw new Exception("JwtSettings are missing in appsettings.json");
 
+            services.AddScoped<IAppDbContextInitializer, AppDbContextInitializer>();
 
-
-            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 

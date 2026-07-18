@@ -1,0 +1,12 @@
+Migration Command:
+make sure to run the following command in Abwaab.Infrastructure project directory:
+
+Add-Migration MigrationName -OutputDir Presistence\Migrations
+-----------------------------------------------------------------
+
+Admin Information:
+
+adming email : admin@abwaab.com
+admin password : SecurePassword123!
+-----------------------------------------------------------------
+
