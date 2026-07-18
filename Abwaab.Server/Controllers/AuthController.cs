@@ -1,7 +1,5 @@
-﻿using Abwaab.Application.Common.Contracts;
-using Abwaab.Application.DTOs.ApplicationUser;
+﻿using Abwaab.Application.DTOs.ApplicationUser;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Abwaab.Server.Controllers
@@ -17,6 +15,17 @@ namespace Abwaab.Server.Controllers
             _mediator = mediator;
         }
 
+        [HttpPost("RegisterUser")]
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterRequest registerRequest)
+        {
+            if (registerRequest == null)
+                return BadRequest();
+
+            RegisterUserResponse response = await _mediator.Send(registerRequest);
+
+            return Ok(response);
+        }
+
         [HttpPost("LoginUserByEmail")]
         public async Task<IActionResult> LoginUserByEmail([FromBody] LoginUserByEmailRequest loginRequest)
         {
@@ -24,17 +33,6 @@ namespace Abwaab.Server.Controllers
                 return BadRequest();
 
             var response = await _mediator.Send(loginRequest);
-
-            return Ok(response);
-        }
-
-        [HttpPost("RegisterUserByEmail")]
-        public async Task<IActionResult> RegisterUserByEmail([FromBody] RegisterUserByEmailRequest registerRequest)
-        {
-            if (registerRequest == null)
-                return BadRequest();
-
-            RegisterUserResponse response = await _mediator.Send(registerRequest);
 
             return Ok(response);
         }

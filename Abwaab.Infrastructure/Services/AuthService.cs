@@ -1,7 +1,9 @@
 ﻿using Abwaab.Application.Common.Contracts;
 using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Interfaces;
 using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Domain.Entities.UserEntities;
+using Abwaab.Infrastructure.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -12,11 +14,13 @@ namespace Abwaab.Infrastructure.Identity.Services
 {
     public class AuthService : IAuthService
     {
+        private readonly IVerificationCodeService _verificationService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IOptions<JwtSettings> _jwtSettings;
 
-        public AuthService(UserManager<ApplicationUser> userManager, IOptions<JwtSettings> jwtSettings)
+        public AuthService(IVerificationCodeService verificationService, UserManager<ApplicationUser> userManager, IOptions<JwtSettings> jwtSettings)
         {
+            _verificationService = verificationService;
             _userManager = userManager;
             _jwtSettings = jwtSettings;
         }
@@ -53,8 +57,8 @@ namespace Abwaab.Infrastructure.Identity.Services
 
             if (!checkPassword)
                 throw new InvalidPasswordException();
-                //return await Task.FromResult(new LoginUserResponse(false, "Invalid password"));
-            
+            //return await Task.FromResult(new LoginUserResponse(false, "Invalid password"));
+
             return await Task.FromResult(new LoginUserResponse(true, "Login successful", await GenerateJwtTokenAsync(new ApplicationUserDTO
             {
                 Id = getUser.Result.Id,
@@ -63,7 +67,7 @@ namespace Abwaab.Infrastructure.Identity.Services
             })));
         }
 
-        public async Task<RegisterUserResponse> RegisterUserByEmailAsync(RegisterUserByEmailRequest registerRequest)
+        public async Task<RegisterUserResponse> RegisterUserAsync(RegisterRequest registerRequest)
         {
             ApplicationUser? getUser = await _userManager.FindByEmailAsync(registerRequest.Email);
             if (getUser != null)
@@ -76,16 +80,40 @@ namespace Abwaab.Infrastructure.Identity.Services
                 FirstName = registerRequest.FirstName,
                 LastName = registerRequest.LastName,
                 UserName = registerRequest.Username,
-                Email = registerRequest.Email
+                Email = registerRequest.Email,
+                PhoneNumber = registerRequest.PhoneNo
             };
 
             IdentityResult result = await _userManager.CreateAsync(newUser, registerRequest.Password);
-            if (result.Succeeded)
-            {
-                return await Task.FromResult(new RegisterUserResponse(true, "Register Successful"));
-            }
+            if (!result.Succeeded)
+                return await Task.FromResult(new RegisterUserResponse(false, "Registration failed"));
 
-            return await Task.FromResult(new RegisterUserResponse(false, "Registration failed"));
+            var code = _verificationService.GenerateCode();
+            var sent = await _verificationService.SendVerificationCodeAsync(
+                email: registerRequest.Email,
+                phoneNumber: registerRequest.PhoneNo,
+                code: code
+            );
+
+            if (!sent)
+                return await Task.FromResult(new RegisterUserResponse(false, "Failed to send verification code."));
+
+            return await Task.FromResult(new RegisterUserResponse(true, "Register Successful"));
         }
+
+        //public string GenerateVerificationCode()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public Task SendVerificationCodeAsync(string email, string code)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public Task SendVerificationCodeSmsAsync(string phoneNumber, string code)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

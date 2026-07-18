@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Abwaab.Infrastructure.Identity
+namespace Abwaab.Infrastructure.Options
 {
     public class JwtSettings
     {

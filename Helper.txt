@@ -10,3 +10,22 @@ adming email : admin@abwaab.com
 admin password : SecurePassword123!
 -----------------------------------------------------------------
 
+{
+  "firstName": "Nijad",
+  "lastName": "Alkhoury",
+  "email": "nijad-k@live.com",
+  "phoneNo": "",
+  "username": "nijad",
+  "password": "P@$$w0rd",
+  "confirmPassword": "P@$$w0rd"
+}
+
+{
+  "firstName": "Nijad",
+  "lastName": "Alkhoury",
+  "email": "",
+  "phoneNo": "+963991955947",
+  "username": "nijad",
+  "password": "P@$$w0rd",
+  "confirmPassword": "P@$$w0rd"
+}

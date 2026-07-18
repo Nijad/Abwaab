@@ -1,9 +1,11 @@
 ﻿using Abwaab.Application.Common.Contracts;
+using Abwaab.Application.Common.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
-using Abwaab.Infrastructure.Identity;
 using Abwaab.Infrastructure.Identity.Services;
+using Abwaab.Infrastructure.Options;
 using Abwaab.Infrastructure.Presistence;
 using Abwaab.Infrastructure.Presistence.Context;
+using Abwaab.Infrastructure.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -74,6 +76,35 @@ namespace Abwaab.Infrastructure
             //});
 
             services.AddValidatorsFromAssembly(Assembly.Load("Abwaab.Application"));
+
+            // Register Configuration Options
+            services.Configure<EmailSettings>(config.GetSection("EmailSettings"));
+            services.Configure<SmsSettings>(config.GetSection("SmsSettings"));
+
+            // Choose your email implementation:
+            // Option 1: SendGrid
+            // services.AddTransient<IEmailSender, SendGridEmailSender>();
+            // Option 2: SMTP (uncomment to use)
+            services.AddTransient<IEmailSender, SmtpEmailSender>();
+
+            // SMS Sender
+            //services.AddTransient<ISmsSender, TwilioSmsSender>();
+
+            services.Configure<TextBeeSettings>(
+            config.GetSection("TextBeeSettings"));
+
+            // Register HttpClient for TextBee
+            services.AddHttpClient<ISmsSender, TextBeeSmsSender>();
+
+            // Orchestrator
+            services.AddTransient<IVerificationCodeService, VerificationCodeService>();
+
+            // Memory Cache (for storing verification codes in-memory)
+            services.AddMemoryCache();
+
+            // Add HttpClient if required by any services (SendGrid doesn't need it via DI, but good practice)
+            services.AddHttpClient();
+
 
             return services;
         }
