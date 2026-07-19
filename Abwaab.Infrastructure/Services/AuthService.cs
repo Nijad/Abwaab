@@ -47,17 +47,41 @@ namespace Abwaab.Infrastructure.Identity.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<LoginUserResponse> LoginUserByEmailAsync(LoginUserByEmailRequest loginRequest)
+        public async Task<LoginUserResponse> LoginUserAsync(LoginUserRequest loginRequest)
         {
-            Task<ApplicationUser?> getUser = _userManager.FindByEmailAsync(loginRequest.Email);
+            Task<ApplicationUser?> getUser;
+            string? identifier;
+            string? loginWith;
+            bool confirmed;
+
+            // Check if user requests to login with email or phone number
+            if (!string.IsNullOrEmpty(loginRequest.Email))
+            {
+                getUser = _userManager.FindByEmailAsync(loginRequest.Email);
+                identifier = loginRequest.Email;
+                loginWith = "email";
+                confirmed = (await getUser).EmailConfirmed;
+            }
+            else if (!string.IsNullOrEmpty(loginRequest.PhoneNo))
+            {
+                getUser = _userManager.FindByNameAsync(loginRequest.PhoneNo);
+                identifier = loginRequest.PhoneNo;
+                loginWith = "phone number";
+                confirmed = (await getUser).PhoneNumberConfirmed;
+            }
+            else
+                throw new ArgumentException("Either email or phone number must be provided.");
+
             if (getUser.Result == null)
-                throw new NotFoundException("User", "email", loginRequest.Email);
+                throw new NotFoundException("User", loginWith, identifier);
 
             bool checkPassword = await _userManager.CheckPasswordAsync(getUser.Result, loginRequest.Password);
 
             if (!checkPassword)
                 throw new InvalidPasswordException();
-            //return await Task.FromResult(new LoginUserResponse(false, "Invalid password"));
+
+            if (!confirmed)
+                return await Task.FromResult(new LoginUserResponse(false, $"Please verify your {loginWith} before logging in."));
 
             return await Task.FromResult(new LoginUserResponse(true, "Login successful", await GenerateJwtTokenAsync(new ApplicationUserDTO
             {
@@ -70,10 +94,9 @@ namespace Abwaab.Infrastructure.Identity.Services
         public async Task<RegisterUserResponse> RegisterUserAsync(RegisterRequest registerRequest)
         {
             ApplicationUser? getUser = await _userManager.FindByEmailAsync(registerRequest.Email);
+
             if (getUser != null)
-            {
                 return await Task.FromResult(new RegisterUserResponse(false, "User already exists"));
-            }
 
             ApplicationUser newUser = new ApplicationUser
             {
@@ -85,6 +108,7 @@ namespace Abwaab.Infrastructure.Identity.Services
             };
 
             IdentityResult result = await _userManager.CreateAsync(newUser, registerRequest.Password);
+
             if (!result.Succeeded)
                 return await Task.FromResult(new RegisterUserResponse(false, "Registration failed"));
 
@@ -101,19 +125,20 @@ namespace Abwaab.Infrastructure.Identity.Services
             return await Task.FromResult(new RegisterUserResponse(true, "Register Successful"));
         }
 
-        //public string GenerateVerificationCode()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public Task<VerifyCodeResponse> VerifyUserAsync(VerifyCodeRequest request)
+        {
+            bool isEmail = !string.IsNullOrEmpty(request.Email);
+            string? identifier = isEmail ? request.Email : request.PhoneNumber;
 
-        //public Task SendVerificationCodeAsync(string email, string code)
-        //{
-        //    throw new NotImplementedException();
-        //}
+            if (string.IsNullOrEmpty(identifier))
+                throw new ArgumentException("Either email or phone number must be provided.");
 
-        //public Task SendVerificationCodeSmsAsync(string phoneNumber, string code)
-        //{
-        //    throw new NotImplementedException();
-        //}
+            bool isValid = _verificationService.VerifyCodeAsync(identifier, request.Code, isEmail).Result;
+
+            if (!isValid)
+                return Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Invalid or expired verification code." });
+
+            return Task.FromResult(new VerifyCodeResponse { IsVerified = true, Message = "Verification successful." });
+        }
     }
 }

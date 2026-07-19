@@ -69,5 +69,20 @@ namespace Abwaab.Infrastructure.Services
             _logger.LogWarning("SendVerificationCodeAsync called with neither email nor phoneNumber.");
             return false;
         }
+
+        public Task<bool> VerifyCodeAsync(string identifier, string userInputCode, bool isEmail = true)
+        {
+            string key = isEmail ? $"verification_email_{identifier}" : $"verification_phone_{identifier}";
+
+            if (_cache.TryGetValue(key, out string storedCode))
+            {
+                if (storedCode == userInputCode)
+                {
+                    _cache.Remove(key); // Invalidate code after successful use
+                    return Task.FromResult(true);
+                }
+            }
+            return Task.FromResult(false);
+        }
     }
 }

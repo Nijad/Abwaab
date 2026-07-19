@@ -26,8 +26,17 @@ namespace Abwaab.Server.Controllers
             return Ok(response);
         }
 
+        [HttpPost("VerifyAccount")]
+        public async Task<IActionResult> VerifyAccount([FromBody] VerifyCodeRequest verifyCodeRequest)
+        {
+            if (verifyCodeRequest == null)
+                return BadRequest();
+            var response = await _mediator.Send(verifyCodeRequest);
+            return Ok(response);
+        }
+
         [HttpPost("LoginUserByEmail")]
-        public async Task<IActionResult> LoginUserByEmail([FromBody] LoginUserByEmailRequest loginRequest)
+        public async Task<IActionResult> LoginUserByEmail([FromBody] LoginUserRequest loginRequest)
         {
             if (loginRequest == null)
                 return BadRequest();

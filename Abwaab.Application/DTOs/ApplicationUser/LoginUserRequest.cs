@@ -2,9 +2,10 @@
 
 namespace Abwaab.Application.DTOs.ApplicationUser
 {
-    public class LoginUserByEmailRequest : IRequest<LoginUserResponse>
+    public class LoginUserRequest : IRequest<LoginUserResponse>
     {
         public string Email { get; set; } = string.Empty;
+        public string PhoneNo { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
 }

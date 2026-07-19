@@ -1,6 +1,8 @@
-﻿namespace Abwaab.Application.DTOs.ApplicationUser
+﻿using MediatR;
+
+namespace Abwaab.Application.DTOs.ApplicationUser
 {
-    public class VerifyCodeRequest
+    public class VerifyCodeRequest : IRequest<VerifyCodeResponse>
     {
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }

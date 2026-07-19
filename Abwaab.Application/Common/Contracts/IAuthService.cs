@@ -10,6 +10,7 @@ namespace Abwaab.Application.Common.Contracts
         //Task SendVerificationCodeAsync(string email, string code);
         //Task SendVerificationCodeSmsAsync(string phoneNumber, string code);
 
-        Task<LoginUserResponse> LoginUserByEmailAsync(LoginUserByEmailRequest loginRequest);
+        Task<LoginUserResponse> LoginUserAsync(LoginUserRequest loginRequest);
+        Task<VerifyCodeResponse> VerifyUserAsync(VerifyCodeRequest request);
     }
 }
