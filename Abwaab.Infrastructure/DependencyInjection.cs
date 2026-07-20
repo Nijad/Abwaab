@@ -96,7 +96,8 @@ namespace Abwaab.Infrastructure
             services.AddHttpClient<ISmsSender, TextBeeSmsSender>();
 
             // Orchestrator
-            services.AddTransient<IVerificationCodeService, VerificationCodeService>();
+            //services.AddTransient<IVerificationCodeService, VerificationCodeService>();
+            services.AddTransient<IVerificationCodeService, VerificationCodeDemoService>();
 
             // Memory Cache (for storing verification codes in-memory)
             services.AddMemoryCache();
