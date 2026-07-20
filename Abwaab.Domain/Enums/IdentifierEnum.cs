@@ -3,6 +3,6 @@
     public enum IdentifierEnum
     {
         email,
-        phoneNumber
+        phone_number
     }
 }

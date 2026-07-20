@@ -70,9 +70,9 @@ namespace Abwaab.Infrastructure.Services
             return false;
         }
 
-        public Task<bool> VerifyCodeAsync(string identifier, string userInputCode, bool isEmail = true)
+        public Task<bool> VerifyCodeAsync(string identifier, string userInputCode)
         {
-            if (_cache.TryGetValue(identifier, out string storedCode))
+            if (_cache.TryGetValue(identifier, out string? storedCode))
             {
                 if (storedCode == userInputCode)
                 {

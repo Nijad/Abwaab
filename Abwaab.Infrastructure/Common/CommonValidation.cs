@@ -23,7 +23,7 @@ namespace Abwaab.Infrastructure.Common
             if (string.IsNullOrWhiteSpace(phoneNumber))
                 return false;
             // Simple regex for international phone numbers
-            var regex = new System.Text.RegularExpressions.Regex(@"^\+9639[0-9]\d{8}$");
+            var regex = new System.Text.RegularExpressions.Regex(@"^\+9639\d{8}$");
             return regex.IsMatch(phoneNumber);
         }
 

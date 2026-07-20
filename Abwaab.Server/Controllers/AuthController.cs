@@ -35,8 +35,8 @@ namespace Abwaab.Server.Controllers
             return Ok(response);
         }
 
-        [HttpPost("LoginUserByEmail")]
-        public async Task<IActionResult> LoginUserByEmail([FromBody] LoginUserRequest loginRequest)
+        [HttpPost("LoginUser")]
+        public async Task<IActionResult> LoginUser([FromBody] LoginUserRequest loginRequest)
         {
             if (loginRequest == null)
                 return BadRequest();

@@ -13,31 +13,12 @@ admin password : SecurePassword123!
 {
   "firstName": "Nijad",
   "lastName": "Alkhoury",
-  "email": "nijad-k@live.com",
-  "phoneNo": "",
-  "username": "nijad",
+  "identifier": "nijad-k@live.com",
   "password": "P@$$w0rd",
   "confirmPassword": "P@$$w0rd"
 }
 
 {
-  "email": "nijad-k@live.com",
-  "phoneNo": "",
-  "password": "P@$$w0rd"
-}
-
-{
-  "firstName": "Nijad",
-  "lastName": "Alkhoury",
-  "email": "",
-  "phoneNo": "+963991955947",
-  "username": "nijad",
-  "password": "P@$$w0rd",
-  "confirmPassword": "P@$$w0rd"
-}
-
-{
-  "email": "",
-  "phoneNo": "+963991955947",
+  "identifier": "nijad-k@live.com",
   "password": "P@$$w0rd"
 }
