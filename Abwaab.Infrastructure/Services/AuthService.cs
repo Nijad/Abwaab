@@ -49,33 +49,36 @@ namespace Abwaab.Infrastructure.Identity.Services
 
         public async Task<LoginUserResponse> LoginUserAsync(LoginUserRequest loginRequest)
         {
-            Task<ApplicationUser?> getUser;
+            ApplicationUser? user;
             string? identifier;
             string? loginWith;
-            bool confirmed;
+            bool confirmed = false;
 
             // Check if user requests to login with email or phone number
             if (!string.IsNullOrEmpty(loginRequest.Email))
             {
-                getUser = _userManager.FindByEmailAsync(loginRequest.Email);
+                user = _userManager.FindByEmailAsync(loginRequest.Email).Result;
                 identifier = loginRequest.Email;
                 loginWith = "email";
-                confirmed = (await getUser).EmailConfirmed;
             }
             else if (!string.IsNullOrEmpty(loginRequest.PhoneNo))
             {
-                getUser = _userManager.FindByNameAsync(loginRequest.PhoneNo);
+                user = _userManager.FindByNameAsync(loginRequest.PhoneNo).Result;
                 identifier = loginRequest.PhoneNo;
                 loginWith = "phone number";
-                confirmed = (await getUser).PhoneNumberConfirmed;
             }
             else
                 throw new ArgumentException("Either email or phone number must be provided.");
-
-            if (getUser.Result == null)
+            //var user = await user;
+            if (user == null)
                 throw new NotFoundException("User", loginWith, identifier);
 
-            bool checkPassword = await _userManager.CheckPasswordAsync(getUser.Result, loginRequest.Password);
+            if (!string.IsNullOrEmpty(loginRequest.Email))
+                confirmed = user.EmailConfirmed;
+            else if (!string.IsNullOrEmpty(loginRequest.PhoneNo))
+                confirmed = user.PhoneNumberConfirmed;
+
+            bool checkPassword = await _userManager.CheckPasswordAsync(user, loginRequest.Password);
 
             if (!checkPassword)
                 throw new InvalidPasswordException();
@@ -85,9 +88,9 @@ namespace Abwaab.Infrastructure.Identity.Services
 
             return await Task.FromResult(new LoginUserResponse(true, "Login successful", await GenerateJwtTokenAsync(new ApplicationUserDTO
             {
-                Id = getUser.Result.Id,
-                Username = getUser.Result.UserName,
-                Email = getUser.Result.Email
+                Id = user.Id,
+                Username = user.UserName,
+                Email = user.Email
             })));
         }
 
@@ -137,6 +140,25 @@ namespace Abwaab.Infrastructure.Identity.Services
 
             if (!isValid)
                 return Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Invalid or expired verification code." });
+
+            ApplicationUser? user;
+            if (isEmail)
+            {
+                user = _userManager.FindByEmailAsync(identifier).Result;
+                var token =  _userManager.GenerateEmailConfirmationTokenAsync(user).Result;
+                var result =  _userManager.ConfirmEmailAsync(user, token).Result;
+                if (!result.Succeeded)
+                    return Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm email." });
+            }
+            else
+            {
+                user = _userManager.FindByNameAsync(identifier).Result;
+                var token = _userManager.GenerateChangePhoneNumberTokenAsync(user, identifier).Result;
+                var result = _userManager.ChangePhoneNumberAsync(user, identifier, token).Result;
+                if (!result.Succeeded)
+                    return Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm phone number." });
+            }
+            
 
             return Task.FromResult(new VerifyCodeResponse { IsVerified = true, Message = "Verification successful." });
         }

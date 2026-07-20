@@ -21,6 +21,12 @@ admin password : SecurePassword123!
 }
 
 {
+  "email": "nijad-k@live.com",
+  "phoneNo": "",
+  "password": "P@$$w0rd"
+}
+
+{
   "firstName": "Nijad",
   "lastName": "Alkhoury",
   "email": "",
@@ -28,4 +34,10 @@ admin password : SecurePassword123!
   "username": "nijad",
   "password": "P@$$w0rd",
   "confirmPassword": "P@$$w0rd"
+}
+
+{
+  "email": "",
+  "phoneNo": "+963991955947",
+  "password": "P@$$w0rd"
 }
