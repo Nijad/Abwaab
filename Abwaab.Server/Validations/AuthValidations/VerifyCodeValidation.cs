@@ -1,7 +1,6 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Infrastructure.Common;
 using FluentValidation;
-using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 
 namespace Abwaab.Server.Validations.AuthValidations
 {
@@ -9,17 +8,9 @@ namespace Abwaab.Server.Validations.AuthValidations
     {
         public VerifyCodeValidation()
         {
-            RuleFor(x => x)
-                .Must(x => !string.IsNullOrEmpty(x.Email) || !string.IsNullOrEmpty(x.PhoneNumber))
-                .WithMessage("You must provide either an Email or a Phone Number.");
-            
-            RuleFor(x => x.Email)
-                .Must(email => string.IsNullOrEmpty(email) || new EmailAddressAttribute().IsValid(email))
-                .WithMessage("Invalid email format.");
-            
-            RuleFor(x => x.PhoneNumber)
-                .Must(IsValidPhoneNumber)
-                .WithMessage("Phone Number must be in international format +9639XXXXXXXX");
+            RuleFor(x => x.Identifier)
+                .NotEmpty().WithMessage("Identifier is required.")
+                .Must(CommonValidation.IsEmailOrPhoneNo).WithMessage("Identifier must be either valide email or valid phone number(+9639XXXXXXXX)");
             
             RuleFor(x => x.Code)
                 .NotEmpty().WithMessage("Verification code is required.")
@@ -27,13 +18,6 @@ namespace Abwaab.Server.Validations.AuthValidations
 
             RuleFor(x=>x.Code)
                 .Matches("^[0-9]{6}$").WithMessage("Verification code must be numeric."); 
-        }
-        private bool IsValidPhoneNumber(string phoneNumber)
-        {
-            if (string.IsNullOrEmpty(phoneNumber))
-                return true;
-            var regex = new Regex(@"\+9639[0-9]{8}");
-            return regex.IsMatch(phoneNumber);
         }
     }
 }

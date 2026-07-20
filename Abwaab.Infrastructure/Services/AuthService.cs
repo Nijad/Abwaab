@@ -3,8 +3,10 @@ using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Interfaces;
 using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Domain.Entities.UserEntities;
+using Abwaab.Infrastructure.Common;
 using Abwaab.Infrastructure.Options;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -96,7 +98,11 @@ namespace Abwaab.Infrastructure.Identity.Services
 
         public async Task<RegisterUserResponse> RegisterUserAsync(RegisterRequest registerRequest)
         {
-            ApplicationUser? getUser = await _userManager.FindByEmailAsync(registerRequest.Email);
+            ApplicationUser? getUser = await _userManager.FindByEmailAsync(registerRequest.Identifier);
+
+            if (getUser == null)
+                getUser = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.PhoneNumber == registerRequest.Identifier);
 
             if (getUser != null)
                 return await Task.FromResult(new RegisterUserResponse(false, "User already exists"));
@@ -105,11 +111,15 @@ namespace Abwaab.Infrastructure.Identity.Services
             {
                 FirstName = registerRequest.FirstName,
                 LastName = registerRequest.LastName,
-                UserName = registerRequest.Username,
-                Email = registerRequest.Email,
-                PhoneNumber = registerRequest.PhoneNo
+                UserName = registerRequest.Identifier,
             };
-
+            
+            IdentifierEnum userIdentifier = IdentifierEnum.;
+            if (CommonValidation.IsValidEmail(registerRequest.Identifier))
+                newUser.Email = registerRequest.Identifier;
+            else if (CommonValidation.IsValidPhoneNumber(registerRequest.Identifier))
+                newUser.PhoneNumber = registerRequest.Identifier;
+            
             IdentityResult result = await _userManager.CreateAsync(newUser, registerRequest.Password);
 
             if (!result.Succeeded)
@@ -145,8 +155,8 @@ namespace Abwaab.Infrastructure.Identity.Services
             if (isEmail)
             {
                 user = _userManager.FindByEmailAsync(identifier).Result;
-                var token =  _userManager.GenerateEmailConfirmationTokenAsync(user).Result;
-                var result =  _userManager.ConfirmEmailAsync(user, token).Result;
+                var token = _userManager.GenerateEmailConfirmationTokenAsync(user).Result;
+                var result = _userManager.ConfirmEmailAsync(user, token).Result;
                 if (!result.Succeeded)
                     return Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm email." });
             }
@@ -158,7 +168,7 @@ namespace Abwaab.Infrastructure.Identity.Services
                 if (!result.Succeeded)
                     return Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm phone number." });
             }
-            
+
 
             return Task.FromResult(new VerifyCodeResponse { IsVerified = true, Message = "Verification successful." });
         }

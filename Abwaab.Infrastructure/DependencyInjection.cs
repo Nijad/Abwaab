@@ -32,8 +32,7 @@ namespace Abwaab.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
         {
 
-            services.AddDbContext<AppDbContext>(options =>
-               options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AppDbContext>(options =>options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
             services.Configure<JwtSettings>(config.GetSection("JwtSettings"));
             var jwtSettings = config.GetSection(nameof(JwtSettings)).Get<JwtSettings>()
