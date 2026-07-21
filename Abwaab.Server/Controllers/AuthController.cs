@@ -1,4 +1,6 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Domain.Enums;
+using Abwaab.Infrastructure.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,6 +45,28 @@ namespace Abwaab.Server.Controllers
 
             var response = await _mediator.Send(loginRequest);
 
+            return Ok(response);
+        }
+
+        [HttpPost("ResendCode")]
+        public async Task<IActionResult> ResendCode([FromBody] ResendCodeRequest resendCodeRequest)
+        {
+            if (resendCodeRequest == null)
+                return BadRequest();
+
+            ResendCodeDTO resendCodeDTO = new ResendCodeDTO
+            {
+                Identifier = resendCodeRequest.Identifier
+            };
+
+            //if(CommonValidation.IsValidEmail(resendCodeDTO.Identifier))
+            //    resendCodeDTO.IdentifierType = IdentifierEnum.email;
+            //else if(CommonValidation.IsValidPhoneNumber(resendCodeDTO.Identifier))
+            //    resendCodeDTO.IdentifierType = IdentifierEnum.phone_number;
+            //else
+            //    return BadRequest("Invalid identifier. Please provide a valid email or phone number.");
+
+            var response = await _mediator.Send(resendCodeDTO);
             return Ok(response);
         }
     }

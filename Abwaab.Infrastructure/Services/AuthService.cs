@@ -60,9 +60,9 @@ namespace Abwaab.Infrastructure.Identity.Services
                 loggingBy = IdentifierEnum.phone_number;
 
             user = _userManager.FindByNameAsync(loginRequest.Identifier).Result;
-                
+
             if (user == null)
-                throw new NotFoundException("User", loggingBy.ToString().Replace('_',' '), loginRequest.Identifier);
+                throw new NotFoundException("User", loggingBy.ToString().Replace('_', ' '), loginRequest.Identifier);
 
             if (loggingBy == IdentifierEnum.email)
                 confirmed = user.EmailConfirmed;
@@ -121,7 +121,7 @@ namespace Abwaab.Infrastructure.Identity.Services
                 return await Task.FromResult(new RegisterUserResponse(false, "Registration failed"));
 
             var code = _verificationService.GenerateCode();
-            var sent = await _verificationService.SendVerificationCodeAsync(userIdentifier==IdentifierEnum.email?registerRequest.Identifier:string.Empty, userIdentifier == IdentifierEnum.phone_number ? registerRequest.Identifier : string.Empty, code);
+            var sent = await _verificationService.SendVerificationCodeAsync(userIdentifier == IdentifierEnum.email ? registerRequest.Identifier : string.Empty, userIdentifier == IdentifierEnum.phone_number ? registerRequest.Identifier : string.Empty, code);
 
             if (!sent)
                 return await Task.FromResult(new RegisterUserResponse(false, "Failed to send verification code."));
@@ -129,7 +129,7 @@ namespace Abwaab.Infrastructure.Identity.Services
             return await Task.FromResult(new RegisterUserResponse(true, $"Register Successful, Verification code sent to your {userIdentifier.ToString().Replace('_', ' ')}"));
         }
 
-        public Task<VerifyCodeResponse> VerifyUserAsync(VerifyCodeRequest request)
+        public async Task<VerifyCodeResponse> VerifyUserAsync(VerifyCodeRequest request)
         {
             IdentifierEnum identifierType = IdentifierEnum.email;
             if (CommonValidation.IsValidEmail(request.Identifier))
@@ -140,7 +140,7 @@ namespace Abwaab.Infrastructure.Identity.Services
             bool isValid = _verificationService.VerifyCodeAsync(request.Identifier, request.Code).Result;
 
             if (!isValid)
-                return Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Invalid or expired verification code." });
+                return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Invalid or expired verification code." });
 
             ApplicationUser? user = _userManager.FindByNameAsync(request.Identifier).Result;
             if (identifierType == IdentifierEnum.email)
@@ -150,7 +150,7 @@ namespace Abwaab.Infrastructure.Identity.Services
                 var result = _userManager.ConfirmEmailAsync(user, token).Result;
 
                 if (!result.Succeeded)
-                    return Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm email." });
+                    return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm email." });
             }
             else if (identifierType == IdentifierEnum.phone_number)
             {
@@ -159,10 +159,21 @@ namespace Abwaab.Infrastructure.Identity.Services
                 var result = _userManager.ChangePhoneNumberAsync(user, request.Identifier, token).Result;
 
                 if (!result.Succeeded)
-                    return Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm phone number." });
+                    return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm phone number." });
             }
 
-            return Task.FromResult(new VerifyCodeResponse { IsVerified = true, Message = "Verification successful." });
+            return await Task.FromResult(new VerifyCodeResponse { IsVerified = true, Message = "Verification successful." });
+        }
+
+        public async Task<bool> IsUserExistsAsync(ResendCodeDTO resendCodeDTO)
+        {
+            if (_userManager.FindByNameAsync(resendCodeDTO.Identifier).Result != null)
+                return await Task.FromResult(true);
+
+            if (resendCodeDTO.IdentifierType==IdentifierEnum.email && _userManager.FindByEmailAsync(resendCodeDTO.Identifier).Result != null)
+                return await Task.FromResult(true);
+
+            return await Task.FromResult(_userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == resendCodeDTO.Identifier) != null);
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Abwaab.Application.Common.Interfaces;
+using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Infrastructure.Common;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -6,10 +8,7 @@ namespace Abwaab.Infrastructure.Services
 {
     public class VerificationCodeDemoService : IVerificationCodeService
     {
-        private readonly IEmailSender _emailSender;
-        private readonly ISmsSender _smsSender;
         private readonly IMemoryCache _cache;
-        private readonly ILogger<VerificationCodeService> _logger;
 
         public VerificationCodeDemoService(
             IEmailSender emailSender,
@@ -17,15 +16,43 @@ namespace Abwaab.Infrastructure.Services
             IMemoryCache cache,
             ILogger<VerificationCodeService> logger)
         {
-            _emailSender = emailSender;
-            _smsSender = smsSender;
             _cache = cache;
-            _logger = logger;
         }
 
         public string GenerateCode()
         {
             return "123456";
+        }
+
+        public Task<ResendCodeResponse> ResendVerificationCodeAsync(string identifier)
+        {
+            string code = GenerateCode();
+            if (CommonValidation.IsValidEmail(identifier))
+            {
+                return SendVerificationCodeAsync(identifier, null, code)
+                    .ContinueWith(task => new ResendCodeResponse
+                    {
+                        IsSuccess = task.Result,
+                        Message = task.Result ? "Verification code resent to email." : "Failed to resend verification code to email."
+                    });
+            }
+            else if (CommonValidation.IsValidPhoneNumber(identifier))
+            {
+                return SendVerificationCodeAsync(null, identifier, code)
+                    .ContinueWith(task => new ResendCodeResponse
+                    {
+                        IsSuccess = task.Result,
+                        Message = task.Result ? "Verification code resent to phone number." : "Failed to resend verification code to phone number."
+                    });
+            }
+            else
+            {
+                return Task.FromResult(new ResendCodeResponse
+                {
+                    IsSuccess = false,
+                    Message = "Invalid identifier. Must be a valid email or phone number."
+                });
+            }
         }
 
         public async Task<bool> SendVerificationCodeAsync(string email, string phoneNumber, string code)

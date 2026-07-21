@@ -1,4 +1,6 @@
 ﻿using Abwaab.Application.Common.Interfaces;
+using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Infrastructure.Common;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -28,6 +30,39 @@ namespace Abwaab.Infrastructure.Services
             // Generates a cryptographically random 6-digit code (e.g., "123456")
             var random = new Random();
             return random.Next(100000, 999999).ToString();
+        }
+
+        public Task<ResendCodeResponse> ResendVerificationCodeAsync(string identifier)
+        {
+            string code = GenerateCode();
+            if(CommonValidation.IsValidEmail(identifier))
+            {
+                // Send the code to the email
+                return SendVerificationCodeAsync(identifier, null, code)
+                    .ContinueWith(task => new ResendCodeResponse
+                    {
+                        IsSuccess = task.Result,
+                        Message = task.Result ? "Verification code resent to email." : "Failed to resend verification code to email."
+                    });
+            }
+            else if(CommonValidation.IsValidPhoneNumber(identifier))
+            {
+                // Send the code to the phone number
+                return SendVerificationCodeAsync(null, identifier, code)
+                    .ContinueWith(task => new ResendCodeResponse
+                    {
+                        IsSuccess = task.Result,
+                        Message = task.Result ? "Verification code resent to phone number." : "Failed to resend verification code to phone number."
+                    });
+            }
+            else
+            {
+                return Task.FromResult(new ResendCodeResponse
+                {
+                    IsSuccess = false,
+                    Message = "Invalid identifier. Must be a valid email or phone number."
+                });
+            }
         }
 
         public async Task<bool> SendVerificationCodeAsync(string email, string phoneNumber, string code)

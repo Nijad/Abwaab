@@ -62,7 +62,15 @@ namespace Abwaab.Server
 
             builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
+            // Add MediatR pipeline behaviors
+            // ValidationBehavior will run before DetectIdentifierBehavior, as it is registered first
+            // This means that validation will occur before identifier detection in the request processing pipeline
+            // The order of registration matters because MediatR executes pipeline behaviors in the order they are registered
+            // If you want to change the order of execution, you can change the order of registration here
+            // For example, if you want DetectIdentifierBehavior to run before ValidationBehavior, you can swap the order of these two lines
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            // DetectIdentifierBehavior will run after ValidationBehavior, as it is registered second
+            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DetectIdentifierBehavior<,>));
 
             var app = builder.Build();
             app.UseExceptionHandler();

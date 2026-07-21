@@ -12,5 +12,6 @@ namespace Abwaab.Application.Common.Contracts
 
         Task<LoginUserResponse> LoginUserAsync(LoginUserRequest loginRequest);
         Task<VerifyCodeResponse> VerifyUserAsync(VerifyCodeRequest request);
+        Task<bool> IsUserExistsAsync(ResendCodeDTO resendCodeDTO);
     }
 }
