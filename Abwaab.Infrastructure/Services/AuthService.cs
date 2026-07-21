@@ -48,34 +48,30 @@ namespace Abwaab.Infrastructure.Identity.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<LoginUserResponse> LoginUserAsync(LoginUserRequest loginRequest)
+        public async Task<LoginUserResponse> LoginUserAsync(LoginUserDTO loginUserDTO)
         {
             ApplicationUser? user;
             string? identifier;
-            IdentifierEnum loggingBy = IdentifierEnum.email;
+            //IdentifierEnum loggingBy = IdentifierEnum.email;
             bool confirmed = false;
 
-            // Check if user requests to login with email or phone number
-            if (CommonValidation.IsValidPhoneNumber(loginRequest.Identifier))
-                loggingBy = IdentifierEnum.phone_number;
-
-            user = _userManager.FindByNameAsync(loginRequest.Identifier).Result;
+            user = _userManager.FindByNameAsync(loginUserDTO.Identifier).Result;
 
             if (user == null)
-                throw new NotFoundException("User", loggingBy.ToString().Replace('_', ' '), loginRequest.Identifier);
+                throw new NotFoundException("User", loginUserDTO.IdentifierType.ToString().Replace('_', ' '), loginUserDTO.Identifier);
 
-            if (loggingBy == IdentifierEnum.email)
+            if (loginUserDTO.IdentifierType == IdentifierEnum.email)
                 confirmed = user.EmailConfirmed;
-            else if (loggingBy == IdentifierEnum.phone_number)
+            else if (loginUserDTO.IdentifierType == IdentifierEnum.phone_number)
                 confirmed = user.PhoneNumberConfirmed;
 
-            bool checkPassword = await _userManager.CheckPasswordAsync(user, loginRequest.Password);
+            bool checkPassword = await _userManager.CheckPasswordAsync(user, loginUserDTO.Password);
 
             if (!checkPassword)
                 throw new InvalidPasswordException();
 
             if (!confirmed)
-                return await Task.FromResult(new LoginUserResponse(false, $"Please verify your {loggingBy.ToString().Replace('_', ' ')} before logging in."));
+                return await Task.FromResult(new LoginUserResponse(false, $"Please verify your {loginUserDTO.IdentifierType.ToString().Replace('_', ' ')} before logging in."));
 
             return await Task.FromResult(new LoginUserResponse(true, "Login successful", await GenerateJwtTokenAsync(new ApplicationUserDTO
             {
@@ -85,65 +81,64 @@ namespace Abwaab.Infrastructure.Identity.Services
             })));
         }
 
-        public async Task<RegisterUserResponse> RegisterUserAsync(RegisterRequest registerRequest)
+        public async Task<RegisterUserResponse> RegisterUserAsync(RegisterDTO registerDTO)
         {
-            ApplicationUser? getUser = await _userManager.FindByEmailAsync(registerRequest.Identifier);
+            ApplicationUser? getUser = null;
+            if (registerDTO.IdentifierType == IdentifierEnum.email)
+            {
+                getUser = await _userManager.FindByEmailAsync(registerDTO.Identifier);
+            }
 
-            if (getUser == null)
+            if (registerDTO.IdentifierType == IdentifierEnum.phone_number)
+            {
                 getUser = await _userManager.Users
-                .FirstOrDefaultAsync(u => u.PhoneNumber == registerRequest.Identifier);
+                                .FirstOrDefaultAsync(u => u.PhoneNumber == registerDTO.Identifier);
+            }
 
             if (getUser != null)
                 return await Task.FromResult(new RegisterUserResponse(false, "User already exists"));
 
             ApplicationUser newUser = new ApplicationUser
             {
-                FirstName = registerRequest.FirstName,
-                LastName = registerRequest.LastName,
-                UserName = registerRequest.Identifier,
+                FirstName = registerDTO.FirstName,
+                LastName = registerDTO.LastName,
+                UserName = registerDTO.Identifier,
             };
 
-            IdentifierEnum userIdentifier = IdentifierEnum.email;
-            if (CommonValidation.IsValidEmail(registerRequest.Identifier))
-            {
-                newUser.Email = registerRequest.Identifier;
-                userIdentifier = IdentifierEnum.email;
-            }
-            else if (CommonValidation.IsValidPhoneNumber(registerRequest.Identifier))
-            {
-                newUser.PhoneNumber = registerRequest.Identifier;
-                userIdentifier = IdentifierEnum.phone_number;
-            }
+            if (registerDTO.IdentifierType == IdentifierEnum.email)
+                newUser.Email = registerDTO.Identifier;
+            else if (registerDTO.IdentifierType == IdentifierEnum.phone_number)
+                newUser.PhoneNumber = registerDTO.Identifier;
 
-            IdentityResult result = await _userManager.CreateAsync(newUser, registerRequest.Password);
+            IdentityResult result = await _userManager.CreateAsync(newUser, registerDTO.Password);
 
             if (!result.Succeeded)
                 return await Task.FromResult(new RegisterUserResponse(false, "Registration failed"));
 
             var code = _verificationService.GenerateCode();
-            var sent = await _verificationService.SendVerificationCodeAsync(userIdentifier == IdentifierEnum.email ? registerRequest.Identifier : string.Empty, userIdentifier == IdentifierEnum.phone_number ? registerRequest.Identifier : string.Empty, code);
+            IdentifierDTO Identifier = new() { 
+                Identifier = registerDTO.Identifier, 
+                IdentifierType = registerDTO.IdentifierType 
+            };
+
+            var sent = await _verificationService.SendVerificationCodeAsync(Identifier, code);
 
             if (!sent)
                 return await Task.FromResult(new RegisterUserResponse(false, "Failed to send verification code."));
 
-            return await Task.FromResult(new RegisterUserResponse(true, $"Register Successful, Verification code sent to your {userIdentifier.ToString().Replace('_', ' ')}"));
+            return await Task.FromResult(new RegisterUserResponse(true, $"Register Successful, Verification code sent to your {registerDTO.IdentifierType.ToString().Replace('_', ' ')}"));
         }
 
-        public async Task<VerifyCodeResponse> VerifyUserAsync(VerifyCodeRequest request)
+        public async Task<VerifyCodeResponse> VerifyUserAsync(VerifyCodeDTO verifyCodeDTO)
         {
-            IdentifierEnum identifierType = IdentifierEnum.email;
-            if (CommonValidation.IsValidEmail(request.Identifier))
-                identifierType = IdentifierEnum.email;
-            else if (CommonValidation.IsValidPhoneNumber(request.Identifier))
-                identifierType = IdentifierEnum.phone_number;
-
-            bool isValid = _verificationService.VerifyCodeAsync(request.Identifier, request.Code).Result;
+            bool isValid = _verificationService.VerifyCodeAsync(verifyCodeDTO.Identifier, verifyCodeDTO.Code).Result;
 
             if (!isValid)
                 return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Invalid or expired verification code." });
 
-            ApplicationUser? user = _userManager.FindByNameAsync(request.Identifier).Result;
-            if (identifierType == IdentifierEnum.email)
+            ApplicationUser? user = _userManager.FindByNameAsync(verifyCodeDTO.Identifier).Result;
+            
+            if (verifyCodeDTO.IdentifierType == IdentifierEnum.email)
             {
                 var token = _userManager.GenerateEmailConfirmationTokenAsync(user).Result;
 
@@ -152,11 +147,11 @@ namespace Abwaab.Infrastructure.Identity.Services
                 if (!result.Succeeded)
                     return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm email." });
             }
-            else if (identifierType == IdentifierEnum.phone_number)
+            else if (verifyCodeDTO.IdentifierType == IdentifierEnum.phone_number)
             {
-                var token = _userManager.GenerateChangePhoneNumberTokenAsync(user, request.Identifier).Result;
+                var token = _userManager.GenerateChangePhoneNumberTokenAsync(user, verifyCodeDTO.Identifier).Result;
 
-                var result = _userManager.ChangePhoneNumberAsync(user, request.Identifier, token).Result;
+                var result = _userManager.ChangePhoneNumberAsync(user, verifyCodeDTO.Identifier, token).Result;
 
                 if (!result.Succeeded)
                     return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm phone number." });
@@ -165,15 +160,17 @@ namespace Abwaab.Infrastructure.Identity.Services
             return await Task.FromResult(new VerifyCodeResponse { IsVerified = true, Message = "Verification successful." });
         }
 
-        public async Task<bool> IsUserExistsAsync(ResendCodeDTO resendCodeDTO)
+        public async Task<bool> IsUserExistsAsync(IdentifierDTO resendCodeDTO)
         {
             if (_userManager.FindByNameAsync(resendCodeDTO.Identifier).Result != null)
                 return await Task.FromResult(true);
 
-            if (resendCodeDTO.IdentifierType==IdentifierEnum.email && _userManager.FindByEmailAsync(resendCodeDTO.Identifier).Result != null)
+            if (resendCodeDTO.IdentifierType == IdentifierEnum.email && _userManager.FindByEmailAsync(resendCodeDTO.Identifier).Result != null)
+                return await Task.FromResult(true);
+            if (resendCodeDTO.IdentifierType == IdentifierEnum.phone_number && _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == resendCodeDTO.Identifier).Result != null)
                 return await Task.FromResult(true);
 
-            return await Task.FromResult(_userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == resendCodeDTO.Identifier) != null);
+            return await Task.FromResult(false);
         }
     }
 }

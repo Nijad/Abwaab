@@ -3,9 +3,11 @@ using MediatR;
 
 namespace Abwaab.Application.DTOs.ApplicationUser
 {
-    public class ResendCodeDTO : IRequest<ResendCodeResponse>
+    public class VerifyCodeDTO : IRequest<VerifyCodeResponse>
     {
         public string Identifier { get; set; } = string.Empty;
         public IdentifierEnum IdentifierType { get; set; }
+        public string Code { get; set; } = string.Empty;
     }
+
 }

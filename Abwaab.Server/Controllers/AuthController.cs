@@ -1,6 +1,4 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser;
-using Abwaab.Domain.Enums;
-using Abwaab.Infrastructure.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +21,16 @@ namespace Abwaab.Server.Controllers
             if (registerRequest == null)
                 return BadRequest();
 
-            RegisterUserResponse response = await _mediator.Send(registerRequest);
+            RegisterDTO registerDTO = new RegisterDTO
+            {
+                FirstName = registerRequest.FirstName,
+                LastName = registerRequest.LastName,
+                Identifier = registerRequest.Identifier,
+                Password = registerRequest.Password,
+                ConfirmPassword = registerRequest.ConfirmPassword
+            };
+
+            RegisterUserResponse response = await _mediator.Send(registerDTO);
 
             return Ok(response);
         }
@@ -33,7 +40,13 @@ namespace Abwaab.Server.Controllers
         {
             if (verifyCodeRequest == null)
                 return BadRequest();
-            var response = await _mediator.Send(verifyCodeRequest);
+            VerifyCodeDTO verifyCodeDTO = new VerifyCodeDTO
+            {
+                Identifier = verifyCodeRequest.Identifier,
+                Code = verifyCodeRequest.Code
+            };
+
+            var response = await _mediator.Send(verifyCodeDTO);
             return Ok(response);
         }
 
@@ -43,7 +56,13 @@ namespace Abwaab.Server.Controllers
             if (loginRequest == null)
                 return BadRequest();
 
-            var response = await _mediator.Send(loginRequest);
+            LoginUserDTO loginUserDTO = new LoginUserDTO
+            {
+                Identifier = loginRequest.Identifier,
+                Password = loginRequest.Password
+            };
+
+            var response = await _mediator.Send(loginUserDTO);
 
             return Ok(response);
         }
@@ -54,17 +73,10 @@ namespace Abwaab.Server.Controllers
             if (resendCodeRequest == null)
                 return BadRequest();
 
-            ResendCodeDTO resendCodeDTO = new ResendCodeDTO
+            IdentifierDTO resendCodeDTO = new IdentifierDTO
             {
                 Identifier = resendCodeRequest.Identifier
             };
-
-            //if(CommonValidation.IsValidEmail(resendCodeDTO.Identifier))
-            //    resendCodeDTO.IdentifierType = IdentifierEnum.email;
-            //else if(CommonValidation.IsValidPhoneNumber(resendCodeDTO.Identifier))
-            //    resendCodeDTO.IdentifierType = IdentifierEnum.phone_number;
-            //else
-            //    return BadRequest("Invalid identifier. Please provide a valid email or phone number.");
 
             var response = await _mediator.Send(resendCodeDTO);
             return Ok(response);

@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations
 {
-    public class VerifyCodeValidation : AbstractValidator<VerifyCodeRequest>
+    public class VerifyCodeValidation : AbstractValidator<VerifyCodeDTO>
     {
         public VerifyCodeValidation()
         {

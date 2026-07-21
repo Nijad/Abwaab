@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Abwaab.Server.Handlers.AuthHandlers
 {
-    public class ResendCodeHandler : IRequestHandler<ResendCodeDTO, ResendCodeResponse>
+    public class ResendCodeHandler : IRequestHandler<IdentifierDTO, ResendCodeResponse>
     {
         private readonly IVerificationCodeService _verificationCodeService;
         private readonly IAuthService _authService;
@@ -14,7 +14,7 @@ namespace Abwaab.Server.Handlers.AuthHandlers
             _verificationCodeService = verificationCodeService;
             _authService = authService;
         }
-        public async Task<ResendCodeResponse> Handle(ResendCodeDTO request, CancellationToken cancellationToken)
+        public async Task<ResendCodeResponse> Handle(IdentifierDTO request, CancellationToken cancellationToken)
         {
             bool isUserExists = await _authService.IsUserExistsAsync(request);
 
@@ -27,7 +27,7 @@ namespace Abwaab.Server.Handlers.AuthHandlers
                 };
             }
 
-            ResendCodeResponse result = await _verificationCodeService.ResendVerificationCodeAsync(request.Identifier);
+            ResendCodeResponse result = await _verificationCodeService.ResendVerificationCodeAsync(request);
             return result;
         }
     }

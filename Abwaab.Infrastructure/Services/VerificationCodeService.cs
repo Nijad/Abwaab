@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Interfaces;
 using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Domain.Enums;
 using Abwaab.Infrastructure.Common;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -32,23 +33,23 @@ namespace Abwaab.Infrastructure.Services
             return random.Next(100000, 999999).ToString();
         }
 
-        public Task<ResendCodeResponse> ResendVerificationCodeAsync(string identifier)
+        public Task<ResendCodeResponse> ResendVerificationCodeAsync(IdentifierDTO resendCodeDTO)
         {
             string code = GenerateCode();
-            if(CommonValidation.IsValidEmail(identifier))
+            if(resendCodeDTO.IdentifierType == IdentifierEnum.email)
             {
                 // Send the code to the email
-                return SendVerificationCodeAsync(identifier, null, code)
+                return SendVerificationCodeAsync(resendCodeDTO, code)
                     .ContinueWith(task => new ResendCodeResponse
                     {
                         IsSuccess = task.Result,
                         Message = task.Result ? "Verification code resent to email." : "Failed to resend verification code to email."
                     });
             }
-            else if(CommonValidation.IsValidPhoneNumber(identifier))
+            else if(resendCodeDTO.IdentifierType == IdentifierEnum.phone_number)
             {
                 // Send the code to the phone number
-                return SendVerificationCodeAsync(null, identifier, code)
+                return SendVerificationCodeAsync(resendCodeDTO, code)
                     .ContinueWith(task => new ResendCodeResponse
                     {
                         IsSuccess = task.Result,
@@ -65,10 +66,10 @@ namespace Abwaab.Infrastructure.Services
             }
         }
 
-        public async Task<bool> SendVerificationCodeAsync(string email, string phoneNumber, string code)
+        public async Task<bool> SendVerificationCodeAsync(IdentifierDTO sendCodeDTO, string code)
         {
             // Decide which channel to use
-            if (!string.IsNullOrEmpty(email))
+            if (sendCodeDTO.IdentifierType == IdentifierEnum.email)
             {
                 var subject = "Your Account Verification Code";
                 var body = $@"
@@ -79,23 +80,23 @@ namespace Abwaab.Infrastructure.Services
                     <p>If you didn't request this, please ignore this email.</p>
                 ";
 
-                var result = await _emailSender.SendEmailAsync(email, subject, body);
+                var result = await _emailSender.SendEmailAsync(sendCodeDTO.Identifier, subject, body);
                 if (result)
                 {
                     // Store the code in cache with a 5-minute expiry
-                    _cache.Set(email, code, TimeSpan.FromMinutes(5));
+                    _cache.Set(sendCodeDTO.Identifier, code, TimeSpan.FromMinutes(5));
                     return true;
                 }
                 return false;
             }
-            else if (!string.IsNullOrEmpty(phoneNumber))
+            else if (sendCodeDTO.IdentifierType == IdentifierEnum.phone_number)
             {
                 var message = $"Your OTP is: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (valid 5 min)";
                 //var message = $"Your verification code is: {code}. It will expire in 5 minutes.";
-                var result = await _smsSender.SendSmsAsync(phoneNumber, message);
+                var result = await _smsSender.SendSmsAsync(sendCodeDTO.Identifier, message);
                 if (result)
                 {
-                    _cache.Set(phoneNumber, code, TimeSpan.FromMinutes(5));
+                    _cache.Set(sendCodeDTO.Identifier, code, TimeSpan.FromMinutes(5));
                     return true;
                 }
                 return false;

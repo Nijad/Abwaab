@@ -4,14 +4,9 @@ namespace Abwaab.Application.Common.Contracts
 {
     public interface IAuthService
     {
-        Task<RegisterUserResponse> RegisterUserAsync(RegisterRequest registerRequest);
-
-        //string GenerateVerificationCode(); // returns a 6‑digit code
-        //Task SendVerificationCodeAsync(string email, string code);
-        //Task SendVerificationCodeSmsAsync(string phoneNumber, string code);
-
-        Task<LoginUserResponse> LoginUserAsync(LoginUserRequest loginRequest);
-        Task<VerifyCodeResponse> VerifyUserAsync(VerifyCodeRequest request);
-        Task<bool> IsUserExistsAsync(ResendCodeDTO resendCodeDTO);
+        Task<RegisterUserResponse> RegisterUserAsync(RegisterDTO registerDTO);
+        Task<LoginUserResponse> LoginUserAsync(LoginUserDTO loginUserDTO);
+        Task<VerifyCodeResponse> VerifyUserAsync(VerifyCodeDTO verifyCodeDTO);
+        Task<bool> IsUserExistsAsync(IdentifierDTO resendCodeDTO);
     }
 }

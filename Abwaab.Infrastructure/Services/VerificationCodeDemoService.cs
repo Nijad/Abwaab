@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Interfaces;
 using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Domain.Enums;
 using Abwaab.Infrastructure.Common;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -24,21 +25,21 @@ namespace Abwaab.Infrastructure.Services
             return "123456";
         }
 
-        public Task<ResendCodeResponse> ResendVerificationCodeAsync(string identifier)
+        public Task<ResendCodeResponse> ResendVerificationCodeAsync(IdentifierDTO resendCodeDTO)
         {
             string code = GenerateCode();
-            if (CommonValidation.IsValidEmail(identifier))
+            if (resendCodeDTO.IdentifierType == IdentifierEnum.email)
             {
-                return SendVerificationCodeAsync(identifier, null, code)
+                return SendVerificationCodeAsync(resendCodeDTO, code)
                     .ContinueWith(task => new ResendCodeResponse
                     {
                         IsSuccess = task.Result,
                         Message = task.Result ? "Verification code resent to email." : "Failed to resend verification code to email."
                     });
             }
-            else if (CommonValidation.IsValidPhoneNumber(identifier))
+            else if (resendCodeDTO.IdentifierType == IdentifierEnum.phone_number)
             {
-                return SendVerificationCodeAsync(null, identifier, code)
+                return SendVerificationCodeAsync(resendCodeDTO, code)
                     .ContinueWith(task => new ResendCodeResponse
                     {
                         IsSuccess = task.Result,
@@ -55,12 +56,9 @@ namespace Abwaab.Infrastructure.Services
             }
         }
 
-        public async Task<bool> SendVerificationCodeAsync(string email, string phoneNumber, string code)
+        public async Task<bool> SendVerificationCodeAsync(IdentifierDTO Identifier, string code)
         {
-            if (!string.IsNullOrEmpty(email))
-                _cache.Set(email, code, TimeSpan.FromMinutes(5));
-            else if (!string.IsNullOrEmpty(phoneNumber))
-                _cache.Set(phoneNumber, code, TimeSpan.FromMinutes(5));
+            _cache.Set(Identifier.Identifier, code, TimeSpan.FromMinutes(5));
             return true;
         }
 

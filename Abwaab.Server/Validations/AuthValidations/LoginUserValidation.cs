@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations
 {
-    public class LoginUserValidation : AbstractValidator<LoginUserRequest>
+    public class LoginUserValidation : AbstractValidator<LoginUserDTO>
     {
         public LoginUserValidation()
         {

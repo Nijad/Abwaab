@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations
 {
-    public class ResendCodeValidationCode : AbstractValidator<ResendCodeDTO>
+    public class ResendCodeValidationCode : AbstractValidator<IdentifierDTO>
     {
         public ResendCodeValidationCode()
         {
