@@ -1,6 +1,11 @@
 ﻿using Abwaab.Application.Common.Contracts;
+using Abwaab.Application.Common.Interfaces;
 using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Domain.Entities.UserEntities;
+using Abwaab.Infrastructure.Options;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace Abwaab.Server.Handlers.AuthHandlers
 {
@@ -17,18 +22,4 @@ namespace Abwaab.Server.Handlers.AuthHandlers
             return result;
         }
     }
-    public class ForgotPasswordHandler : IRequestHandler<ForgotPasswordDTO, ForgotPasswordResponse>
-    {
-        private readonly IAuthService _authService;
-        public ForgotPasswordHandler(IAuthService authService)
-        {
-            _authService = authService;
-        }
-        public async Task<ForgotPasswordResponse> Handle(ForgotPasswordDTO request, CancellationToken cancellationToken)
-        {
-            var result = await _authService.ForgotPasswordAsyn(request);
-            return result;
-        }
-    }
-
 }

@@ -98,5 +98,21 @@ namespace Abwaab.Server.Controllers
             var response = await _mediator.Send(forgotPasswordDTO);
             return Ok(response);
         }
+
+        //[HttpPost("ResetPassword")]
+        //public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest resetPasswordRequest)
+        //{
+        //    if (resetPasswordRequest == null)
+        //        return BadRequest();
+        //    ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO
+        //    {
+        //        Identifier = resetPasswordRequest.Identifier,
+        //        Token = resetPasswordRequest.Token,
+        //        NewPassword = resetPasswordRequest.NewPassword,
+        //        ConfirmNewPassword = resetPasswordRequest.ConfirmNewPassword
+        //    };
+        //    var response = await _mediator.Send(resetPasswordDTO);
+        //    return Ok(response);
+        //}
     }
 }

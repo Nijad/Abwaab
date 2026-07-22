@@ -8,6 +8,7 @@ using Abwaab.Infrastructure.Common;
 using Abwaab.Infrastructure.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -20,12 +21,27 @@ namespace Abwaab.Infrastructure.Identity.Services
         private readonly IVerificationCodeService _verificationService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IOptions<JwtSettings> _jwtSettings;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IJwtService _jwtService;
+        private readonly IRefreshTokenRepository _refreshTokenRepo;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IVerificationCodeService verificationService, UserManager<ApplicationUser> userManager, IOptions<JwtSettings> jwtSettings)
+        public AuthService(
+            IVerificationCodeService verificationService, 
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IJwtService jwtService,
+            IRefreshTokenRepository refreshTokenRepo,
+            IOptions<JwtSettings> jwtSettings,
+            ILogger<AuthService> logger)
         {
             _verificationService = verificationService;
             _userManager = userManager;
             _jwtSettings = jwtSettings;
+            _signInManager = signInManager;
+            _jwtService = jwtService;
+            _refreshTokenRepo = refreshTokenRepo;
+            _logger = logger;
         }
 
         private async Task<string> GenerateJwtTokenAsync(ApplicationUserDTO user)
@@ -50,12 +66,8 @@ namespace Abwaab.Infrastructure.Identity.Services
 
         public async Task<LoginUserResponse> LoginUserAsync(LoginUserDTO loginUserDTO)
         {
-            ApplicationUser? user;
-            string? identifier;
-            //IdentifierEnum loggingBy = IdentifierEnum.email;
             bool confirmed = false;
-
-            user = _userManager.FindByNameAsync(loginUserDTO.Identifier).Result;
+            ApplicationUser? user = _userManager.FindByNameAsync(loginUserDTO.Identifier).Result;
 
             if (user == null)
                 throw new NotFoundException("User", loginUserDTO.IdentifierType.ToString().Replace('_', ' '), loginUserDTO.Identifier);
@@ -71,14 +83,19 @@ namespace Abwaab.Infrastructure.Identity.Services
                 throw new InvalidPasswordException();
 
             if (!confirmed)
-                return await Task.FromResult(new LoginUserResponse(false, $"Please verify your {loginUserDTO.IdentifierType.ToString().Replace('_', ' ')} before logging in."));
+                return await Task.FromResult(new LoginUserResponse { Success = false, Message = $"Please verify your {loginUserDTO.IdentifierType.ToString().Replace('_', ' ')} before logging in." });
 
-            return await Task.FromResult(new LoginUserResponse(true, "Login successful", await GenerateJwtTokenAsync(new ApplicationUserDTO
+            return await Task.FromResult(new LoginUserResponse
             {
-                Id = user.Id,
-                Username = user.UserName,
-                Email = user.Email
-            })));
+                Success = true,
+                Message = "Login successful",
+                AccessToken = await GenerateJwtTokenAsync(new ApplicationUserDTO
+                {
+                    Id = user.Id,
+                    Username = user.UserName,
+                    Email = user.Email
+                })
+            });
         }
 
         public async Task<RegisterUserResponse> RegisterUserAsync(RegisterDTO registerDTO)
@@ -116,9 +133,10 @@ namespace Abwaab.Infrastructure.Identity.Services
                 return await Task.FromResult(new RegisterUserResponse(false, "Registration failed"));
 
             var code = _verificationService.GenerateCode();
-            IdentifierDTO Identifier = new() { 
-                Identifier = registerDTO.Identifier, 
-                IdentifierType = registerDTO.IdentifierType 
+            IdentifierDTO Identifier = new()
+            {
+                Identifier = registerDTO.Identifier,
+                IdentifierType = registerDTO.IdentifierType
             };
 
             var sent = await _verificationService.SendVerificationCodeAsync(Identifier, code);
@@ -137,7 +155,7 @@ namespace Abwaab.Infrastructure.Identity.Services
                 return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Invalid or expired verification code." });
 
             ApplicationUser? user = _userManager.FindByNameAsync(verifyCodeDTO.Identifier).Result;
-            
+
             if (verifyCodeDTO.IdentifierType == IdentifierEnum.email)
             {
                 var token = _userManager.GenerateEmailConfirmationTokenAsync(user).Result;
@@ -181,15 +199,15 @@ namespace Abwaab.Infrastructure.Identity.Services
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
             var result = await _userManager.ResetPasswordAsync(user, resetToken, request.NewPassword);
-            
+
             if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
 
-                return await Task.FromResult(new ForgotPasswordResponse {Success = false, Message = $"Password reset failed: {errors}"}); 
+                return await Task.FromResult(new ForgotPasswordResponse { Success = false, Message = $"Password reset failed: {errors}" });
             }
 
-             return new ForgotPasswordResponse { Success = true, Message = "Password reset successful." };
+            return new ForgotPasswordResponse { Success = true, Message = "Password reset successful." };
         }
     }
 }
