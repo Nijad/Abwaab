@@ -8,5 +8,6 @@ namespace Abwaab.Application.Common.Contracts
         Task<LoginUserResponse> LoginUserAsync(LoginUserDTO loginUserDTO);
         Task<VerifyCodeResponse> VerifyUserAsync(VerifyCodeDTO verifyCodeDTO);
         Task<bool> IsUserExistsAsync(IdentifierDTO resendCodeDTO);
+        Task<ForgotPasswordResponse> ForgotPasswordAsyn(ForgotPasswordDTO request);
     }
 }

@@ -81,5 +81,22 @@ namespace Abwaab.Server.Controllers
             var response = await _mediator.Send(resendCodeDTO);
             return Ok(response);
         }
+
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordRequest)
+        {
+            if (forgotPasswordRequest == null)
+                return BadRequest();
+
+            ForgotPasswordDTO forgotPasswordDTO = new ForgotPasswordDTO
+            {
+                Identifier = forgotPasswordRequest.Identifier,
+                ConfirmNewPassword = forgotPasswordRequest.ConfirmNewPassword,
+                NewPassword = forgotPasswordRequest.NewPassword
+            };
+
+            var response = await _mediator.Send(forgotPasswordDTO);
+            return Ok(response);
+        }
     }
 }

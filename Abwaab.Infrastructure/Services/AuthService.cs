@@ -172,5 +172,24 @@ namespace Abwaab.Infrastructure.Identity.Services
 
             return await Task.FromResult(false);
         }
+
+        public async Task<ForgotPasswordResponse> ForgotPasswordAsyn(ForgotPasswordDTO request)
+        {
+            var user = _userManager.FindByNameAsync(request.Identifier).Result;
+            if (user == null)
+                throw new NotFoundException("User", request.IdentifierType.ToString().Replace('_', ' '), request.Identifier);
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, request.NewPassword);
+            
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+
+                return await Task.FromResult(new ForgotPasswordResponse {Success = false, Message = $"Password reset failed: {errors}"}); 
+            }
+
+             return new ForgotPasswordResponse { Success = true, Message = "Password reset successful." };
+        }
     }
 }
