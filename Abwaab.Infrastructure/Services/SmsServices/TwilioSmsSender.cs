@@ -6,7 +6,7 @@ using Twilio;
 using Twilio.Exceptions;
 using Twilio.Rest.Api.V2010.Account;
 
-namespace Abwaab.Infrastructure.Services
+namespace Abwaab.Infrastructure.Services.SmsServices
 {
     public class TwilioSmsSender : ISmsSender
     {

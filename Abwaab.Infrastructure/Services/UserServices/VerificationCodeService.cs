@@ -6,7 +6,7 @@ using Abwaab.Infrastructure.Common;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
-namespace Abwaab.Infrastructure.Services
+namespace Abwaab.Infrastructure.Services.UserServices
 {
     public class VerificationCodeService : IVerificationCodeService
     {

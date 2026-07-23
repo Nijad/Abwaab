@@ -2,6 +2,7 @@
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Interfaces;
 using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
 using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
 using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
 using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
@@ -9,15 +10,14 @@ using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using Abwaab.Infrastructure.Options;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
+using System.Security.Claims;
 
-namespace Abwaab.Infrastructure.Identity.Services
+namespace Abwaab.Infrastructure.Services.UserServices
 {
     public class AuthService : IAuthService
     {
@@ -28,6 +28,7 @@ namespace Abwaab.Infrastructure.Identity.Services
         private readonly IJwtService _jwtService;
         private readonly IRefreshTokenRepository _refreshTokenRepo;
         private readonly ILogger<AuthService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AuthService(
             IVerificationCodeService verificationService, 
@@ -36,7 +37,8 @@ namespace Abwaab.Infrastructure.Identity.Services
             IJwtService jwtService,
             IRefreshTokenRepository refreshTokenRepo,
             IOptions<JwtSettings> jwtSettings,
-            ILogger<AuthService> logger)
+            ILogger<AuthService> logger,
+            IHttpContextAccessor httpContextAccessor)
         {
             _verificationService = verificationService;
             _userManager = userManager;
@@ -45,6 +47,7 @@ namespace Abwaab.Infrastructure.Identity.Services
             _jwtService = jwtService;
             _refreshTokenRepo = refreshTokenRepo;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         private async Task<ApplicationUser?> FinedUserByIdentifierAsync(string identifier, IdentifierEnum identifierType)
@@ -110,7 +113,7 @@ namespace Abwaab.Infrastructure.Identity.Services
                 Success = true,
                 AccessToken = accessToken,
                 RefreshToken = refreshTokenString,
-                ExpiresIn = (int)_jwtSettings.Value.AccessTokenExpiryMinutes * 60,
+                ExpiresIn = _jwtSettings.Value.AccessTokenExpiryMinutes * 60,
                 Message = "Login successful",
             };
         }
@@ -225,6 +228,32 @@ namespace Abwaab.Infrastructure.Identity.Services
             }
 
             return new ForgotPasswordResponse { Success = true, Message = "Password reset successful." };
+        }
+
+        public async Task<ChangePasswordResponse> ChangePassword(ChangePasswordDTO request)
+        {
+            // Get current user from claims
+            var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return new ChangePasswordResponse { Success = false, Message = "User not authenticated." };
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return new ChangePasswordResponse { Success = false, Message = "User not found." };
+
+            var result = await _userManager.ChangePasswordAsync(
+                user, request.CurrentPassword,
+                request.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return new ChangePasswordResponse { Success = false, Message = $"Failed: {errors}" };
+            }
+
+            _logger.LogInformation("Password changed for user {UserId}", userId);
+
+            return new ChangePasswordResponse { Success = true, Message = "Password changed successfully." };
         }
     }
 }

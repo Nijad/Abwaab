@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace Abwaab.Infrastructure.Services
+namespace Abwaab.Infrastructure.Services.EmailServices
 {
     public class SmtpEmailSender : IEmailSender
     {

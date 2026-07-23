@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Abwaab.Infrastructure.Services
+namespace Abwaab.Infrastructure.Services.UserServices
 {
     public class JwtService : IJwtService
     {
@@ -107,7 +107,7 @@ namespace Abwaab.Infrastructure.Services
                 Success = true,
                 AccessToken = newAccessToken,
                 RefreshToken = newRefreshToken,
-                ExpiresIn = (int)_jwtSettings.AccessTokenExpiryMinutes * 60
+                ExpiresIn = _jwtSettings.AccessTokenExpiryMinutes * 60
             };
         }
     }

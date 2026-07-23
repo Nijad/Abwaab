@@ -1,10 +1,12 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
 using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
 using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
 using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
 using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Abwaab.Server.Controllers
@@ -113,20 +115,20 @@ namespace Abwaab.Server.Controllers
             return Ok(response);
         }
 
-        //[HttpPost("ResetPassword")]
-        //public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest resetPasswordRequest)
-        //{
-        //    if (resetPasswordRequest == null)
-        //        return BadRequest();
-        //    ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO
-        //    {
-        //        Identifier = resetPasswordRequest.Identifier,
-        //        Token = resetPasswordRequest.Token,
-        //        NewPassword = resetPasswordRequest.NewPassword,
-        //        ConfirmNewPassword = resetPasswordRequest.ConfirmNewPassword
-        //    };
-        //    var response = await _mediator.Send(resetPasswordDTO);
-        //    return Ok(response);
-        //}
+        [Authorize]
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            if (request == null)
+                return BadRequest();
+            ChangePasswordDTO resetPasswordDTO = new ChangePasswordDTO
+            {
+                CurrentPassword = request.CurrentPassword,
+                NewPassword = request.NewPassword,
+                ConfirmNewPassword = request.ConfirmPassword
+            };
+            var response = await _mediator.Send(resetPasswordDTO);
+            return Ok(response);
+        }
     }
 }

@@ -5,7 +5,7 @@ using Abwaab.Infrastructure.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Abwaab.Infrastructure.Services
+namespace Abwaab.Infrastructure.Services.SmsServices
 {
     public class TextBeeSmsSender : ISmsSender
     {

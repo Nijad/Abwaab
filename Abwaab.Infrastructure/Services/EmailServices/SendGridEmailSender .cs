@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-namespace Abwaab.Infrastructure.Services
+namespace Abwaab.Infrastructure.Services.EmailServices
 {
     public class SendGridEmailSender : IEmailSender
     {

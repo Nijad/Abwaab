@@ -1,12 +1,13 @@
 ﻿using Abwaab.Application.Common.Contracts;
 using Abwaab.Application.Common.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
-using Abwaab.Infrastructure.Identity.Services;
 using Abwaab.Infrastructure.Options;
 using Abwaab.Infrastructure.Presistence;
 using Abwaab.Infrastructure.Presistence.Context;
 using Abwaab.Infrastructure.Presistence.Repositories;
-using Abwaab.Infrastructure.Services;
+using Abwaab.Infrastructure.Services.EmailServices;
+using Abwaab.Infrastructure.Services.SmsServices;
+using Abwaab.Infrastructure.Services.UserServices;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
