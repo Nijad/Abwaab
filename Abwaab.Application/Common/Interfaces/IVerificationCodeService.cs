@@ -1,4 +1,5 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 
 namespace Abwaab.Application.Common.Interfaces
 {

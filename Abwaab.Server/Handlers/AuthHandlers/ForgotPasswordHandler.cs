@@ -1,5 +1,5 @@
 ﻿using Abwaab.Application.Common.Contracts;
-using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
 using MediatR;
 
 namespace Abwaab.Server.Handlers.AuthHandlers

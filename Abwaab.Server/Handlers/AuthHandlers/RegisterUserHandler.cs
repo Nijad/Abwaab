@@ -1,11 +1,11 @@
 ﻿
 using Abwaab.Application.Common.Contracts;
-using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
 using MediatR;
 
 namespace Abwaab.Server.Handlers.AuthHandlers
 {
-    public class RegisterUserHandler : IRequestHandler<RegisterDTO, RegisterUserResponse>
+    public class RegisterUserHandler : IRequestHandler<RegisterUserDTO, RegisterUserResponse>
     {
         private readonly IAuthService _authService;
 
@@ -13,7 +13,7 @@ namespace Abwaab.Server.Handlers.AuthHandlers
         {
             _authService = authService;
         }
-        public async Task<RegisterUserResponse> Handle(RegisterDTO request, CancellationToken cancellationToken)
+        public async Task<RegisterUserResponse> Handle(RegisterUserDTO request, CancellationToken cancellationToken)
         {
             RegisterUserResponse result = await _authService.RegisterUserAsync(request);
             return result;

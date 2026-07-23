@@ -2,6 +2,10 @@
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Interfaces;
 using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
+using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
+using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
+using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using Abwaab.Infrastructure.Options;
@@ -58,26 +62,6 @@ namespace Abwaab.Infrastructure.Identity.Services
             return user;
         }
 
-        private async Task<string> GenerateJwtTokenAsync(ApplicationUserDTO user)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Value.Secret));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claims = new[]
-            {
-                new System.Security.Claims.Claim("id", user.Id.ToString()),
-                new System.Security.Claims.Claim("username", user.Username ?? "")
-                // Add other claims as needed
-            };
-            var token = new JwtSecurityToken(
-                issuer: _jwtSettings.Value.Issuer,
-                audience: _jwtSettings.Value.Audience,
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(_jwtSettings.Value.AccessTokenExpiryMinutes),
-                signingCredentials: credentials
-            );
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
         public async Task<LoginUserResponse> LoginUserAsync(LoginUserDTO loginUserDTO)
         {
             bool confirmed = false;
@@ -131,7 +115,7 @@ namespace Abwaab.Infrastructure.Identity.Services
             };
         }
 
-        public async Task<RegisterUserResponse> RegisterUserAsync(RegisterDTO registerDTO)
+        public async Task<RegisterUserResponse> RegisterUserAsync(RegisterUserDTO registerDTO)
         {
             ApplicationUser? getUser = null;
             if (registerDTO.IdentifierType == IdentifierEnum.email)

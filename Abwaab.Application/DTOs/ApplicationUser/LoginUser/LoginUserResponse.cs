@@ -1,11 +1,11 @@
-﻿namespace Abwaab.Application.DTOs.ApplicationUser
+﻿namespace Abwaab.Application.DTOs.ApplicationUser.LoginUser
 {
-    public class RefreshTokenResponse
+    public class LoginUserResponse()
     {
         public bool Success { get; set; }
+        public string? Message { get; set; }
         public string? AccessToken { get; set; }
         public string? RefreshToken { get; set; }
         public int ExpiresIn { get; set; }
-        public string? Message { get; set; }
-    }
+    };
 }

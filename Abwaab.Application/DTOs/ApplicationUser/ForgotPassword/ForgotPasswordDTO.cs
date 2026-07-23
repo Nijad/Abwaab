@@ -1,7 +1,7 @@
 ﻿using Abwaab.Domain.Enums;
 using MediatR;
 
-namespace Abwaab.Application.DTOs.ApplicationUser
+namespace Abwaab.Application.DTOs.ApplicationUser.ForgotPassword
 {
     public class ForgotPasswordDTO : IRequest<ForgotPasswordResponse>
     {

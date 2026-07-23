@@ -1,5 +1,5 @@
 ﻿using Abwaab.Application.Common.Interfaces;
-using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
 using MediatR;
 
 namespace Abwaab.Server.Handlers.AuthHandlers

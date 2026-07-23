@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.DTOs.ApplicationUser;
+﻿using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
 using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations

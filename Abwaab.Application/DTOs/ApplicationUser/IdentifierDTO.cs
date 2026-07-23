@@ -1,4 +1,5 @@
-﻿using Abwaab.Domain.Enums;
+﻿using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
+using Abwaab.Domain.Enums;
 using MediatR;
 
 namespace Abwaab.Application.DTOs.ApplicationUser

@@ -1,4 +1,9 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
+using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
+using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
+using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
+using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,12 +21,12 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPost("RegisterUser")]
-        public async Task<IActionResult> RegisterUser([FromBody] RegisterRequest registerRequest)
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest registerRequest)
         {
             if (registerRequest == null)
                 return BadRequest();
 
-            RegisterDTO registerDTO = new RegisterDTO
+            RegisterUserDTO registerDTO = new RegisterUserDTO
             {
                 FirstName = registerRequest.FirstName,
                 LastName = registerRequest.LastName,

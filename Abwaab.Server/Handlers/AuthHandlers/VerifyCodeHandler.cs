@@ -1,6 +1,6 @@
 ﻿
 using Abwaab.Application.Common.Contracts;
-using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using MediatR;
 
 namespace Abwaab.Server.Handlers.AuthHandlers

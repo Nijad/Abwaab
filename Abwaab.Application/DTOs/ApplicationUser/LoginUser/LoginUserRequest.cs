@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Abwaab.Application.DTOs.ApplicationUser
+namespace Abwaab.Application.DTOs.ApplicationUser.LoginUser
 {
     public class LoginUserRequest : IRequest<LoginUserResponse>
     {

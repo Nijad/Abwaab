@@ -1,13 +1,13 @@
 ﻿using Abwaab.Domain.Enums;
 using MediatR;
 
-namespace Abwaab.Application.DTOs.ApplicationUser
+namespace Abwaab.Application.DTOs.ApplicationUser.LoginUser
 {
-    public class VerifyCodeDTO : IRequest<VerifyCodeResponse>
+    public class LoginUserDTO : IRequest<LoginUserResponse>
     {
         public string Identifier { get; set; } = string.Empty;
         public IdentifierEnum IdentifierType { get; set; }
-        public string Code { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 
 }

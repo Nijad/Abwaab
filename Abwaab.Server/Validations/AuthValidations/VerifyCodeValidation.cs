@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.DTOs.ApplicationUser;
+﻿using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using Abwaab.Infrastructure.Common;
 using FluentValidation;
 

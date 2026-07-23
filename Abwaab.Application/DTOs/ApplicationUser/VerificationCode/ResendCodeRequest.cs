@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Abwaab.Application.DTOs.ApplicationUser
+namespace Abwaab.Application.DTOs.ApplicationUser.VerificationCode
 {
     public class ResendCodeRequest : IRequest<ResendCodeResponse>
     {
