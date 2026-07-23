@@ -1,5 +1,5 @@
 ﻿using Abwaab.Domain.Enums;
-using Abwaab.Infrastructure.Common;
+using Abwaab.Server.Validations.Common;
 using MediatR;
 using System.Reflection;
 

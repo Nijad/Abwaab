@@ -16,11 +16,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .IsRequired()
                    .HasMaxLength(200);
 
-            //builder.HasMany(s => s.Notifications)
-            //       .WithOne(n => n.NotificationState)
-            //       .HasForeignKey(n => n.NotificationStateId)
-            //       .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasIndex(s => s.StateName).IsUnique();
         }
     }

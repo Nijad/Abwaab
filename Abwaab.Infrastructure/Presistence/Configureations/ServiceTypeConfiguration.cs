@@ -16,11 +16,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .IsRequired()
                    .HasMaxLength(200);
 
-            //builder.HasMany(st => st.Payments)
-            //       .WithOne(p => p.ServiceType)
-            //       .HasForeignKey(p => p.ServiceTypeId)
-            //       .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasIndex(st => st.ServiceName).IsUnique();
         }
     }

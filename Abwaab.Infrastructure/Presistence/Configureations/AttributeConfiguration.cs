@@ -16,16 +16,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .IsRequired()
                    .HasMaxLength(200);
 
-            //builder.HasMany(a => a.PropertyAttributes)
-            //       .WithOne(pa => pa.Attribute)
-            //       .HasForeignKey(pa => pa.AttributeId)
-            //       .OnDelete(DeleteBehavior.Restrict);
-
-            //builder.HasMany(a => a.PossibleValues)
-            //       .WithOne(pv => pv.Attribute)
-            //       .HasForeignKey(pv => pv.AttributeId)
-            //       .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasIndex(a => a.AttributeName).IsUnique();
         }
     }

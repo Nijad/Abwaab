@@ -1,5 +1,5 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
-using Abwaab.Infrastructure.Common;
+using Abwaab.Server.Validations.Common;
 using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations

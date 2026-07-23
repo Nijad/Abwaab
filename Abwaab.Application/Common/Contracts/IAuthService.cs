@@ -5,6 +5,9 @@ using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
 using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
+using Abwaab.Domain.Entities.UserEntities;
+using Abwaab.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace Abwaab.Application.Common.Contracts
 {
@@ -17,5 +20,7 @@ namespace Abwaab.Application.Common.Contracts
         Task<ForgotPasswordResponse> ForgotPasswordAsyn(ForgotPasswordDTO request);
         Task<ChangePasswordResponse> ChangePassword(ChangePasswordDTO request);
         Task<LogoutResponse> Logout(LogoutRequest request);
+
+        Task<bool> MappingUserWithNotificationWay(ApplicationUser user, NotificationWayEnum notificationWayType);
     }
 }

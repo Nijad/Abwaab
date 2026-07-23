@@ -48,13 +48,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
             builder.Property(p => p.ExpieryDate)
                    .HasColumnType("date");
 
-            // Relationship: Plan -> ApplicationUser (shadow FK 'PlanId' on users)
-            // Assumes ApplicationUser does not declare a navigation/PlanId; uses shadow FK.
-            //builder.HasMany(p => p.Users)
-            //       .WithOne()
-            //       .HasForeignKey("PlanId")
-            //       .OnDelete(DeleteBehavior.SetNull);
-
             // Indexes
             builder.HasIndex(p => p.Name);
             builder.HasIndex(p => p.IsDisabled);

@@ -9,7 +9,6 @@ using Abwaab.Infrastructure.Services.EmailServices;
 using Abwaab.Infrastructure.Services.SmsServices;
 using Abwaab.Infrastructure.Services.UserServices;
 using FluentValidation;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +40,10 @@ namespace Abwaab.Infrastructure
     ?? throw new Exception("JwtSettings are missing in appsettings.json");
 
             services.AddScoped<IJwtService, JwtService>();
+
+            //REPOSITORIES
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddScoped<INotificationWayRepository, NotificationWayRepository>();
 
             services.AddScoped<IAppDbContextInitializer, AppDbContextInitializer>();
 

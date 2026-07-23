@@ -8,6 +8,7 @@ using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
 using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
+using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using Abwaab.Infrastructure.Options;
@@ -30,16 +31,18 @@ namespace Abwaab.Infrastructure.Services.UserServices
         private readonly IRefreshTokenRepository _refreshTokenRepo;
         private readonly ILogger<AuthService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly INotificationWayRepository _notificationWayRepository;
 
         public AuthService(
-            IVerificationCodeService verificationService, 
+            IVerificationCodeService verificationService,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IJwtService jwtService,
             IRefreshTokenRepository refreshTokenRepo,
             IOptions<JwtSettings> jwtSettings,
             ILogger<AuthService> logger,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            INotificationWayRepository notificationWayRepository)
         {
             _verificationService = verificationService;
             _userManager = userManager;
@@ -49,6 +52,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _refreshTokenRepo = refreshTokenRepo;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
+            _notificationWayRepository = notificationWayRepository;
         }
 
         private async Task<ApplicationUser?> FinedUserByIdentifierAsync(string identifier, IdentifierEnum identifierType)
@@ -154,15 +158,15 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 return await Task.FromResult(new RegisterUserResponse(false, "Registration failed"));
 
             var code = _verificationService.GenerateCode();
-            IdentifierDTO Identifier = new()
-            {
-                Identifier = registerDTO.Identifier,
-                IdentifierType = registerDTO.IdentifierType
-            };
 
-            var sent = await _verificationService.SendVerificationCodeAsync(Identifier, code);
+            Task<bool> sent = Task.FromResult(false);
 
-            if (!sent)
+            if (registerDTO.IdentifierType == IdentifierEnum.email)
+                sent = _verificationService.SendVerificationCodeViaEmailAsync(registerDTO.Identifier, code);
+            else if (registerDTO.IdentifierType == IdentifierEnum.phone_number)
+                sent = _verificationService.SendVerificationCodeViaSmsAsync(registerDTO.Identifier, code);
+
+            if (!sent.Result)
                 return await Task.FromResult(new RegisterUserResponse(false, "Failed to send verification code."));
 
             return await Task.FromResult(new RegisterUserResponse(true, $"Register Successful, Verification code sent to your {registerDTO.IdentifierType.ToString().Replace('_', ' ')}"));
@@ -185,6 +189,8 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
                 if (!result.Succeeded)
                     return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm email." });
+                
+                await MappingUserWithNotificationWay(user, NotificationWayEnum.Email);
             }
             else if (verifyCodeDTO.IdentifierType == IdentifierEnum.phone_number)
             {
@@ -194,7 +200,11 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
                 if (!result.Succeeded)
                     return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm phone number." });
+
+                await MappingUserWithNotificationWay(user, NotificationWayEnum.SMS);
             }
+
+            await MappingUserWithNotificationWay(user, NotificationWayEnum.Push_Notification);
 
             return await Task.FromResult(new VerifyCodeResponse { IsVerified = true, Message = "Verification successful." });
         }
@@ -290,24 +300,20 @@ namespace Abwaab.Infrastructure.Services.UserServices
             }
             else
             {
-                // Revoke a specific refresh token (if provided)
-                if (string.IsNullOrEmpty(request.RefreshToken))
-                {
-                    return new LogoutResponse { Success = false, Message = "Refresh token is required." };
-                }
-
                 var storedToken = await _refreshTokenRepo.GetByTokenAsync(request.RefreshToken);
+
                 if (storedToken == null || storedToken.UserId != userGuid)
-                {
                     return new LogoutResponse { Success = false, Message = "Invalid refresh token." };
-                }
 
                 if (!storedToken.IsRevoked && storedToken.ExpiryDate > DateTime.UtcNow)
                 {
                     storedToken.IsRevoked = true;
                     storedToken.RevokedByIp = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+
                     await _refreshTokenRepo.UpdateAsync(storedToken);
+
                     _logger.LogInformation("Refresh token revoked for user {UserId}", userId);
+
                     return new LogoutResponse { Success = true, Message = "Logged out successfully." };
                 }
                 else
@@ -316,6 +322,30 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     return new LogoutResponse { Success = false, Message = "Token already invalid." };
                 }
             }
+        }
+
+        public async Task<bool> MappingUserWithNotificationWay(ApplicationUser user, NotificationWayEnum notificationWayType)
+        {
+            NotificationWay? notificationWay = _notificationWayRepository.GetNotificationWay(notificationWayType.ToString().Replace('_', ' ')).Result;
+
+            if (notificationWay != null)
+            {
+                user.NotificationWaySubscriptions = new List<UserNotificationSubscription>();
+
+                user.NotificationWaySubscriptions.Add(new()
+                {
+                    Id = new Guid(),
+                    User = user,
+                    UserId = user.Id,
+                    NotificationWay = notificationWay,
+                    NotificationWayId = notificationWay.Id,
+                    IsInactive = false
+                });
+
+                return _userManager.UpdateAsync(user).Result.Succeeded;
+            }
+
+            return await Task.FromResult(false);
         }
     }
 }

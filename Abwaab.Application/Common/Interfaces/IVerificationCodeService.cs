@@ -7,7 +7,11 @@ namespace Abwaab.Application.Common.Interfaces
     {
         string GenerateCode(); // Generates a 6-digit numeric code
         Task<ResendCodeResponse> ResendVerificationCodeAsync(IdentifierDTO resendCodeDTO);
-        Task<bool> SendVerificationCodeAsync(IdentifierDTO sendCodeDTO, string code);
+        
+        Task<bool> SendVerificationCodeViaEmailAsync(string email, string code);
+
+        Task<bool> SendVerificationCodeViaSmsAsync(string phoneNo, string code);
+        
         Task<bool> VerifyCodeAsync(string identifier, string userInputCode);
     }
 }

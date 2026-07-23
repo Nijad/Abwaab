@@ -2,7 +2,6 @@
 using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using Abwaab.Domain.Enums;
-using Abwaab.Infrastructure.Common;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -14,6 +13,9 @@ namespace Abwaab.Infrastructure.Services.UserServices
         private readonly ISmsSender _smsSender;
         private readonly IMemoryCache _cache;
         private readonly ILogger<VerificationCodeService> _logger;
+        
+        // Code validity duration
+        private const int CodeTimeoutMinutes = 5;
 
         public VerificationCodeService(
             IEmailSender emailSender,
@@ -40,7 +42,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             if(resendCodeDTO.IdentifierType == IdentifierEnum.email)
             {
                 // Send the code to the email
-                return SendVerificationCodeAsync(resendCodeDTO, code)
+                return SendVerificationCodeViaEmailAsync(resendCodeDTO.Identifier, code)
                     .ContinueWith(task => new ResendCodeResponse
                     {
                         IsSuccess = task.Result,
@@ -50,7 +52,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             else if(resendCodeDTO.IdentifierType == IdentifierEnum.phone_number)
             {
                 // Send the code to the phone number
-                return SendVerificationCodeAsync(resendCodeDTO, code)
+                return SendVerificationCodeViaSmsAsync(resendCodeDTO.Identifier, code)
                     .ContinueWith(task => new ResendCodeResponse
                     {
                         IsSuccess = task.Result,
@@ -67,43 +69,36 @@ namespace Abwaab.Infrastructure.Services.UserServices
             }
         }
 
-        public async Task<bool> SendVerificationCodeAsync(IdentifierDTO sendCodeDTO, string code)
+        public async Task<bool> SendVerificationCodeViaEmailAsync(string email, string code)
         {
-            // Decide which channel to use
-            if (sendCodeDTO.IdentifierType == IdentifierEnum.email)
+            var subject = "Your Account Verification Code";
+            var body = $@"
+                <h2>Email Verification</h2>
+                <p>Thank you for registering. Please use the following code to verify your account:</p>
+                <h1 style='font-size: 32px; letter-spacing: 5px; color: #2d3748;'>{code}</h1>
+                <p>This code will expire in {CodeTimeoutMinutes} minutes.</p>
+                <p>If you didn't request this, please ignore this email.</p>
+            ";
+            var result = await _emailSender.SendEmailAsync(email, subject, body);
+            if (result)
             {
-                var subject = "Your Account Verification Code";
-                var body = $@"
-                    <h2>Email Verification</h2>
-                    <p>Thank you for registering. Please use the following code to verify your account:</p>
-                    <h1 style='font-size: 32px; letter-spacing: 5px; color: #2d3748;'>{code}</h1>
-                    <p>This code will expire in 5 minutes.</p>
-                    <p>If you didn't request this, please ignore this email.</p>
-                ";
-
-                var result = await _emailSender.SendEmailAsync(sendCodeDTO.Identifier, subject, body);
-                if (result)
-                {
-                    // Store the code in cache with a 5-minute expiry
-                    _cache.Set(sendCodeDTO.Identifier, code, TimeSpan.FromMinutes(5));
-                    return true;
-                }
-                return false;
+                // Store the code in cache with a 5-minute expiry
+                _cache.Set(email, code, TimeSpan.FromMinutes(CodeTimeoutMinutes));
+                return true;
             }
-            else if (sendCodeDTO.IdentifierType == IdentifierEnum.phone_number)
+            return false;
+        }
+
+        public async Task<bool> SendVerificationCodeViaSmsAsync(string phoneNo, string code)
+        {
+            var message = $"Your OTP is: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (valid {CodeTimeoutMinutes} min)";
+            //var message = $"Your verification code is: {code}. It will expire in 5 minutes.";
+            var result = await _smsSender.SendSmsAsync(phoneNo, message);
+            if (result)
             {
-                var message = $"Your OTP is: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (valid 5 min)";
-                //var message = $"Your verification code is: {code}. It will expire in 5 minutes.";
-                var result = await _smsSender.SendSmsAsync(sendCodeDTO.Identifier, message);
-                if (result)
-                {
-                    _cache.Set(sendCodeDTO.Identifier, code, TimeSpan.FromMinutes(5));
-                    return true;
-                }
-                return false;
+                _cache.Set(phoneNo, code, TimeSpan.FromMinutes(CodeTimeoutMinutes));
+                return true;
             }
-
-            _logger.LogWarning("SendVerificationCodeAsync called with neither email nor phoneNumber.");
             return false;
         }
 

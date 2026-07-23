@@ -16,12 +16,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .IsRequired()
                    .HasMaxLength(200);
 
-            // Payments collection navigation (if present)
-            //builder.HasMany(ps => ps.Payments)
-            //       .WithOne(p => p.PaymentState)
-            //       .HasForeignKey(p => p.PaymentStateId)
-            //       .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasIndex(ps => ps.StateName).IsUnique();
         }
     }

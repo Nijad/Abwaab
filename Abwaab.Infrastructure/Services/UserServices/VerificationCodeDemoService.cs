@@ -3,7 +3,6 @@ using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using Abwaab.Domain.Enums;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 
 namespace Abwaab.Infrastructure.Services.UserServices
 {
@@ -11,11 +10,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
     {
         private readonly IMemoryCache _cache;
 
-        public VerificationCodeDemoService(
-            IEmailSender emailSender,
-            ISmsSender smsSender,
-            IMemoryCache cache,
-            ILogger<VerificationCodeService> logger)
+        public VerificationCodeDemoService(IMemoryCache cache)
         {
             _cache = cache;
         }
@@ -30,7 +25,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             string code = GenerateCode();
             if (resendCodeDTO.IdentifierType == IdentifierEnum.email)
             {
-                return SendVerificationCodeAsync(resendCodeDTO, code)
+                return SendVerificationCodeViaEmailAsync(resendCodeDTO.Identifier, code)
                     .ContinueWith(task => new ResendCodeResponse
                     {
                         IsSuccess = task.Result,
@@ -39,7 +34,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             }
             else if (resendCodeDTO.IdentifierType == IdentifierEnum.phone_number)
             {
-                return SendVerificationCodeAsync(resendCodeDTO, code)
+                return SendVerificationCodeViaSmsAsync(resendCodeDTO.Identifier, code)
                     .ContinueWith(task => new ResendCodeResponse
                     {
                         IsSuccess = task.Result,
@@ -56,10 +51,14 @@ namespace Abwaab.Infrastructure.Services.UserServices
             }
         }
 
-        public async Task<bool> SendVerificationCodeAsync(IdentifierDTO Identifier, string code)
+        public Task<bool> SendVerificationCodeViaEmailAsync(string email, string code)
         {
-            _cache.Set(Identifier.Identifier, code, TimeSpan.FromMinutes(5));
-            return true;
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> SendVerificationCodeViaSmsAsync(string phoneNo, string code)
+        {
+            return Task.FromResult(true);
         }
 
         public Task<bool> VerifyCodeAsync(string identifier, string userInputCode)
