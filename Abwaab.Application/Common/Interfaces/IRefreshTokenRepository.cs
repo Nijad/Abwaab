@@ -8,6 +8,6 @@ namespace Abwaab.Application.Common.Interfaces
         Task CreateAsync(RefreshToken refreshToken);
         Task UpdateAsync(RefreshToken refreshToken);
         Task RevokeAsync(string token, string? revokedByIp = null);
-        Task<IEnumerable<RefreshToken>> GetActiveTokensForUserAsync(string userId);
+        Task<IEnumerable<RefreshToken>> GetActiveTokensForUserAsync(Guid userId);
     }
 }

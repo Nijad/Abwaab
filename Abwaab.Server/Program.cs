@@ -1,11 +1,15 @@
 
 using Abwaab.Application;
 using Abwaab.Infrastructure;
+using Abwaab.Infrastructure.Options;
 using Abwaab.Server.Behaviors;
 using Abwaab.Server.Exceptions;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace Abwaab.Server
 {
@@ -17,7 +21,7 @@ namespace Abwaab.Server
             builder.Services.AddProblemDetails();
 
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-            
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>

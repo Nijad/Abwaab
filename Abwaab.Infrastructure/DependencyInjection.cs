@@ -5,6 +5,7 @@ using Abwaab.Infrastructure.Identity.Services;
 using Abwaab.Infrastructure.Options;
 using Abwaab.Infrastructure.Presistence;
 using Abwaab.Infrastructure.Presistence.Context;
+using Abwaab.Infrastructure.Presistence.Repositories;
 using Abwaab.Infrastructure.Services;
 using FluentValidation;
 using MediatR;
@@ -38,41 +39,34 @@ namespace Abwaab.Infrastructure
             var jwtSettings = config.GetSection(nameof(JwtSettings)).Get<JwtSettings>()
     ?? throw new Exception("JwtSettings are missing in appsettings.json");
 
+            services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
             services.AddScoped<IAppDbContextInitializer, AppDbContextInitializer>();
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(o =>
+            }).AddJwtBearer(options =>
             {
-                o.RequireHttpsMetadata = false;
-                o.SaveToken = true;
-                o.TokenValidationParameters = new TokenValidationParameters
+                var jwtSettings = config.GetSection("JwtSettings").Get<JwtSettings>();
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
                     ValidateIssuer = true,
-                    ValidIssuer = jwtSettings.Issuer,
                     ValidateAudience = true,
-                    ValidAudience = jwtSettings.Audience,
-                    ClockSkew = TimeSpan.Zero
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings?.Issuer,
+                    ValidAudience = jwtSettings?.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings?.Secret))
                 };
             });
 
-            //services.AddMediatR(cfg =>
-            //{
-            //    // Register all handlers from the Application assembly
-            //    cfg.RegisterServicesFromAssembly(Assembly.Load("Abwaab.Application"));
-
-            //    // Add the ValidationPipelineBehavior (runs before handlers)
-            //    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-            //});
+            services.AddAuthorization();
 
             services.AddValidatorsFromAssembly(Assembly.Load("Abwaab.Application"));
 

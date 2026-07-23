@@ -1,7 +1,6 @@
 ﻿using Abwaab.Application.Common.Interfaces;
 using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Domain.Enums;
-using Abwaab.Infrastructure.Common;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 

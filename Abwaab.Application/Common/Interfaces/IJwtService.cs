@@ -1,4 +1,5 @@
-﻿using Abwaab.Domain.Entities.UserEntities;
+﻿using Abwaab.Application.DTOs.ApplicationUser;
+using Abwaab.Domain.Entities.UserEntities;
 
 namespace Abwaab.Application.Common.Interfaces
 {
@@ -6,5 +7,6 @@ namespace Abwaab.Application.Common.Interfaces
     {
         string GenerateAccessToken(ApplicationUser user);
         string GenerateRefreshToken();
+        Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request);
     }
 }

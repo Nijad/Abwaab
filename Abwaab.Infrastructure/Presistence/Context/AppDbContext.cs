@@ -53,5 +53,6 @@ namespace Abwaab.Infrastructure.Presistence.Context
         public DbSet<Plan> Plans { get; set; }
         public DbSet<UserPlan> UserPlans { get; set; }
 
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

@@ -99,6 +99,15 @@ namespace Abwaab.Server.Controllers
             return Ok(response);
         }
 
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest refreshTokenRequest)
+        {
+            if (refreshTokenRequest == null)
+                return BadRequest();
+            var response = await _mediator.Send(refreshTokenRequest);
+            return Ok(response);
+        }
+
         //[HttpPost("ResetPassword")]
         //public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest resetPasswordRequest)
         //{

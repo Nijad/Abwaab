@@ -4,7 +4,6 @@ using Abwaab.Application.Common.Interfaces;
 using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
-using Abwaab.Infrastructure.Common;
 using Abwaab.Infrastructure.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +43,21 @@ namespace Abwaab.Infrastructure.Identity.Services
             _logger = logger;
         }
 
+        private async Task<ApplicationUser?> FinedUserByIdentifierAsync(string identifier, IdentifierEnum identifierType)
+        {
+            ApplicationUser? user = null;
+            if (identifierType == IdentifierEnum.email)
+            {
+                user = await _userManager.FindByEmailAsync(identifier);
+            }
+            else if (identifierType == IdentifierEnum.phone_number)
+            {
+                user = await _userManager.Users
+                    .FirstOrDefaultAsync(u => u.PhoneNumber == identifier);
+            }
+            return user;
+        }
+
         private async Task<string> GenerateJwtTokenAsync(ApplicationUserDTO user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Value.Secret));
@@ -58,7 +72,7 @@ namespace Abwaab.Infrastructure.Identity.Services
                 issuer: _jwtSettings.Value.Issuer,
                 audience: _jwtSettings.Value.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(_jwtSettings.Value.ExpiryMinutes),
+                expires: DateTime.Now.AddMinutes(_jwtSettings.Value.AccessTokenExpiryMinutes),
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -67,35 +81,54 @@ namespace Abwaab.Infrastructure.Identity.Services
         public async Task<LoginUserResponse> LoginUserAsync(LoginUserDTO loginUserDTO)
         {
             bool confirmed = false;
-            ApplicationUser? user = _userManager.FindByNameAsync(loginUserDTO.Identifier).Result;
+
+            // Find user by email or phone
+            ApplicationUser? user = FinedUserByIdentifierAsync(loginUserDTO.Identifier, loginUserDTO.IdentifierType).Result;
 
             if (user == null)
                 throw new NotFoundException("User", loginUserDTO.IdentifierType.ToString().Replace('_', ' '), loginUserDTO.Identifier);
+
+            // Check password
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginUserDTO.Password, lockoutOnFailure: false);
+
+            if (!result.Succeeded)
+            {
+                throw new InvalidPasswordException();
+            }
 
             if (loginUserDTO.IdentifierType == IdentifierEnum.email)
                 confirmed = user.EmailConfirmed;
             else if (loginUserDTO.IdentifierType == IdentifierEnum.phone_number)
                 confirmed = user.PhoneNumberConfirmed;
 
-            bool checkPassword = await _userManager.CheckPasswordAsync(user, loginUserDTO.Password);
-
-            if (!checkPassword)
-                throw new InvalidPasswordException();
-
             if (!confirmed)
                 return await Task.FromResult(new LoginUserResponse { Success = false, Message = $"Please verify your {loginUserDTO.IdentifierType.ToString().Replace('_', ' ')} before logging in." });
 
-            return await Task.FromResult(new LoginUserResponse
+            // Generate access token
+            var accessToken = _jwtService.GenerateAccessToken(user);
+            var refreshTokenString = _jwtService.GenerateRefreshToken();
+
+            // Store refresh token
+            var refreshToken = new RefreshToken
+            {
+                Token = refreshTokenString,
+                UserId = user.Id,
+                ExpiryDate = DateTime.UtcNow.AddDays(_jwtSettings.Value.RefreshTokenExpiryDays),
+                IsRevoked = false,
+                CreatedAt = DateTime.UtcNow
+            };
+            await _refreshTokenRepo.CreateAsync(refreshToken);
+
+            _logger.LogInformation("User {UserId} logged in successfully.", user.Id);
+
+            return new LoginUserResponse
             {
                 Success = true,
+                AccessToken = accessToken,
+                RefreshToken = refreshTokenString,
+                ExpiresIn = (int)_jwtSettings.Value.AccessTokenExpiryMinutes * 60,
                 Message = "Login successful",
-                AccessToken = await GenerateJwtTokenAsync(new ApplicationUserDTO
-                {
-                    Id = user.Id,
-                    Username = user.UserName,
-                    Email = user.Email
-                })
-            });
+            };
         }
 
         public async Task<RegisterUserResponse> RegisterUserAsync(RegisterDTO registerDTO)
@@ -154,7 +187,7 @@ namespace Abwaab.Infrastructure.Identity.Services
             if (!isValid)
                 return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Invalid or expired verification code." });
 
-            ApplicationUser? user = _userManager.FindByNameAsync(verifyCodeDTO.Identifier).Result;
+            ApplicationUser? user = FinedUserByIdentifierAsync(verifyCodeDTO.Identifier, verifyCodeDTO.IdentifierType).Result;
 
             if (verifyCodeDTO.IdentifierType == IdentifierEnum.email)
             {
@@ -180,7 +213,7 @@ namespace Abwaab.Infrastructure.Identity.Services
 
         public async Task<bool> IsUserExistsAsync(IdentifierDTO resendCodeDTO)
         {
-            if (_userManager.FindByNameAsync(resendCodeDTO.Identifier).Result != null)
+            if (FinedUserByIdentifierAsync(resendCodeDTO.Identifier, resendCodeDTO.IdentifierType).Result != null)
                 return await Task.FromResult(true);
 
             if (resendCodeDTO.IdentifierType == IdentifierEnum.email && _userManager.FindByEmailAsync(resendCodeDTO.Identifier).Result != null)
@@ -193,7 +226,7 @@ namespace Abwaab.Infrastructure.Identity.Services
 
         public async Task<ForgotPasswordResponse> ForgotPasswordAsyn(ForgotPasswordDTO request)
         {
-            var user = _userManager.FindByNameAsync(request.Identifier).Result;
+            var user = FinedUserByIdentifierAsync(request.Identifier, request.IdentifierType).Result;
             if (user == null)
                 throw new NotFoundException("User", request.IdentifierType.ToString().Replace('_', ' '), request.Identifier);
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
