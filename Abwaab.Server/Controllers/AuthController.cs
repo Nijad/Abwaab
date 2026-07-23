@@ -2,6 +2,7 @@
 using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
 using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
 using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
+using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
 using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
@@ -128,6 +129,17 @@ namespace Abwaab.Server.Controllers
                 ConfirmNewPassword = request.ConfirmPassword
             };
             var response = await _mediator.Send(resetPasswordDTO);
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
+        {
+            if (request == null)
+                return BadRequest();
+            
+            LogoutResponse response = await _mediator.Send(request);
             return Ok(response);
         }
     }

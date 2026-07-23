@@ -5,6 +5,7 @@ using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
 using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
 using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
+using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using Abwaab.Domain.Entities.UserEntities;
@@ -254,6 +255,67 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _logger.LogInformation("Password changed for user {UserId}", userId);
 
             return new ChangePasswordResponse { Success = true, Message = "Password changed successfully." };
+        }
+
+        public async Task<LogoutResponse> Logout(LogoutRequest request)
+        {
+            // Get the current user ID from the JWT claims (authenticated user)
+            var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new LogoutResponse { Success = false, Message = "User not authenticated." };
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return new LogoutResponse { Success = false, Message = "User not found." };
+            }
+
+            Guid userGuid = new Guid(userId);
+
+            if (request.RevokeAll)
+            {
+                // Revoke all active refresh tokens for this user
+                var tokens = await _refreshTokenRepo.GetActiveTokensForUserAsync(userGuid);
+                foreach (var token in tokens)
+                {
+                    token.IsRevoked = true;
+                    token.RevokedByIp = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+                    await _refreshTokenRepo.UpdateAsync(token);
+                }
+                _logger.LogInformation("All refresh tokens revoked for user {UserId}", userId);
+                return new LogoutResponse { Success = true, Message = "Logged out from all devices." };
+            }
+            else
+            {
+                // Revoke a specific refresh token (if provided)
+                if (string.IsNullOrEmpty(request.RefreshToken))
+                {
+                    return new LogoutResponse { Success = false, Message = "Refresh token is required." };
+                }
+
+                var storedToken = await _refreshTokenRepo.GetByTokenAsync(request.RefreshToken);
+                if (storedToken == null || storedToken.UserId != userGuid)
+                {
+                    return new LogoutResponse { Success = false, Message = "Invalid refresh token." };
+                }
+
+                if (!storedToken.IsRevoked && storedToken.ExpiryDate > DateTime.UtcNow)
+                {
+                    storedToken.IsRevoked = true;
+                    storedToken.RevokedByIp = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+                    await _refreshTokenRepo.UpdateAsync(storedToken);
+                    _logger.LogInformation("Refresh token revoked for user {UserId}", userId);
+                    return new LogoutResponse { Success = true, Message = "Logged out successfully." };
+                }
+                else
+                {
+                    // Token is already expired or revoked
+                    return new LogoutResponse { Success = false, Message = "Token already invalid." };
+                }
+            }
         }
     }
 }

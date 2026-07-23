@@ -2,6 +2,7 @@
 using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
 using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
 using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
+using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 
@@ -15,5 +16,6 @@ namespace Abwaab.Application.Common.Contracts
         Task<bool> IsUserExistsAsync(IdentifierDTO resendCodeDTO);
         Task<ForgotPasswordResponse> ForgotPasswordAsyn(ForgotPasswordDTO request);
         Task<ChangePasswordResponse> ChangePassword(ChangePasswordDTO request);
+        Task<LogoutResponse> Logout(LogoutRequest request);
     }
 }
