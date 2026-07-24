@@ -21,5 +21,10 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         {
             return await _context.NotificationWays.ToListAsync();
         }
+
+        public async Task<List<UserNotificationSubscription>> GetUserNotificationWays(Guid userId)
+        {
+            return await _context.UserNotificationSubscriptions.Where(nw => nw.UserId == userId).ToListAsync();
+        }
     }
 }

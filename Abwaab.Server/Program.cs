@@ -75,6 +75,8 @@ namespace Abwaab.Server
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             // DetectIdentifierBehavior will run after ValidationBehavior, as it is registered second
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DetectIdentifierBehavior<,>));
+            // Get user id in a request
+            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UserContextBehavior<,>));
 
             var app = builder.Build();
             app.UseExceptionHandler();

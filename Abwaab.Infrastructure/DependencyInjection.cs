@@ -40,6 +40,9 @@ namespace Abwaab.Infrastructure
     ?? throw new Exception("JwtSettings are missing in appsettings.json");
 
             services.AddScoped<IJwtService, JwtService>();
+            
+            // Register IUserContext as scoped (per request)
+            services.AddScoped<IUserContext, UserContext>();
 
             //REPOSITORIES
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();

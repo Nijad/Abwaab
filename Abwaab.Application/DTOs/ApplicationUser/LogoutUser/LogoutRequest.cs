@@ -1,9 +1,12 @@
-﻿using MediatR;
+﻿
+using Abwaab.Application.Common.Interfaces;
+using MediatR;
 
 namespace Abwaab.Application.DTOs.ApplicationUser.LogoutUser
 {
-    public class LogoutRequest : IRequest<LogoutResponse>
+    public class LogoutRequest : IRequest<LogoutResponse> , IUserRequest
     {
+        public Guid UserId { get; set; }
         // If not provided, we may revoke all
         public string? RefreshToken { get; set; }
         // If true, revoke all tokens for user

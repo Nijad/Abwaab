@@ -12,12 +12,10 @@ using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using Abwaab.Infrastructure.Options;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Security.Claims;
 
 namespace Abwaab.Infrastructure.Services.UserServices
 {
@@ -30,7 +28,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
         private readonly IJwtService _jwtService;
         private readonly IRefreshTokenRepository _refreshTokenRepo;
         private readonly ILogger<AuthService> _logger;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserContext _userContext;
         private readonly INotificationWayRepository _notificationWayRepository;
 
         public AuthService(
@@ -41,7 +39,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             IRefreshTokenRepository refreshTokenRepo,
             IOptions<JwtSettings> jwtSettings,
             ILogger<AuthService> logger,
-            IHttpContextAccessor httpContextAccessor,
+            IUserContext userContext,
             INotificationWayRepository notificationWayRepository)
         {
             _verificationService = verificationService;
@@ -51,7 +49,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _jwtService = jwtService;
             _refreshTokenRepo = refreshTokenRepo;
             _logger = logger;
-            _httpContextAccessor = httpContextAccessor;
+            _userContext = userContext;
             _notificationWayRepository = notificationWayRepository;
         }
 
@@ -189,7 +187,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
                 if (!result.Succeeded)
                     return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm email." });
-                
+
                 await MappingUserWithNotificationWay(user, NotificationWayEnum.Email);
             }
             else if (verifyCodeDTO.IdentifierType == IdentifierEnum.phone_number)
@@ -243,12 +241,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task<ChangePasswordResponse> ChangePassword(ChangePasswordDTO request)
         {
-            // Get current user from claims
-            var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
-                return new ChangePasswordResponse { Success = false, Message = "User not authenticated." };
-
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user == null)
                 return new ChangePasswordResponse { Success = false, Message = "User not found." };
 
@@ -262,57 +255,47 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 return new ChangePasswordResponse { Success = false, Message = $"Failed: {errors}" };
             }
 
-            _logger.LogInformation("Password changed for user {UserId}", userId);
+            _logger.LogInformation("Password changed for user {UserId}", request.UserId.ToString());
 
             return new ChangePasswordResponse { Success = true, Message = "Password changed successfully." };
         }
 
         public async Task<LogoutResponse> Logout(LogoutRequest request)
         {
-            // Get the current user ID from the JWT claims (authenticated user)
-            var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return new LogoutResponse { Success = false, Message = "User not authenticated." };
-            }
-
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user == null)
             {
                 return new LogoutResponse { Success = false, Message = "User not found." };
             }
 
-            Guid userGuid = new Guid(userId);
-
             if (request.RevokeAll)
             {
                 // Revoke all active refresh tokens for this user
-                var tokens = await _refreshTokenRepo.GetActiveTokensForUserAsync(userGuid);
+                var tokens = await _refreshTokenRepo.GetActiveTokensForUserAsync(request.UserId);
                 foreach (var token in tokens)
                 {
                     token.IsRevoked = true;
-                    token.RevokedByIp = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+                    token.RevokedByIp = _userContext.RemoteIpAddress;
                     await _refreshTokenRepo.UpdateAsync(token);
                 }
-                _logger.LogInformation("All refresh tokens revoked for user {UserId}", userId);
+                _logger.LogInformation("All refresh tokens revoked for user {UserId}", request.UserId.ToString());
                 return new LogoutResponse { Success = true, Message = "Logged out from all devices." };
             }
             else
             {
                 var storedToken = await _refreshTokenRepo.GetByTokenAsync(request.RefreshToken);
 
-                if (storedToken == null || storedToken.UserId != userGuid)
+                if (storedToken == null || storedToken.UserId != request.UserId)
                     return new LogoutResponse { Success = false, Message = "Invalid refresh token." };
 
                 if (!storedToken.IsRevoked && storedToken.ExpiryDate > DateTime.UtcNow)
                 {
                     storedToken.IsRevoked = true;
-                    storedToken.RevokedByIp = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+                    storedToken.RevokedByIp = _userContext.RemoteIpAddress;
 
                     await _refreshTokenRepo.UpdateAsync(storedToken);
 
-                    _logger.LogInformation("Refresh token revoked for user {UserId}", userId);
+                    _logger.LogInformation("Refresh token revoked for user {UserId}", request.UserId.ToString());
 
                     return new LogoutResponse { Success = true, Message = "Logged out successfully." };
                 }
@@ -330,9 +313,9 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
             if (notificationWay != null)
             {
-                user.NotificationWaySubscriptions = new List<UserNotificationSubscription>();
-
-                user.NotificationWaySubscriptions.Add(new()
+                user.NotificationWaySubscriptions = await _notificationWayRepository.GetUserNotificationWays(user.Id);
+                
+                UserNotificationSubscription userNotificationWay = new()
                 {
                     Id = new Guid(),
                     User = user,
@@ -340,9 +323,13 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     NotificationWay = notificationWay,
                     NotificationWayId = notificationWay.Id,
                     IsInactive = false
-                });
+                };
 
-                return _userManager.UpdateAsync(user).Result.Succeeded;
+                if (!user.NotificationWaySubscriptions.Contains(userNotificationWay))
+                {
+                    user.NotificationWaySubscriptions.Add(userNotificationWay);
+                    return _userManager.UpdateAsync(user).Result.Succeeded;
+                }
             }
 
             return await Task.FromResult(false);
