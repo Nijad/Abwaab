@@ -21,5 +21,7 @@ namespace Abwaab.Domain.Entities.UserEntities
         public List<Appointment>? Appointments { get; set; }
         public List<OTP>? OTPs { get; set; }
         //public List<Property>? Properties { get; set; }
+        public string? PreviousEmail { get; set; }
+        public string? PreviousPhoneNumber { get; set; }
     }
 }

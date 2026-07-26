@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations
 {
-    public class ResendCodeValidationCode : AbstractValidator<IdentifierDTO>
+    public class ResendCodeValidation : AbstractValidator<IdentifierDTO>
     {
-        public ResendCodeValidationCode()
+        public ResendCodeValidation()
         {
             RuleFor(x => x.Identifier)
                 .NotEmpty().WithMessage("Identifier is required.")

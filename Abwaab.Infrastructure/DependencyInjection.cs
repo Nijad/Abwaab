@@ -5,6 +5,7 @@ using Abwaab.Infrastructure.Options;
 using Abwaab.Infrastructure.Presistence;
 using Abwaab.Infrastructure.Presistence.Context;
 using Abwaab.Infrastructure.Presistence.Repositories;
+using Abwaab.Infrastructure.Services.Common;
 using Abwaab.Infrastructure.Services.EmailServices;
 using Abwaab.Infrastructure.Services.SmsServices;
 using Abwaab.Infrastructure.Services.UserServices;
@@ -105,6 +106,8 @@ namespace Abwaab.Infrastructure
             // Add HttpClient if required by any services (SendGrid doesn't need it via DI, but good practice)
             services.AddHttpClient();
 
+            services.AddHttpContextAccessor(); 
+            services.AddScoped<IUrlBuilder, UrlBuilder>();
 
             return services;
         }

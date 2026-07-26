@@ -1,8 +1,6 @@
-﻿using MediatR;
-
-namespace Abwaab.Application.DTOs.ApplicationUser.RegisterUser
+﻿namespace Abwaab.Application.DTOs.ApplicationUser.RegisterUser
 {
-    public class RegisterUserRequest: IRequest<RegisterUserResponse>
+    public class RegisterUserRequest
     {
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;

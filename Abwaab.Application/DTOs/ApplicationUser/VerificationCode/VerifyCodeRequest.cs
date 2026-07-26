@@ -1,8 +1,6 @@
-﻿using MediatR;
-
-namespace Abwaab.Application.DTOs.ApplicationUser.VerificationCode
+﻿namespace Abwaab.Application.DTOs.ApplicationUser.VerificationCode
 {
-    public class VerifyCodeRequest : IRequest<VerifyCodeResponse>
+    public class VerifyCodeRequest
     {
         public string Identifier { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty;

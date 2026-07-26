@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
 using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
+using Abwaab.Application.DTOs.ApplicationUser.IdentifierManagement;
 using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
 using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
@@ -141,6 +142,48 @@ namespace Abwaab.Server.Controllers
             
             LogoutResponse response = await _mediator.Send(request);
             return Ok(response);
+        }
+
+        [HttpPost("initiate-email-change")]
+        public async Task<IActionResult> InitiateEmailChange([FromBody] InitiateEmailChangeRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpPost("confirm-email-change")]
+        public async Task<IActionResult> ConfirmEmailChange([FromBody] ConfirmEmailChangeRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpPost("initiate-phone-change")]
+        public async Task<IActionResult> InitiatePhoneChange([FromBody] InitiatePhoneNoChangeRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpPost("confirm-phone-change")]
+        public async Task<IActionResult> ConfirmPhoneChange([FromBody] ConfirmPhoneNoChangeRequest request)
+        {
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpPost("cancel-email-change")]
+        public async Task<IActionResult> CancelEmailChange()
+        {
+            var result = await _mediator.Send(new CancelEmailChangeRequest());
+            return result.Success ? Ok(result) : BadRequest(result);
+        }
+
+        [HttpPost("cancel-phone-change")]
+        public async Task<IActionResult> CancelPhoneChange()
+        {
+            var result = await _mediator.Send(new CancelPhoneChangeRequest());
+            return result.Success ? Ok(result) : BadRequest(result);
         }
     }
 }

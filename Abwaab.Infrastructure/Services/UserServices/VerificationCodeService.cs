@@ -2,6 +2,7 @@
 using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using Abwaab.Domain.Enums;
+using Abwaab.Infrastructure.Common;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -14,9 +15,6 @@ namespace Abwaab.Infrastructure.Services.UserServices
         private readonly IMemoryCache _cache;
         private readonly ILogger<VerificationCodeService> _logger;
         
-        // Code validity duration
-        private const int CodeTimeoutMinutes = 5;
-
         public VerificationCodeService(
             IEmailSender emailSender,
             ISmsSender smsSender,
@@ -29,7 +27,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _logger = logger;
         }
 
-        public string GenerateCode()
+        public string GenerateVerificationCode()
         {
             // Generates a cryptographically random 6-digit code (e.g., "123456")
             var random = new Random();
@@ -38,7 +36,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public Task<ResendCodeResponse> ResendVerificationCodeAsync(IdentifierDTO resendCodeDTO)
         {
-            string code = GenerateCode();
+            string code = GenerateVerificationCode();
             if(resendCodeDTO.IdentifierType == IdentifierEnum.email)
             {
                 // Send the code to the email
@@ -76,14 +74,14 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 <h2>Email Verification</h2>
                 <p>Thank you for registering. Please use the following code to verify your account:</p>
                 <h1 style='font-size: 32px; letter-spacing: 5px; color: #2d3748;'>{code}</h1>
-                <p>This code will expire in {CodeTimeoutMinutes} minutes.</p>
+                <p>This code will expire in {Constants.CODE_TIMEOUT_MINUTES} minutes.</p>
                 <p>If you didn't request this, please ignore this email.</p>
             ";
             var result = await _emailSender.SendEmailAsync(email, subject, body);
             if (result)
             {
                 // Store the code in cache with a 5-minute expiry
-                _cache.Set(email, code, TimeSpan.FromMinutes(CodeTimeoutMinutes));
+                _cache.Set(email, code, TimeSpan.FromMinutes(Constants.CODE_TIMEOUT_MINUTES));
                 return true;
             }
             return false;
@@ -91,12 +89,12 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task<bool> SendVerificationCodeViaSmsAsync(string phoneNo, string code)
         {
-            var message = $"Your OTP is: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (valid {CodeTimeoutMinutes} min)";
+            var message = $"Your OTP is: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (valid {Constants.CODE_TIMEOUT_MINUTES} min)";
             //var message = $"Your verification code is: {code}. It will expire in 5 minutes.";
             var result = await _smsSender.SendSmsAsync(phoneNo, message);
             if (result)
             {
-                _cache.Set(phoneNo, code, TimeSpan.FromMinutes(CodeTimeoutMinutes));
+                _cache.Set(phoneNo, code, TimeSpan.FromMinutes(Constants.CODE_TIMEOUT_MINUTES));
                 return true;
             }
             return false;

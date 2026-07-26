@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
 using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
+using Abwaab.Application.DTOs.ApplicationUser.IdentifierManagement;
 using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
 using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
@@ -22,5 +23,11 @@ namespace Abwaab.Application.Common.Contracts
         Task<LogoutResponse> Logout(LogoutRequest request);
 
         Task<bool> MappingUserWithNotificationWay(ApplicationUser user, NotificationWayEnum notificationWayType);
+        Task<InitiateEmailChangeResponse> InitiatieEmailChange(InitiateEmailChangeRequest request);
+        Task<ConfirmEmailChangeResponse> ConfirmEmailChange(ConfirmEmailChangeRequest request);
+        Task<InitiatePhoneNoChangeResponse> InitiatePhoneNoChange(InitiatePhoneNoChangeRequest request);
+        Task<ConfirmPhoneNoChangeResponse> ConfirmPhoneNoChange(ConfirmPhoneNoChangeRequest request);
+        Task<CancelEmailChangeResponse> CancelEmailChange(CancelEmailChangeRequest request);
+        Task<CancelPhoneChangeResponse> CancelPhoneChange(CancelPhoneChangeRequest request);
     }
 }

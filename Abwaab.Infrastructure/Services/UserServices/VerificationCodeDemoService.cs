@@ -15,14 +15,14 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _cache = cache;
         }
 
-        public string GenerateCode()
+        public string GenerateVerificationCode()
         {
             return "123456";
         }
 
         public Task<ResendCodeResponse> ResendVerificationCodeAsync(IdentifierDTO resendCodeDTO)
         {
-            string code = GenerateCode();
+            string code = GenerateVerificationCode();
             if (resendCodeDTO.IdentifierType == IdentifierEnum.email)
             {
                 return SendVerificationCodeViaEmailAsync(resendCodeDTO.Identifier, code)

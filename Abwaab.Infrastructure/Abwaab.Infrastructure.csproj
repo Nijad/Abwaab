@@ -27,8 +27,4 @@
     <ProjectReference Include="..\Abwaab.Domain\Abwaab.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Common\" />
-  </ItemGroup>
-
 </Project>

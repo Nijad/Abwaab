@@ -1,5 +1,4 @@
-﻿
-using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Common.Interfaces;
 using MediatR;
 
 namespace Abwaab.Application.DTOs.ApplicationUser.LogoutUser
