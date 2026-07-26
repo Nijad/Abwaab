@@ -2,6 +2,7 @@
 using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Options;
+using DynamicData;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -32,15 +33,21 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _logger = logger;
         }
 
-        public string GenerateAccessToken(ApplicationUser user)
+        public string GenerateAccessToken(ApplicationUser user, IList<string> roles)
         {
-            var claims = new[]
+            List<Claim> claims = new()
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+                new Claim(JwtRegisteredClaimNames.PhoneNumber, user.PhoneNumber ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Name, user.UserName ?? user.Id.ToString())
             };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -86,7 +93,8 @@ namespace Abwaab.Infrastructure.Services.UserServices
             await _refreshTokenRepo.RevokeAsync(request.RefreshToken, "Rotation");
 
             // 4. Generate new tokens
-            var newAccessToken = GenerateAccessToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            var newAccessToken = GenerateAccessToken(user, roles);
             var newRefreshToken = GenerateRefreshToken();
 
             // 5. Store the new refresh token

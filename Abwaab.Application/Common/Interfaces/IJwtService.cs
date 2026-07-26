@@ -5,7 +5,7 @@ namespace Abwaab.Application.Common.Interfaces
 {
     public interface IJwtService
     {
-        string GenerateAccessToken(ApplicationUser user);
+        string GenerateAccessToken(ApplicationUser user, IList<string> roles);
         string GenerateRefreshToken();
         Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request);
     }

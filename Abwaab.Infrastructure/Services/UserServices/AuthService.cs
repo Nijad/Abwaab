@@ -122,7 +122,8 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 return await Task.FromResult(new LoginUserResponse { Success = false, Message = $"Please verify your {loginUserDTO.IdentifierType.ToString().Replace('_', ' ')} before logging in." });
 
             // Generate access token
-            var accessToken = _jwtService.GenerateAccessToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            var accessToken = _jwtService.GenerateAccessToken(user, roles);
             var refreshTokenString = _jwtService.GenerateRefreshToken();
 
             // Store refresh token
