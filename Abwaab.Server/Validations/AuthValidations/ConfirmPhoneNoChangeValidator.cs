@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations
 {
-    public class ConfirmPhoneNoChangeValidator : AbstractValidator<ConfirmPhoneNoChangeRequest>
+    public class ConfirmPhoneNoChangeValidator : AbstractValidator<ConfirmPhoneNoChangeCommand>
     {
         public ConfirmPhoneNoChangeValidator()
         {

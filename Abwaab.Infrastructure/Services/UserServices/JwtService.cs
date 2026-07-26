@@ -71,7 +71,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return Convert.ToBase64String(randomNumber);
         }
 
-        public async Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request)
+        public async Task<RefreshTokenResponse> RefreshToken(RefreshTokenCommand request)
         {
             // 1. Validate the refresh token from the repository
             var storedToken = await _refreshTokenRepo.GetByTokenAsync(request.RefreshToken);

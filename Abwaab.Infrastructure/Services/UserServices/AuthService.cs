@@ -1,7 +1,6 @@
 ﻿using Abwaab.Application.Common.Contracts;
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Interfaces;
-using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
 using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
 using Abwaab.Application.DTOs.ApplicationUser.IdentifierManagement;
@@ -9,14 +8,15 @@ using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
 using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
+using Abwaab.Application.DTOs.Roles.AddRoleToUser;
+using Abwaab.Application.DTOs.Roles.GetUserRoles;
+using Abwaab.Application.DTOs.Roles.RemoveUserFormRole;
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using Abwaab.Infrastructure.Common;
 using Abwaab.Infrastructure.Options;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -29,6 +29,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
     {
         private readonly IVerificationCodeService _verificationService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IOptions<JwtSettings> _jwtSettings;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IJwtService _jwtService;
@@ -44,6 +45,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
         public AuthService(
             IVerificationCodeService verificationService,
             UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
             IJwtService jwtService,
             IRefreshTokenRepository refreshTokenRepo,
@@ -58,6 +60,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
         {
             _verificationService = verificationService;
             _userManager = userManager;
+            _roleManager = roleManager;
             _jwtSettings = jwtSettings;
             _signInManager = signInManager;
             _jwtService = jwtService;
@@ -71,7 +74,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _urlBuilder = urlBuilder;
         }
 
-        private async Task<ApplicationUser?> FinedUserByIdentifierAsync(string identifier, IdentifierEnum identifierType, bool lookAtPrevious = false)
+        private async Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifierEnum identifierType)
         {
             ApplicationUser? user = null;
             if (identifierType == IdentifierEnum.email)
@@ -95,12 +98,12 @@ namespace Abwaab.Infrastructure.Services.UserServices
             throw new NotImplementedException($"Identifier type of {identifierType.ToString()} does not implemented yet");
         }
 
-        public async Task<LoginUserResponse> LoginUserAsync(LoginUserDTO loginUserDTO)
+        public async Task<LoginUserResponse> LoginUserCommandAsync(LoginUserDTO loginUserDTO)
         {
             bool confirmed = false;
 
             // Find user by email or phone
-            ApplicationUser? user = FinedUserByIdentifierAsync(loginUserDTO.Identifier, loginUserDTO.IdentifierType).Result;
+            ApplicationUser? user = FindUserByIdentifierAsync(loginUserDTO.Identifier, loginUserDTO.IdentifierType).Result;
 
             if (user == null)
                 throw new NotFoundException("User", loginUserDTO.IdentifierType.ToString().Replace('_', ' '), loginUserDTO.Identifier);
@@ -149,7 +152,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             };
         }
 
-        public async Task<RegisterUserResponse> RegisterUserAsync(RegisterUserDTO registerDTO)
+        public async Task<RegisterUserResponse> RegisterUserCommandAsync(RegisterUserDTO registerDTO)
         {
             ApplicationUser? getUser = null;
             if (registerDTO.IdentifierType == IdentifierEnum.email)
@@ -198,14 +201,14 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return new RegisterUserResponse(true, $"Register Successful, Verification code sent to your {registerDTO.IdentifierType.ToString().Replace('_', ' ')}");
         }
 
-        public async Task<VerifyCodeResponse> VerifyUserAsync(VerifyCodeDTO verifyCodeDTO)
+        public async Task<VerifyCodeResponse> VerifyUserCommandAsync(VerifyCodeDTO verifyCodeDTO)
         {
             bool isValid = _verificationService.VerifyCodeAsync(verifyCodeDTO.Identifier, verifyCodeDTO.Code).Result;
 
             if (!isValid)
                 return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Invalid or expired verification code." });
 
-            ApplicationUser? user = FinedUserByIdentifierAsync(verifyCodeDTO.Identifier, verifyCodeDTO.IdentifierType).Result;
+            ApplicationUser? user = FindUserByIdentifierAsync(verifyCodeDTO.Identifier, verifyCodeDTO.IdentifierType).Result;
 
             if (verifyCodeDTO.IdentifierType == IdentifierEnum.email)
             {
@@ -216,7 +219,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 if (!result.Succeeded)
                     return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm email." });
 
-                await MappingUserWithNotificationWay(user, NotificationWayEnum.Email);
+                await MappingUserWithNotificationWayCommandAsync(user, NotificationWayEnum.Email);
             }
             else if (verifyCodeDTO.IdentifierType == IdentifierEnum.phone_number)
             {
@@ -227,17 +230,17 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 if (!result.Succeeded)
                     return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Failed to confirm phone number." });
 
-                await MappingUserWithNotificationWay(user, NotificationWayEnum.SMS);
+                await MappingUserWithNotificationWayCommandAsync(user, NotificationWayEnum.SMS);
             }
 
-            await MappingUserWithNotificationWay(user, NotificationWayEnum.Push_Notification);
+            await MappingUserWithNotificationWayCommandAsync(user, NotificationWayEnum.Push_Notification);
 
             return await Task.FromResult(new VerifyCodeResponse { IsVerified = true, Message = "Verification successful." });
         }
 
-        public async Task<bool> IsUserExistsAsync(IdentifierDTO resendCodeDTO)
+        public async Task<bool> IsUserExistsCommandAsync(ResendCodeDTO resendCodeDTO)
         {
-            if (FinedUserByIdentifierAsync(resendCodeDTO.Identifier, resendCodeDTO.IdentifierType).Result != null)
+            if (FindUserByIdentifierAsync(resendCodeDTO.Identifier, resendCodeDTO.IdentifierType).Result != null)
                 return await Task.FromResult(true);
 
             if (resendCodeDTO.IdentifierType == IdentifierEnum.email && _userManager.FindByEmailAsync(resendCodeDTO.Identifier).Result != null)
@@ -248,9 +251,9 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return await Task.FromResult(false);
         }
 
-        public async Task<ForgotPasswordResponse> ForgotPasswordAsyn(ForgotPasswordDTO request)
+        public async Task<ForgotPasswordResponse> ForgotPasswordCommandAsyn(ForgotPasswordDTO request)
         {
-            var user = FinedUserByIdentifierAsync(request.Identifier, request.IdentifierType).Result;
+            var user = FindUserByIdentifierAsync(request.Identifier, request.IdentifierType).Result;
             if (user == null)
                 throw new NotFoundException("User", request.IdentifierType.ToString().Replace('_', ' '), request.Identifier);
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -275,7 +278,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return new ForgotPasswordResponse { Success = true, Message = "Password reset successful." };
         }
 
-        public async Task<ChangePasswordResponse> ChangePassword(ChangePasswordDTO request)
+        public async Task<ChangePasswordResponse> ChangePasswordCommandAsync(ChangePasswordDTO request)
         {
             var userId = _userContext.UserId;
             var user = await _userManager.FindByIdAsync(userId.ToString());
@@ -320,7 +323,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return new ChangePasswordResponse { Success = true, Message = "Password changed successfully. You have been logged out of all other devices." };
         }
 
-        public async Task<LogoutResponse> Logout(LogoutRequest request)
+        public async Task<LogoutResponse> LogoutCommandAsync(LogoutCommand request)
         {
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user == null)
@@ -367,7 +370,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             }
         }
 
-        public async Task<bool> MappingUserWithNotificationWay(ApplicationUser user, NotificationWayEnum notificationWayType)
+        public async Task<bool> MappingUserWithNotificationWayCommandAsync(ApplicationUser user, NotificationWayEnum notificationWayType)
         {
             NotificationWay? notificationWay = _notificationWayRepository.GetNotificationWay(notificationWayType.ToString().Replace('_', ' ')).Result;
 
@@ -395,7 +398,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return await Task.FromResult(false);
         }
 
-        public async Task<InitiateEmailChangeResponse> InitiatieEmailChange(InitiateEmailChangeRequest request)
+        public async Task<InitiateEmailChangeResponse> InitiatieEmailChangeCommandAsync(InitiateEmailChangeCommand request)
         {
             var userId = _userContext.UserId;
             var user = await _userManager.FindByIdAsync(userId.ToString());
@@ -472,7 +475,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return new InitiateEmailChangeResponse { Success = true, Message = "Verification code sent to the new email address." };
         }
 
-        public async Task<ConfirmEmailChangeResponse> ConfirmEmailChange(ConfirmEmailChangeRequest request)
+        public async Task<ConfirmEmailChangeResponse> ConfirmEmailChangeCommandAsync(ConfirmEmailChangeCommand request)
         {
             var userId = _userContext.UserId;
             var user = await _userManager.FindByIdAsync(userId.ToString());
@@ -517,7 +520,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return new ConfirmEmailChangeResponse { Success = true, Message = $"Email address changed successfully. Verification code sent to your new email {request.NewEmail}" };
         }
 
-        public async Task<InitiatePhoneNoChangeResponse> InitiatePhoneNoChange(InitiatePhoneNoChangeRequest request)
+        public async Task<InitiatePhoneNoChangeResponse> InitiatePhoneNoChangeCommandAsync(InitiatePhoneNoChangeCommand request)
         {
             var userId = _userContext.UserId;
             var user = await _userManager.FindByIdAsync(userId.ToString());
@@ -596,7 +599,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
         }
 
 
-        public async Task<ConfirmPhoneNoChangeResponse> ConfirmPhoneNoChange(ConfirmPhoneNoChangeRequest request)
+        public async Task<ConfirmPhoneNoChangeResponse> ConfirmPhoneNoChangeCommandAsync(ConfirmPhoneNoChangeCommand request)
         {
             var userId = _userContext.UserId;
             var user = await _userManager.FindByIdAsync(userId.ToString());
@@ -638,7 +641,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return new ConfirmPhoneNoChangeResponse { Success = true, Message = "Phone number updated successfully." };
         }
 
-        public async Task<CancelEmailChangeResponse> CancelEmailChange(CancelEmailChangeRequest request)
+        public async Task<CancelEmailChangeResponse> CancelEmailChangeCommandAsync(CancelEmailChangeCommand request)
         {
             var userId = _userContext.UserId;
 
@@ -666,7 +669,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return new CancelEmailChangeResponse { Success = true, Message = "Pending change cancelled. You have been logged out for security." };
         }
 
-        public async Task<CancelPhoneChangeResponse> CancelPhoneChange(CancelPhoneChangeRequest request)
+        public async Task<CancelPhoneChangeResponse> CancelPhoneChangeCommandAsync(CancelPhoneChangeCommand request)
         {
             var userId = _userContext.UserId;
             var cacheKey = $"phone_change_{userId}";
@@ -689,6 +692,77 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
             _logger.LogWarning("Phone change cancelled by user {UserId}. All sessions revoked.", userId);
             return new CancelPhoneChangeResponse { Success = true, Message = "Pending change cancelled. You have been logged out for security." };
+        }
+
+        public async Task<AddUserToRoleResponse> AddUserToRoleCommandAsync(AddUserToRoleDTO request)
+        {
+            // 1. Find the user 
+            var user = await FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            if (user == null)
+                return new AddUserToRoleResponse { Success = false, Message = "User not found." };
+
+            // 2. Check if the role exists
+            var roleExists = await _roleManager.RoleExistsAsync(request.RoleName);
+            if (!roleExists)
+                return new AddUserToRoleResponse { Success = false, Message = $"Role '{request.RoleName}' does not exist." };
+
+            // 3. Check if user already has the role
+            var isInRole = await _userManager.IsInRoleAsync(user, request.RoleName);
+            if (isInRole)
+                return new AddUserToRoleResponse { Success = false, Message = $"User already has the role '{request.RoleName}'." };
+
+            // 4. Add the role
+            var result = await _userManager.AddToRoleAsync(user, request.RoleName);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                _logger.LogError($"Failed to add user {user.Id} to role {request.RoleName}: {errors}", user.Id, request.RoleName, errors);
+                return new AddUserToRoleResponse { Success = false, Message = $"Failed: {errors}" };
+            }
+
+            _logger.LogInformation($"User {user.Id} added to role {request.RoleName}", user.Id, request.RoleName);
+            return new AddUserToRoleResponse { Success = true, Message = $"User added to role '{request.RoleName}' successfully." };
+        }
+
+        public async Task<RemoveUserFromRoleResponse> RemoveUserFromRoleCommandAsync(RemoveUserFromRoleDTO request)
+        {
+            var user = await FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            if (user == null)
+                return new RemoveUserFromRoleResponse { Success = false, Message = "User not found." };
+
+            var roleExists = await _roleManager.RoleExistsAsync(request.RoleName);
+            if (!roleExists)
+                return new RemoveUserFromRoleResponse { Success = false, Message = $"Role '{request.RoleName}' does not exist." };
+
+            var isInRole = await _userManager.IsInRoleAsync(user, request.RoleName);
+            if (!isInRole)
+                return new RemoveUserFromRoleResponse { Success = false, Message = $"User does not have the role '{request.RoleName}'." };
+
+            var result = await _userManager.RemoveFromRoleAsync(user, request.RoleName);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                _logger.LogError($"Failed to remove user {user.Id} from role {request.RoleName}: {errors}", user.Id, request.RoleName, errors);
+                return new RemoveUserFromRoleResponse { Success = false, Message = $"Failed: {errors}" };
+            }
+
+            _logger.LogInformation($"User {user.Id} removed from role {request.RoleName}", user.Id, request.RoleName);
+            return new RemoveUserFromRoleResponse { Success = true, Message = $"User removed from role '{request.RoleName}' successfully." };
+        }
+
+        public async Task<GetUserRolesResponse> GetUserRolesQueryAsync(GetUserRolesDTO request)
+        {
+            var user = await FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            if (user == null)
+                return new GetUserRolesResponse { Success = false, Message = "User not found." };
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return new GetUserRolesResponse { Success = true, Roles = roles.ToList() };
+        }
+
+        public async Task<List<string>> GetAllRolesQueryAsync()
+        {
+            return await _roleManager.Roles.Select(r => r.Name).ToListAsync();
         }
     }
 }

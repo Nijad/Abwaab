@@ -7,6 +7,6 @@ namespace Abwaab.Application.Common.Interfaces
     {
         string GenerateAccessToken(ApplicationUser user, IList<string> roles);
         string GenerateRefreshToken();
-        Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request);
+        Task<RefreshTokenResponse> RefreshToken(RefreshTokenCommand request);
     }
 }

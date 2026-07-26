@@ -1,5 +1,4 @@
-﻿using Abwaab.Application.DTOs.ApplicationUser;
-using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
+﻿using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
 using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
 using Abwaab.Application.DTOs.ApplicationUser.IdentifierManagement;
 using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
@@ -7,6 +6,8 @@ using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
 using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
+using Abwaab.Application.DTOs.Roles.AddRoleToUser;
+using Abwaab.Application.DTOs.Roles.RemoveUserFormRole;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPost("RegisterUser")]
-        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest registerRequest)
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserCommand registerRequest)
         {
             if (registerRequest == null)
                 return BadRequest();
@@ -45,7 +46,7 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPost("VerifyAccount")]
-        public async Task<IActionResult> VerifyAccount([FromBody] VerifyCodeRequest verifyCodeRequest)
+        public async Task<IActionResult> VerifyAccount([FromBody] VerifyCodeCommand verifyCodeRequest)
         {
             if (verifyCodeRequest == null)
                 return BadRequest();
@@ -60,7 +61,7 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPost("LoginUser")]
-        public async Task<IActionResult> LoginUser([FromBody] LoginUserRequest loginRequest)
+        public async Task<IActionResult> LoginUser([FromBody] LoginUserCommand loginRequest)
         {
             if (loginRequest == null)
                 return BadRequest();
@@ -77,12 +78,12 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPost("ResendCode")]
-        public async Task<IActionResult> ResendCode([FromBody] ResendCodeRequest resendCodeRequest)
+        public async Task<IActionResult> ResendCode([FromBody] ResendCodeCommand resendCodeRequest)
         {
             if (resendCodeRequest == null)
                 return BadRequest();
 
-            IdentifierDTO resendCodeDTO = new IdentifierDTO
+            ResendCodeDTO resendCodeDTO = new ResendCodeDTO
             {
                 Identifier = resendCodeRequest.Identifier
             };
@@ -92,7 +93,7 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPost("ForgotPassword")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordRequest)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommand forgotPasswordRequest)
         {
             if (forgotPasswordRequest == null)
                 return BadRequest();
@@ -109,7 +110,7 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest refreshTokenRequest)
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand refreshTokenRequest)
         {
             if (refreshTokenRequest == null)
                 return BadRequest();
@@ -119,7 +120,7 @@ namespace Abwaab.Server.Controllers
 
         [Authorize]
         [HttpPost("ChangePassword")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand request)
         {
             if (request == null)
                 return BadRequest();
@@ -135,38 +136,38 @@ namespace Abwaab.Server.Controllers
 
         [Authorize]
         [HttpPost("Logout")]
-        public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
+        public async Task<IActionResult> Logout([FromBody] LogoutCommand request)
         {
             if (request == null)
                 return BadRequest();
-            
+
             LogoutResponse response = await _mediator.Send(request);
             return Ok(response);
         }
 
         [HttpPost("initiate-email-change")]
-        public async Task<IActionResult> InitiateEmailChange([FromBody] InitiateEmailChangeRequest request)
+        public async Task<IActionResult> InitiateEmailChange([FromBody] InitiateEmailChangeCommand request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost("confirm-email-change")]
-        public async Task<IActionResult> ConfirmEmailChange([FromBody] ConfirmEmailChangeRequest request)
+        public async Task<IActionResult> ConfirmEmailChange([FromBody] ConfirmEmailChangeCommand request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost("initiate-phone-change")]
-        public async Task<IActionResult> InitiatePhoneChange([FromBody] InitiatePhoneNoChangeRequest request)
+        public async Task<IActionResult> InitiatePhoneChange([FromBody] InitiatePhoneNoChangeCommand request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);
         }
 
         [HttpPost("confirm-phone-change")]
-        public async Task<IActionResult> ConfirmPhoneChange([FromBody] ConfirmPhoneNoChangeRequest request)
+        public async Task<IActionResult> ConfirmPhoneChange([FromBody] ConfirmPhoneNoChangeCommand request)
         {
             var result = await _mediator.Send(request);
             return Ok(result);
@@ -175,14 +176,14 @@ namespace Abwaab.Server.Controllers
         [HttpPost("cancel-email-change")]
         public async Task<IActionResult> CancelEmailChange()
         {
-            var result = await _mediator.Send(new CancelEmailChangeRequest());
+            var result = await _mediator.Send(new CancelEmailChangeCommand());
             return result.Success ? Ok(result) : BadRequest(result);
         }
 
         [HttpPost("cancel-phone-change")]
         public async Task<IActionResult> CancelPhoneChange()
         {
-            var result = await _mediator.Send(new CancelPhoneChangeRequest());
+            var result = await _mediator.Send(new CancelPhoneChangeCommand());
             return result.Success ? Ok(result) : BadRequest(result);
         }
     }

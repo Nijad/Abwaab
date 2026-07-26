@@ -57,7 +57,7 @@ namespace Abwaab.Server
             });
 
             builder.Services.AddInfrastructure(builder.Configuration);
-
+            builder.Services.AddRepositories();
             builder.Services.AddServices();
 
             builder.Services.AddApplication(builder.Configuration);

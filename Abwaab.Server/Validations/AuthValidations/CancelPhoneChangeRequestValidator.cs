@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations
 {
-    public class CancelPhoneChangeRequestValidator : AbstractValidator<CancelPhoneChangeRequest>
+    public class CancelPhoneChangeRequestValidator : AbstractValidator<CancelPhoneChangeCommand>
     {
         // No rules needed
     }

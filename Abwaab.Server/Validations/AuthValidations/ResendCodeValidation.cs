@@ -1,10 +1,10 @@
-﻿using Abwaab.Application.DTOs.ApplicationUser;
+﻿using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using Abwaab.Server.Validations.Common;
 using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations
 {
-    public class ResendCodeValidation : AbstractValidator<IdentifierDTO>
+    public class ResendCodeValidation : AbstractValidator<ResendCodeDTO>
     {
         public ResendCodeValidation()
         {

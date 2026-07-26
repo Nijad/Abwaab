@@ -1,5 +1,4 @@
 ﻿using Abwaab.Application.Common.Interfaces;
-using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using Abwaab.Domain.Enums;
 using Abwaab.Infrastructure.Common;
@@ -34,7 +33,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return random.Next(100000, 999999).ToString();
         }
 
-        public Task<ResendCodeResponse> ResendVerificationCodeAsync(IdentifierDTO resendCodeDTO)
+        public Task<ResendCodeResponse> ResendVerificationCodeAsync(ResendCodeDTO resendCodeDTO)
         {
             string code = GenerateVerificationCode();
             if(resendCodeDTO.IdentifierType == IdentifierEnum.email)

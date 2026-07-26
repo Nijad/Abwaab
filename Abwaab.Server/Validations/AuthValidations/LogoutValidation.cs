@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations
 {
-    public class LogoutValidation : AbstractValidator<LogoutRequest>
+    public class LogoutValidation : AbstractValidator<LogoutCommand>
     {
         public LogoutValidation()
         {

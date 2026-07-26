@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations
 {
-    public class InitiatePhoneNoChangeValidator : AbstractValidator<InitiatePhoneNoChangeRequest>
+    public class InitiatePhoneNoChangeValidator : AbstractValidator<InitiatePhoneNoChangeCommand>
     {
         public InitiatePhoneNoChangeValidator()
         {

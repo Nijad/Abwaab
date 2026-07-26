@@ -1,5 +1,4 @@
 ﻿using Abwaab.Application.Common.Interfaces;
-using Abwaab.Application.DTOs.ApplicationUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
 using Abwaab.Domain.Enums;
 using Microsoft.Extensions.Caching.Memory;
@@ -20,7 +19,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return "123456";
         }
 
-        public Task<ResendCodeResponse> ResendVerificationCodeAsync(IdentifierDTO resendCodeDTO)
+        public Task<ResendCodeResponse> ResendVerificationCodeAsync(ResendCodeDTO resendCodeDTO)
         {
             string code = GenerateVerificationCode();
             if (resendCodeDTO.IdentifierType == IdentifierEnum.email)

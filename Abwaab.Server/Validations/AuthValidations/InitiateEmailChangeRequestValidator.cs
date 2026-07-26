@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Abwaab.Server.Validations.AuthValidations
 {
-    public class InitiateEmailChangeRequestValidator : AbstractValidator<InitiateEmailChangeRequest>
+    public class InitiateEmailChangeRequestValidator : AbstractValidator<InitiateEmailChangeCommand>
     {
         public InitiateEmailChangeRequestValidator()
         {
