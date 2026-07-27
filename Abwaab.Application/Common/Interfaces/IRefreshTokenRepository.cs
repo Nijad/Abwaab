@@ -9,5 +9,6 @@ namespace Abwaab.Application.Common.Interfaces
         Task UpdateAsync(RefreshToken refreshToken);
         Task RevokeAsync(string token, string? revokedByIp = null);
         Task<IEnumerable<RefreshToken>> GetActiveTokensForUserAsync(Guid userId);
+        Task<RefreshToken?> GetByHashAsync(string hash);
     }
 }

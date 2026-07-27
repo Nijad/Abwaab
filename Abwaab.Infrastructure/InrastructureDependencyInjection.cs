@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
@@ -24,7 +25,8 @@ namespace Abwaab.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
         {
-
+            services.AddMemoryCache();
+            services.AddScoped<ITokenBlacklistService, TokenBlacklistService>();
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
             services.Configure<JwtSettings>(config.GetSection("JwtSettings"));
@@ -53,7 +55,25 @@ namespace Abwaab.Infrastructure
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings?.Issuer,
                     ValidAudience = jwtSettings?.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings?.Secret))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings?.Secret)),
+                    ClockSkew = TimeSpan.Zero
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+                        if (!string.IsNullOrEmpty(jti))
+                        {
+                            var blacklistService = context.HttpContext.RequestServices
+                                .GetRequiredService<ITokenBlacklistService>();
+                            if (blacklistService.IsBlacklisted(jti))
+                            {
+                                context.Fail("Token has been revoked.");
+                            }
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
             });
 

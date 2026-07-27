@@ -100,7 +100,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             // 5. Store the new refresh token
             var newStoredToken = new RefreshToken
             {
-                Token = newRefreshToken,
+                TokenHash = HashToken(newRefreshToken),
                 UserId = user.Id,
                 ExpiryDate = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays),
                 IsRevoked = false,
@@ -117,6 +117,13 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 RefreshToken = newRefreshToken,
                 ExpiresIn = _jwtSettings.AccessTokenExpiryMinutes * 60
             };
+        }
+
+        private string HashToken(string token) // same as above
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
+            return Convert.ToBase64String(bytes);
         }
     }
 }

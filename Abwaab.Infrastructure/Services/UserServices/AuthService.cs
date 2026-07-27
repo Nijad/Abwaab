@@ -16,11 +16,17 @@ using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using Abwaab.Infrastructure.Common;
 using Abwaab.Infrastructure.Options;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using Whipstaff.Core.Entities;
 using IEmailSender = Abwaab.Application.Common.Interfaces.IEmailSender;
 
 namespace Abwaab.Infrastructure.Services.UserServices
@@ -41,6 +47,8 @@ namespace Abwaab.Infrastructure.Services.UserServices
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly IUrlBuilder _urlBuilder;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ITokenBlacklistService _blacklistService;
 
         public AuthService(
             IVerificationCodeService verificationService,
@@ -56,7 +64,9 @@ namespace Abwaab.Infrastructure.Services.UserServices
             IMemoryCache cache,
             IEmailSender emailSender,
             ISmsSender smsSender,
-            IUrlBuilder urlBuilder)
+            IUrlBuilder urlBuilder,
+            IHttpContextAccessor httpContextAccessor,
+            ITokenBlacklistService blacklistService)
         {
             _verificationService = verificationService;
             _userManager = userManager;
@@ -72,6 +82,8 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _emailSender = emailSender;
             _smsSender = smsSender;
             _urlBuilder = urlBuilder;
+            _httpContextAccessor = httpContextAccessor;
+            _blacklistService = blacklistService;
         }
 
         private async Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifierEnum identifierType)
@@ -132,7 +144,8 @@ namespace Abwaab.Infrastructure.Services.UserServices
             // Store refresh token
             var refreshToken = new RefreshToken
             {
-                Token = refreshTokenString,
+                TokenHash = HashToken(refreshTokenString),
+                //Token = refreshTokenString,
                 UserId = user.Id,
                 ExpiryDate = DateTime.UtcNow.AddDays(_jwtSettings.Value.RefreshTokenExpiryDays),
                 IsRevoked = false,
@@ -140,16 +153,32 @@ namespace Abwaab.Infrastructure.Services.UserServices
             };
             await _refreshTokenRepo.CreateAsync(refreshToken);
 
-            _logger.LogInformation("User {UserId} logged in successfully.", user.Id);
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,           // Not accessible via JavaScript
+                Secure = true,             // Only sent over HTTPS
+                SameSite = SameSiteMode.Strict,
+                Expires = refreshToken.ExpiryDate
+            };
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("RefreshToken", refreshTokenString, cookieOptions);
 
+            _logger.LogInformation("User {UserId} logged in successfully.", user.Id);
+            
             return new LoginUserResponse
             {
                 Success = true,
                 AccessToken = accessToken,
-                RefreshToken = refreshTokenString,
+                //RefreshToken = refreshTokenString,
                 ExpiresIn = _jwtSettings.Value.AccessTokenExpiryMinutes * 60,
                 Message = "Login successful",
             };
+        }
+
+        private string HashToken(string token)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
+            return Convert.ToBase64String(bytes);
         }
 
         public async Task<RegisterUserResponse> RegisterUserCommandAsync(RegisterUserDTO registerDTO)
@@ -287,20 +316,35 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
             // 1. Change the password
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+            
             if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 return new ChangePasswordResponse { Success = false, Message = $"Failed: {errors}" };
             }
 
-            // 2. CRITICAL: Revoke ALL refresh tokens for this user (log out from all devices)
-            var activeTokens = await _refreshTokenRepo.GetActiveTokensForUserAsync(userId);
-            foreach (var token in activeTokens)
+            var jti = _httpContextAccessor.HttpContext.User.FindFirstValue(JwtRegisteredClaimNames.Jti);
+            if (!string.IsNullOrEmpty(jti))
+            {
+                var expClaim = _httpContextAccessor.HttpContext.User.FindFirst("exp")?.Value;
+                if (long.TryParse(expClaim, out var exp))
+                {
+                    var expiry = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
+                    _blacklistService.AddToBlacklist(jti, expiry);
+                }
+            }
+
+            // Revoke all refresh tokens
+            var tokens = await _refreshTokenRepo.GetActiveTokensForUserAsync(userId);
+            foreach (var token in tokens)
             {
                 token.IsRevoked = true;
                 token.RevokedByIp = "Password changed";
                 await _refreshTokenRepo.UpdateAsync(token);
             }
+
+            // Delete the refresh token cookie
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete("RefreshToken");
 
             _logger.LogInformation("Password changed successfully for user {UserId}. All sessions revoked.", userId);
 
@@ -309,6 +353,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
             _ = Task.Run(async () =>
             {
+                //todo: check if user has email
                 var subject = "Security Alert: Your Password Was Changed";
                 var body = $@"
                     <h2>Password Changed</h2>
@@ -318,6 +363,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     <p>If you did NOT make this change, please reset your password immediately.</p>
                 ";
                 await _emailSender.SendEmailAsync(user.Email, subject, body);
+                //todo: check if user has phone send alert sms
             });
 
             return new ChangePasswordResponse { Success = true, Message = "Password changed successfully. You have been logged out of all other devices." };
@@ -331,43 +377,41 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 return new LogoutResponse { Success = false, Message = "User not found." };
             }
 
+            var httpContext = _httpContextAccessor.HttpContext;
+            var jti = httpContext.User.FindFirstValue(JwtRegisteredClaimNames.Jti);
+            if (!string.IsNullOrEmpty(jti))
+            {
+                var expClaim = httpContext.User.FindFirst("exp")?.Value;
+                if (long.TryParse(expClaim, out var exp))
+                {
+                    var expiry = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
+                    _blacklistService.AddToBlacklist(jti, expiry);
+                }
+            }
+
+            // 2. Remove the refresh token cookie
+            httpContext.Response.Cookies.Delete("RefreshToken");
+
+            // 3. Revoke refresh tokens (all or the specific one)
             if (request.RevokeAll)
             {
-                // Revoke all active refresh tokens for this user
                 var tokens = await _refreshTokenRepo.GetActiveTokensForUserAsync(request.UserId);
                 foreach (var token in tokens)
                 {
                     token.IsRevoked = true;
-                    token.RevokedByIp = _userContext.RemoteIpAddress;
+                    token.RevokedByIp = "Logout all";
                     await _refreshTokenRepo.UpdateAsync(token);
                 }
-                _logger.LogInformation("All refresh tokens revoked for user {UserId}", request.UserId.ToString());
-                return new LogoutResponse { Success = true, Message = "Logged out from all devices." };
             }
             else
             {
-                var storedToken = await _refreshTokenRepo.GetByTokenAsync(request.RefreshToken);
-
-                if (storedToken == null || storedToken.UserId != request.UserId)
-                    return new LogoutResponse { Success = false, Message = "Invalid refresh token." };
-
-                if (!storedToken.IsRevoked && storedToken.ExpiryDate > DateTime.UtcNow)
-                {
-                    storedToken.IsRevoked = true;
-                    storedToken.RevokedByIp = _userContext.RemoteIpAddress;
-
-                    await _refreshTokenRepo.UpdateAsync(storedToken);
-
-                    _logger.LogInformation("Refresh token revoked for user {UserId}", request.UserId.ToString());
-
-                    return new LogoutResponse { Success = true, Message = "Logged out successfully." };
-                }
-                else
-                {
-                    // Token is already expired or revoked
-                    return new LogoutResponse { Success = false, Message = "Token already invalid." };
-                }
+                // Revoke only the one from the cookie
+                var refreshToken = httpContext.Request.Cookies["RefreshToken"];
+                if (!string.IsNullOrEmpty(refreshToken))
+                    await _refreshTokenRepo.RevokeAsync(refreshToken, "Logout");
             }
+
+            return new LogoutResponse { Success = true, Message = "Logged out successfully." };
         }
 
         public async Task<bool> MappingUserWithNotificationWayCommandAsync(ApplicationUser user, NotificationWayEnum notificationWayType)
