@@ -365,5 +365,3 @@ FodyWeavers.xsd
 *.production
 /Abwaab.Server/appsettings.json
 /Abwaab.Server/appsettings.json
-/Abwaab.Server/appsettings.json
-/Abwaab.Server/appsettings.Development.json
