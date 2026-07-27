@@ -10,7 +10,7 @@ namespace Abwaab.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "Admin")]
     public class RolesController : ControllerBase
     {
         private readonly IMediator _mediator;

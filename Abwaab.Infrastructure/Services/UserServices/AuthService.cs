@@ -121,13 +121,15 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 throw new NotFoundException("User", loginUserDTO.IdentifierType.ToString().Replace('_', ' '), loginUserDTO.Identifier);
 
             // Check password
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginUserDTO.Password, lockoutOnFailure: false);
+            //var result = await _signInManager.CheckPasswordSignInAsync(user, loginUserDTO.Password, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(user, loginUserDTO.Password, false, lockoutOnFailure: true);
+
+            if (result.IsLockedOut)
+                return new LoginUserResponse { Success = false, Message = "Account locked out." };
 
             if (!result.Succeeded)
-            {
                 throw new InvalidPasswordException();
-            }
-
+            
             if (loginUserDTO.IdentifierType == IdentifierEnum.email)
                 confirmed = user.EmailConfirmed;
             else if (loginUserDTO.IdentifierType == IdentifierEnum.phone_number)
@@ -140,11 +142,11 @@ namespace Abwaab.Infrastructure.Services.UserServices
             var roles = await _userManager.GetRolesAsync(user);
             var accessToken = _jwtService.GenerateAccessToken(user, roles);
             var refreshTokenString = _jwtService.GenerateRefreshToken();
-
+            var tokenHash = HashToken(refreshTokenString);
             // Store refresh token
             var refreshToken = new RefreshToken
             {
-                TokenHash = HashToken(refreshTokenString),
+                TokenHash = tokenHash,
                 //Token = refreshTokenString,
                 UserId = user.Id,
                 ExpiryDate = DateTime.UtcNow.AddDays(_jwtSettings.Value.RefreshTokenExpiryDays),
@@ -168,7 +170,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             {
                 Success = true,
                 AccessToken = accessToken,
-                //RefreshToken = refreshTokenString,
+                RefreshToken = tokenHash,
                 ExpiresIn = _jwtSettings.Value.AccessTokenExpiryMinutes * 60,
                 Message = "Login successful",
             };

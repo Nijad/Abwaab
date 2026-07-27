@@ -6,11 +6,10 @@ using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
 using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
-using Abwaab.Application.DTOs.Roles.AddRoleToUser;
-using Abwaab.Application.DTOs.Roles.RemoveUserFormRole;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Abwaab.Server.Controllers
 {
@@ -61,6 +60,7 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPost("LoginUser")]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserCommand loginRequest)
         {
             if (loginRequest == null)

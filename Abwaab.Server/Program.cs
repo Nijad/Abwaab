@@ -88,7 +88,7 @@ namespace Abwaab.Server
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Abwaab API V1");
                 }*/);
             }
-
+            app.UseRateLimiter();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
