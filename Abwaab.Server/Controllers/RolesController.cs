@@ -2,6 +2,7 @@
 using Abwaab.Application.DTOs.Roles.GetAllRoles;
 using Abwaab.Application.DTOs.Roles.GetUserRoles;
 using Abwaab.Application.DTOs.Roles.RemoveUserFormRole;
+using Abwaab.Infrastructure.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace Abwaab.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = Constants.ROLE_ADMIN)]
     public class RolesController : ControllerBase
     {
         private readonly IMediator _mediator;

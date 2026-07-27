@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Contracts;
 using Abwaab.Domain.Entities.UserEntities;
+using Abwaab.Infrastructure.Common;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -55,8 +56,8 @@ namespace Abwaab.Infrastructure.Presistence
         private async Task TrySeedAsync()
         {
             // 1. Seed Roles
-            var adminRole = new ApplicationRole { Id = new Guid(), Name = "Admin", NormalizedName = "ADMIN" };
-            var userRole = new ApplicationRole { Id = new Guid(), Name = "User", NormalizedName = "USER" };
+            var adminRole = new ApplicationRole { Id = new Guid(), Name = Constants.ROLE_ADMIN, NormalizedName = Constants.ROLE_ADMIN.ToUpper() };
+            var userRole = new ApplicationRole { Id = new Guid(), Name = Constants.ROLE_USER, NormalizedName = Constants.ROLE_USER.ToUpper() };
 
             if (! await _roleManager.Roles.AnyAsync())
             {
