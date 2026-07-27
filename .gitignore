@@ -361,4 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+*.development
+*.production
+/Abwaab.Server/appsettings.json
 /Abwaab.Server/appsettings.json
