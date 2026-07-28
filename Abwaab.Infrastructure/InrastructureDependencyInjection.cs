@@ -1,5 +1,4 @@
-﻿using Abwaab.Application.Common.Contracts;
-using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Common.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Options;
 using Abwaab.Infrastructure.Presistence;

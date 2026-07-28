@@ -10,7 +10,6 @@ using Abwaab.Application.DTOs.Roles.GetUserRoles;
 using Abwaab.Application.DTOs.Roles.RemoveUserFormRole;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
-using Microsoft.AspNetCore.Identity;
 
 namespace Abwaab.Application.Common.Contracts
 {

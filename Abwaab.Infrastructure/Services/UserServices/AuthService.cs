@@ -26,13 +26,13 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Whipstaff.Core.Entities;
 using IEmailSender = Abwaab.Application.Common.Interfaces.IEmailSender;
 
 namespace Abwaab.Infrastructure.Services.UserServices
 {
     public class AuthService : IAuthService
     {
+        private readonly IUserService _userService;
         private readonly IVerificationCodeService _verificationService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
@@ -51,6 +51,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
         private readonly ITokenBlacklistService _blacklistService;
 
         public AuthService(
+            IUserService userService,
             IVerificationCodeService verificationService,
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
@@ -68,6 +69,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             IHttpContextAccessor httpContextAccessor,
             ITokenBlacklistService blacklistService)
         {
+            _userService = userService;
             _verificationService = verificationService;
             _userManager = userManager;
             _roleManager = roleManager;
@@ -86,36 +88,36 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _blacklistService = blacklistService;
         }
 
-        private async Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifierEnum identifierType)
-        {
-            ApplicationUser? user = null;
-            if (identifierType == IdentifierEnum.email)
-            {
-                user = await _userManager.FindByEmailAsync(identifier);
-                if (user != null)
-                    return user;
-                return await _userManager.Users
-                    .FirstOrDefaultAsync(u => u.PreviousEmail == identifier);
-            }
-            else if (identifierType == IdentifierEnum.phone_number)
-            {
-                user = await _userManager.Users
-                    .FirstOrDefaultAsync(u => u.PhoneNumber == identifier);
-                if (user != null)
-                    return user;
-                return await _userManager.Users
-                    .FirstOrDefaultAsync(u => u.PreviousPhoneNumber == identifier);
-            }
+        //private async Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifierEnum identifierType)
+        //{
+        //    ApplicationUser? user = null;
+        //    if (identifierType == IdentifierEnum.email)
+        //    {
+        //        user = await _userManager.FindByEmailAsync(identifier);
+        //        if (user != null)
+        //            return user;
+        //        return await _userManager.Users
+        //            .FirstOrDefaultAsync(u => u.PreviousEmail == identifier);
+        //    }
+        //    else if (identifierType == IdentifierEnum.phone_number)
+        //    {
+        //        user = await _userManager.Users
+        //            .FirstOrDefaultAsync(u => u.PhoneNumber == identifier);
+        //        if (user != null)
+        //            return user;
+        //        return await _userManager.Users
+        //            .FirstOrDefaultAsync(u => u.PreviousPhoneNumber == identifier);
+        //    }
 
-            throw new NotImplementedException($"Identifier type of {identifierType.ToString()} does not implemented yet");
-        }
+        //    throw new NotImplementedException($"Identifier type of {identifierType.ToString()} does not implemented yet");
+        //}
 
         public async Task<LoginUserResponse> LoginUserCommandAsync(LoginUserDTO loginUserDTO)
         {
             bool confirmed = false;
 
             // Find user by email or phone
-            ApplicationUser? user = FindUserByIdentifierAsync(loginUserDTO.Identifier, loginUserDTO.IdentifierType).Result;
+            ApplicationUser? user = _userService.FindUserByIdentifierAsync(loginUserDTO.Identifier, loginUserDTO.IdentifierType).Result;
 
             if (user == null)
                 throw new NotFoundException("User", loginUserDTO.IdentifierType.ToString().Replace('_', ' '), loginUserDTO.Identifier);
@@ -129,7 +131,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
             if (!result.Succeeded)
                 throw new InvalidPasswordException();
-            
+
             if (loginUserDTO.IdentifierType == IdentifierEnum.email)
                 confirmed = user.EmailConfirmed;
             else if (loginUserDTO.IdentifierType == IdentifierEnum.phone_number)
@@ -171,7 +173,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _httpContextAccessor?.HttpContext?.Response.Cookies.Append("RefreshToken", refreshTokenString, cookieOptions);
 
             _logger.LogInformation("User {UserId} logged in successfully.", user.Id);
-            
+
             return new LoginUserResponse
             {
                 Success = true,
@@ -211,6 +213,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 FirstName = registerDTO.FirstName,
                 LastName = registerDTO.LastName,
                 UserName = registerDTO.Identifier,
+                LockoutEnabled = true
             };
 
             if (registerDTO.IdentifierType == IdentifierEnum.email)
@@ -245,7 +248,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             if (!isValid)
                 return await Task.FromResult(new VerifyCodeResponse { IsVerified = false, Message = "Invalid or expired verification code." });
 
-            ApplicationUser? user = FindUserByIdentifierAsync(verifyCodeDTO.Identifier, verifyCodeDTO.IdentifierType).Result;
+            ApplicationUser? user = _userService.FindUserByIdentifierAsync(verifyCodeDTO.Identifier, verifyCodeDTO.IdentifierType).Result;
 
             if (verifyCodeDTO.IdentifierType == IdentifierEnum.email)
             {
@@ -277,7 +280,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task<bool> IsUserExistsCommandAsync(ResendCodeDTO resendCodeDTO)
         {
-            if (FindUserByIdentifierAsync(resendCodeDTO.Identifier, resendCodeDTO.IdentifierType).Result != null)
+            if (_userService.FindUserByIdentifierAsync(resendCodeDTO.Identifier, resendCodeDTO.IdentifierType).Result != null)
                 return await Task.FromResult(true);
 
             if (resendCodeDTO.IdentifierType == IdentifierEnum.email && _userManager.FindByEmailAsync(resendCodeDTO.Identifier).Result != null)
@@ -290,7 +293,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task<ForgotPasswordResponse> ForgotPasswordCommandAsyn(ForgotPasswordDTO request)
         {
-            var user = FindUserByIdentifierAsync(request.Identifier, request.IdentifierType).Result;
+            var user = _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType).Result;
             if (user == null)
                 throw new NotFoundException("User", request.IdentifierType.ToString().Replace('_', ' '), request.Identifier);
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -329,17 +332,17 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
             // 1. Change the password
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
-            
+
             if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 return new ChangePasswordResponse { Success = false, Message = $"Failed: {errors}" };
             }
-            
+
             // null = unlock immediately
-            await _userManager.SetLockoutEndDateAsync(user, null); 
+            await _userManager.SetLockoutEndDateAsync(user, null);
             // Reset failed attempts to 0
-            await _userManager.ResetAccessFailedCountAsync(user);  
+            await _userManager.ResetAccessFailedCountAsync(user);
 
             var jti = _httpContextAccessor.HttpContext.User.FindFirstValue(JwtRegisteredClaimNames.Jti);
             if (!string.IsNullOrEmpty(jti))
@@ -434,11 +437,11 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task<bool> MappingUserWithNotificationWayCommandAsync(ApplicationUser user, NotificationWayEnum notificationWayType)
         {
-            NotificationWay? notificationWay = _notificationWayRepository.GetNotificationWay(notificationWayType.ToString().Replace('_', ' ')).Result;
+            NotificationWay? notificationWay = _notificationWayRepository.GetNotificationWayByNameAsync(notificationWayType.ToString().Replace('_', ' ')).Result;
 
             if (notificationWay != null)
             {
-                user.NotificationWaySubscriptions = await _notificationWayRepository.GetUserNotificationWays(user.Id);
+                user.NotificationWaySubscriptions = await _notificationWayRepository.GetNotificationWaysByUserAsync(user.Id);
 
                 UserNotificationSubscription userNotificationWay = new()
                 {
@@ -759,7 +762,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
         public async Task<AddUserToRoleResponse> AddUserToRoleCommandAsync(AddUserToRoleDTO request)
         {
             // 1. Find the user 
-            var user = await FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            var user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
             if (user == null)
                 return new AddUserToRoleResponse { Success = false, Message = "User not found." };
 
@@ -788,7 +791,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task<RemoveUserFromRoleResponse> RemoveUserFromRoleCommandAsync(RemoveUserFromRoleDTO request)
         {
-            var user = await FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            var user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
             if (user == null)
                 return new RemoveUserFromRoleResponse { Success = false, Message = "User not found." };
 
@@ -814,7 +817,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task<GetUserRolesResponse> GetUserRolesQueryAsync(GetUserRolesDTO request)
         {
-            var user = await FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            var user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
             if (user == null)
                 return new GetUserRolesResponse { Success = false, Message = "User not found." };
 

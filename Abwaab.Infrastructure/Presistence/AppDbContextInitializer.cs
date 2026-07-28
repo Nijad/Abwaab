@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Common.Contracts;
+﻿using Abwaab.Application.Common.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Common;
 using Abwaab.Infrastructure.Presistence.Context;
@@ -70,7 +70,8 @@ namespace Abwaab.Infrastructure.Presistence
             {
                 UserName = "admin@abwaab.com",
                 Email = "admin@abwaab.com",
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                LockoutEnabled = false
             };
 
             if (await _userManager.Users.AllAsync(u => u.UserName != adminUser.UserName))

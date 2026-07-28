@@ -9,8 +9,10 @@ namespace Abwaab.Infrastructure
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
-            //services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IJwtService, JwtService>();
             return services;
         }

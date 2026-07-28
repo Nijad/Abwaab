@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Common.Contracts;
+﻿using Abwaab.Application.Common.Interfaces;
 
 namespace Abwaab.Server.Exceptions
 {

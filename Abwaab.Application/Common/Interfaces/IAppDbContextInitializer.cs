@@ -1,4 +1,4 @@
-﻿namespace Abwaab.Application.Common.Contracts
+﻿namespace Abwaab.Application.Common.Interfaces
 {
     public interface IAppDbContextInitializer
     {
