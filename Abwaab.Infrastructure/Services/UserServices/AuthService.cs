@@ -138,6 +138,11 @@ namespace Abwaab.Infrastructure.Services.UserServices
             if (!confirmed)
                 return await Task.FromResult(new LoginUserResponse { Success = false, Message = $"Please verify your {loginUserDTO.IdentifierType.ToString().Replace('_', ' ')} before logging in." });
 
+            // null = unlock immediately
+            await _userManager.SetLockoutEndDateAsync(user, null);
+            // Reset failed attempts to 0
+            await _userManager.ResetAccessFailedCountAsync(user);
+
             // Generate access token
             var roles = await _userManager.GetRolesAsync(user);
             var accessToken = _jwtService.GenerateAccessToken(user, roles);
@@ -162,7 +167,8 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 SameSite = SameSiteMode.Strict,
                 Expires = refreshToken.ExpiryDate
             };
-            _httpContextAccessor.HttpContext.Response.Cookies.Append("RefreshToken", refreshTokenString, cookieOptions);
+
+            _httpContextAccessor?.HttpContext?.Response.Cookies.Append("RefreshToken", refreshTokenString, cookieOptions);
 
             _logger.LogInformation("User {UserId} logged in successfully.", user.Id);
             
@@ -298,6 +304,11 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 return await Task.FromResult(new ForgotPasswordResponse { Success = false, Message = $"Password reset failed: {errors}" });
             }
 
+            // null = unlock immediately
+            await _userManager.SetLockoutEndDateAsync(user, null);
+            // Reset failed attempts to 0
+            await _userManager.ResetAccessFailedCountAsync(user);
+
             var activeTokens = await _refreshTokenRepo.GetActiveTokensForUserAsync(user.Id);
             foreach (var token in activeTokens)
             {
@@ -324,6 +335,11 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 return new ChangePasswordResponse { Success = false, Message = $"Failed: {errors}" };
             }
+            
+            // null = unlock immediately
+            await _userManager.SetLockoutEndDateAsync(user, null); 
+            // Reset failed attempts to 0
+            await _userManager.ResetAccessFailedCountAsync(user);  
 
             var jti = _httpContextAccessor.HttpContext.User.FindFirstValue(JwtRegisteredClaimNames.Jti);
             if (!string.IsNullOrEmpty(jti))
