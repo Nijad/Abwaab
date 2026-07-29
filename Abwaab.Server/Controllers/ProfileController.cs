@@ -11,9 +11,13 @@ namespace Abwaab.Server.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public ProfileController(IMediator mediator)
+        private readonly ILogger<ProfileController> _logger;
+        public ProfileController(
+            IMediator mediator,
+            ILogger<ProfileController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpPost("SubscribeNotificationWay")]

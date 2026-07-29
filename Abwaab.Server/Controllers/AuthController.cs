@@ -22,8 +22,7 @@ namespace Abwaab.Server.Controllers
 
         public AuthController(
             IMediator mediator,
-            ILogger<AuthController> logger
-            )
+            ILogger<AuthController> logger)
         {
             _mediator = mediator;
             _logger = logger;

@@ -1,6 +1,6 @@
 ﻿using Abwaab.Application.Common.Interfaces;
 
-namespace Abwaab.Server.Exceptions
+namespace Abwaab.Server.Extensions
 {
     public static class InitializerExtensions
     {

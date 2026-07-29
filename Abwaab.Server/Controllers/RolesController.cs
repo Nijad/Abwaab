@@ -15,9 +15,12 @@ namespace Abwaab.Server.Controllers
     public class RolesController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public RolesController(IMediator mediator)
+        private readonly ILogger<RolesController> _logger;
+        public RolesController(IMediator mediator,
+            ILogger<RolesController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpPost("add-user-role")]
