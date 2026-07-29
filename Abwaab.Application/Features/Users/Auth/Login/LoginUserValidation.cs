@@ -1,8 +1,7 @@
-﻿using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
-using Abwaab.Application.Validations.Common;
+﻿using Abwaab.Application.Validations.Common;
 using FluentValidation;
 
-namespace Abwaab.Application.Validations.AuthValidations
+namespace Abwaab.Application.Features.Users.Auth.Login
 {
     public class LoginUserValidation : AbstractValidator<LoginUserDTO>
     {

@@ -1,9 +1,7 @@
-﻿
-using Abwaab.Application.Common.Contracts;
-using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
+﻿using Abwaab.Application.Common.Contracts;
 using MediatR;
 
-namespace Abwaab.Server.Handlers.AuthHandlers
+namespace Abwaab.Application.Features.Users.Auth.Register
 {
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserDTO, RegisterUserResponse>
     {

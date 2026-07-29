@@ -12,7 +12,8 @@
     <Folder Include="DTOs\Profile\UpgradPlan\" />
     <Folder Include="DTOs\Profile\UpdateInfo\" />
     <Folder Include="Features\Properties\" />
-    <Folder Include="Features\Users\" />
+    <Folder Include="Features\Users\Profile\" />
+    <Folder Include="Features\Users\Role\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,6 @@
-﻿using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
-using FluentValidation;
+﻿using FluentValidation;
 
-namespace Abwaab.Application.Validations.AuthValidations
+namespace Abwaab.Application.Features.Users.Auth.Logout
 {
     public class LogoutValidation : AbstractValidator<LogoutCommand>
     {

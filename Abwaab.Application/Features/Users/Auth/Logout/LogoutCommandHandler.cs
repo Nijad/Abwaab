@@ -1,8 +1,7 @@
 ﻿using Abwaab.Application.Common.Contracts;
-using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using MediatR;
 
-namespace Abwaab.Server.Handlers.AuthHandlers
+namespace Abwaab.Application.Features.Users.Auth.Logout
 {
     public class LogoutCommandHandler : IRequestHandler<LogoutCommand, LogoutResponse>
     {

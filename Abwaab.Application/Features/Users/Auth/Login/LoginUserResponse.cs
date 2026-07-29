@@ -1,4 +1,4 @@
-﻿namespace Abwaab.Application.DTOs.ApplicationUser.LoginUser
+﻿namespace Abwaab.Application.Features.Users.Auth.Login
 {
     public class LoginUserResponse()
     {

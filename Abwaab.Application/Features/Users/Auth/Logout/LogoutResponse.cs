@@ -1,4 +1,4 @@
-﻿namespace Abwaab.Application.DTOs.ApplicationUser.LogoutUser
+﻿namespace Abwaab.Application.Features.Users.Auth.Logout
 {
     public class LogoutResponse
     {

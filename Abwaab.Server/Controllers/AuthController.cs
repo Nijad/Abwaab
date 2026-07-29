@@ -1,11 +1,11 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
 using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
 using Abwaab.Application.DTOs.ApplicationUser.IdentifierManagement;
-using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
-using Abwaab.Application.DTOs.ApplicationUser.LogoutUser;
 using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
-using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
 using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
+using Abwaab.Application.Features.Users.Auth.Login;
+using Abwaab.Application.Features.Users.Auth.Logout;
+using Abwaab.Application.Features.Users.Auth.Register;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

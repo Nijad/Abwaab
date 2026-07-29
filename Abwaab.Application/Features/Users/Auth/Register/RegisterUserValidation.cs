@@ -1,8 +1,7 @@
-﻿using Abwaab.Application.DTOs.ApplicationUser.RegisterUser;
-using Abwaab.Application.Validations.Common;
+﻿using Abwaab.Application.Validations.Common;
 using FluentValidation;
 
-namespace Abwaab.Application.Validations.AuthValidations
+namespace Abwaab.Application.Features.Users.Auth.Register
 {
     public class RegisterUserValidation : AbstractValidator<RegisterUserDTO>
     {

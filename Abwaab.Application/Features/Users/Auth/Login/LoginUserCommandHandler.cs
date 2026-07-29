@@ -1,13 +1,7 @@
 ﻿using Abwaab.Application.Common.Contracts;
-using Abwaab.Application.Common.Interfaces;
-using Abwaab.Application.DTOs.ApplicationUser.LoginUser;
-using Abwaab.Domain.Entities.UserEntities;
-using Abwaab.Infrastructure.Options;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
-namespace Abwaab.Server.Handlers.AuthHandlers
+namespace Abwaab.Application.Features.Users.Auth.Login
 {
     public class LoginUserCommandHandler : IRequestHandler<LoginUserDTO, LoginUserResponse>
     {
