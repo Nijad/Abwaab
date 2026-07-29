@@ -1,15 +1,16 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser.IdentifierManagement;
+using Abwaab.Application.Validations.Common;
 using FluentValidation;
 
-namespace Abwaab.Server.Validations.AuthValidations
+namespace Abwaab.Application.Validations.AuthValidations
 {
-    public class InitiateEmailChangeRequestValidator : AbstractValidator<InitiateEmailChangeCommand>
+    public class InitiatePhoneNoChangeValidator : AbstractValidator<InitiatePhoneNoChangeCommand>
     {
-        public InitiateEmailChangeRequestValidator()
+        public InitiatePhoneNoChangeValidator()
         {
-            RuleFor(x => x.NewEmail)
-                .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Invalid email format.");
+            RuleFor(x => x.NewPhoneNo)
+                .NotEmpty().WithMessage("Phone number is required.")
+                .Must(CommonValidation.IsValidPhoneNumber).WithMessage("Phone number must be either valide email or valid phone number(+9639XXXXXXXX)");
 
             RuleFor(x => x.CurrentPassword)
                 .NotEmpty().WithMessage("Password is required.")

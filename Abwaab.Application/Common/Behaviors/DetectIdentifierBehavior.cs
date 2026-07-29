@@ -1,9 +1,9 @@
-﻿using Abwaab.Domain.Enums;
-using Abwaab.Server.Validations.Common;
+﻿using Abwaab.Application.Validations.Common;
+using Abwaab.Domain.Enums;
 using MediatR;
 using System.Reflection;
 
-namespace Abwaab.Server.Behaviors
+namespace Abwaab.Application.Common.Behaviors
 {
     public class DetectIdentifierBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>

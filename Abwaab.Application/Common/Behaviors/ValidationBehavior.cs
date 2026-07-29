@@ -2,7 +2,7 @@
 using FluentValidation.Results;
 using MediatR;
 
-namespace Abwaab.Server.Behaviors
+namespace Abwaab.Application.Common.Behaviors
 {
     public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>

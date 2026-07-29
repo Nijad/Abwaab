@@ -1,7 +1,7 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
 using FluentValidation;
 
-namespace Abwaab.Server.Validations.AuthValidations
+namespace Abwaab.Application.Validations.AuthValidations
 {
     public class ChangePasswordValidation : AbstractValidator<ChangePasswordDTO>
     {

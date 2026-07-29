@@ -1,7 +1,7 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser.IdentifierManagement;
 using FluentValidation;
 
-namespace Abwaab.Server.Validations.AuthValidations
+namespace Abwaab.Application.Validations.AuthValidations
 {
     public class CancelEmailChangeRequestValidator : AbstractValidator<CancelEmailChangeCommand>
     {

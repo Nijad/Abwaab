@@ -1,7 +1,7 @@
 ﻿using Abwaab.Application.Common.Interfaces;
 using MediatR;
 
-namespace Abwaab.Server.Behaviors
+namespace Abwaab.Application.Common.Behaviors
 {
     public class UserContextBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IUserRequest

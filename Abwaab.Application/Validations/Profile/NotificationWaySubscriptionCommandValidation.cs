@@ -1,7 +1,7 @@
 ﻿using Abwaab.Application.DTOs.Profile.NotificationWaySubscription;
 using FluentValidation;
 
-namespace Abwaab.Server.Validations.Profile
+namespace Abwaab.Application.Validations.Profile
 {
     public class NotificationWaySubscriptionCommandValidation : AbstractValidator<NotificationWaySubscriptionCommand>
     {

@@ -1,11 +1,11 @@
-﻿using Abwaab.Application.DTOs.Roles.AddRoleToUser;
+﻿using Abwaab.Application.DTOs.Roles.RemoveUserFormRole;
 using FluentValidation;
 
-namespace Abwaab.Server.Validations.AuthValidations
+namespace Abwaab.Application.Validations.AuthValidations
 {
-    public class AddUserToRoleCommandValidator : AbstractValidator<AddUserToRoleDTO>
+    public class RemoveUserFromRoleCommandValidator : AbstractValidator<RemoveUserFromRoleDTO>
     {
-        public AddUserToRoleCommandValidator()
+        public RemoveUserFromRoleCommandValidator()
         {
             RuleFor(x => x.Identifier)
                 .NotEmpty().WithMessage("User identifier is required.");

@@ -1,6 +1,6 @@
 ﻿using System.Net.Mail;
 
-namespace Abwaab.Server.Validations.Common
+namespace Abwaab.Application.Validations.Common
 {
     public static class CommonValidation
     {

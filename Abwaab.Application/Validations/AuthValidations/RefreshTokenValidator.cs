@@ -1,7 +1,7 @@
 ﻿using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
 using FluentValidation;
 
-namespace Abwaab.Server.Validations.AuthValidations
+namespace Abwaab.Application.Validations.AuthValidations
 {
     public class RefreshTokenValidator : AbstractValidator<RefreshTokenCommand>
     {
