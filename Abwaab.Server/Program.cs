@@ -16,7 +16,7 @@ namespace Abwaab.Server
             builder.Services.AddProblemDetails();
 
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-            // 1. Configure the Serilog Logger
+            
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Warning() // Global log level
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning) // Ignore verbose framework logs
@@ -76,8 +76,12 @@ namespace Abwaab.Server
 
             var app = builder.Build();
             app.UseExceptionHandler();
-            
+
             app.UseSerilogRequestLogging();
+
+            app.UseExceptionHandler();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             if (app.Environment.IsDevelopment())
             {
@@ -87,11 +91,15 @@ namespace Abwaab.Server
             }
             app.UseRateLimiter();
             app.UseHttpsRedirection();
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
 
-
-            app.MapControllers();
+            app.UseEndpoints(endpoints =>
+            {
+                app.MapControllers();
+                app.MapFallbackToFile("/index.html");
+            });
 
             try
             {
