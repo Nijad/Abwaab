@@ -1,5 +1,5 @@
 ﻿using Abwaab.Application.Common.Interfaces;
-using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
+using Abwaab.Application.Features.Users.Auth.SendCode;
 using Abwaab.Domain.Enums;
 using Abwaab.Infrastructure.Common;
 using Microsoft.Extensions.Caching.Memory;
@@ -33,14 +33,14 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return random.Next(100000, 999999).ToString();
         }
 
-        public Task<ResendCodeResponse> ResendVerificationCodeAsync(ResendCodeDTO resendCodeDTO)
+        public Task<SendCodeResponse> ResendVerificationCodeAsync(SendCodeDTO resendCodeDTO)
         {
             string code = GenerateVerificationCode();
             if(resendCodeDTO.IdentifierType == IdentifierEnum.email)
             {
                 // Send the code to the email
                 return SendVerificationCodeViaEmailAsync(resendCodeDTO.Identifier, code)
-                    .ContinueWith(task => new ResendCodeResponse
+                    .ContinueWith(task => new SendCodeResponse
                     {
                         IsSuccess = task.Result,
                         Message = task.Result ? "Verification code resent to email." : "Failed to resend verification code to email."
@@ -50,7 +50,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             {
                 // Send the code to the phone number
                 return SendVerificationCodeViaSmsAsync(resendCodeDTO.Identifier, code)
-                    .ContinueWith(task => new ResendCodeResponse
+                    .ContinueWith(task => new SendCodeResponse
                     {
                         IsSuccess = task.Result,
                         Message = task.Result ? "Verification code resent to phone number." : "Failed to resend verification code to phone number."
@@ -58,7 +58,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             }
             else
             {
-                return Task.FromResult(new ResendCodeResponse
+                return Task.FromResult(new SendCodeResponse
                 {
                     IsSuccess = false,
                     Message = "Invalid identifier. Must be a valid email or phone number."

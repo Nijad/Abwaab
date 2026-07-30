@@ -1,15 +1,8 @@
-﻿using Abwaab.Application.DTOs.ApplicationUser.ChangePassword;
-using Abwaab.Application.DTOs.ApplicationUser.ForgotPassword;
-using Abwaab.Application.DTOs.ApplicationUser.IdentifierManagement;
-using Abwaab.Application.DTOs.ApplicationUser.VerificationCode;
-using Abwaab.Application.DTOs.Roles.AddRoleToUser;
-using Abwaab.Application.DTOs.Roles.GetUserRoles;
-using Abwaab.Application.DTOs.Roles.RemoveUserFormRole;
-using Abwaab.Application.Features.Users.Auth.Login;
+﻿using Abwaab.Application.Features.Users.Auth.Login;
 using Abwaab.Application.Features.Users.Auth.Logout;
 using Abwaab.Application.Features.Users.Auth.Register;
-using Abwaab.Domain.Entities.UserEntities;
-using Abwaab.Domain.Enums;
+using Abwaab.Application.Features.Users.Auth.SendCode;
+using Abwaab.Application.Features.Users.Auth.VerificationCode;
 
 namespace Abwaab.Application.Common.Contracts
 {
@@ -18,20 +11,7 @@ namespace Abwaab.Application.Common.Contracts
         Task<RegisterUserResponse> RegisterUserCommandAsync(RegisterUserDTO registerDTO);
         Task<LoginUserResponse> LoginUserCommandAsync(LoginUserDTO loginUserDTO);
         Task<VerifyCodeResponse> VerifyUserCommandAsync(VerifyCodeDTO verifyCodeDTO);
-        Task<bool> IsUserExistsCommandAsync(ResendCodeDTO resendCodeDTO);
-        Task<ForgotPasswordResponse> ForgotPasswordCommandAsyn(ForgotPasswordDTO request);
-        Task<ChangePasswordResponse> ChangePasswordCommandAsync(ChangePasswordDTO request);
+        Task<bool> IsUserExistsCommandAsync(SendCodeDTO resendCodeDTO);        
         Task<LogoutResponse> LogoutCommandAsync(LogoutCommand request);
-        Task<bool> MappingUserWithNotificationWayCommandAsync(ApplicationUser user, NotificationWayEnum notificationWayType);
-        Task<InitiateEmailChangeResponse> InitiatieEmailChangeCommandAsync(InitiateEmailChangeCommand request);
-        Task<ConfirmEmailChangeResponse> ConfirmEmailChangeCommandAsync(ConfirmEmailChangeCommand request);
-        Task<InitiatePhoneNoChangeResponse> InitiatePhoneNoChangeCommandAsync(InitiatePhoneNoChangeCommand request);
-        Task<ConfirmPhoneNoChangeResponse> ConfirmPhoneNoChangeCommandAsync(ConfirmPhoneNoChangeCommand request);
-        Task<CancelEmailChangeResponse> CancelEmailChangeCommandAsync(CancelEmailChangeCommand request);
-        Task<CancelPhoneChangeResponse> CancelPhoneChangeCommandAsync(CancelPhoneChangeCommand request);
-        Task<AddUserToRoleResponse> AddUserToRoleCommandAsync(AddUserToRoleDTO request);
-        Task<RemoveUserFromRoleResponse> RemoveUserFromRoleCommandAsync(RemoveUserFromRoleDTO request);
-        Task<GetUserRolesResponse> GetUserRolesQueryAsync(GetUserRolesDTO request);
-        Task<List<string>> GetAllRolesQueryAsync();
     }
 }

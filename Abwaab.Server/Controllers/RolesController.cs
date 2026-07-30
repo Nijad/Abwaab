@@ -1,7 +1,7 @@
-﻿using Abwaab.Application.DTOs.Roles.AddRoleToUser;
-using Abwaab.Application.DTOs.Roles.GetAllRoles;
-using Abwaab.Application.DTOs.Roles.GetUserRoles;
-using Abwaab.Application.DTOs.Roles.RemoveUserFormRole;
+﻿using Abwaab.Application.Features.Users.Role.AddUserToRole;
+using Abwaab.Application.Features.Users.Role.GetAllRoles;
+using Abwaab.Application.Features.Users.Role.GetUserRoles;
+using Abwaab.Application.Features.Users.Role.RemoveUserFromRole;
 using Abwaab.Infrastructure.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

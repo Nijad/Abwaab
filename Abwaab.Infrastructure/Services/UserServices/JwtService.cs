@@ -1,5 +1,5 @@
 ﻿using Abwaab.Application.Common.Interfaces;
-using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
+using Abwaab.Application.Features.Users.Auth.RefreshToken;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Options;
 using DynamicData;

@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.DTOs.ApplicationUser.RefreshToken;
+﻿using Abwaab.Application.Features.Users.Auth.RefreshToken;
 using Abwaab.Domain.Entities.UserEntities;
 
 namespace Abwaab.Application.Common.Interfaces
