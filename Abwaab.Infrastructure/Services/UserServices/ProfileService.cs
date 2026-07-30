@@ -527,7 +527,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
             if (notificationWay.WayName == NotificationWayEnum.Email.ToString() && !string.IsNullOrEmpty(user.Email) && !user.EmailConfirmed)
                 return new() { Success = false, Message = "Your email is not confirmed, please confirm email first;" };
-            
+
             if (notificationWay.WayName == NotificationWayEnum.SMS.ToString() && string.IsNullOrEmpty(user.PhoneNumber))
                 return new() { Success = false, Message = "You don't have phone number yet, please add an email first." };
 
@@ -554,7 +554,31 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task<NotificationWayUnsubscriptionResponse> UnsubscribeNotificationWayCommandAsync(NotificationWaySubsciptionCommand request)
         {
-            throw new NotImplementedException();
+            //check if user exist
+            ApplicationUser? user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            if (user == null)
+                throw new NotFoundException("User", nameof(request.UserId), request.UserId.ToString());
+
+            //check if notification way exist
+            NotificationWay? notificationWay = await _notificationWayRepository.GetNotificationWayByIdAsync(request.NotifiactionWayId);
+            if (notificationWay == null)
+                throw new NotFoundException(nameof(NotificationWay), nameof(request.NotifiactionWayId), request.NotifiactionWayId.ToString());
+
+            //check if user had already subscribe
+            UserNotificationSubscription? userSubscription = await _notificationWayRepository.GetUserSubscriptionAsync(request.UserId, request.NotifiactionWayId);
+
+            if (userSubscription == null)
+
+                return new() { Success = false, Message = $"User is already unsubscribe with {notificationWay.WayName}" };
+
+            if (!userSubscription.IsInactive)
+                return new() { Success = false, Message = $"User subscription is already inactive with {notificationWay.WayName}" };
+
+            userSubscription.IsInactive = true;
+            userSubscription.LastModifiedAt = DateTime.Now;
+            userSubscription.LastModifiedBy = user.Id.ToString();
+            await _notificationWayRepository.UpdateSubscriptionAsync(userSubscription);
+            return new() { Success = true, Message = "Subscription deactivated successfully" };
         }
     }
 }
