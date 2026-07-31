@@ -76,8 +76,8 @@ namespace Abwaab.Server
 
             var app = builder.Build();
             app.UseExceptionHandler();
-            //app.UseDefaultFiles();
-            //app.UseStaticFiles();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             //app.UseMiddleware<GlobalExceptionMiddleware>();
             if (app.Environment.IsDevelopment())
             {
@@ -90,13 +90,15 @@ namespace Abwaab.Server
             }
 
             app.UseHttpsRedirection();
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
 
-
-            app.MapControllers();
-
-            //app.MapFallbackToFile("/index.html");
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapFallbackToFile("/index.html");
+            });
 
             app.Run();
         }
