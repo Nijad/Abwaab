@@ -1,7 +1,8 @@
-﻿using Abwaab.Application.DTOs.Roles.AddRoleToUser;
-using Abwaab.Application.DTOs.Roles.GetAllRoles;
-using Abwaab.Application.DTOs.Roles.GetUserRoles;
-using Abwaab.Application.DTOs.Roles.RemoveUserFormRole;
+﻿using Abwaab.Application.Features.Users.Role.AddUserToRole;
+using Abwaab.Application.Features.Users.Role.GetAllRoles;
+using Abwaab.Application.Features.Users.Role.GetUserRoles;
+using Abwaab.Application.Features.Users.Role.RemoveUserFromRole;
+using Abwaab.Infrastructure.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +11,16 @@ namespace Abwaab.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = Constants.ROLE_ADMIN)]
     public class RolesController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public RolesController(IMediator mediator)
+        private readonly ILogger<RolesController> _logger;
+        public RolesController(IMediator mediator,
+            ILogger<RolesController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpPost("add-user-role")]

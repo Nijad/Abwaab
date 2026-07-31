@@ -6,5 +6,7 @@
         public const string AUTH_CONTROLLER = "auth";
         public const string CANCEL_PHONE_CHANGE_ACTION = "CancelPhoneChange";
         public const string CANCEL_EMAIL_CHANGE_ACTION = "CancelEmailChange";
+        public const string ROLE_ADMIN = "Admin";
+        public const string ROLE_USER = "User";
     }
 }

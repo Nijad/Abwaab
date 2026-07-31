@@ -1,5 +1,4 @@
-﻿using Abwaab.Application.Common.Contracts;
-using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Common.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Options;
 using Abwaab.Infrastructure.Presistence;
@@ -10,7 +9,9 @@ using Abwaab.Infrastructure.Services.SmsServices;
 using Abwaab.Infrastructure.Services.UserServices;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
+using System.Threading.RateLimiting;
 
 namespace Abwaab.Infrastructure
 {
@@ -37,7 +39,23 @@ namespace Abwaab.Infrastructure
 
             services.AddScoped<IAppDbContextInitializer, AppDbContextInitializer>();
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddRateLimiter(options =>
+            {
+                options.AddFixedWindowLimiter("LoginPolicy", opt =>
+                {
+                    opt.PermitLimit = 5;
+                    opt.Window = TimeSpan.FromMinutes(5);
+                    opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                    opt.QueueLimit = 0;
+                });
+            });
+
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            {
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+            })
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
             services.AddAuthentication(options =>

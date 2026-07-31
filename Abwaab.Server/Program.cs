@@ -1,11 +1,10 @@
-
 using Abwaab.Application;
 using Abwaab.Infrastructure;
-using Abwaab.Server.Behaviors;
 using Abwaab.Server.Exceptions;
-using FluentValidation;
-using MediatR;
+using Abwaab.Server.Extensions;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Events;
 
 namespace Abwaab.Server
 {
@@ -17,6 +16,21 @@ namespace Abwaab.Server
             builder.Services.AddProblemDetails();
 
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Warning() // Global log level
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning) // Ignore verbose framework logs
+                .Enrich.FromLogContext() // Add contextual properties
+                .WriteTo.Console()  // Output to Console (optional)
+                .WriteTo.File(
+                    path: "logs/abwaab-.log",              // File path (logs folder)
+                    rollingInterval: RollingInterval.Day, // New log file every day
+                    retainedFileCountLimit: 31,           // Keep last 31 days of logs
+                    fileSizeLimitBytes: 20 * 1024 * 1024  // Max 20 MB per file
+                )
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -60,21 +74,11 @@ namespace Abwaab.Server
 
             builder.Services.AddMediatR(options => options.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
-            builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
-
-            // Add MediatR pipeline behaviors
-            // ValidationBehavior will run before DetectIdentifierBehavior, as it is registered first
-            // This means that validation will occur before identifier detection in the request processing pipeline
-            // The order of registration matters because MediatR executes pipeline behaviors in the order they are registered
-            // If you want to change the order of execution, you can change the order of registration here
-            // For example, if you want DetectIdentifierBehavior to run before ValidationBehavior, you can swap the order of these two lines
-            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-            // DetectIdentifierBehavior will run after ValidationBehavior, as it is registered second
-            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DetectIdentifierBehavior<,>));
-            // Get user id in a request
-            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UserContextBehavior<,>));
-
             var app = builder.Build();
+            app.UseExceptionHandler();
+
+            app.UseSerilogRequestLogging();
+
             app.UseExceptionHandler();
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -83,12 +87,9 @@ namespace Abwaab.Server
             {
                 await app.InitialiseDatabaseAsync();
                 app.UseSwagger();
-                app.UseSwaggerUI(/*c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Abwaab API V1");
-                }*/);
+                app.UseSwaggerUI();
             }
-
+            app.UseRateLimiter();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
@@ -100,7 +101,19 @@ namespace Abwaab.Server
                 endpoints.MapFallbackToFile("/index.html");
             });
 
-            app.Run();
+            try
+            {
+                Log.Information("Application is starting up.");
+                app.Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Application terminated unexpectedly.");
+            }
+            finally
+            {
+                Log.CloseAndFlush(); // Ensure logs are written before exit
+            }
         }
     }
 }
