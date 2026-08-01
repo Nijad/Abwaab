@@ -82,7 +82,7 @@ namespace Abwaab.Server
             app.UseExceptionHandler();
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
+            //app.UseMiddleware<GlobalExceptionMiddleware>();
             if (app.Environment.IsDevelopment())
             {
                 await app.InitialiseDatabaseAsync();
@@ -97,8 +97,8 @@ namespace Abwaab.Server
 
             app.UseEndpoints(endpoints =>
             {
-                app.MapControllers();
-                app.MapFallbackToFile("/index.html");
+                endpoints.MapControllers();
+                endpoints.MapFallbackToFile("/index.html");
             });
 
             try
