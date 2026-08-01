@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Common.Exceptions.Email;
+using Abwaab.Application.Interfaces;
 using Abwaab.Infrastructure.Options;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -19,7 +20,7 @@ namespace Abwaab.Infrastructure.Services.EmailServices
             _logger = logger;
         }
 
-        public async Task<bool> SendEmailAsync(string toEmail, string subject, string body)
+        public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
             try
             {
@@ -39,39 +40,35 @@ namespace Abwaab.Infrastructure.Services.EmailServices
 
                 // Choose the correct SecureSocketOptions based on the port
                 SecureSocketOptions options;
+                
+                // Direct SSL (old standard)
                 if (_settings.SmtpPort == 465)
-                {
-                    options = SecureSocketOptions.SslOnConnect;  // Direct SSL (old standard)
-                }
+                    options = SecureSocketOptions.SslOnConnect;
+                
+                // Upgrade to TLS after plain connection
                 else if (_settings.SmtpPort == 587)
-                {
-                    options = SecureSocketOptions.StartTls;      // Upgrade to TLS after plain connection
-                }
+                    options = SecureSocketOptions.StartTls;
+                
+                // Fallback: try StartTls if not explicitly set (common for other ports)
                 else
-                {
-                    // Fallback: try StartTls if not explicitly set (common for other ports)
                     options = SecureSocketOptions.StartTlsWhenAvailable;
-                }
 
                 // Connect with the correct security option
                 await client.ConnectAsync(_settings.SmtpServer, _settings.SmtpPort, options);
 
                 // Authenticate if credentials are provided
                 if (!string.IsNullOrEmpty(_settings.SmtpUsername) && !string.IsNullOrEmpty(_settings.SmtpPassword))
-                {
                     await client.AuthenticateAsync(_settings.SmtpUsername, _settings.SmtpPassword);
-                }
 
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
 
                 _logger.LogInformation("Email sent successfully to {ToEmail} via SMTP.", toEmail);
-                return true;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "SMTP send failed to {ToEmail}.", toEmail);
-                return false;
+                throw new FailedSendignEmailException();
             }
         }
     }

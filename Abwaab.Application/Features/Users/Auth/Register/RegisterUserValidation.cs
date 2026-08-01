@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Validations.Common;
+﻿using Abwaab.Application.Common.Validations.Common;
 using FluentValidation;
 
 namespace Abwaab.Application.Features.Users.Auth.Register

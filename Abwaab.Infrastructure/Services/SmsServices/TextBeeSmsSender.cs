@@ -1,9 +1,10 @@
-﻿using System.Text;
-using System.Text.Json;
-using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Common.Exceptions.SMS;
+using Abwaab.Application.Interfaces;
 using Abwaab.Infrastructure.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Text;
+using System.Text.Json;
 
 namespace Abwaab.Infrastructure.Services.SmsServices
 {
@@ -28,39 +29,29 @@ namespace Abwaab.Infrastructure.Services.SmsServices
             _httpClient.DefaultRequestHeaders.Add("x-api-key", _settings.ApiKey);
         }
 
-        public async Task<bool> SendSmsAsync(string phoneNumber, string message)
+        public async Task SendSmsAsync(string phoneNumber, string message)
         {
-            try
+            // Build the request payload
+            var payload = new
             {
-                // Build the request payload
-                var payload = new
-                {
-                    recipients = new[] { phoneNumber },
-                    message,
-                    from = _settings.SenderPhoneNumber
-                };
+                recipients = new[] { phoneNumber },
+                message,
+                from = _settings.SenderPhoneNumber
+            };
 
-                var json = JsonSerializer.Serialize(payload);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                // Send the SMS via TextBee API
-                var endpoint = $"api/v1/gateway/devices/{_settings.DeviceId}/send-sms";
-                var response = await _httpClient.PostAsync(endpoint, content);
+            // Send the SMS via TextBee API
+            var endpoint = $"api/v1/gateway/devices/{_settings.DeviceId}/send-sms";
+            var response = await _httpClient.PostAsync(endpoint, content);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    _logger.LogInformation("SMS sent successfully to {PhoneNumber}", phoneNumber);
-                    return true;
-                }
-
+            if (!response.IsSuccessStatusCode)
+            {
                 var error = await response.Content.ReadAsStringAsync();
-                _logger.LogError("TextBee API error: {StatusCode} - {Error}", response.StatusCode, error);
-                return false;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Exception occurred while sending SMS to {PhoneNumber}", phoneNumber);
-                return false;
+                _logger.LogError($"TextBee API error: {response.StatusCode} - {error}", response.StatusCode, error);
+
+                throw new FailedSendignSMSException();
             }
         }
     }

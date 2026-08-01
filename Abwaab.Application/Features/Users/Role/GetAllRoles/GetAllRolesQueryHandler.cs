@@ -1,19 +1,19 @@
-﻿using Abwaab.Application.Common.Contracts;
-using MediatR;
+﻿using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Abwaab.Application.Features.Users.Role.GetAllRoles
 {
     public class GetAllRolesQueryHandler : IRequestHandler<GetAllRolesQuery, List<string>>
     {
-        private readonly IRoleService _roleService;
-        public GetAllRolesQueryHandler(IRoleService roleService)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public GetAllRolesQueryHandler(RoleManager<IdentityRole> roleManager)
         {
-            _roleService = roleService;
+            _roleManager = roleManager;
         }
         public async Task<List<string>> Handle(GetAllRolesQuery request, CancellationToken cancellationToken)
         {
-            List<string> response = await _roleService.GetAllRolesQueryAsync();
-            return response;
+            return await _roleManager.Roles.Select(r => r.Name).ToListAsync();
         }
     }
 }

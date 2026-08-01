@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Interfaces;
 
 namespace Abwaab.Server.Extensions
 {

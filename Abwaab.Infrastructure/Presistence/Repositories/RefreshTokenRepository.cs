@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;

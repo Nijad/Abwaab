@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Interfaces;
 using Abwaab.Infrastructure.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;

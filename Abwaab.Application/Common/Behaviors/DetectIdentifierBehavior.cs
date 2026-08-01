@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Validations.Common;
+﻿using Abwaab.Application.Common.Validations.Common;
 using Abwaab.Domain.Enums;
 using MediatR;
 using System.Reflection;

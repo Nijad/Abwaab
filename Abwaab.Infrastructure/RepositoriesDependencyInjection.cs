@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Interfaces;
 using Abwaab.Infrastructure.Presistence.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,10 +1,10 @@
-﻿using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
+using Abwaab.Application.Features.Users.Auth.Login;
 using Abwaab.Application.Features.Users.Auth.RefreshToken;
+using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Options;
-using DynamicData;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,20 +17,17 @@ namespace Abwaab.Infrastructure.Services.UserServices
     public class JwtService : IJwtService
     {
         private readonly JwtSettings _jwtSettings;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRefreshTokenRepository _refreshTokenRepo;
-        private readonly ILogger<JwtService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public JwtService(
             IOptions<JwtSettings> settings,
-            UserManager<ApplicationUser> userManager,
             IRefreshTokenRepository refreshTokenRepo,
-            ILogger<JwtService> logger)
+            IHttpContextAccessor httpContextAccessor)
         {
             _jwtSettings = settings.Value;
-            _userManager = userManager;
             _refreshTokenRepo = refreshTokenRepo;
-            _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string GenerateAccessToken(ApplicationUser user, IList<string> roles)
@@ -71,33 +68,21 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return Convert.ToBase64String(randomNumber);
         }
 
-        public async Task<RefreshTokenResponse> RefreshToken(RefreshTokenCommand request)
+        public async Task<Guid> GetUserIdByTokenAsync(RefreshTokenCommand request)
         {
-            // 1. Validate the refresh token from the repository
-            var storedToken = await _refreshTokenRepo.GetByTokenAsync(request.RefreshToken);
+            RefreshToken? storedToken = await _refreshTokenRepo.GetByTokenAsync(request.RefreshToken);
+            
             if (storedToken == null || storedToken.IsRevoked || storedToken.ExpiryDate < DateTime.UtcNow)
-            {
-                _logger.LogWarning("Invalid or expired refresh token.");
-                return new RefreshTokenResponse { Success = false, Message = "Invalid or expired refresh token." };
-            }
+                throw new InvalidRefreshTokenException();
 
-            // 2. Find the user
-            var user = await _userManager.FindByIdAsync(storedToken.UserId.ToString());
-            if (user == null)
-            {
-                _logger.LogWarning("User not found for refresh token.");
-                return new RefreshTokenResponse { Success = false, Message = "User not found." };
-            }
+            return storedToken.UserId;
+        }
 
-            // 3. (Optional) Revoke the old token (rotation)
-            await _refreshTokenRepo.RevokeAsync(request.RefreshToken, "Rotation");
-
-            // 4. Generate new tokens
-            var roles = await _userManager.GetRolesAsync(user);
+        public async Task<RefreshTokenResponse> RefreshTokenAsync(ApplicationUser user, IList<string> roles, string refreshToken)
+        {
+            await _refreshTokenRepo.RevokeAsync(refreshToken, "Rotation");
             var newAccessToken = GenerateAccessToken(user, roles);
             var newRefreshToken = GenerateRefreshToken();
-
-            // 5. Store the new refresh token
             var newStoredToken = new RefreshToken
             {
                 TokenHash = HashToken(newRefreshToken),
@@ -107,8 +92,6 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 CreatedAt = DateTime.UtcNow
             };
             await _refreshTokenRepo.CreateAsync(newStoredToken);
-
-            _logger.LogInformation("Refresh token rotated for user {UserId}.", user.Id);
 
             return new RefreshTokenResponse
             {
@@ -125,5 +108,48 @@ namespace Abwaab.Infrastructure.Services.UserServices
             var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
             return Convert.ToBase64String(bytes);
         }
+
+        string IJwtService.HashToken(string token)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
+            return Convert.ToBase64String(bytes);
+        }
+
+        public async Task<LoginUserResponse> GenerateResponseAsync(ApplicationUser user, IList<string> roles)
+        {
+            string accessToken = GenerateAccessToken(user, roles);
+            var refreshTokenString = GenerateRefreshToken();
+            var tokenHash = HashToken(refreshTokenString);
+            var refreshToken = new RefreshToken
+            {
+                TokenHash = tokenHash,
+                UserId = user.Id,
+                ExpiryDate = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays),
+                IsRevoked = false,
+                CreatedAt = DateTime.UtcNow
+            };
+            await _refreshTokenRepo.CreateAsync(refreshToken);
+
+            CookieOptions cookieOptions = new()
+            {
+                HttpOnly = true,           // Not accessible via JavaScript
+                Secure = true,             // Only sent over HTTPS
+                SameSite = SameSiteMode.Strict,
+                Expires = refreshToken.ExpiryDate
+            };
+
+            _httpContextAccessor?.HttpContext?.Response.Cookies.Append("RefreshToken", refreshTokenString, cookieOptions);
+
+            return new LoginUserResponse
+            {
+                Success = true,
+                AccessToken = accessToken,
+                RefreshToken = tokenHash,
+                ExpiresIn = _jwtSettings.AccessTokenExpiryMinutes * 60,
+                Message = "Login successful",
+            };
+        }
+
     }
 }

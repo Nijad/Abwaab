@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Common.Exceptions.Email;
+using Abwaab.Application.Interfaces;
 using Abwaab.Infrastructure.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,7 +19,7 @@ namespace Abwaab.Infrastructure.Services.EmailServices
             _logger = logger;
         }
 
-        public async Task<bool> SendEmailAsync(string toEmail, string subject, string body)
+        public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
             try
             {
@@ -35,17 +36,18 @@ namespace Abwaab.Infrastructure.Services.EmailServices
                 if (response.IsSuccessStatusCode)
                 {
                     _logger.LogInformation("Email sent successfully to {ToEmail}.", toEmail);
-                    return true;
+                    //return true;
                 }
 
                 var errorBody = await response.Body.ReadAsStringAsync();
                 _logger.LogError("SendGrid failed: {StatusCode} - {Error}", response.StatusCode, errorBody);
-                return false;
+                //return false;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception occurred while sending email to {ToEmail}.", toEmail);
-                return false;
+                //return false;
+                throw new FailedSendignEmailException();
             }
         }
     }

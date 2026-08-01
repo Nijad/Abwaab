@@ -1,4 +1,6 @@
-﻿using Abwaab.Application.Common.Contracts;
+﻿using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Contracts;
+using Abwaab.Application.Features.Users.Auth.SendCode;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -35,7 +37,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     .FirstOrDefaultAsync(u => u.PreviousPhoneNumber == identifier);
             }
 
-            throw new NotImplementedException($"Identifier type of {identifierType.ToString()} does not implemented yet");
+            throw new NotImplementdIdentifierException(identifierType.ToString());
         }
     }
 }

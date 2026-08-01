@@ -1,5 +1,5 @@
-﻿using Abwaab.Application.Common.Contracts;
-using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Contracts;
+using Abwaab.Application.Interfaces;
 using Abwaab.Infrastructure.Services.UserServices;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,7 +11,6 @@ namespace Abwaab.Infrastructure
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IJwtService, JwtService>();
             return services;

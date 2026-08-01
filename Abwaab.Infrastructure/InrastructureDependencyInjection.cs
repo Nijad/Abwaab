@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Options;
 using Abwaab.Infrastructure.Presistence;
@@ -28,7 +28,7 @@ namespace Abwaab.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
         {
             services.AddMemoryCache();
-            services.AddScoped<ITokenBlacklistService, TokenBlacklistService>();
+            services.AddScoped<ITokenCacheService, TokenCacheService>();
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
             services.Configure<JwtSettings>(config.GetSection("JwtSettings"));
@@ -84,7 +84,7 @@ namespace Abwaab.Infrastructure
                         if (!string.IsNullOrEmpty(jti))
                         {
                             var blacklistService = context.HttpContext.RequestServices
-                                .GetRequiredService<ITokenBlacklistService>();
+                                .GetRequiredService<ITokenCacheService>();
                             if (blacklistService.IsBlacklisted(jti))
                             {
                                 context.Fail("Token has been revoked.");

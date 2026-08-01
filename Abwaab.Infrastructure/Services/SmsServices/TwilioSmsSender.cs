@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Common.Exceptions.SMS;
+using Abwaab.Application.Interfaces;
 using Abwaab.Infrastructure.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,7 +20,7 @@ namespace Abwaab.Infrastructure.Services.SmsServices
             _logger = logger;
         }
 
-        public async Task<bool> SendSmsAsync(string phoneNumber, string message)
+        public async Task SendSmsAsync(string phoneNumber, string message)
         {
             try
             {
@@ -36,23 +37,21 @@ namespace Abwaab.Infrastructure.Services.SmsServices
 
                 if (!string.IsNullOrEmpty(result.Sid))
                 {
-                    _logger.LogInformation("SMS sent successfully to {PhoneNumber}. SID: {Sid}", phoneNumber, result.Sid);
-                    return true;
+                    _logger.LogInformation($"SMS sent successfully to {phoneNumber}. SID: {result.Sid}");
                 }
 
-                _logger.LogWarning("SMS sent but no SID returned for {PhoneNumber}.", phoneNumber);
-                return false;
+                _logger.LogWarning($"SMS sent but no SID returned for {phoneNumber}.");
             }
             catch (ApiException ex)
             {
                 // Twilio specific errors (e.g., invalid number, insufficient balance)
-                _logger.LogError(ex, "Twilio API error sending SMS to {PhoneNumber}: {Message}", phoneNumber, ex.Message);
-                return false;
+                _logger.LogError(ex, $"Twilio API error sending SMS to {phoneNumber}: {ex.Message}");
+                throw new FailedSendignSMSException();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception occurred while sending SMS to {PhoneNumber}.", phoneNumber);
-                return false;
+                _logger.LogError(ex, $"Exception occurred while sending SMS to {phoneNumber}.");
+                throw new FailedSendignSMSException();
             }
         }
     }

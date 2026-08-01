@@ -1,5 +1,6 @@
-﻿using Abwaab.Application.Common.Contracts;
-using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Contracts;
+using Abwaab.Application.Interfaces;
 using MediatR;
 
 namespace Abwaab.Application.Features.Users.Auth.SendCode
@@ -7,27 +8,23 @@ namespace Abwaab.Application.Features.Users.Auth.SendCode
     public class SendCodeCommandHandler : IRequestHandler<SendCodeDTO, SendCodeResponse>
     {
         private readonly IVerificationCodeService _verificationCodeService;
-        private readonly IAuthService _authService;
-        public SendCodeCommandHandler(IVerificationCodeService verificationCodeService, IAuthService authService)
+        private readonly IUserService _userService;
+
+        public SendCodeCommandHandler(
+            IVerificationCodeService verificationCodeService, 
+            IUserService userService)
         {
             _verificationCodeService = verificationCodeService;
-            _authService = authService;
+            _userService = userService;
         }
         public async Task<SendCodeResponse> Handle(SendCodeDTO request, CancellationToken cancellationToken)
         {
-            bool isUserExists = await _authService.IsUserExistsCommandAsync(request);
+            var user = _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
 
-            if (!isUserExists)
-            {
-                return new SendCodeResponse
-                {
-                    IsSuccess = false,
-                    Message = $"User with {request.IdentifierType.ToString().Replace('_', ' ')} {request.Identifier} does not exist."
-                };
-            }
-
-            SendCodeResponse result = await _verificationCodeService.ResendVerificationCodeAsync(request);
-            return result;
+            if(user == null)
+                throw new NotFoundException("User", nameof(request.IdentifierType), request.Identifier);
+            
+            return await _verificationCodeService.SendVerificationCodeAsync(request);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Common.Interfaces;
+﻿using Abwaab.Application.Interfaces;
 using MediatR;
 
 namespace Abwaab.Application.Features.Users.Profile.Password.Change

@@ -1,5 +1,5 @@
-﻿using Abwaab.Application.Common.Interfaces;
-using Abwaab.Application.Features.Users.Auth.SendCode;
+﻿using Abwaab.Application.Features.Users.Auth.SendCode;
+using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Enums;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -19,7 +19,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return "123456";
         }
 
-        public Task<SendCodeResponse> ResendVerificationCodeAsync(SendCodeDTO resendCodeDTO)
+        public Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO)
         {
             string code = GenerateVerificationCode();
             if (resendCodeDTO.IdentifierType == IdentifierEnum.email)
@@ -27,8 +27,8 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 return SendVerificationCodeViaEmailAsync(resendCodeDTO.Identifier, code)
                     .ContinueWith(task => new SendCodeResponse
                     {
-                        IsSuccess = task.Result,
-                        Message = task.Result ? "Verification code resent to email." : "Failed to resend verification code to email."
+                        Success = true,
+                        Message = "Verification code resent to email."
                     });
             }
             else if (resendCodeDTO.IdentifierType == IdentifierEnum.phone_number)
@@ -36,41 +36,45 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 return SendVerificationCodeViaSmsAsync(resendCodeDTO.Identifier, code)
                     .ContinueWith(task => new SendCodeResponse
                     {
-                        IsSuccess = task.Result,
-                        Message = task.Result ? "Verification code resent to phone number." : "Failed to resend verification code to phone number."
+                        Success = true,
+                        Message = "Verification code resent to phone number."
                     });
             }
             else
             {
                 return Task.FromResult(new SendCodeResponse
                 {
-                    IsSuccess = false,
+                    Success = false,
                     Message = "Invalid identifier. Must be a valid email or phone number."
                 });
             }
         }
 
-        public Task<bool> SendVerificationCodeViaEmailAsync(string email, string code)
+        public Task SendVerificationCodeViaEmailAsync(string email, string code)
         {
             return Task.FromResult(true);
         }
 
-        public Task<bool> SendVerificationCodeViaSmsAsync(string phoneNo, string code)
+        public Task SendVerificationCodeViaSmsAsync(string phoneNo, string code)
         {
             return Task.FromResult(true);
         }
 
         public Task<bool> VerifyCodeAsync(string identifier, string userInputCode)
         {
-            if (_cache.TryGetValue(identifier, out string? storedCode))
+            if (_cache.TryGetValue(identifier, out string? storedCode) && storedCode == userInputCode)
             {
-                if (storedCode == userInputCode)
-                {
-                    _cache.Remove(identifier); // Invalidate code after successful use
-                    return Task.FromResult(true);
-                }
+                // Invalidate code after successful use
+                _cache.Remove(identifier);
+                return Task.FromResult(true);
             }
             return Task.FromResult(false);
         }
+
+        Task IVerificationCodeService.SendVerificationCodeViaEmailAsync(string email, string code)
+        {
+            return SendVerificationCodeViaEmailAsync(email, code);
+        }
+
     }
 }
