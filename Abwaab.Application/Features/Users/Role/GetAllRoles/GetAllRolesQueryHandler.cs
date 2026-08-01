@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Abwaab.Domain.Entities.UserEntities;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,8 +7,8 @@ namespace Abwaab.Application.Features.Users.Role.GetAllRoles
 {
     public class GetAllRolesQueryHandler : IRequestHandler<GetAllRolesQuery, List<string>>
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public GetAllRolesQueryHandler(RoleManager<IdentityRole> roleManager)
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        public GetAllRolesQueryHandler(RoleManager<ApplicationRole> roleManager)
         {
             _roleManager = roleManager;
         }
