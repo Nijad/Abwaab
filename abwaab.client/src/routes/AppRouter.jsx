@@ -2,22 +2,22 @@ import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 // Layouts
-import { MainLayout } from "../layouts/MainLayout";
-import { AdminLayout } from "../layouts/AdminLayout";
+import MainLayout from "../layouts/MainLayout";
+import AdminLayout from "../layouts/AdminLayout";
 
 // Protection Guard
-import { ProtectedRoute } from "./ProtectedRoute";
+// import { ProtectedRoute } from "./ProtectedRoute";
 
 // Public Pages
-import { HomePage } from "../pages/public/HomePage";
-import { PropertiesPage } from "../pages/public/PropertiesPage";
-import { PropertyDetailsPage } from "../pages/public/PropertyDetailsPage";
-import { LoginPage } from "../pages/public/LoginPage";
+import Home from "../pages/Home";
+import Properties from "../pages/Properties";
+import Login from "../pages/Login";
+import PropertyDetails from "../pages/PropertyDetails";
 
 // Dashboard Pages
-import { OverviewPage } from "../pages/dashboard/OverviewPage";
-import { MyPropertiesPage } from "../pages/dashboard/MyPropertiesPage";
-import { ManageUsersPage } from "../pages/dashboard/ManageUsersPage";
+// import { OverviewPage } from "../pages/dashboard/OverviewPage";
+// import { MyPropertiesPage } from "../pages/dashboard/MyPropertiesPage";
+// import { ManageUsersPage } from "../pages/dashboard/ManageUsersPage";
 
 const router = createBrowserRouter([
   // ----------------------------------------------------------------------
@@ -27,36 +27,36 @@ const router = createBrowserRouter([
     path: "/",
     element: <MainLayout />,
     children: [
-      { index: true, element: <HomePage /> },
-      { path: "properties", element: <PropertiesPage /> },
-      { path: "properties/:id", element: <PropertyDetailsPage /> },
-      { path: "login", element: <LoginPage /> },
+      { index: true, element: <Home /> },
+      { path: "properties", element: <Properties /> },
+      { path: "properties/:id", element: <PropertyDetails /> },
+      { path: "login", element: <Login /> },
     ],
   },
 
   // ----------------------------------------------------------------------
   // 2. DASHBOARD LAYOUT GROUP (Protected)
   // ----------------------------------------------------------------------
-  {
-    path: "/dashboard",
-    element: (
-      <ProtectedRoute>
-        <AdminLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      { index: true, element: <OverviewPage /> },
-      { path: "my-properties", element: <MyPropertiesPage /> },
-      {
-        path: "users",
-        element: (
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <ManageUsersPage />
-          </ProtectedRoute>
-        ),
-      },
-    ],
-  },
+  // {
+  //   path: "/dashboard",
+  //   element: (
+  //     <ProtectedRoute>
+  //       <AdminLayout />
+  //     </ProtectedRoute>
+  //   ),
+  //   children: [
+  //     { index: true, element: <OverviewPage /> },
+  //     { path: "my-properties", element: <MyPropertiesPage /> },
+  //     {
+  //       path: "users",
+  //       element: (
+  //         <ProtectedRoute allowedRoles={["Admin"]}>
+  //           <ManageUsersPage />
+  //         </ProtectedRoute>
+  //       ),
+  //     },
+  //   ],
+  // },
 
   // ----------------------------------------------------------------------
   // 3. FALLBACK / 404 ROUTE
