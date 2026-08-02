@@ -31,7 +31,17 @@ namespace Abwaab.Server
                 .CreateLogger();
 
             builder.Host.UseSerilog();
-
+            builder.Services.AddCors(policy =>
+            {
+                policy.AddPolicy("devPolicy", op =>
+                {
+                    op.WithOrigins("https://localhost:60706").AllowCredentials().AllowAnyMethod().AllowAnyHeader().Build();
+                });
+                policy.AddPolicy("prodPolicy", op =>
+                {
+                    op.WithOrigins("https://production_URL.com").AllowCredentials().AllowAnyMethod().AllowAnyHeader().Build();
+                });
+            });
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
@@ -86,11 +96,13 @@ namespace Abwaab.Server
             if (app.Environment.IsDevelopment())
             {
                 await app.InitialiseDatabaseAsync();
+                app.UseCors("devPolicy");
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
             app.UseRateLimiter();
             app.UseHttpsRedirection();
+            app.UseCors("prodPolicy");
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
