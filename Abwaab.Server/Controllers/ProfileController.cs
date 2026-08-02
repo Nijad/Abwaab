@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.Features.Users.Profile.Email.Cancel;
 using Abwaab.Application.Features.Users.Profile.Email.Confirm;
 using Abwaab.Application.Features.Users.Profile.Email.InitiateChange;
+using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Subscribe;
 using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Unsubscribe;
 using Abwaab.Application.Features.Users.Profile.Password.Change;
 using Abwaab.Application.Features.Users.Profile.Password.Forgot;
@@ -26,16 +27,6 @@ namespace Abwaab.Server.Controllers
         {
             _mediator = mediator;
             _logger = logger;
-        }
-
-        [HttpPost("SubscribeNotificationWay")]
-        public async Task<IActionResult> SubscribeNotificationWay([FromBody] NotificationWaySubsciptionCommand request)
-        {
-            if (request == null)
-                return BadRequest();
-
-            var result = await _mediator.Send(request);
-            return Ok(result);
         }
 
         [HttpPost("cancel-email-change")]
@@ -112,5 +103,26 @@ namespace Abwaab.Server.Controllers
             var response = await _mediator.Send(forgotPasswordDTO);
             return Ok(response);
         }
+
+        [HttpPost("SubscribeNotificationWay")]
+        public async Task<IActionResult> SubscribeNotificationWay([FromBody] NotificationWaySubscriptionCommand request)
+        {
+            if (request == null)
+                return BadRequest();
+
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpPost("UnsubscribeNotificationWay")]
+        public async Task<IActionResult> UnsubscribeNotificationWay([FromBody] NotificationWayUnsubsciptionCommand request)
+        {
+            if (request == null)
+                return BadRequest();
+
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
     }
 }

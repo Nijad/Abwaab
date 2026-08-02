@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Unsubscribe
 {
-    public class NotificationWayUnsubscriptionCommandHandler : IRequestHandler<NotificationWaySubsciptionCommand, NotificationWayUnsubscriptionResponse>
+    public class NotificationWayUnsubscriptionCommandHandler : IRequestHandler<NotificationWayUnsubsciptionCommand, NotificationWayUnsubscriptionResponse>
     {
         IProfileService _profileService;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -18,7 +18,7 @@ namespace Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.
             _userManager = userManager;
         }
 
-        public async Task<NotificationWayUnsubscriptionResponse> Handle(NotificationWaySubsciptionCommand request, CancellationToken cancellationToken)
+        public async Task<NotificationWayUnsubscriptionResponse> Handle(NotificationWayUnsubsciptionCommand request, CancellationToken cancellationToken)
         {
             //check if user exist
             ApplicationUser? user = await _userManager.FindByIdAsync(request.UserId.ToString());

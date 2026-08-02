@@ -2,7 +2,7 @@
 
 namespace Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Unsubscribe
 {
-    public class NotificationWayUnsubscriptionCommandValidation : AbstractValidator<NotificationWaySubsciptionCommand>
+    public class NotificationWayUnsubscriptionCommandValidation : AbstractValidator<NotificationWayUnsubsciptionCommand>
     {
         public NotificationWayUnsubscriptionCommandValidation()
         {
