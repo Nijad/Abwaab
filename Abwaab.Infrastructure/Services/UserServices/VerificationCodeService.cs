@@ -30,13 +30,12 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return random.Next(100000, 999999).ToString();
         }
 
-        public Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO)
+        public async Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO)
         {
-            string code = GenerateVerificationCode();
             if (resendCodeDTO.IdentifierType == IdentifierEnum.email)
             {
                 // Send the code to the email
-                return SendVerificationCodeViaEmailAsync(resendCodeDTO.Identifier, code)
+                return await SendVerificationCodeViaEmailAsync(resendCodeDTO.Identifier, resendCodeDTO.Code)
                     .ContinueWith(task => new SendCodeResponse
                     {
                         Success = true,
@@ -46,7 +45,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             else if (resendCodeDTO.IdentifierType == IdentifierEnum.phone_number)
             {
                 // Send the code to the phone number
-                return SendVerificationCodeViaSmsAsync(resendCodeDTO.Identifier, code)
+                return await SendVerificationCodeViaSmsAsync(resendCodeDTO.Identifier, resendCodeDTO.Code)
                     .ContinueWith(task => new SendCodeResponse
                     {
                         Success = true,

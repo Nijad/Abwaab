@@ -12,20 +12,17 @@ namespace Abwaab.Application.Features.Users.Auth.Register
 {
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserDTO, RegisterUserResponse>
     {
-        private readonly IAuthService _authService;
         private readonly IUserService _userService;
         private readonly IVerificationCodeService _verificationService;
         private readonly IMemoryCache _cache;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public RegisterUserCommandHandler(
-            IAuthService authService,
             IUserService userService,
             IVerificationCodeService verificationService,
             IMemoryCache cache,
             UserManager<ApplicationUser> userManager)
         {
-            _authService = authService;
             _userService = userService;
             _verificationService = verificationService;
             _cache = cache;
@@ -35,7 +32,7 @@ namespace Abwaab.Application.Features.Users.Auth.Register
         public async Task<RegisterUserResponse> Handle(RegisterUserDTO request, CancellationToken cancellationToken)
         {
             //check if user already exists
-            Task<ApplicationUser?> user = _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
 
             if (user != null)
                 throw new UserAlreadyExistException();

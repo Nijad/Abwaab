@@ -20,6 +20,13 @@ namespace Abwaab.Server.Exceptions
         {
             ProblemDetails problem = exception switch
             {
+                EmailNotVerifiedException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status428PreconditionRequired,
+                    Title = "Login Failed",
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
                 UserNotInRoleException ex => new CustomProblemDetails
                 {
                     Status = StatusCodes.Status400BadRequest,

@@ -109,13 +109,6 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return Convert.ToBase64String(bytes);
         }
 
-        string IJwtService.HashToken(string token)
-        {
-            using var sha256 = SHA256.Create();
-            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
-            return Convert.ToBase64String(bytes);
-        }
-
         public async Task<LoginUserResponse> GenerateResponseAsync(ApplicationUser user, IList<string> roles)
         {
             string accessToken = GenerateAccessToken(user, roles);
@@ -145,7 +138,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             {
                 Success = true,
                 AccessToken = accessToken,
-                RefreshToken = tokenHash,
+                RefreshToken = refreshTokenString,
                 ExpiresIn = _jwtSettings.AccessTokenExpiryMinutes * 60,
                 Message = "Login successful",
             };

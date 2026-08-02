@@ -47,7 +47,7 @@ namespace Abwaab.Application.Features.Users.Auth.Login
             if (result.IsLockedOut)
                 throw new AccountLockedOutException();
 
-            if (request.IdentifierType == IdentifierEnum.email && user.EmailConfirmed)
+            if ((request.IdentifierType == IdentifierEnum.email) && !user.EmailConfirmed)
                 throw new EmailNotVerifiedException();
 
             if (request.IdentifierType == IdentifierEnum.phone_number && user.PhoneNumberConfirmed)

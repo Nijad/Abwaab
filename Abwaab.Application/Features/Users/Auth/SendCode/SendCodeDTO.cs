@@ -7,5 +7,6 @@ namespace Abwaab.Application.Features.Users.Auth.SendCode
     {
         public string Identifier { get; set; } = string.Empty;
         public IdentifierEnum IdentifierType { get; set; }
+        public string Code { get; set; } = string.Empty;
     }
 }
