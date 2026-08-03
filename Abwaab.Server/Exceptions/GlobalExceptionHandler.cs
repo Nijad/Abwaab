@@ -132,7 +132,7 @@ namespace Abwaab.Server.Exceptions
                     Detail = ex.Message,
                     ErrorCode = ex.ErrorCode
                 },
-                NotImplementdIdentifierException ex => new CustomProblemDetails
+                NotImplementedIdentifierException ex => new CustomProblemDetails
                 {
                     Status = StatusCodes.Status500InternalServerError,
                     Title = "Not Implemented Identifier type",

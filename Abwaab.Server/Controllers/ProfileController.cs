@@ -5,6 +5,8 @@ using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Subs
 using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Unsubscribe;
 using Abwaab.Application.Features.Users.Profile.Password.Change;
 using Abwaab.Application.Features.Users.Profile.Password.Forgot;
+using Abwaab.Application.Features.Users.Profile.Password.Reset;
+using Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode;
 using Abwaab.Application.Features.Users.Profile.Phone.Cancel;
 using Abwaab.Application.Features.Users.Profile.Phone.Confirm;
 using Abwaab.Application.Features.Users.Profile.Phone.InitiateChange;
@@ -83,24 +85,6 @@ namespace Abwaab.Server.Controllers
                 ConfirmNewPassword = request.ConfirmPassword
             };
             var response = await _mediator.Send(resetPasswordDTO);
-            return Ok(response);
-        }
-
-        [AllowAnonymous]
-        [HttpPost("ForgotPassword")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommand forgotPasswordRequest)
-        {
-            if (forgotPasswordRequest == null)
-                return BadRequest();
-
-            ForgotPasswordDTO forgotPasswordDTO = new ForgotPasswordDTO
-            {
-                Identifier = forgotPasswordRequest.Identifier,
-                ConfirmNewPassword = forgotPasswordRequest.ConfirmNewPassword,
-                NewPassword = forgotPasswordRequest.NewPassword
-            };
-
-            var response = await _mediator.Send(forgotPasswordDTO);
             return Ok(response);
         }
 

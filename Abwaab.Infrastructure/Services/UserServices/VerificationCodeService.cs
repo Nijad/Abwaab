@@ -53,7 +53,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     });
             }
 
-            throw new NotImplementdIdentifierException(resendCodeDTO.IdentifierType.ToString());
+            throw new NotImplementedIdentifierException(resendCodeDTO.IdentifierType.ToString());
         }
 
         public async Task SendVerificationCodeViaEmailAsync(string email, string code)

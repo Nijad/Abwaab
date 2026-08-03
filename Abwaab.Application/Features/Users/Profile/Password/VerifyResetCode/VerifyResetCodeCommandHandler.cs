@@ -1,0 +1,39 @@
+﻿using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
+using Abwaab.Domain.Enums;
+using Abwaab.Infrastructure.Common;
+using MediatR;
+using Microsoft.Extensions.Caching.Memory;
+
+namespace Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode
+{
+    public class VerifyResetCodeCommandHandler : IRequestHandler<VerifyResetCodeDTO, VerifyResetCodeResponse>
+    {
+        private readonly IMemoryCache _cache;
+
+        public VerifyResetCodeCommandHandler(IMemoryCache cache)
+        {
+            _cache = cache;
+        }
+
+        public Task<VerifyResetCodeResponse> Handle(VerifyResetCodeDTO request, CancellationToken cancellationToken)
+        {
+            var cacheKey = $"reset_{request.Identifier}";
+            if (!_cache.TryGetValue(cacheKey, out string storedCode))
+                if (request.IdentifierType == IdentifierEnum.email)
+                    throw new InvalidCodeOrEmailMissmatchException();
+                else if (request.IdentifierType == IdentifierEnum.phone_number)
+                    throw new InvalidCodeOrPhoneMissmatchException();
+                else
+                    throw new NotImplementedIdentifierException(request.IdentifierType.ToString().Replace("_", " "));
+
+            if (storedCode != request.Code)
+                    throw new InvalidVerificationCodeException();
+
+            // Set a flag that code is verified
+            _cache.Set($"reset_verified_{request.Identifier}", true, TimeSpan.FromMinutes(Constants.CODE_TIMEOUT_MINUTES));
+
+            return Task.FromResult(new VerifyResetCodeResponse { Success = true, Message = "Code verified." });
+        }
+    }
+}

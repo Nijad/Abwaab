@@ -53,7 +53,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     .FirstOrDefaultAsync(u => u.PreviousPhoneNumber == identifier);
             }
 
-            throw new NotImplementdIdentifierException(identifierType.ToString());
+            throw new NotImplementedIdentifierException(identifierType.ToString());
         }
 
         public string? GetUserJti()

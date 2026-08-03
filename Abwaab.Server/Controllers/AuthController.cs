@@ -4,6 +4,9 @@ using Abwaab.Application.Features.Users.Auth.RefreshToken;
 using Abwaab.Application.Features.Users.Auth.Register;
 using Abwaab.Application.Features.Users.Auth.SendCode;
 using Abwaab.Application.Features.Users.Auth.VerificationCode;
+using Abwaab.Application.Features.Users.Profile.Password.Forgot;
+using Abwaab.Application.Features.Users.Profile.Password.Reset;
+using Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -112,6 +115,48 @@ namespace Abwaab.Server.Controllers
 
             LogoutResponse response = await _mediator.Send(request);
             return Ok(response);
+        }
+
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommand forgotPasswordRequest)
+        {
+            if (forgotPasswordRequest == null)
+                return BadRequest();
+
+            ForgotPasswordDTO forgotPasswordDTO = new ForgotPasswordDTO
+            {
+                Identifier = forgotPasswordRequest.Identifier
+            };
+
+            var response = await _mediator.Send(forgotPasswordDTO);
+            return Ok(response);
+        }
+
+        [HttpPost("verify-reset-code")]
+        public async Task<IActionResult> VerifyResetCode([FromBody] VerifyResetCodeCommand command)
+        {
+            VerifyResetCodeDTO request = new()
+            {
+                Identifier = command.Identifier,
+                Code = command.Code
+            };
+
+            var result = await _mediator.Send(request);
+            return result.Success ? Ok(result) : BadRequest(result);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
+        {
+            ResetPasswordDTO request = new()
+            {
+                Identifier = command.Identifier,
+                Code = command.Code,
+                NewPassword = command.NewPassword,
+                ConfirmNewPassword = command.ConfirmNewPassword
+            };
+            var result = await _mediator.Send(request);
+            return result.Success ? Ok(result) : BadRequest(result);
         }
     }
 }
