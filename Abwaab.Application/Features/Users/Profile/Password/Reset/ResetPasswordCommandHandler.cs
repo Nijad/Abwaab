@@ -1,5 +1,9 @@
-﻿using Abwaab.Application.Contracts;
+﻿using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Profile.Password;
+using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
+using Abwaab.Application.Contracts;
 using Abwaab.Domain.Entities.UserEntities;
+using Abwaab.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
@@ -30,21 +34,48 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Reset
         {
             // 1. Ensure code was verified (optional but recommended)
             if (!_cache.TryGetValue($"reset_verified_{request.Identifier}", out bool _))
-            {
-                return new ResetPasswordResponse { Success = false, Message = "Code not verified. Please verify first." };
-            }
+                throw new InvalidVerificationCodeException();
 
             // 2. Find user
             var user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
             if (user == null)
-                return new ResetPasswordResponse { Success = false, Message = "User not found." };
+                throw new NotFoundException("User", request.IdentifierType.ToString().Replace("_", " "), request.Identifier);
+
+            if (request.IdentifierType == IdentifierEnum.email)
+            {
+                if (user.PreviousEmail == request.Identifier)
+                {
+                    // Clear previous email if it matches the identifier
+                    user.PreviousEmail = null;
+                    // Update to the new email
+                    user.Email  = request.Identifier;
+                    // Mark email as unconfirmed
+                    user.EmailConfirmed = false;
+                }
+            }
+            else if (request.IdentifierType == IdentifierEnum.phone_number)
+            {
+                if (user.PreviousEmail == request.Identifier)
+                {
+                    // Clear previous email if it matches the identifier
+                    user.PreviousPhoneNumber = null;
+                    // Update to the new email
+                    user.PhoneNumber = request.Identifier;
+                    // Mark phone number as unconfirmed
+                    user.PhoneNumberConfirmed = false;
+                }
+            }
+            else
+                throw new NotImplementedIdentifierException(request.IdentifierType.ToString().Replace("_", " "));
+
+            //todo : enable if reset password does not update user information
+            //await _userManager.UpdateAsync(user);
+
 
             // 3. Validate the code again
             var cacheKey = $"reset_{request.Identifier}";
             if (!_cache.TryGetValue(cacheKey, out string storedCode) || storedCode != request.Code)
-            {
-                return new ResetPasswordResponse { Success = false, Message = "Invalid or expired code." };
-            }
+                throw new InvalidVerificationCodeException();
 
             // 4. Generate password reset token via Identity
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -53,14 +84,17 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Reset
             if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                return new ResetPasswordResponse { Success = false, Message = $"Reset failed: {errors}" };
+                _logger.LogError("Password reset failed for user {UserId}: {Errors}", user.Id, errors);
+
+                throw new FailedResetPasswordException();
             }
 
             // 5. Clear cache entries
             _cache.Remove(cacheKey);
             _cache.Remove($"reset_verified_{request.Identifier}");
 
-            _logger.LogInformation("Password reset successfully for user {UserId}", user.Id);
+
+
             return new ResetPasswordResponse { Success = true, Message = "Password has been reset." };
         }
     }

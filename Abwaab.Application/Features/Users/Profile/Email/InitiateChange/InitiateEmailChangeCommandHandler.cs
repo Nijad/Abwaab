@@ -1,11 +1,11 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Users.Profile.Email.Pending;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
-using Abwaab.Infrastructure.Common;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
@@ -111,7 +111,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
                 CreatedAt = DateTime.UtcNow
             };
 
-            _cache.Set($"email_change_{userId}", pending, TimeSpan.FromMinutes(Constants.CODE_TIMEOUT_MINUTES));
+            _cache.Set($"email_change_{userId}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
             // We don't mention the alert to the user to avoid confusion, but it's sent.
             return new InitiateEmailChangeResponse { Success = true, Message = "Verification code sent to the new email address." };

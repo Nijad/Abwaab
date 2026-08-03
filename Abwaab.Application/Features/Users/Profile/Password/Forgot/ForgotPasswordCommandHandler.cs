@@ -1,9 +1,9 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
-using Abwaab.Infrastructure.Common;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -40,7 +40,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Forgot
             else
                 throw new NotImplementedIdentifierException(request.IdentifierType.ToString());
 
-            _cache.Set($"reset_{request.Identifier}", code, TimeSpan.FromMinutes(Constants.CODE_TIMEOUT_MINUTES));
+            _cache.Set($"reset_{request.Identifier}", code, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
             return new ForgotPasswordResponse { Success = true, Message = $"Reset code sent to your {request.IdentifierType.ToString().Replace("_", " ")}." };
         }

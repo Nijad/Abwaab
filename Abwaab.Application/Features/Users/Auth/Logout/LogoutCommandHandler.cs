@@ -45,11 +45,8 @@ namespace Abwaab.Application.Features.Users.Auth.Logout
 
             ApplicationUser? user = await _userManager.FindByNameAsync(username);
 
-            //-----------------------------------------------------
-
-            //var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user == null)
-                throw new NotFoundException("User", nameof(username), user.Id.ToString());
+                throw new NotFoundException("User", nameof(username), username);
 
             LogoutResponse response = await _userService.RevokeActiveToken(user.Id, request.RevokeAll);
 

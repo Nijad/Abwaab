@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Exceptions.Profile;
+﻿using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Profile;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
@@ -16,9 +17,11 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger<ChangePasswordCommandHandler> _logger;
+        private readonly IUserService _userService;
+        private readonly ITokenCacheService _tokenCacheService;
 
         public ChangePasswordCommandHandler(
-            IProfileService profileService, IUserContext userContext, UserManager<ApplicationUser> userManager, IEmailSender emailSender, ISmsSender smsSender, ILogger<ChangePasswordCommandHandler> logger)
+            IProfileService profileService, IUserContext userContext, UserManager<ApplicationUser> userManager, IEmailSender emailSender, ISmsSender smsSender, ILogger<ChangePasswordCommandHandler> logger, IUserService userService, ITokenCacheService tokenCacheService)
         {
             _profileService = profileService;
             _userContext = userContext;
@@ -26,6 +29,8 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = logger;
+            _userService = userService;
+            _tokenCacheService = tokenCacheService;
         }
 
         public async Task<ChangePasswordResponse> Handle(ChangePasswordDTO request, CancellationToken cancellationToken)
@@ -33,7 +38,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
             var userId = _userContext.UserId;
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
-                return new ChangePasswordResponse { Success = false, Message = "User not found." };
+                throw new NotFoundException("User", nameof(userId), userId.ToString());
 
             // 1. Change the password
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
@@ -52,8 +57,21 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
             // Reset failed attempts to 0
             await _userManager.ResetAccessFailedCountAsync(user);
 
+            var jti = _userService.GetUserJti();
 
-            await _profileService.ChangePasswordCommandAsync(userId);
+            if (!string.IsNullOrEmpty(jti))
+            {
+                string? expClaim = _userService.GetUserExpClaim();
+                if (long.TryParse(expClaim, out var exp))
+                {
+                    DateTime expiry = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
+                    _tokenCacheService.AddToBlacklist(jti, expiry);
+                }
+            }
+
+            await _profileService.RevokeAllRefreshToken(userId, "Password changed");
+
+            _userService.RemoveCookie("RefreshToken");
 
             if (user.Email != null)
                 _ = Task.Run(async () =>

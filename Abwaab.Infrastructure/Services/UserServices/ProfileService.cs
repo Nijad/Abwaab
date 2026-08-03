@@ -11,8 +11,6 @@ using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.JsonWebTokens;
-using System.Security.Claims;
 
 namespace Abwaab.Infrastructure.Services.UserServices
 {
@@ -21,20 +19,14 @@ namespace Abwaab.Infrastructure.Services.UserServices
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly INotificationWayRepository _notificationWayRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepo;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ITokenCacheService _tokenCacheService;
         public ProfileService(
             UserManager<ApplicationUser> userManager,
             INotificationWayRepository notificationWayRepository,
-            IRefreshTokenRepository refreshTokenRepo,
-            IHttpContextAccessor httpContextAccessor,
-            ITokenCacheService tokenCacheService)
+            IRefreshTokenRepository refreshTokenRepo)
         {
             _userManager = userManager;
             _notificationWayRepository = notificationWayRepository;
             _refreshTokenRepo = refreshTokenRepo;
-            _httpContextAccessor = httpContextAccessor;
-            _tokenCacheService = tokenCacheService;
         }
 
         public async Task RevokeAllRefreshToken(Guid userId, string reason)
@@ -48,27 +40,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 await _refreshTokenRepo.UpdateAsync(token);
             }
         }
-                
-        public async Task ChangePasswordCommandAsync(Guid userId)
-        {
-            string? jti = _httpContextAccessor.HttpContext.User.FindFirstValue(JwtRegisteredClaimNames.Jti);
-            if (!string.IsNullOrEmpty(jti))
-            {
-                string? expClaim = _httpContextAccessor.HttpContext.User.FindFirst("exp")?.Value;
-                if (long.TryParse(expClaim, out var exp))
-                {
-                    DateTime expiry = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
-                    _tokenCacheService.AddToBlacklist(jti, expiry);
-                }
-            }
-
-            // Revoke all refresh tokens
-            await RevokeAllRefreshToken(userId, "Password changed");
-
-            // Delete the refresh token cookie
-            _httpContextAccessor.HttpContext.Response.Cookies.Delete("RefreshToken");
-        }
-      
+              
         public async Task<bool> SubscribeNotificationWayCommandAsync(ApplicationUser user, NotificationWayEnum notificationWayType)
         {
             NotificationWay? notificationWay = await _notificationWayRepository.GetNotificationWayByNameAsync(notificationWayType.ToString().Replace('_', ' '));

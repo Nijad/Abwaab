@@ -1,6 +1,6 @@
-﻿namespace Abwaab.Infrastructure.Common
+﻿namespace Abwaab.Application.Common.Constants
 {
-    public class Constants
+    public class GeneralConstants
     {
         public const int CODE_TIMEOUT_MINUTES = 5;
         public const string AUTH_CONTROLLER = "auth";

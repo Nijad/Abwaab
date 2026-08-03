@@ -8,6 +8,7 @@ using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace Abwaab.Application.Features.Users.Auth.VerificationCode
 {
@@ -17,16 +18,20 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IVerificationCodeService _verificationService;
         private readonly IProfileService _profileService;
+        private readonly ILogger<VerifyCodeCommandHandler> _logger;
+
         public VerifyCodeCommandHandler(
             IUserService userService,
             UserManager<ApplicationUser> userManager,
             IVerificationCodeService verificationService,
-            IProfileService profileService)
+            IProfileService profileService,
+            ILogger<VerifyCodeCommandHandler> logger)
         {
             _userService = userService;
             _userManager = userManager;
             _verificationService = verificationService;
             _profileService = profileService;
+            _logger = logger;
         }
         public async Task<VerifyCodeResponse> Handle(VerifyCodeDTO request, CancellationToken cancellationToken)
         {
@@ -61,6 +66,14 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
                     throw new FailedConfirmationPhoneException();
 
                 await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWayEnum.SMS);
+            }
+
+            var roleResult = await _userManager.AddToRoleAsync(user, "User");
+            if (!roleResult.Succeeded)
+            {
+                var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+
+                _logger.LogError($"Failed to add user {user.Id} to 'User' role': {errors}");
             }
 
             await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWayEnum.Push_Notification);

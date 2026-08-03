@@ -1,8 +1,8 @@
-﻿using Abwaab.Application.Features.Users.Role.AddUserToRole;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Features.Users.Role.AddUserToRole;
 using Abwaab.Application.Features.Users.Role.GetAllRoles;
 using Abwaab.Application.Features.Users.Role.GetUserRoles;
 using Abwaab.Application.Features.Users.Role.RemoveUserFromRole;
-using Abwaab.Infrastructure.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,7 @@ namespace Abwaab.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = Constants.ROLE_ADMIN)]
+    [Authorize(Roles = GeneralConstants.ROLE_ADMIN)]
     public class RolesController : ControllerBase
     {
         private readonly IMediator _mediator;

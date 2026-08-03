@@ -1,9 +1,9 @@
-﻿using Abwaab.Application.Common.Exceptions.Auth;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
-using Abwaab.Infrastructure.Common;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
@@ -63,7 +63,7 @@ namespace Abwaab.Application.Features.Users.Auth.Register
                 await _verificationService.SendVerificationCodeViaSmsAsync(request.Identifier, code);
 
             // Store the code in cache with a 5-minute expiry
-            _cache.Set(request.Identifier, code, TimeSpan.FromMinutes(Constants.CODE_TIMEOUT_MINUTES));
+            _cache.Set(request.Identifier, code, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
             return new RegisterUserResponse(true, $"Register Successful, Verification code sent to your {request.IdentifierType.ToString().Replace('_', ' ')}");
         }

@@ -1,7 +1,7 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
 using Abwaab.Domain.Enums;
-using Abwaab.Infrastructure.Common;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -31,7 +31,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode
                     throw new InvalidVerificationCodeException();
 
             // Set a flag that code is verified
-            _cache.Set($"reset_verified_{request.Identifier}", true, TimeSpan.FromMinutes(Constants.CODE_TIMEOUT_MINUTES));
+            _cache.Set($"reset_verified_{request.Identifier}", true, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
             return Task.FromResult(new VerifyResetCodeResponse { Success = true, Message = "Code verified." });
         }

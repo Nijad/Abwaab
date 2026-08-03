@@ -1,8 +1,8 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Features.Users.Auth.SendCode;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Enums;
-using Abwaab.Infrastructure.Common;
 using Microsoft.Extensions.Caching.Memory;
 using Org.BouncyCastle.Tls;
 
@@ -63,7 +63,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 <h2>Email Verification</h2>
                 <p>Thank you for registering. Please use the following code to verify your account:</p>
                 <h1 style='font-size: 32px; letter-spacing: 5px; color: #2d3748;'>{code}</h1>
-                <p>This code will expire in {Constants.CODE_TIMEOUT_MINUTES} minutes.</p>
+                <p>This code will expire in {GeneralConstants.CODE_TIMEOUT_MINUTES} minutes.</p>
                 <p>If you didn't request this, please ignore this email.</p>
             ";
 
@@ -72,7 +72,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task SendVerificationCodeViaSmsAsync(string phoneNo, string code)
         {
-            var message = $"Your OTP is: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (valid {Constants.CODE_TIMEOUT_MINUTES} min)";
+            var message = $"Your OTP is: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (valid {GeneralConstants.CODE_TIMEOUT_MINUTES} min)";
 
             await _smsSender.SendSmsAsync(phoneNo, message);
         }

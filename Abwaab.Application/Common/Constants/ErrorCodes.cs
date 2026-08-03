@@ -34,5 +34,6 @@
         public const string UserNotInRole = "USER_NOT_IN_ROLE";
         public const string FailedToAddUserToRole = "FAILED_TO_ADD_USER_TO_ROLE";
         public const string FailedToRemoveUserFromRole = "FAILED_TO_REMOVE_USER_FROM_ROLE";
+        public const string FailedResetPassword = "FAILED_RESET_PASSWORD";
     }
 }

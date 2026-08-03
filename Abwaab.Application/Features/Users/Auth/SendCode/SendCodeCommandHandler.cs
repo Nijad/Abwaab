@@ -1,7 +1,7 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
-using Abwaab.Infrastructure.Common;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -35,7 +35,7 @@ namespace Abwaab.Application.Features.Users.Auth.SendCode
             var result = await _verificationCodeService.SendVerificationCodeAsync(request);
             
             // Store the code in cache with a 5-minute expiry
-            _cache.Set(request.Identifier, code, TimeSpan.FromMinutes(Constants.CODE_TIMEOUT_MINUTES));
+            _cache.Set(request.Identifier, code, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
             return result;
         }

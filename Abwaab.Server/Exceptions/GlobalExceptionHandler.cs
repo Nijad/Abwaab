@@ -4,6 +4,7 @@ using Abwaab.Application.Common.Exceptions.Email;
 using Abwaab.Application.Common.Exceptions.Profile;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.NotificationWay;
+using Abwaab.Application.Common.Exceptions.Profile.Password;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
 using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
 using Abwaab.Application.Common.Exceptions.Role;
@@ -20,6 +21,13 @@ namespace Abwaab.Server.Exceptions
         {
             ProblemDetails problem = exception switch
             {
+                FailedResetPasswordException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    Title = "Failed Reset Password",
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
                 EmailNotVerifiedException ex => new CustomProblemDetails
                 {
                     Status = StatusCodes.Status428PreconditionRequired,

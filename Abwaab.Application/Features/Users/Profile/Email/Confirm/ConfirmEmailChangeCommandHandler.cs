@@ -60,7 +60,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.Confirm
             // If you use email as username
             user.UserName = request.NewEmail;
             // Force re-verification of the new email
-            //user.EmailConfirmed = false;
+            user.EmailConfirmed = false;
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
