@@ -50,7 +50,7 @@ namespace Abwaab.Application.Features.Users.Role.AddUserToRole
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 
-                _logger.LogError($"Failed to add user {user.Id} to role {request.RoleName}: {errors}", user.Id, request.RoleName, errors);
+                _logger.LogError($"Failed to add user {user.Id} to '{request.RoleName}' role : {errors}");
 
                 throw new FailedToAddUserToRoleException();
             }

@@ -48,6 +48,10 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
             builder.Property(p => p.ExpieryDate)
                    .HasColumnType("date");
 
+            builder.Property(p => p.DefaultPlan)
+                   .IsRequired(false)
+                   .HasDefaultValue(false);
+
             // Indexes
             builder.HasIndex(p => p.Name);
             builder.HasIndex(p => p.IsDisabled);

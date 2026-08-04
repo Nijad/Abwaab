@@ -40,17 +40,17 @@ namespace Abwaab.Application.Features.Users.Auth.Login
                     request.Identifier);
 
             SignInResult result = await _signInManager.PasswordSignInAsync(user, request.Password, false, lockoutOnFailure: true);
+            
+            if (result.IsLockedOut)
+                throw new AccountLockedOutException();
 
             if (!result.Succeeded)
                 throw new InvalidCredentialsException();
 
-            if (result.IsLockedOut)
-                throw new AccountLockedOutException();
-
-            if (request.IdentifierType == IdentifierEnum.email && user.EmailConfirmed)
+            if ((request.IdentifierType == IdentifierEnum.email) && !user.EmailConfirmed)
                 throw new EmailNotVerifiedException();
 
-            if (request.IdentifierType == IdentifierEnum.phone_number && user.PhoneNumberConfirmed)
+            if (request.IdentifierType == IdentifierEnum.phone_number && !user.PhoneNumberConfirmed)
                 throw new PhoneNotVerifiedException();
 
             // null = unlock immediately

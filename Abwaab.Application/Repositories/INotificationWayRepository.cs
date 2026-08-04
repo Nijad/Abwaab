@@ -1,6 +1,6 @@
 ﻿using Abwaab.Domain.Entities.NotificationEntities;
 
-namespace Abwaab.Application.Interfaces
+namespace Abwaab.Application.Repositories
 {
     public interface INotificationWayRepository
     {

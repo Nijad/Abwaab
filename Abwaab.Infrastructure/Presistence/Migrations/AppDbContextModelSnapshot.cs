@@ -1078,6 +1078,11 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("DefaultPlan")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<int>("DurationInDays")
                         .HasColumnType("int");
 

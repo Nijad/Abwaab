@@ -1,5 +1,5 @@
-﻿using Abwaab.Application.Interfaces;
-using Abwaab.Infrastructure.Common;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
@@ -22,9 +22,9 @@ namespace Abwaab.Infrastructure.Services.Common
             _configuration = configuration;
         }
 
-        public string GetCancelEmailChangeUrl() => BuildUrl(Constants.CANCEL_EMAIL_CHANGE_ACTION, Constants.AUTH_CONTROLLER);
+        public string GetCancelEmailChangeUrl() => BuildUrl(GeneralConstants.CANCEL_EMAIL_CHANGE_ACTION, GeneralConstants.AUTH_CONTROLLER);
 
-        public string GetCancelPhoneChangeUrl() => BuildUrl(Constants.CANCEL_PHONE_CHANGE_ACTION, Constants.AUTH_CONTROLLER);
+        public string GetCancelPhoneChangeUrl() => BuildUrl(GeneralConstants.CANCEL_PHONE_CHANGE_ACTION, GeneralConstants.AUTH_CONTROLLER);
 
 
         private string BuildUrl(string action, string controller)

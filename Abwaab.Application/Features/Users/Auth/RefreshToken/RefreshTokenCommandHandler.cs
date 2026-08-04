@@ -1,5 +1,4 @@
 ﻿using Abwaab.Application.Common.Exceptions;
-using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;

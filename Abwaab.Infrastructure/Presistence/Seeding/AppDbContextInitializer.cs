@@ -1,12 +1,12 @@
-﻿using Abwaab.Application.Interfaces;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
-using Abwaab.Infrastructure.Common;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Abwaab.Infrastructure.Presistence
+namespace Abwaab.Infrastructure.Presistence.Seeding
 {
     public class AppDbContextInitializer : IAppDbContextInitializer
     {
@@ -56,8 +56,8 @@ namespace Abwaab.Infrastructure.Presistence
         private async Task TrySeedAsync()
         {
             // 1. Seed Roles
-            var adminRole = new ApplicationRole { Id = new Guid(), Name = Constants.ROLE_ADMIN, NormalizedName = Constants.ROLE_ADMIN.ToUpper() };
-            var userRole = new ApplicationRole { Id = new Guid(), Name = Constants.ROLE_USER, NormalizedName = Constants.ROLE_USER.ToUpper() };
+            var adminRole = new ApplicationRole { Id = new Guid(), Name = GeneralConstants.ROLE_ADMIN, NormalizedName = GeneralConstants.ROLE_ADMIN.ToUpper() };
+            var userRole = new ApplicationRole { Id = new Guid(), Name = GeneralConstants.ROLE_USER, NormalizedName = GeneralConstants.ROLE_USER.ToUpper() };
 
             if (! await _roleManager.Roles.AnyAsync())
             {

@@ -8,6 +8,7 @@ using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace Abwaab.Application.Features.Users.Auth.VerificationCode
 {
@@ -17,16 +18,20 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IVerificationCodeService _verificationService;
         private readonly IProfileService _profileService;
+        private readonly ILogger<VerifyCodeCommandHandler> _logger;
+
         public VerifyCodeCommandHandler(
             IUserService userService,
             UserManager<ApplicationUser> userManager,
             IVerificationCodeService verificationService,
-            IProfileService profileService)
+            IProfileService profileService,
+            ILogger<VerifyCodeCommandHandler> logger)
         {
             _userService = userService;
             _userManager = userManager;
             _verificationService = verificationService;
             _profileService = profileService;
+            _logger = logger;
         }
         public async Task<VerifyCodeResponse> Handle(VerifyCodeDTO request, CancellationToken cancellationToken)
         {
@@ -40,6 +45,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             if (!isValid)
                 throw new InvalidVerificationCodeException();
 
+            // Confirm the user's email or phone number based on the identifier type
             if (request.IdentifierType == IdentifierEnum.email)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -63,6 +69,19 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
                 await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWayEnum.SMS);
             }
 
+            // Add the user to the "User" role
+            var roleResult = await _userManager.AddToRoleAsync(user, "User");
+            if (!roleResult.Succeeded)
+            {
+                var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+
+                _logger.LogError($"Failed to add user {user.Id} to 'User' role': {errors}");
+            }
+
+            // Assign default plant to the new user
+            await _userService.AssignDefaultPlantAsync(user.Id);
+
+            // Subscribe the user to push notifications
             await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWayEnum.Push_Notification);
 
             return await Task.FromResult(new VerifyCodeResponse { Success = true, Message = "Verification successful." });

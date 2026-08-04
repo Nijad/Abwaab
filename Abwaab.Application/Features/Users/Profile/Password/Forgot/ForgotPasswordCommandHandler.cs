@@ -1,58 +1,48 @@
-﻿using Abwaab.Application.Common.Exceptions;
-using Abwaab.Application.Common.Exceptions.Profile;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Contracts;
+using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
+using Abwaab.Domain.Enums;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Abwaab.Application.Features.Users.Profile.Password.Forgot
 {
     public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordDTO, ForgotPasswordResponse>
     {
-        private readonly IProfileService _profileService;
+        private readonly IVerificationCodeService _verificationService;
+        private readonly IMemoryCache _cache;
         private readonly IUserService _userService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<ForgotPasswordCommandHandler> _logger;
 
         public ForgotPasswordCommandHandler(
-            IProfileService profileService, 
-            IUserService userService,
-            UserManager<ApplicationUser> userManager, 
-            ILogger<ForgotPasswordCommandHandler> logger)
+            IVerificationCodeService verificationService,
+            IMemoryCache cache,
+            IUserService userService)
         {
-            _profileService = profileService;
+            _verificationService = verificationService;
+            _cache = cache;
             _userService = userService;
-            _userManager = userManager;
-            _logger = logger;
         }
+
         public async Task<ForgotPasswordResponse> Handle(ForgotPasswordDTO request, CancellationToken cancellationToken)
         {
-            var user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
             if (user == null)
-                throw new NotFoundException("User", request.IdentifierType.ToString().Replace('_', ' '), request.Identifier);
+                throw new NotFoundException("User", nameof(request.Identifier), request.Identifier);
 
-            string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            string code = _verificationService.GenerateVerificationCode();
 
-            IdentityResult result = await _userManager.ResetPasswordAsync(user, resetToken, request.NewPassword);
+            if (request.IdentifierType == IdentifierEnum.email)
+                await _verificationService.SendVerificationCodeViaEmailAsync(user.Email!, code);
+            else if (request.IdentifierType == IdentifierEnum.phone_number)
+                await _verificationService.SendVerificationCodeViaSmsAsync(user.PhoneNumber!, code);
+            else
+                throw new NotImplementedIdentifierException(request.IdentifierType.ToString());
 
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            _cache.Set($"reset_{request.Identifier}", code, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
-                _logger.LogError("Password reset failed for user {UserId}. Errors: {Errors}", user.Id, errors);
-
-                throw new FailedChangePasswordException();
-            }
-
-            // null = unlock immediately
-            await _userManager.SetLockoutEndDateAsync(user, null);
-            // Reset failed attempts to 0
-            await _userManager.ResetAccessFailedCountAsync(user);
-
-            await _profileService.RevokeAllRefreshToken(user.Id, "ForgotPassword");
-
-            return new ForgotPasswordResponse { Success = true, Message = "Password reset successful." };
+            return new ForgotPasswordResponse { Success = true, Message = $"Reset code sent to your {request.IdentifierType.ToString().Replace("_", " ")}." };
         }
     }
 }

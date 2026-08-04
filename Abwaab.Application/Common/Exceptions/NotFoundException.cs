@@ -6,7 +6,7 @@
         string id, 
         string errorCode = "", 
         string title ="") : 
-            Exception($"The {entity} with the {property}: {id} was not found.")
+            Exception($"The {entity} with the {property}: '{id}' was not found.")
     {
         public  string Title { get; set; } = title;
         public string ErrorCode { get; } = errorCode;

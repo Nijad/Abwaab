@@ -1,6 +1,6 @@
 ﻿using Abwaab.Domain.Entities.UserEntities;
 
-namespace Abwaab.Application.Interfaces
+namespace Abwaab.Application.Repositories
 {
     public interface IRefreshTokenRepository
     {

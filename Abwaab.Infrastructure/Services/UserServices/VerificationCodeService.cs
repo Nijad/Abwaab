@@ -1,8 +1,8 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Features.Users.Auth.SendCode;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Enums;
-using Abwaab.Infrastructure.Common;
 using Microsoft.Extensions.Caching.Memory;
 using Org.BouncyCastle.Tls;
 
@@ -30,13 +30,12 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return random.Next(100000, 999999).ToString();
         }
 
-        public Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO)
+        public async Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO)
         {
-            string code = GenerateVerificationCode();
             if (resendCodeDTO.IdentifierType == IdentifierEnum.email)
             {
                 // Send the code to the email
-                return SendVerificationCodeViaEmailAsync(resendCodeDTO.Identifier, code)
+                return await SendVerificationCodeViaEmailAsync(resendCodeDTO.Identifier, resendCodeDTO.Code)
                     .ContinueWith(task => new SendCodeResponse
                     {
                         Success = true,
@@ -46,7 +45,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             else if (resendCodeDTO.IdentifierType == IdentifierEnum.phone_number)
             {
                 // Send the code to the phone number
-                return SendVerificationCodeViaSmsAsync(resendCodeDTO.Identifier, code)
+                return await SendVerificationCodeViaSmsAsync(resendCodeDTO.Identifier, resendCodeDTO.Code)
                     .ContinueWith(task => new SendCodeResponse
                     {
                         Success = true,
@@ -54,7 +53,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     });
             }
 
-            throw new NotImplementdIdentifierException(resendCodeDTO.IdentifierType.ToString());
+            throw new NotImplementedIdentifierException(resendCodeDTO.IdentifierType.ToString());
         }
 
         public async Task SendVerificationCodeViaEmailAsync(string email, string code)
@@ -64,7 +63,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 <h2>Email Verification</h2>
                 <p>Thank you for registering. Please use the following code to verify your account:</p>
                 <h1 style='font-size: 32px; letter-spacing: 5px; color: #2d3748;'>{code}</h1>
-                <p>This code will expire in {Constants.CODE_TIMEOUT_MINUTES} minutes.</p>
+                <p>This code will expire in {GeneralConstants.CODE_TIMEOUT_MINUTES} minutes.</p>
                 <p>If you didn't request this, please ignore this email.</p>
             ";
 
@@ -73,7 +72,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task SendVerificationCodeViaSmsAsync(string phoneNo, string code)
         {
-            var message = $"Your OTP is: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (valid {Constants.CODE_TIMEOUT_MINUTES} min)";
+            var message = $"Your OTP is: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (valid {GeneralConstants.CODE_TIMEOUT_MINUTES} min)";
 
             await _smsSender.SendSmsAsync(phoneNo, message);
         }

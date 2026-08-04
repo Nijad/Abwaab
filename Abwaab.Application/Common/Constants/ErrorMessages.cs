@@ -29,5 +29,6 @@
         public const string FailedChangePassword = "Failed to change password.";
         public const string FailedToAddUserToRole = "Failed to add user to role.";
         public const string FailedToRemoveUserFromRole = "Failed to remove user from role.";
+        public const string FailedResetPassword = "Failed to reset password.";
     }
 }

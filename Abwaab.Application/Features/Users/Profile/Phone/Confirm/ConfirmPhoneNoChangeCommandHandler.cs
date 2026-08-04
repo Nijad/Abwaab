@@ -55,7 +55,7 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Confirm
             // Update the user's phone number
             user.PhoneNumber = request.NewPhoneNo;
             // Force re-verification
-            //user.PhoneNumberConfirmed = false;
+            user.PhoneNumberConfirmed = false;
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
