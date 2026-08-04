@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Abwaab.Infrastructure.Presistence
+namespace Abwaab.Infrastructure.Presistence.Seeding
 {
     public class AppDbContextInitializer : IAppDbContextInitializer
     {

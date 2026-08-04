@@ -1,8 +1,8 @@
 ﻿using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Options;
-using Abwaab.Infrastructure.Presistence;
 using Abwaab.Infrastructure.Presistence.Context;
+using Abwaab.Infrastructure.Presistence.Seeding;
 using Abwaab.Infrastructure.Services.Common;
 using Abwaab.Infrastructure.Services.EmailServices;
 using Abwaab.Infrastructure.Services.SmsServices;
@@ -118,8 +118,8 @@ namespace Abwaab.Infrastructure
             // Register HttpClient for TextBee
             services.AddHttpClient<ISmsSender, TextBeeSmsSender>();
 
-            //services.AddTransient<IVerificationCodeService, VerificationCodeDemoService>();
-            services.AddTransient<IVerificationCodeService, VerificationCodeService>();
+            services.AddTransient<IVerificationCodeService, VerificationCodeDemoService>();
+            //services.AddTransient<IVerificationCodeService, VerificationCodeService>();
 
             // Memory Cache (for storing verification codes in-memory)
             services.AddMemoryCache();

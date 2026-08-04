@@ -7,7 +7,7 @@ using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
 
-namespace Abwaab.Infrastructure.Presistence
+namespace Abwaab.Infrastructure.Presistence.Seeding
 {
     public static class SeedData
     {
@@ -107,16 +107,17 @@ namespace Abwaab.Infrastructure.Presistence
                 new Plan {
                     Id = new Guid(),
                     Name = "Basic Plan",
-                    Price = 9.99m,
+                    Price = 0m,
                     DurationInDays = 3650,
                     StartDate = DateOnly.FromDateTime(DateTime.Now),
                     ExpieryDate = DateOnly.FromDateTime(DateTime.Now.AddYears(50)),
-                    TempDurationInDays = 3,
-                    MaxPropertiesCountAtSameTime = 1,
+                    TempDurationInDays = 3650,
+                    MaxPropertiesCountAtSameTime = 0,
                     MaxStardPropertiesCountAtSameTime = 0,
-                    MaxImagesCount = 3,
+                    MaxImagesCount = 0,
                     MaxVideosCount = 0,
-                    IsDisabled = false
+                    IsDisabled = false,
+                    DefaultPlan = true
                 }
             };
         }
