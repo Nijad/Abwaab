@@ -1,4 +1,7 @@
-﻿using Abwaab.Application.Repositories;
+﻿using Abwaab.Application.Common.Enums;
+using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Repositories;
+using Abwaab.Domain.Entities.PaymentEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -32,9 +35,58 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public Task<Plan?> GetDefaultPlanAsync()
+        public async Task<Plan?> GetDefaultPlanAsync()
         {
-            return _context.Plans.FirstOrDefaultAsync(p => p.DefaultPlan == true);
+            return await _context.Plans.FirstOrDefaultAsync(p => p.DefaultPlan == true);
+        }
+
+        public async Task<Plan?> GetPlanByIdAsync(Guid planId)
+        {
+            return await _context.Plans.FirstOrDefaultAsync(p => p.Id == planId);
+        }
+
+        public async Task UpgradeUserPlanAsync(ApplicationUser user, Plan plan)
+        {
+            PaymentState? paymentState = await _context.PaymentStates.FirstOrDefaultAsync(ps => ps.StateName == PaymentStatesEnum.Pending.ToString());
+
+            if (paymentState == null)
+                throw new NotFoundException("PaymentSatate", nameof(PaymentState.StateName), PaymentStatesEnum.Pending.ToString());
+            
+            ServiceType? serviceType = await _context.ServiceTypes.FirstOrDefaultAsync(st => st.ServiceName == ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " "));
+
+            if (serviceType == null)
+                throw new NotFoundException("ServiceType", nameof(ServiceType.ServiceName), ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " "));
+
+            await _context.UserPlans.AddAsync(new UserPlan
+            {
+                Id = new Guid(),
+                User = user,
+                UserId = user.Id,
+                Plan = plan,
+                PlanId = plan.Id,
+                SubscriptionDate = DateOnly.FromDateTime(DateTime.Today),
+                IsActive = false,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = $"{user.FirstName} {user.LastName}",
+                Payments = new List<Payment>
+                {
+                    new Payment
+                    {
+                        Id = new Guid(),
+                        Amount = plan.Price,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = $"{user.FirstName} {user.LastName}",
+                        Description = $"Payment for upgrading to {plan.Name} plan",
+                        PaymentCode = Guid.NewGuid().ToString(),
+                        PaymentState = paymentState,
+                        PaymentStateId = paymentState.Id,
+                        ServiceType = serviceType,
+                        ServiceTypeId = serviceType.Id
+                    }
+                }
+            });
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> UserHasActivePlanAsync(Guid id)

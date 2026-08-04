@@ -6,6 +6,6 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Forgot
     public class ForgotPasswordDTO : IRequest<ForgotPasswordResponse>
     {
         public string Identifier { get; set; } = string.Empty;
-        public IdentifierEnum IdentifierType { get; set; }
+        public IdentifiersEnum IdentifierType { get; set; }
     }
 }

@@ -35,5 +35,7 @@
         public const string FailedToAddUserToRole = "FAILED_TO_ADD_USER_TO_ROLE";
         public const string FailedToRemoveUserFromRole = "FAILED_TO_REMOVE_USER_FROM_ROLE";
         public const string FailedResetPassword = "FAILED_RESET_PASSWORD";
+        public const string UserAlreadyHasPlan = "USER_ALREADY_HAS_PLAN";
+        public const string PlanNotAvailable = "PLAN_NOT_AVAILABLE";
     }
 }

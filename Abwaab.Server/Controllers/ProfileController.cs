@@ -4,12 +4,10 @@ using Abwaab.Application.Features.Users.Profile.Email.InitiateChange;
 using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Subscribe;
 using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Unsubscribe;
 using Abwaab.Application.Features.Users.Profile.Password.Change;
-using Abwaab.Application.Features.Users.Profile.Password.Forgot;
-using Abwaab.Application.Features.Users.Profile.Password.Reset;
-using Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode;
 using Abwaab.Application.Features.Users.Profile.Phone.Cancel;
 using Abwaab.Application.Features.Users.Profile.Phone.Confirm;
 using Abwaab.Application.Features.Users.Profile.Phone.InitiateChange;
+using Abwaab.Application.Features.Users.Profile.Plans.Upgrade;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -108,5 +106,13 @@ namespace Abwaab.Server.Controllers
             return Ok(result);
         }
 
+        [HttpPost("UpgradePlan")]
+        public async Task<IActionResult> UpgradePlan([FromBody] UpgradePlanComman request)
+        {
+            if (request == null)
+                return BadRequest();
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
     }
 }

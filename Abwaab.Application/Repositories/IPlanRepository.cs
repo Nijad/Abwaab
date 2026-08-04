@@ -6,6 +6,8 @@ namespace Abwaab.Application.Repositories
     {
         Task AssignPlanToUserAsync(Guid userId, Guid planId);
         Task<Plan?> GetDefaultPlanAsync();
+        Task<Plan?> GetPlanByIdAsync(Guid planId);
+        Task UpgradeUserPlanAsync(ApplicationUser user, Plan plan);
         Task<bool> UserHasActivePlanAsync(Guid id);
     }
 }

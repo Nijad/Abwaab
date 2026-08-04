@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Validations.Common;
+﻿using Abwaab.Application.Common.Enums;
+using Abwaab.Application.Common.Validations.Common;
 using Abwaab.Domain.Enums;
 using MediatR;
 using System.Reflection;
@@ -24,12 +25,12 @@ namespace Abwaab.Application.Common.Behaviors
             return await next();
         }
 
-        private IdentifierEnum DetectIdentifierType(string identifier)
+        private IdentifiersEnum DetectIdentifierType(string identifier)
         {
             if (CommonValidation.IsValidPhoneNumber(identifier))
-                return IdentifierEnum.phone_number;
+                return IdentifiersEnum.Phone_Number;
             else if (CommonValidation.IsValidEmail(identifier))
-                return IdentifierEnum.email;
+                return IdentifiersEnum.Email;
             else
                 throw new ArgumentException("Invalid identifier format. Must be a valid phone number (+9639XXXXXXXX) or email address.");
         }

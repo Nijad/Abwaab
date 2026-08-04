@@ -47,10 +47,10 @@ namespace Abwaab.Application.Features.Users.Auth.Login
             if (!result.Succeeded)
                 throw new InvalidCredentialsException();
 
-            if ((request.IdentifierType == IdentifierEnum.email) && !user.EmailConfirmed)
+            if ((request.IdentifierType == IdentifiersEnum.Email) && !user.EmailConfirmed)
                 throw new EmailNotVerifiedException();
 
-            if (request.IdentifierType == IdentifierEnum.phone_number && !user.PhoneNumberConfirmed)
+            if (request.IdentifierType == IdentifiersEnum.Phone_Number && !user.PhoneNumberConfirmed)
                 throw new PhoneNotVerifiedException();
 
             // null = unlock immediately

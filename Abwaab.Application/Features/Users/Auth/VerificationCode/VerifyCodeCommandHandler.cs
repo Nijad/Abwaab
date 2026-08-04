@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Enums;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
 using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
@@ -46,34 +47,34 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
                 throw new InvalidVerificationCodeException();
 
             // Confirm the user's email or phone number based on the identifier type
-            if (request.IdentifierType == IdentifierEnum.email)
+            if (request.IdentifierType == IdentifiersEnum.Email)
             {
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-                var result = await _userManager.ConfirmEmailAsync(user, token);
+                IdentityResult result = await _userManager.ConfirmEmailAsync(user, token);
 
                 if (!result.Succeeded)
                     throw new FailedConfirmationEmailException();
 
-                await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWayEnum.Email);
+                await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWaysEnum.Email);
             }
-            else if (request.IdentifierType == IdentifierEnum.phone_number)
+            else if (request.IdentifierType == IdentifiersEnum.Phone_Number)
             {
-                var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, request.Identifier);
+                string token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, request.Identifier);
 
-                var result = await _userManager.ChangePhoneNumberAsync(user, request.Identifier, token);
+                IdentityResult result = await _userManager.ChangePhoneNumberAsync(user, request.Identifier, token);
 
                 if (!result.Succeeded)
                     throw new FailedConfirmationPhoneException();
 
-                await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWayEnum.SMS);
+                await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWaysEnum.SMS);
             }
 
             // Add the user to the "User" role
             var roleResult = await _userManager.AddToRoleAsync(user, "User");
             if (!roleResult.Succeeded)
             {
-                var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                string errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
 
                 _logger.LogError($"Failed to add user {user.Id} to 'User' role': {errors}");
             }
@@ -82,7 +83,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             await _userService.AssignDefaultPlantAsync(user.Id);
 
             // Subscribe the user to push notifications
-            await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWayEnum.Push_Notification);
+            await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWaysEnum.Push_Notification);
 
             return await Task.FromResult(new VerifyCodeResponse { Success = true, Message = "Verification successful." });
         }
