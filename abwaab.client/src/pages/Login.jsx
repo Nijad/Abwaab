@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "../services/axios";
+import { Button } from "@mui/material";
 
 const Login = () => {
   // const axiosPrivate = useAxiosPrivate();
@@ -7,10 +8,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const controller = new AbortController();
-    const response = await axios.post("/auth/loginuser", {
-      data: { ...fdata },
-      signal: controller.signal,
-    });
+    const response = await axios.post("/auth/loginuser", { ...fdata });
     // const response = await fetch(`${import.meta.}/api/auth/login` {
     //   body: JSON.stringify({ ...fdata }),
     //   headers: {
@@ -31,25 +29,24 @@ const Login = () => {
           <label>Email / Mobile No.</label>
           <input
             type="text"
-            name="identifier"
+            name="Identifier"
             value={fdata.identifier}
-            onChange={(e) =>
-              setFdata({ ...fdata, [e.target.name]: e.target.value })
-            }
+            onChange={(e) => setFdata({ ...fdata, identifier: e.target.value })}
           />
         </div>
         <div className="">
           <label>Password</label>
           <input
             type="password"
-            name="password"
+            name="Password"
             value={fdata.password}
-            onChange={(e) =>
-              setFdata({ ...fdata, [e.target.name]: e.target.value })
-            }
+            onChange={(e) => setFdata({ ...fdata, password: e.target.value })}
           />
         </div>
-        <input type="submit" />
+        {/* <input type="submit" /> */}
+        <Button type="submit" variant="outlined" color="secondary">
+          Submit
+        </Button>
       </form>
     </div>
   );
