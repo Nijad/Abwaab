@@ -45,6 +45,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             if (!isValid)
                 throw new InvalidVerificationCodeException();
 
+            // Confirm the user's email or phone number based on the identifier type
             if (request.IdentifierType == IdentifierEnum.email)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -68,6 +69,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
                 await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWayEnum.SMS);
             }
 
+            // Add the user to the "User" role
             var roleResult = await _userManager.AddToRoleAsync(user, "User");
             if (!roleResult.Succeeded)
             {
@@ -76,6 +78,10 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
                 _logger.LogError($"Failed to add user {user.Id} to 'User' role': {errors}");
             }
 
+            // Assign default plant to the new user
+            await _userService.AssignDefaultPlantAsync(user.Id);
+
+            // Subscribe the user to push notifications
             await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWayEnum.Push_Notification);
 
             return await Task.FromResult(new VerifyCodeResponse { Success = true, Message = "Verification successful." });

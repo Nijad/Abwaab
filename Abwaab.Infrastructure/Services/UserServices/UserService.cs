@@ -17,12 +17,14 @@ namespace Abwaab.Infrastructure.Services.UserServices
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRefreshTokenRepository _refreshTokenRepo;
+        private readonly IPlanRepository _PlanRepository;
 
-        public UserService(UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepo)
+        public UserService(UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepo, IPlanRepository planRepository)
         {
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _refreshTokenRepo = refreshTokenRepo;
+            _PlanRepository = planRepository;
         }
 
         public string? FindUserByContext()
@@ -100,6 +102,17 @@ namespace Abwaab.Infrastructure.Services.UserServices
             }
 
             return new LogoutResponse { Success = true, Message = "Logged out successfully." };
+        }
+
+        public async Task AssignDefaultPlantAsync(Guid userId)
+        {
+            // Assign default plan to the user if they don't have an active plan
+            Plan? defaultPlan = await _PlanRepository.GetDefaultPlanAsync();
+
+            bool userHasActivePlan = await _PlanRepository.UserHasActivePlanAsync(userId);
+
+            if (defaultPlan != null && !userHasActivePlan)
+                await _PlanRepository.AssignPlanToUserAsync(userId, defaultPlan.Id);
         }
     }
 }

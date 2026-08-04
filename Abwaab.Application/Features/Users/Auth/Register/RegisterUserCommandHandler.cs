@@ -42,7 +42,7 @@ namespace Abwaab.Application.Features.Users.Auth.Register
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 UserName = request.Identifier,
-                LockoutEnabled = true
+                LockoutEnabled = true,
             };
 
             if (request.IdentifierType == IdentifierEnum.email)
