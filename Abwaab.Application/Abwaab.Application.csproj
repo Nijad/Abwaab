@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="Common\Mappings\" />
     <Folder Include="Features\Properties\" />
+    <Folder Include="Features\Users\Profile\Plan\" />
   </ItemGroup>
 
   <ItemGroup>

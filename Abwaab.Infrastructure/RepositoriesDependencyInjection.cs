@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Interfaces;
+﻿using Abwaab.Application.Repositories;
 using Abwaab.Infrastructure.Presistence.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +10,7 @@ namespace Abwaab.Infrastructure
         {
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<INotificationWayRepository, NotificationWayRepository>();
+            services.AddScoped<IPlanRepository, PlanRepository>();
             return services;
         }
     }

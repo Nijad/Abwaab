@@ -1,7 +1,7 @@
 ﻿using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Users.Auth.Logout;
-using Abwaab.Application.Interfaces;
+using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 using Microsoft.AspNetCore.Http;

@@ -2,6 +2,7 @@
 using Abwaab.Application.Features.Users.Auth.Login;
 using Abwaab.Application.Features.Users.Auth.RefreshToken;
 using Abwaab.Application.Interfaces;
+using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Options;
 using Microsoft.AspNetCore.Http;

@@ -5,7 +5,7 @@ using Abwaab.Application.Common.Exceptions.Profile.Phone;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Subscribe;
 using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Unsubscribe;
-using Abwaab.Application.Interfaces;
+using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
