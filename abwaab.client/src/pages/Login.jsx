@@ -27,10 +27,8 @@ const Login = () => {
       })
       .catch((e) => console.log(e))
       .finally(() => {
-        if (isAdmin) {
-          redirect("Admin");
-        }
-        redirect("");
+        if (isAdmin) redirect("Admin");
+        else redirect("");
       });
 
     // return <Navigate to="/" replace />;
