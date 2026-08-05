@@ -6,7 +6,7 @@ namespace Abwaab.Application.Features.Users.Role.AddUserToRole
     public class AddUserToRoleDTO : IRequest<AddUserToRoleResponse>
     {
         public string Identifier { get; set; } = string.Empty;
-        public IdentifierEnum IdentifierType { get; set; }
+        public IdentifiersEnum IdentifierType { get; set; }
         public string RoleName { get; set; } = string.Empty;
     }
 }

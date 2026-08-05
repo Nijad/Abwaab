@@ -56,8 +56,8 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         private async Task TrySeedAsync()
         {
             // 1. Seed Roles
-            var adminRole = new ApplicationRole { Id = new Guid(), Name = GeneralConstants.ROLE_ADMIN, NormalizedName = GeneralConstants.ROLE_ADMIN.ToUpper() };
-            var userRole = new ApplicationRole { Id = new Guid(), Name = GeneralConstants.ROLE_USER, NormalizedName = GeneralConstants.ROLE_USER.ToUpper() };
+            var adminRole = new ApplicationRole { Id = new Guid(), Name = RoleConstants.ROLE_ADMIN, NormalizedName = RoleConstants.ROLE_ADMIN.ToUpper() };
+            var userRole = new ApplicationRole { Id = new Guid(), Name = RoleConstants.ROLE_USER, NormalizedName = RoleConstants.ROLE_USER.ToUpper() };
 
             if (! await _roleManager.Roles.AnyAsync())
             {

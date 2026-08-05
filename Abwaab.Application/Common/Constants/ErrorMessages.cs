@@ -30,5 +30,7 @@
         public const string FailedToAddUserToRole = "Failed to add user to role.";
         public const string FailedToRemoveUserFromRole = "Failed to remove user from role.";
         public const string FailedResetPassword = "Failed to reset password.";
+        public const string UserAlreadyHasPlan = "User already has a plan.";
+        public const string PlanNotAvailable = "The selected plan is not available.";
     }
 }

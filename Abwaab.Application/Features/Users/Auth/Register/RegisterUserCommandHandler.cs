@@ -1,4 +1,5 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
@@ -45,9 +46,9 @@ namespace Abwaab.Application.Features.Users.Auth.Register
                 LockoutEnabled = true,
             };
 
-            if (request.IdentifierType == IdentifierEnum.email)
+            if (request.IdentifierType == IdentifiersEnum.Email)
                 newUser.Email = request.Identifier;
-            else if (request.IdentifierType == IdentifierEnum.phone_number)
+            else if (request.IdentifierType == IdentifiersEnum.Phone_Number)
                 newUser.PhoneNumber = request.Identifier;
 
             IdentityResult result = await _userManager.CreateAsync(newUser, request.Password);
@@ -57,9 +58,9 @@ namespace Abwaab.Application.Features.Users.Auth.Register
 
             string code = _verificationService.GenerateVerificationCode();
 
-            if (request.IdentifierType == IdentifierEnum.email)
+            if (request.IdentifierType == IdentifiersEnum.Email)
                 await _verificationService.SendVerificationCodeViaEmailAsync(request.Identifier, code);
-            else if (request.IdentifierType == IdentifierEnum.phone_number)
+            else if (request.IdentifierType == IdentifiersEnum.Phone_Number)
                 await _verificationService.SendVerificationCodeViaSmsAsync(request.Identifier, code);
 
             // Store the code in cache with a 5-minute expiry

@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Enums;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Users.Auth.Logout;
 using Abwaab.Application.Repositories;
@@ -34,10 +35,10 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return username;
         }
 
-        public async Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifierEnum identifierType)
+        public async Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifiersEnum identifierType)
         {
             ApplicationUser? user = null;
-            if (identifierType == IdentifierEnum.email)
+            if (identifierType == IdentifiersEnum.Email)
             {
                 user = await _userManager.FindByEmailAsync(identifier);
                 if (user != null)
@@ -45,7 +46,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 return await _userManager.Users
                     .FirstOrDefaultAsync(u => u.PreviousEmail == identifier);
             }
-            else if (identifierType == IdentifierEnum.phone_number)
+            else if (identifierType == IdentifiersEnum.Phone_Number)
             {
                 user = await _userManager.Users
                     .FirstOrDefaultAsync(u => u.PhoneNumber == identifier);

@@ -22,7 +22,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
         public Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO)
         {
             string code = GenerateVerificationCode();
-            if (resendCodeDTO.IdentifierType == IdentifierEnum.email)
+            if (resendCodeDTO.IdentifierType == IdentifiersEnum.Email)
             {
                 return SendVerificationCodeViaEmailAsync(resendCodeDTO.Identifier, code)
                     .ContinueWith(task => new SendCodeResponse
@@ -31,7 +31,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                         Message = "Verification code resent to email."
                     });
             }
-            else if (resendCodeDTO.IdentifierType == IdentifierEnum.phone_number)
+            else if (resendCodeDTO.IdentifierType == IdentifiersEnum.Phone_Number)
             {
                 return SendVerificationCodeViaSmsAsync(resendCodeDTO.Identifier, code)
                     .ContinueWith(task => new SendCodeResponse

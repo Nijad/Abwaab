@@ -8,7 +8,7 @@ namespace Abwaab.Application.Interfaces
     {
         string GenerateAccessToken(ApplicationUser user, IList<string> roles);
         string GenerateRefreshToken();
-        Task<LoginUserResponse> GenerateResponseAsync(ApplicationUser user, IList<string> roles);
+        Task<TokenResponseDTO> GenerateTokenResponseAsync(ApplicationUser user, IList<string> roles);
         Task<RefreshTokenResponse> RefreshTokenAsync(ApplicationUser user, IList<string> roles, string refreshToken);
 
         Task<Guid> GetUserIdByTokenAsync(RefreshTokenCommand request);

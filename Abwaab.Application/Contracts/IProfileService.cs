@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Subscribe;
+﻿using Abwaab.Application.Common.Enums;
+using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Subscribe;
 using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Unsubscribe;
 using Abwaab.Application.Features.Users.Profile.Phone.InitiateChange;
 using Abwaab.Domain.Entities.UserEntities;
@@ -10,7 +11,7 @@ namespace Abwaab.Application.Contracts
     {
         Task<NotificationWaySubscriptionResponse> SubscribeNotificationWayCommandAsync(ApplicationUser user, Guid notificationWayId);
         Task<NotificationWayUnsubscriptionResponse> UnsubscribeNotificationWayCommandAsync(ApplicationUser user, Guid notificationWayId);
-        Task<bool> SubscribeNotificationWayCommandAsync(ApplicationUser user, NotificationWayEnum notificationWayType);
+        Task<bool> SubscribeNotificationWayCommandAsync(ApplicationUser user, NotificationWaysEnum notificationWayType);
         Task RevokeAllRefreshToken(Guid userId, string reason);
     }
 }

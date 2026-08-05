@@ -9,7 +9,6 @@ using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace Abwaab.Infrastructure.Services.UserServices
@@ -41,7 +40,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             }
         }
               
-        public async Task<bool> SubscribeNotificationWayCommandAsync(ApplicationUser user, NotificationWayEnum notificationWayType)
+        public async Task<bool> SubscribeNotificationWayCommandAsync(ApplicationUser user, NotificationWaysEnum notificationWayType)
         {
             NotificationWay? notificationWay = await _notificationWayRepository.GetNotificationWayByNameAsync(notificationWayType.ToString().Replace('_', ' '));
 
@@ -92,16 +91,16 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 }
 
             //chkeck if user has contact method related
-            if (notificationWay.WayName == NotificationWayEnum.Email.ToString() && string.IsNullOrEmpty(user.Email))
+            if (notificationWay.WayName == NotificationWaysEnum.Email.ToString() && string.IsNullOrEmpty(user.Email))
                 throw new NoRegisterdEmailException();
 
-            if (notificationWay.WayName == NotificationWayEnum.Email.ToString() && !string.IsNullOrEmpty(user.Email) && !user.EmailConfirmed)
+            if (notificationWay.WayName == NotificationWaysEnum.Email.ToString() && !string.IsNullOrEmpty(user.Email) && !user.EmailConfirmed)
                 throw new NoVerifiedEmailException();
 
-            if (notificationWay.WayName == NotificationWayEnum.SMS.ToString() && string.IsNullOrEmpty(user.PhoneNumber))
+            if (notificationWay.WayName == NotificationWaysEnum.SMS.ToString() && string.IsNullOrEmpty(user.PhoneNumber))
                 throw new NoRegisterdPhoneException();
 
-            if (notificationWay.WayName == NotificationWayEnum.SMS.ToString() && !string.IsNullOrEmpty(user.PhoneNumber) && !user.PhoneNumberConfirmed)
+            if (notificationWay.WayName == NotificationWaysEnum.SMS.ToString() && !string.IsNullOrEmpty(user.PhoneNumber) && !user.PhoneNumberConfirmed)
                 throw new NoVerifiedPhoneException();
 
             //subscribe

@@ -4,7 +4,6 @@ using Abwaab.Application.Features.Users.Auth.SendCode;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Enums;
 using Microsoft.Extensions.Caching.Memory;
-using Org.BouncyCastle.Tls;
 
 namespace Abwaab.Infrastructure.Services.UserServices
 {
@@ -32,7 +31,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO)
         {
-            if (resendCodeDTO.IdentifierType == IdentifierEnum.email)
+            if (resendCodeDTO.IdentifierType == IdentifiersEnum.Email)
             {
                 // Send the code to the email
                 return await SendVerificationCodeViaEmailAsync(resendCodeDTO.Identifier, resendCodeDTO.Code)
@@ -42,7 +41,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                         Message = "Verification code resent to email."
                     });
             }
-            else if (resendCodeDTO.IdentifierType == IdentifierEnum.phone_number)
+            else if (resendCodeDTO.IdentifierType == IdentifiersEnum.Phone_Number)
             {
                 // Send the code to the phone number
                 return await SendVerificationCodeViaSmsAsync(resendCodeDTO.Identifier, resendCodeDTO.Code)

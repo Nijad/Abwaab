@@ -1,6 +1,6 @@
 ﻿namespace Abwaab.Domain.Enums
 {
-    public enum NotificationWayEnum
+    public enum NotificationWaysEnum
     {
         Email,
         SMS,

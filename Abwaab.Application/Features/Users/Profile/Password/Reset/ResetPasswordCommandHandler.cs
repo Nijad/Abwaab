@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Enums;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Profile.Password;
 using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
 using Abwaab.Application.Contracts;
@@ -41,7 +42,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Reset
             if (user == null)
                 throw new NotFoundException("User", request.IdentifierType.ToString().Replace("_", " "), request.Identifier);
 
-            if (request.IdentifierType == IdentifierEnum.email)
+            if (request.IdentifierType == IdentifiersEnum.Email)
             {
                 if (user.PreviousEmail == request.Identifier)
                 {
@@ -53,7 +54,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Reset
                     user.EmailConfirmed = false;
                 }
             }
-            else if (request.IdentifierType == IdentifierEnum.phone_number)
+            else if (request.IdentifierType == IdentifiersEnum.Phone_Number)
             {
                 if (user.PreviousEmail == request.Identifier)
                 {

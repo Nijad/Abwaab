@@ -8,7 +8,7 @@ namespace Abwaab.Application.Features.Users.Auth.Register
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Identifier { get; set; } = string.Empty;
-        public IdentifierEnum IdentifierType { get; set; }
+        public IdentifiersEnum IdentifierType { get; set; }
         public string Password { get; set; } = string.Empty;
         public string ConfirmPassword { get; set; } = string.Empty;
     }

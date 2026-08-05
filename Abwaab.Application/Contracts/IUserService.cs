@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Features.Users.Auth.Logout;
+﻿using Abwaab.Application.Common.Enums;
+using Abwaab.Application.Features.Users.Auth.Logout;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 
@@ -6,7 +7,7 @@ namespace Abwaab.Application.Contracts
 {
     public interface IUserService
     {
-        Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifierEnum identifierType);
+        Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifiersEnum identifierType);
 
         string? FindUserByContext();
 

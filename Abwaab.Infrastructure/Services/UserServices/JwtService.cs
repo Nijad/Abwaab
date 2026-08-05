@@ -110,11 +110,11 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return Convert.ToBase64String(bytes);
         }
 
-        public async Task<LoginUserResponse> GenerateResponseAsync(ApplicationUser user, IList<string> roles)
+        public async Task<TokenResponseDTO> GenerateTokenResponseAsync(ApplicationUser user, IList<string> roles)
         {
             string accessToken = GenerateAccessToken(user, roles);
-            var refreshTokenString = GenerateRefreshToken();
-            var tokenHash = HashToken(refreshTokenString);
+            string refreshTokenString = GenerateRefreshToken();
+            string tokenHash = HashToken(refreshTokenString);
             var refreshToken = new RefreshToken
             {
                 TokenHash = tokenHash,
@@ -135,13 +135,11 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
             _httpContextAccessor?.HttpContext?.Response.Cookies.Append("RefreshToken", refreshTokenString, cookieOptions);
 
-            return new LoginUserResponse
+            return new TokenResponseDTO
             {
-                Success = true,
                 AccessToken = accessToken,
                 RefreshToken = refreshTokenString,
                 ExpiresIn = _jwtSettings.AccessTokenExpiryMinutes * 60,
-                Message = "Login successful",
             };
         }
 

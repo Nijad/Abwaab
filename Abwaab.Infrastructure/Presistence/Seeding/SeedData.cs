@@ -1,4 +1,5 @@
-﻿using Abwaab.Domain.Entities.AppointmentEntities;
+﻿using Abwaab.Application.Common.Enums;
+using Abwaab.Domain.Entities.AppointmentEntities;
 using Abwaab.Domain.Entities.MediaEntities;
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.PaymentEntities;
@@ -15,8 +16,8 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<MediaType>
             {
-                new MediaType { Id = new Guid(), Name = "Video" },
-                new MediaType { Id = new Guid(), Name = "Image" }
+                new MediaType { Id = new Guid(), Name = MediaTypesEnum.Video.ToString() },
+                new MediaType { Id = new Guid(), Name = MediaTypesEnum.Image.ToString() }
             };
         }
 
@@ -24,8 +25,8 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<ServiceType>
             {
-                new ServiceType { Id = new Guid(), ServiceName = "Plan Subscription" },
-                new ServiceType { Id = new Guid(), ServiceName = "Advertisment" }
+                new ServiceType { Id = new Guid(), ServiceName = ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " ") },
+                new ServiceType { Id = new Guid(), ServiceName = ServiceTypesEnum.Advertisment.ToString() }
             };
         }
 
@@ -33,9 +34,12 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<PaymentState>
             {
-                new PaymentState { Id = new Guid(), StateName = "Pending" },
-                new PaymentState { Id = new Guid(), StateName = "Completed" },
-                new PaymentState { Id = new Guid(), StateName = "Failed" }
+                new PaymentState { Id = new Guid(), StateName = PaymentStatesEnum.Pending.ToString() },
+                new PaymentState { Id = new Guid(), StateName = PaymentStatesEnum.Completed.ToString() },
+                new PaymentState { Id = new Guid(), StateName = PaymentStatesEnum.Failed.ToString() },
+                new PaymentState { Id = new Guid(), StateName = PaymentStatesEnum.Refunded.ToString() },
+                new PaymentState { Id = new Guid(), StateName = PaymentStatesEnum.Expired.ToString() },
+                new PaymentState { Id = new Guid(), StateName = PaymentStatesEnum.Cancelled.ToString() }
             };
         }
 
@@ -43,12 +47,12 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<AppointmentState>
             {
-                new AppointmentState { Id = new Guid(), StateName = "Pending" },
-                new AppointmentState { Id = new Guid(), StateName = "Refused" },
-                new AppointmentState { Id = new Guid(), StateName = "Accepted" },
-                new AppointmentState { Id = new Guid(), StateName = "Canceled" },
-                new AppointmentState { Id = new Guid(), StateName = "Unfinished" },
-                new AppointmentState { Id = new Guid(), StateName = "Completed" }
+                new AppointmentState { Id = new Guid(), StateName = AppointmentStatesEnum.Pending.ToString() },
+                new AppointmentState { Id = new Guid(), StateName = AppointmentStatesEnum.Refused.ToString() },
+                new AppointmentState { Id = new Guid(), StateName = AppointmentStatesEnum.Accepted.ToString() },
+                new AppointmentState { Id = new Guid(), StateName = AppointmentStatesEnum.Canceled.ToString() },
+                new AppointmentState { Id = new Guid(), StateName = AppointmentStatesEnum.Unfinished.ToString() },
+                new AppointmentState { Id = new Guid(), StateName = AppointmentStatesEnum.Completed.ToString() }
             };
         }
 
@@ -56,11 +60,11 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<NotificationState>
             {
-                new NotificationState { Id = new Guid(), StateName = "Pending" },
-                new NotificationState { Id = new Guid(), StateName = "Sent" },
-                new NotificationState { Id = new Guid(), StateName = "Failed" },
-                new NotificationState { Id = new Guid(), StateName = "Unread" },
-                new NotificationState { Id = new Guid(), StateName = "Read" },
+                new NotificationState { Id = new Guid(), StateName = NotificationStatesEnum.Pending.ToString() },
+                new NotificationState { Id = new Guid(), StateName = NotificationStatesEnum.Sent.ToString() },
+                new NotificationState { Id = new Guid(), StateName = NotificationStatesEnum.Failed.ToString() },
+                new NotificationState { Id = new Guid(), StateName = NotificationStatesEnum.Unread.ToString() },
+                new NotificationState { Id = new Guid(), StateName = NotificationStatesEnum.Read.ToString() },
             };
         }
 
@@ -68,9 +72,9 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<NotificationWay>
             {
-                new NotificationWay { Id = new Guid(), WayName = "Email" },
-                new NotificationWay { Id = new Guid(), WayName = "SMS" },
-                new NotificationWay { Id = new Guid(), WayName = "Push Notification" }
+                new NotificationWay { Id = new Guid(), WayName = NotificationWaysEnum.Email.ToString() },
+                new NotificationWay { Id = new Guid(), WayName = NotificationWaysEnum.SMS.ToString() },
+                new NotificationWay { Id = new Guid(), WayName = NotificationWaysEnum.Push_Notification.ToString() }
             };
         }
 
@@ -78,12 +82,12 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<AppointmentAction>
             {
-                new AppointmentAction { Id = new Guid(), ActionName = "Request" },
-                new AppointmentAction { Id = new Guid(), ActionName = "Accept" },
-                new AppointmentAction { Id = new Guid(), ActionName = "Refuse" },
-                new AppointmentAction { Id = new Guid(), ActionName = "Cancel" },
-                new AppointmentAction { Id = new Guid(), ActionName = "Visit" },
-                new AppointmentAction { Id = new Guid(), ActionName = "Report" },
+                new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Report.ToString() },
+                new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Accept.ToString() },
+                new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Refuse.ToString() },
+                new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Cancel.ToString() },
+                new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Visit.ToString() },
+                new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Report.ToString() },
             };
         }
 
@@ -91,12 +95,12 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<PropertyState>
             {
-                new PropertyState { Id = new Guid(), StateName = "Pending" },
-                new PropertyState { Id = new Guid(), StateName = "Published" },
-                new PropertyState { Id = new Guid(), StateName = "Rejected" },
-                new PropertyState { Id = new Guid(), StateName = "Sold" },
-                new PropertyState { Id = new Guid(), StateName = "Deleted" },
-                new PropertyState { Id = new Guid(), StateName = "Disabled" }
+                new PropertyState { Id = new Guid(), StateName = PropertyStatesEnum.Pending.ToString() },
+                new PropertyState { Id = new Guid(), StateName = PropertyStatesEnum.Published.ToString() },
+                new PropertyState { Id = new Guid(), StateName = PropertyStatesEnum.Rejected.ToString() },
+                new PropertyState { Id = new Guid(), StateName = PropertyStatesEnum.Sold.ToString() },
+                new PropertyState { Id = new Guid(), StateName = PropertyStatesEnum.Deleted.ToString() },
+                new PropertyState { Id = new Guid(), StateName = PropertyStatesEnum.Disabled.ToString() }
             };
         }
 

@@ -20,9 +20,9 @@ namespace Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode
         {
             var cacheKey = $"reset_{request.Identifier}";
             if (!_cache.TryGetValue(cacheKey, out string storedCode))
-                if (request.IdentifierType == IdentifierEnum.email)
+                if (request.IdentifierType == IdentifiersEnum.Email)
                     throw new InvalidCodeOrEmailMissmatchException();
-                else if (request.IdentifierType == IdentifierEnum.phone_number)
+                else if (request.IdentifierType == IdentifiersEnum.Phone_Number)
                     throw new InvalidCodeOrPhoneMissmatchException();
                 else
                     throw new NotImplementedIdentifierException(request.IdentifierType.ToString().Replace("_", " "));

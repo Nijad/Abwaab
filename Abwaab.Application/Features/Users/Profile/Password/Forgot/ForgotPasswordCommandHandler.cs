@@ -1,4 +1,5 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
@@ -33,9 +34,9 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Forgot
 
             string code = _verificationService.GenerateVerificationCode();
 
-            if (request.IdentifierType == IdentifierEnum.email)
+            if (request.IdentifierType == IdentifiersEnum.Email)
                 await _verificationService.SendVerificationCodeViaEmailAsync(user.Email!, code);
-            else if (request.IdentifierType == IdentifierEnum.phone_number)
+            else if (request.IdentifierType == IdentifiersEnum.Phone_Number)
                 await _verificationService.SendVerificationCodeViaSmsAsync(user.PhoneNumber!, code);
             else
                 throw new NotImplementedIdentifierException(request.IdentifierType.ToString());

@@ -47,10 +47,10 @@ namespace Abwaab.Application.Features.Users.Auth.Login
             if (!result.Succeeded)
                 throw new InvalidCredentialsException();
 
-            if ((request.IdentifierType == IdentifierEnum.email) && !user.EmailConfirmed)
+            if ((request.IdentifierType == IdentifiersEnum.Email) && !user.EmailConfirmed)
                 throw new EmailNotVerifiedException();
 
-            if (request.IdentifierType == IdentifierEnum.phone_number && !user.PhoneNumberConfirmed)
+            if (request.IdentifierType == IdentifiersEnum.Phone_Number && !user.PhoneNumberConfirmed)
                 throw new PhoneNotVerifiedException();
 
             // null = unlock immediately
@@ -60,9 +60,24 @@ namespace Abwaab.Application.Features.Users.Auth.Login
 
             //get user roles
             IList<string> roles = await _userManager.GetRolesAsync(user);
-            
+
             // Generate access token
-            return await _jwtService.GenerateResponseAsync(user, roles);
+            TokenResponseDTO tokenResponse = await _jwtService.GenerateTokenResponseAsync(user, roles);
+
+            // Check if user has Admin role
+            bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+            LoginUserResponse response = new LoginUserResponse
+            {
+                Success = true,
+                Message = "Login successful",
+                AccessToken = tokenResponse.AccessToken,
+                RefreshToken = tokenResponse.RefreshToken,
+                ExpiresIn = tokenResponse.ExpiresIn,
+                IsAdmin = isAdmin
+            };
+
+            return response;
 
         }
     }
