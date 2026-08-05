@@ -18,6 +18,12 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             _context = context;
         }
 
+        public async Task AddPlanAsync(Plan plan)
+        {
+            await _context.Plans.AddAsync(plan);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task AssignPlanToUserAsync(Guid userId, Guid planId)
         {
             UserPlan userPlan = new UserPlan
@@ -33,6 +39,11 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
 
             _context.UserPlans.Add(userPlan);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Plan>> GetAllAsync()
+        {
+            return  await _context.Plans.ToListAsync();
         }
 
         public async Task<Plan?> GetDefaultPlanAsync()
@@ -97,6 +108,12 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 up.SubscriptionDate.AddDays(up.Plan.DurationInDays) >= DateOnly.FromDateTime(DateTime.Today))
                 .ToListAsync();
             return activeUserPlans.Count > 0;
+        }
+
+        public Task<bool> UserHasPlan(Guid userId, Guid planId)
+        {
+            //_context.UserPlans.Where(x=>x.UserId == userId && x.PlanId==planId && x.)
+            return Task.FromResult(true);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Abwaab.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = GeneralConstants.ROLE_ADMIN)]
+    [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
     public class RolesController : ControllerBase
     {
         private readonly IMediator _mediator;

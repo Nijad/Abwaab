@@ -42,7 +42,8 @@ namespace Abwaab.Application.Features.Users.Profile.Plans.Upgrade
                 throw new PlanNotAvailableException();
 
             // check if the user already has the plan
-            if (user.UserPlans != null && user.UserPlans.Any(up => up.PlanId == plan.Id))
+            bool userAlreadyHasPlan = await _planRepository.UserHasPlan(user.Id, plan.Id);
+            if (userAlreadyHasPlan)
                 throw new UserAlreadyHasPlanException();
 
             await _planRepository.UpgradeUserPlanAsync(user, plan);
