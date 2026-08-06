@@ -18,14 +18,14 @@ namespace Abwaab.Infrastructure.Services.UserServices
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRefreshTokenRepository _refreshTokenRepo;
-        private readonly IPlanRepository _PlanRepository;
+        private readonly IPlanRepository _planRepository;
 
         public UserService(UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IRefreshTokenRepository refreshTokenRepo, IPlanRepository planRepository)
         {
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _refreshTokenRepo = refreshTokenRepo;
-            _PlanRepository = planRepository;
+            _planRepository = planRepository;
         }
 
         public string? FindUserByContext()
@@ -108,12 +108,18 @@ namespace Abwaab.Infrastructure.Services.UserServices
         public async Task AssignDefaultPlantAsync(Guid userId)
         {
             // Assign default plan to the user if they don't have an active plan
-            Plan? defaultPlan = await _PlanRepository.GetDefaultPlanAsync();
+            Plan? defaultPlan = await _planRepository.GetDefaultPlanAsync();
 
-            bool userHasActivePlan = await _PlanRepository.UserHasActivePlanAsync(userId);
+            bool userHasActivePlan = await _planRepository.UserHasActivePlanAsync(userId);
+
+            string userPlanStatesName = UserPlanStatesEnum.Active.ToString();
+            UserPlanStatus? status = await _planRepository.GetUserPlanStatusByNameAsync(userPlanStatesName);
+
+            if (status == null)
+                throw new NotFoundException("UserPlanStatus", nameof(status.StateName), userPlanStatesName);
 
             if (defaultPlan != null && !userHasActivePlan)
-                await _PlanRepository.AssignPlanToUserAsync(userId, defaultPlan.Id);
+                await _planRepository.AssignPlanToUserAsync(userId, defaultPlan.Id, status.Id);
         }
     }
 }

@@ -124,6 +124,9 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
             if (!await _context.AttributePossibleValues.AnyAsync())
                 await _context.AddRangeAsync(SeedData.LoadAttributePossibleValues());
 
+            if(!await _context.UserPlansStatus.AnyAsync())
+                await _context.AddRangeAsync(SeedData.LoadUserPlanStates());
+
             await _context.SaveChangesAsync();
         }
     }

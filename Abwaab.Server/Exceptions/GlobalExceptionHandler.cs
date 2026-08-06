@@ -207,21 +207,21 @@ namespace Abwaab.Server.Exceptions
                 },
                 AccountLockedOutException ex=>new CustomProblemDetails
                 {
-                    Status = StatusCodes.Status401Unauthorized,
+                    Status = StatusCodes.Status403Forbidden,
                     Title = "Account Locked Out",
                     Detail = exception.Message,
                     ErrorCode = ex.ErrorCode
                 },
                 NotFoundException ex => new CustomProblemDetails
                 {
-                    Status = StatusCodes.Status401Unauthorized,
+                    Status = StatusCodes.Status400BadRequest,
                     Title = ex.Title,
                     Detail = ex.Message,
                     ErrorCode = ex.ErrorCode
                 },
                 InvalidCredentialsException ex => new CustomProblemDetails
                 {
-                    Status = StatusCodes.Status401Unauthorized,
+                    Status = StatusCodes.Status400BadRequest,
                     Title = "Invalid Cedentials",
                     Detail = ex.Message,
                     ErrorCode = ex.ErrorCode
