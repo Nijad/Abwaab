@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Profile.Plans;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Users.Auth.Logout;
 using Abwaab.Application.Repositories;
@@ -105,21 +106,38 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return new LogoutResponse { Success = true, Message = "Logged out successfully." };
         }
 
-        public async Task AssignDefaultPlantAsync(Guid userId)
+        public async Task ActiveDefaultPlantAsync(ApplicationUser user)
         {
-            // Assign default plan to the user if they don't have an active plan
+            HttpContext? httpContext = _httpContextAccessor.HttpContext;
+            string? actionUser = httpContext?.User?.Identity?.Name;
+
+            // 1. check if user doesn't have active plan
+            bool hasActivePlan = await _planRepository.CheckIfUserHasActivePlan(user.Id);
+
+            if (hasActivePlan)
+                throw new UserAlreadyHasActivePlanException();
+
+            // 2. check if user already has default plan 
             Plan? defaultPlan = await _planRepository.GetDefaultPlanAsync();
 
-            bool userHasActivePlan = await _planRepository.UserHasActivePlanAsync(userId);
+            if (defaultPlan == null)
+                throw new NotFoundException(nameof(Plan), nameof(defaultPlan.DefaultPlan), "True");
 
-            string userPlanStatesName = UserPlanStatesEnum.Active.ToString();
-            UserPlanStatus? status = await _planRepository.GetUserPlanStatusByNameAsync(userPlanStatesName);
+            bool hasDefultPlan = await _planRepository.UserHasPlan(user.Id, defaultPlan.Id);
 
-            if (status == null)
-                throw new NotFoundException("UserPlanStatus", nameof(status.StateName), userPlanStatesName);
+            // 3. active default plan if exists or create new one for user
+            if (hasDefultPlan)
+            {
+                // active defult plan for user
+                await _planRepository.ActiveUserPlan(user.Id, defaultPlan.Id);
+            }
+            else
+            {
+                // assign defaul plan to user
+                Guid activeUserPlanStateId = await _planRepository.GetUserPlanStateId(UserPlanStatesEnum.Active);
 
-            if (defaultPlan != null && !userHasActivePlan)
-                await _planRepository.AssignPlanToUserAsync(userId, defaultPlan.Id, status.Id);
+                await _planRepository.AssignPlanToUserAsync(user.Id, defaultPlan.Id, activeUserPlanStateId);
+            }                
         }
     }
 }

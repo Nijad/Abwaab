@@ -32,5 +32,6 @@
         public const string FailedResetPassword = "Failed to reset password.";
         public const string UserAlreadyHasPlan = "User already has a plan.";
         public const string PlanNotAvailable = "The selected plan is not available.";
+        public const string UserAlreadyHasActivePlan = "User already has an active plan";
     }
 }

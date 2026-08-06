@@ -8,11 +8,9 @@ namespace Abwaab.Application.Features.Plans.CreatePlan
     public class CreatePlanCommandHandler : IRequestHandler<CreatePlanCommand, CreatePlanResponse>
     {
         private readonly IPlanRepository _planRepository;
-        private readonly IUserService _userService;
-        public CreatePlanCommandHandler(IPlanRepository planRepository, IUserService userService)
+        public CreatePlanCommandHandler(IPlanRepository planRepository)
         {
             _planRepository = planRepository;
-            _userService = userService;
         }
         public async Task<CreatePlanResponse> Handle(CreatePlanCommand request, CancellationToken cancellationToken)
         {
@@ -30,9 +28,7 @@ namespace Abwaab.Application.Features.Plans.CreatePlan
                 MaxImagesCount = request.MaxImagesCount,
                 MaxVideosCount = request.MaxVideosCount,
                 IsDisabled = false,
-                DefaultPlan = false,
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = _userService.FindUserByContext(),
+                DefaultPlan = false
             };
 
             await _planRepository.AddPlanAsync(plan);

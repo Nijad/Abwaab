@@ -18,6 +18,6 @@ namespace Abwaab.Application.Contracts
         void RemoveCookie(string cookieName);
 
         Task<LogoutResponse> RevokeActiveToken(Guid userId, bool revokeAll);
-        Task AssignDefaultPlantAsync(Guid userId);
+        Task ActiveDefaultPlantAsync(ApplicationUser user);
     }
 }

@@ -23,6 +23,13 @@ namespace Abwaab.Server.Exceptions
         {
             ProblemDetails problem = exception switch
             {
+                UserAlreadyHasActivePlanException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Failed To Active Default Plan",
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
                 PlanNotAvailableException ex => new CustomProblemDetails
                 {
                     Status = StatusCodes.Status400BadRequest,
