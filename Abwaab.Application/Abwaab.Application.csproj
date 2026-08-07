@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Common\Mappings\" />
+    <Folder Include="Features\Plans\CancelPlan\" />
     <Folder Include="Features\Properties\" />
     <Folder Include="Features\Users\Profile\Plans\Activate\" />
   </ItemGroup>

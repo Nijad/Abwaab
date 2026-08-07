@@ -14,13 +14,13 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
     {
         private readonly AppDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly string? actionBy;
+        private readonly string actionBy;
 
         public PlanRepository(AppDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
-            actionBy = actionBy;
+            actionBy = _httpContextAccessor!.HttpContext!.User!.Identity!.Name!;
         }
 
         public async Task AddPlanAsync(Plan plan)

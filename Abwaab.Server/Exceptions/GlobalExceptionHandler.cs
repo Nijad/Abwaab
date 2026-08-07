@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Email;
+using Abwaab.Application.Common.Exceptions.Payments;
 using Abwaab.Application.Common.Exceptions.Plans;
 using Abwaab.Application.Common.Exceptions.Profile;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
@@ -23,6 +24,13 @@ namespace Abwaab.Server.Exceptions
         {
             ProblemDetails problem = exception switch
             {
+                NotImplementedServiceTypeException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    Title = "Service Type Not Implemented",
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
                 UserAlreadyHasActivePlanException ex => new CustomProblemDetails
                 {
                     Status = StatusCodes.Status400BadRequest,

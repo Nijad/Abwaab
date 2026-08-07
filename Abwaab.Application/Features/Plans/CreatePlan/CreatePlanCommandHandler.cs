@@ -1,5 +1,4 @@
-﻿using Abwaab.Application.Contracts;
-using Abwaab.Application.Repositories;
+﻿using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
 
