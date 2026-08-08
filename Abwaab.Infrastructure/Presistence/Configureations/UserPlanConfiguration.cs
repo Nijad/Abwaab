@@ -16,10 +16,9 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .IsRequired(true)
                    .HasColumnType("date");
 
-            builder.Property(p => p.IsActive)
-                .IsRequired(true)
-                .HasDefaultValue(false)
-                .HasColumnType("bit");
+            builder.HasOne(p => p.UserPlanStatus)
+                .WithMany(u => u.UserPlans)
+                .HasForeignKey(p => p.UserPlanStateId);
 
             // Relationships
             builder.HasOne(p => p.User)

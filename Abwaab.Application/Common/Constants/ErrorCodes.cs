@@ -37,5 +37,7 @@
         public const string FailedResetPassword = "FAILED_RESET_PASSWORD";
         public const string UserAlreadyHasPlan = "USER_ALREADY_HAS_PLAN";
         public const string PlanNotAvailable = "PLAN_NOT_AVAILABLE";
+        public const string UserAlreadyHasActivePlan = "USER_ALREADY_HAS_ACTIVE_PLAN";
+        public const string NotImplementedServiceType = "NOT_IMPLEMENTED_SERVICE_TYPE";
     }
 }

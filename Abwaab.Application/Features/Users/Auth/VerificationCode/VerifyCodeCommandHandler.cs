@@ -1,5 +1,4 @@
-﻿using Abwaab.Application.Common.Enums;
-using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
 using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
@@ -80,7 +79,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             }
 
             // Assign default plant to the new user
-            await _userService.AssignDefaultPlantAsync(user.Id);
+            await _userService.ActiveDefaultPlantAsync(user);
 
             // Subscribe the user to push notifications
             await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWaysEnum.Push_Notification);

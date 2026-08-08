@@ -233,5 +233,17 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
                 }
             };
         }
+
+        public static List<UserPlanStatus> LoadUserPlanStates()
+        {
+            return new List<UserPlanStatus>()
+            {
+                new UserPlanStatus() { Id = new Guid(), StateName = UserPlanStatesEnum.Pending.ToString() },
+                new UserPlanStatus() { Id = new Guid(), StateName = UserPlanStatesEnum.Active.ToString() },
+                new UserPlanStatus() { Id = new Guid(), StateName = UserPlanStatesEnum.Expiered.ToString() },
+                new UserPlanStatus() { Id = new Guid(), StateName = UserPlanStatesEnum.Working.ToString() },
+                new UserPlanStatus() { Id = new Guid(), StateName = UserPlanStatesEnum.Canceled.ToString() },
+            };
+        }
     }
 }

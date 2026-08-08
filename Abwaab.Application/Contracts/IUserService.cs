@@ -1,5 +1,4 @@
-﻿using Abwaab.Application.Common.Enums;
-using Abwaab.Application.Features.Users.Auth.Logout;
+﻿using Abwaab.Application.Features.Users.Auth.Logout;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
 
@@ -18,6 +17,6 @@ namespace Abwaab.Application.Contracts
         void RemoveCookie(string cookieName);
 
         Task<LogoutResponse> RevokeActiveToken(Guid userId, bool revokeAll);
-        Task AssignDefaultPlantAsync(Guid userId);
+        Task ActiveDefaultPlantAsync(ApplicationUser user);
     }
 }
