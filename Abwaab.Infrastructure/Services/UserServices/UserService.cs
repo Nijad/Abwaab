@@ -139,5 +139,10 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 await _planRepository.AssignPlanToUserAsync(user.Id, defaultPlan.Id, activeUserPlanStateId);
             }                
         }
+
+        public async Task<ApplicationUser?> FindUserByNameAsync(string username)
+        {
+            return await _userManager.FindByNameAsync(username);
+        }
     }
 }

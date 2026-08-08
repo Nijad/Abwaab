@@ -24,6 +24,27 @@ namespace Abwaab.Server.Exceptions
         {
             ProblemDetails problem = exception switch
             {
+                NotValidPaymentCodeException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status412PreconditionFailed,
+                    Title = "Failed To Confirm Payment",
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
+                FailedCancelationUserPlanException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status412PreconditionFailed,
+                    Title = "Failed To Cancel User Plan",
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
+                ObjectNotBelongToUserException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    Title = "Not Belong To You",
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
                 NotImplementedServiceTypeException ex => new CustomProblemDetails
                 {
                     Status = StatusCodes.Status500InternalServerError,

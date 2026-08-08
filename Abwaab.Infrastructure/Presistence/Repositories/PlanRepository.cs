@@ -71,9 +71,14 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await _context.Plans.FirstOrDefaultAsync(p => p.Id == planId);
         }
 
-        public async Task<UserPlanStatus?> GetUserPlanStatusByNameAsync(string palnName)
+        public async Task<UserPlanStatus> FindUserPlanStatusByNameAsync(string palnName)
         {
-            return await _context.UserPlansStatus.Where(x => x.StateName == palnName).FirstOrDefaultAsync();
+            UserPlanStatus? userPlanStatus = await _context.UserPlansStatus.Where(x => x.StateName == palnName).FirstOrDefaultAsync();
+
+            if (userPlanStatus == null)
+                throw new NotFoundException(nameof(UserPlanStatus), nameof(userPlanStatus.StateName), palnName);
+
+            return userPlanStatus;
         }
 
         public async Task UpgradeUserPlanAsync(ApplicationUser user, Plan plan)
@@ -89,7 +94,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 throw new NotFoundException("ServiceType", nameof(ServiceType.ServiceName), ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " "));
 
             string userPlanStatesName = UserPlanStatesEnum.Pending.ToString();
-            UserPlanStatus? userPlanStatus = await GetUserPlanStatusByNameAsync(userPlanStatesName);
+            UserPlanStatus? userPlanStatus = await FindUserPlanStatusByNameAsync(userPlanStatesName);
 
             if (userPlanStatus == null)
                 throw new NotFoundException("UserPlanStatus", nameof(userPlanStatus.StateName), userPlanStatesName);
@@ -175,8 +180,15 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             _context.UserPlans.Update(userPlan);
 
             await _context.SaveChangesAsync();
+        }
 
+        public async Task<UserPlan?> FindUserActivePlanAsync(Guid? userId)
+        {
+            UserPlanStatus activeUserPlanState = await FindUserPlanStatusByNameAsync(UserPlanStatesEnum.Active.ToString());
 
+            UserPlan? userPlan = await _context.UserPlans.Where(x=>x.UserId==userId && x.UserPlanStateId == activeUserPlanState.Id).FirstOrDefaultAsync();
+
+            return userPlan;
         }
     }
 }

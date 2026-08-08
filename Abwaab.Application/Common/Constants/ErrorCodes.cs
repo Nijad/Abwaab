@@ -39,5 +39,8 @@
         public const string PlanNotAvailable = "PLAN_NOT_AVAILABLE";
         public const string UserAlreadyHasActivePlan = "USER_ALREADY_HAS_ACTIVE_PLAN";
         public const string NotImplementedServiceType = "NOT_IMPLEMENTED_SERVICE_TYPE";
+        public const string ObjectNotBelongToUser = "OBJECT_NOT_BELONG_TO_USER";
+        public const string FailedCancelationUserPlan = "FAILED_CANCELATION_USER_PLAN";
+        public const string NotValidPaymentCode = "NON_PAYABLE";
     }
 }

@@ -36,19 +36,7 @@ namespace Abwaab.Infrastructure.Services
             payment.PaymentStateId = completedStateId;
             payment.LastModifiedAt = DateTime.Now;
             payment.LastModifiedBy = actionBy;
-
-            if (payment.ServiceType.ServiceName == ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " "))
-            {
-                UserPlanStatus? activeUserPlanState = await _planRepository.GetUserPlanStatusByNameAsync(UserPlanStatesEnum.Active.ToString());
-                
-                payment.UserPlan!.UserPlanStateId = activeUserPlanState!.Id;
-                payment.UserPlan.UserPlanStatus = activeUserPlanState;
-            }
-            else if (payment.ServiceType.ServiceName == ServiceTypesEnum.Advertisment.ToString())
-                throw new NotImplementedServiceTypeException(ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " "));
-            else
-                throw new NotImplementedServiceTypeException(ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " "));
-
+            
             _context.Payments.Update(payment);
             await _context.SaveChangesAsync();
         }
@@ -67,11 +55,28 @@ namespace Abwaab.Infrastructure.Services
         public async Task<Payment?> FindPaymentByPaymentCodeAsync(string paymentCode)
         {
             return await _context.Payments
-                .Include(x=>x.ServiceType)
-                .Include(x=>x.UserPlan)
-                .Include(x=>x.Advertisment)
+                .Include(x => x.ServiceType)
+                .Include(x => x.UserPlan)
+                .Include(x => x.Advertisment)
                 .Where(x => x.PaymentCode == paymentCode)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<PaymentState> FindPaymentSateBySateNameAsync(PaymentStatesEnum stateName)
+        {
+            PaymentState? state = await _context.PaymentStates.Where(x => x.StateName == stateName.ToString()).FirstOrDefaultAsync();
+
+            if (state == null)
+                throw new NotFoundException(nameof(PaymentState), nameof(state.StateName), stateName.ToString());
+
+            return state;
+        }
+
+        public async Task<Payment?> FindPendingUserPlanPaymentAsync(Guid userPlanId)
+        {
+            PaymentState pendingPaymentState = await FindPaymentSateBySateNameAsync(PaymentStatesEnum.Pending);
+
+            return await _context.Payments.Where(x => x.UserPlandId == userPlanId && x.PaymentStateId == pendingPaymentState.Id).FirstOrDefaultAsync();
         }
     }
 }

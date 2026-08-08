@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Options;
+using Abwaab.Infrastructure.Presistence;
 using Abwaab.Infrastructure.Presistence.Context;
 using Abwaab.Infrastructure.Presistence.Seeding;
 using Abwaab.Infrastructure.Services.Common;
@@ -23,7 +24,7 @@ using System.Threading.RateLimiting;
 
 namespace Abwaab.Infrastructure
 {
-    public static class InrastructureDependencyInjection
+    public static class InfrastructureDependencyInjection
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
         {
@@ -129,6 +130,8 @@ namespace Abwaab.Infrastructure
 
             services.AddHttpContextAccessor();
             services.AddScoped<IUrlBuilder, UrlBuilder>();
+
+            services.AddScoped<ITransactionManager, EfCoreTransactionManager>();
 
             return services;
         }

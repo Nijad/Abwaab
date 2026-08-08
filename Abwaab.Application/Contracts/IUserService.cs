@@ -18,5 +18,6 @@ namespace Abwaab.Application.Contracts
 
         Task<LogoutResponse> RevokeActiveToken(Guid userId, bool revokeAll);
         Task ActiveDefaultPlantAsync(ApplicationUser user);
+        Task<ApplicationUser?> FindUserByNameAsync(string username);
     }
 }

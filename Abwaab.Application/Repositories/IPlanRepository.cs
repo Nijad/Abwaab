@@ -11,10 +11,11 @@ namespace Abwaab.Application.Repositories
         Task<List<Plan>> GetAllAsync();
         Task<Plan?> GetDefaultPlanAsync();
         Task<Plan?> GetPlanByIdAsync(Guid planId);
-        Task<UserPlanStatus?> GetUserPlanStatusByNameAsync(string planName);
+        Task<UserPlanStatus> FindUserPlanStatusByNameAsync(string planName);
         Task UpgradeUserPlanAsync(ApplicationUser user, Plan plan);
         Task<bool> UserHasPlan(Guid userId ,Guid planId);
         Task<Guid> GetUserPlanStateId(UserPlanStatesEnum state);
         Task ActiveUserPlan(Guid userId, Guid planId);
+        Task<UserPlan?> FindUserActivePlanAsync(Guid? userId);
     }
 }
