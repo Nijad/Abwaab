@@ -22,7 +22,7 @@ namespace Abwaab.Application.Features.Users.Profile.Plans.Cancel
                 throw new NotFoundException(nameof(UserPlan), nameof(userPlan.Id), request.PlanId.ToString());
 
             // check if it is pending
-            bool isPendingUserPlan = await _planService.IsPendingUserPlan(userPlan);
+            bool isPendingUserPlan = await _planService.IsPendingUserPlanAsync(userPlan);
 
             // change it's status to canceled
 

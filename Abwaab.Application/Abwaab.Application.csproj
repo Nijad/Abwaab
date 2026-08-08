@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Common\Mappings\" />
     <Folder Include="Features\Payments\Remove\" />
-    <Folder Include="Features\Plans\CancelPlan\" />
     <Folder Include="Features\Properties\" />
   </ItemGroup>
 

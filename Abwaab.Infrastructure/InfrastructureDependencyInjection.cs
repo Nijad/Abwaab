@@ -23,7 +23,7 @@ using System.Threading.RateLimiting;
 
 namespace Abwaab.Infrastructure
 {
-    public static class InrastructureDependencyInjection
+    public static class InfrastructureDependencyInjection
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
         {
