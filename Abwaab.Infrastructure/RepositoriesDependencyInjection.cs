@@ -11,6 +11,7 @@ namespace Abwaab.Infrastructure
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<INotificationWayRepository, NotificationWayRepository>();
             services.AddScoped<IPlanRepository, PlanRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
             return services;
         }
     }
