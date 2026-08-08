@@ -9,14 +9,10 @@ namespace Abwaab.Application.Features.Payments.Confirm
     public class ConfirmPaymentHandler : IRequestHandler<ConfirmPaymentCommand, ConfirmPaymentResponse>
     {
         private readonly IPaymentService _paymentService;
-        private readonly IPlanService _planService;
 
-        public ConfirmPaymentHandler(
-            IPaymentService paymentService, 
-            IPlanService planService)
+        public ConfirmPaymentHandler(IPaymentService paymentService)
         {
             _paymentService = paymentService;
-            _planService = planService;
         }
 
         public async Task<ConfirmPaymentResponse> Handle(ConfirmPaymentCommand request, CancellationToken cancellationToken)
