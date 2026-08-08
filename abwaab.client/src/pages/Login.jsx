@@ -3,11 +3,14 @@ import axios from "../services/axios";
 import { Button } from "@mui/material";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router";
+import Admin from "./Admin";
+import { useSnackbar } from "notistack";
 
 const Login = () => {
   // const axiosPrivate = useAxiosPrivate();
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [fdata, setFdata] = useState({ identifier: "", password: "" });
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,37 +28,28 @@ const Login = () => {
         isAdmin = resp.data.isAdmin;
         login(resp.data);
       })
-      .catch((e) => console.log(e))
+      .catch((e) => {
+        console.log(e);
+        enqueueSnackbar(e);
+      })
       .finally(() => {
-        if (isAdmin) redirect("Admin");
-        else redirect("");
+        if (isAdmin) redirect("admin");
+        else redirect("portal");
       });
-
-    // return <Navigate to="/" replace />;
-    // const token = parseJwt(response.data.accessToken);
-    // console.log(token);
-
-    // const response = await fetch(`${import.meta.}/api/auth/login` {
-    //   body: JSON.stringify({ ...fdata }),
-    //   headers: {
-    //     "Content-Type": "Application/json",
-    //   },
-    //   mode: "cors",
-    //   method: "Post",
-    //   signal: controller.signal,
-    // });
-    // console.log(response);
   };
   console.log(fdata);
   const redirect = (to) => {
     navigate(`/${to}`);
   };
+  const handleForgotPassword = () => {
+    redirect("reset-password");
+  };
 
   return (
-    <div>
+    <div className="">
       <form method="post" onSubmit={handleSubmit}>
         <div className="">
-          <label>Email / Mobile No.</label>
+          <label>البريد الإلكتروني/ الموبايل</label>
           <input
             type="text"
             name="Identifier"
@@ -64,7 +58,7 @@ const Login = () => {
           />
         </div>
         <div className="">
-          <label>Password</label>
+          <label>كلمة المرور</label>
           <input
             type="password"
             name="Password"
@@ -73,10 +67,24 @@ const Login = () => {
           />
         </div>
         {/* <input type="submit" /> */}
-        <Button type="submit" variant="outlined" color="secondary">
-          Submit
+        <Button type="submit" variant="contained" color="navy">
+          دخول
         </Button>
       </form>
+      <Button
+        type="button"
+        variant="text"
+        color="sky"
+        onClick={() => handleForgotPassword()}
+      >
+        هل نسيت كلمة المرور؟
+      </Button>
+      <p className="">
+        ليس لديك حساب؟{" "}
+        <Button type="button" onClick={() => redirect("register")}>
+          قم بالتسجيل الآن
+        </Button>{" "}
+      </p>
     </div>
   );
 };
