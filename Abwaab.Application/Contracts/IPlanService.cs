@@ -10,5 +10,6 @@ namespace Abwaab.Application.Contracts
         Task<bool> IsUserPlanBelongToUserAsync(Guid userPlanId, Guid userId);
         Task<UserPlanStatus> FindUserPlanStatusByStatusNameAsync(UserPlanStatesEnum statusName);
         Task UpdateUserPlan(UserPlan userPlan);
+        Task ActivatePlan(UserPlan? userPlan);
     }
 }

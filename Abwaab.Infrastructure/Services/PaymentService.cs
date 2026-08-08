@@ -36,19 +36,7 @@ namespace Abwaab.Infrastructure.Services
             payment.PaymentStateId = completedStateId;
             payment.LastModifiedAt = DateTime.Now;
             payment.LastModifiedBy = actionBy;
-
-            if (payment.ServiceType.ServiceName == ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " "))
-            {
-                UserPlanStatus? activeUserPlanState = await _planRepository.GetUserPlanStatusByNameAsync(UserPlanStatesEnum.Active.ToString());
-
-                payment.UserPlan!.UserPlanStateId = activeUserPlanState!.Id;
-                payment.UserPlan.UserPlanStatus = activeUserPlanState;
-            }
-            else if (payment.ServiceType.ServiceName == ServiceTypesEnum.Advertisment.ToString())
-                throw new NotImplementedServiceTypeException(ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " "));
-            else
-                throw new NotImplementedServiceTypeException(ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " "));
-
+            
             _context.Payments.Update(payment);
             await _context.SaveChangesAsync();
         }
