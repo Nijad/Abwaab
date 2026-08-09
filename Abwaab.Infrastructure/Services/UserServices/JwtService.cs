@@ -121,7 +121,9 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 UserId = user.Id,
                 ExpiryDate = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays),
                 IsRevoked = false,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                FirstName = user.FirstName,
+                LastName = user.LastName
             };
             await _refreshTokenRepo.CreateAsync(refreshToken);
 

@@ -4,7 +4,6 @@ using Abwaab.Application.Common.Exceptions.Payments;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.PaymentEntities;
-using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
 
 namespace Abwaab.Application.Features.Payments.Confirm

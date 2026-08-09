@@ -8,5 +8,7 @@
         public string? RefreshToken { get; set; }
         public int ExpiresIn { get; set; }
         public bool IsAdmin { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
     };
 }
