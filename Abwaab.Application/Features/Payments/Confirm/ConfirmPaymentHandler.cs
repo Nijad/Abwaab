@@ -59,6 +59,7 @@ namespace Abwaab.Application.Features.Payments.Confirm
             catch (Exception ex)
             {
                 await _transactionManager.RollbackTransactionAsync(cancellationToken);
+                throw;
             }
             return new() { Success = true, Message = $"Payment Confirmed, and {ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " ")} activated successfully" };
         }
