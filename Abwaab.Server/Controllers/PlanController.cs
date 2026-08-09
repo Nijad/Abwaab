@@ -35,8 +35,8 @@ namespace Abwaab.Server.Controllers
             return Ok(result);
         }
         
-        [HttpPost("cancel-plan")]
-        public async Task<IActionResult> CancelPlan([FromBody] CancelUserPlanCommand plan)
+        [HttpPost("cancel-user-plan")]
+        public async Task<IActionResult> CanceluserPlan([FromBody] CancelUserPlanCommand plan)
         {
             var result = await _mediator.Send(plan);
             return Ok(result);
