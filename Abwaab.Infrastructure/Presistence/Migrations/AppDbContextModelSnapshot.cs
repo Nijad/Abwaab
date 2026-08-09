@@ -980,6 +980,12 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Property<DateTime?>("PlanExpieryDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PreviousEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PreviousPhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RefreshToken")
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");
@@ -1072,6 +1078,11 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("DefaultPlan")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<int>("DurationInDays")
                         .HasColumnType("int");
 
@@ -1125,6 +1136,38 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.ToTable("Plans", (string)null);
                 });
 
+            modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RevokedByIp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.UserPlan", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1136,11 +1179,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<DateTime?>("LastModifiedAt")
                         .HasColumnType("datetime2");
@@ -1157,13 +1195,45 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("UserPlanStateId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PlanId");
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("UserPlanStateId");
+
                     b.ToTable("UserPlans", (string)null);
+                });
+
+            modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.UserPlanStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StateName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserPlansStatus");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -1491,6 +1561,17 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.RefreshToken", b =>
+                {
+                    b.HasOne("Abwaab.Domain.Entities.UserEntities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.UserPlan", b =>
                 {
                     b.HasOne("Abwaab.Domain.Entities.UserEntities.Plan", "Plan")
@@ -1505,9 +1586,17 @@ namespace Abwaab.Infrastructure.presistence.migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Abwaab.Domain.Entities.UserEntities.UserPlanStatus", "UserPlanStatus")
+                        .WithMany("UserPlans")
+                        .HasForeignKey("UserPlanStateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Plan");
 
                     b.Navigation("User");
+
+                    b.Navigation("UserPlanStatus");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -1660,6 +1749,11 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Navigation("Payments");
 
                     b.Navigation("Properties");
+                });
+
+            modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.UserPlanStatus", b =>
+                {
+                    b.Navigation("UserPlans");
                 });
 #pragma warning restore 612, 618
         }

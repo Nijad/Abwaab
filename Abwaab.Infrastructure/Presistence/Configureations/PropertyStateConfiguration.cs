@@ -17,12 +17,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .IsRequired()
                    .HasMaxLength(200);
 
-            // Relationship -> Property (assumes Property.PropertyStateId exists)
-            //builder.HasMany<Property>(ps => new List<Property>())
-            //       .WithOne()
-            //       .HasForeignKey("PropertyStateId")
-            //       .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasIndex("StateName").IsUnique();
         }
     }

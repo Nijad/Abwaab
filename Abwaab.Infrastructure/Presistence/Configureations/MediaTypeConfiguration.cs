@@ -19,11 +19,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
             builder.Property(mt => mt.Description)
                    .HasMaxLength(1000);
 
-            //builder.HasMany(mt => mt.MediaList)
-            //       .WithOne(m => m.MediaType)
-            //       .HasForeignKey(m => m.MediaTypeId)
-            //       .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasIndex(mt => mt.Name).IsUnique();
         }
     }

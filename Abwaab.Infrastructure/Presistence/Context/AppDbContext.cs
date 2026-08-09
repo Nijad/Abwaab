@@ -52,6 +52,8 @@ namespace Abwaab.Infrastructure.Presistence.Context
         public DbSet<OTP> OTPs { get; set; }
         public DbSet<Plan> Plans { get; set; }
         public DbSet<UserPlan> UserPlans { get; set; }
+        public DbSet<UserPlanStatus> UserPlansStatus { get; set; }
 
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

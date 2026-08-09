@@ -16,12 +16,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .IsRequired()
                    .HasMaxLength(200);
 
-            // Relationship -> Property (assumes Property.FinishingId exists)
-            //builder.HasMany<Property>(f => new List<Property>())
-            //       .WithOne()
-            //       .HasForeignKey("FinishingId")
-            //       .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasIndex("FinishingName").IsUnique();
         }
     }

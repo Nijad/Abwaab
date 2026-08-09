@@ -16,11 +16,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .IsRequired()
                    .HasMaxLength(200);
 
-            //builder.HasMany(s => s.Appointments)
-            //       .WithOne(a => a.AppointmentState)
-            //       .HasForeignKey(a => a.AppointmentStateId)
-            //       .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasIndex(s => s.StateName).IsUnique();
         }
     }

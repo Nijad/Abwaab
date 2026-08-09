@@ -7,13 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Presistence\Repositories\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MailKit" Version="4.17.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.28" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.28" />
+    <PackageReference Include="Microsoft.AspNetCore.RateLimiting" Version="7.0.0-rc.2.22476.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.17">
       <PrivateAssets>all</PrivateAssets>
