@@ -46,7 +46,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
             if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                
+
                 _logger.LogError($"Failed to change password for user {userId}. Errors: {errors}");
 
                 throw new FailedChangePasswordException();

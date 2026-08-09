@@ -1,5 +1,4 @@
 ﻿using Abwaab.Application.Common.Constants;
-using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
@@ -34,10 +33,18 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Forgot
 
             string code = _verificationService.GenerateVerificationCode();
 
-            if (request.IdentifierType == IdentifiersEnum.Email)
+            if (request.Identifier == user.Email)
                 await _verificationService.SendVerificationCodeViaEmailAsync(user.Email!, code);
-            else if (request.IdentifierType == IdentifiersEnum.Phone_Number)
+            else if (request.Identifier == user.PreviousEmail)
+                await _verificationService.SendVerificationCodeViaEmailAsync(user.PreviousEmail!, code);
+            else if (request.Identifier == user.PhoneNumber)
                 await _verificationService.SendVerificationCodeViaSmsAsync(user.PhoneNumber!, code);
+            else if (request.Identifier == user.PreviousPhoneNumber)
+                await _verificationService.SendVerificationCodeViaSmsAsync(user.PreviousPhoneNumber!, code);
+            else if (request.IdentifierType == IdentifiersEnum.Email)
+                throw new NotFoundException(nameof(request.Identifier), IdentifiersEnum.Email.ToString(), request.Identifier);
+            else if (request.IdentifierType == IdentifiersEnum.Phone_Number)
+                throw new NotFoundException(nameof(request.Identifier), IdentifiersEnum.Phone_Number.ToString().Replace("_", " "), request.Identifier);
             else
                 throw new NotImplementedIdentifierException(request.IdentifierType.ToString());
 

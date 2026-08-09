@@ -87,6 +87,13 @@ namespace Abwaab.Server.Exceptions
                     Detail = ex.Message,
                     ErrorCode = ex.ErrorCode
                 },
+                PhoneNotVerifiedException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    Title = "Failed To Login",
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
                 UserNotInRoleException ex => new CustomProblemDetails
                 {
                     Status = StatusCodes.Status400BadRequest,

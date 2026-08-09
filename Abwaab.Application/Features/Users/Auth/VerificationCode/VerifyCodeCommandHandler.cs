@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
 using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
@@ -70,12 +71,15 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             }
 
             // Add the user to the "User" role
-            var roleResult = await _userManager.AddToRoleAsync(user, "User");
-            if (!roleResult.Succeeded)
+            if (await _userManager.IsInRoleAsync(user, RoleConstants.ROLE_USER))
             {
-                string errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                var roleResult = await _userManager.AddToRoleAsync(user, RoleConstants.ROLE_USER);
+                if (!roleResult.Succeeded)
+                {
+                    string errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
 
-                _logger.LogError($"Failed to add user {user.Id} to 'User' role': {errors}");
+                    _logger.LogError($"Failed to add user {user.Id} to 'User' role': {errors}");
+                }
             }
 
             // Assign default plant to the new user

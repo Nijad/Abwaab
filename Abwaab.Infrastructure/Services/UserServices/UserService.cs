@@ -114,8 +114,10 @@ namespace Abwaab.Infrastructure.Services.UserServices
             // 1. check if user doesn't have active plan
             bool hasActivePlan = await _planRepository.CheckIfUserHasActivePlan(user.Id);
 
+            // if user already has active plan return and don't throw exception
+            // because if user add or change thier identifier
             if (hasActivePlan)
-                throw new UserAlreadyHasActivePlanException();
+                return; // throw new UserAlreadyHasActivePlanException();
 
             // 2. check if user already has default plan 
             Plan? defaultPlan = await _planRepository.GetDefaultPlanAsync();
