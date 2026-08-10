@@ -15,6 +15,7 @@ namespace Abwaab.Application.Features.Plans.CancelPlan
     public class CancelUserPlanCommandHandler : IRequestHandler<CancelUserPlanCommand, CancelUserPlanResponse>
     {
         private readonly IPlanService _planService;
+        private readonly IUserPlanStateService _userPlanStateService;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ClaimsPrincipal currentUser;
         private readonly IUserService _userService;
@@ -26,7 +27,8 @@ namespace Abwaab.Application.Features.Plans.CancelPlan
             IHttpContextAccessor contextAccessor,
             IUserService userService,
             IPaymentService paymentService,
-            ITransactionManager transactionManager)
+            ITransactionManager transactionManager,
+            IUserPlanStateService userPlanStateService)
         {
             _planService = planService;
             _contextAccessor = contextAccessor;
@@ -34,6 +36,7 @@ namespace Abwaab.Application.Features.Plans.CancelPlan
             _userService = userService;
             _paymentService = paymentService;
             _transactionManager = transactionManager;
+            _userPlanStateService = userPlanStateService;
         }
 
         public async Task<CancelUserPlanResponse> Handle(CancelUserPlanCommand request, CancellationToken cancellationToken)
@@ -59,13 +62,13 @@ namespace Abwaab.Application.Features.Plans.CancelPlan
                         request.UserPlanId.ToString());
 
                 // 3. check if user plan with pending status
-                UserPlanStatus activeStatus = await _planService.FindUserPlanStatusByStatusNameAsync(UserPlanStatesEnum.Active);
+                UserPlanStatus activeStatus = await _userPlanStateService.GetActiveUserPlanStatus();
                 if (activeStatus.Id != userPlan.UserPlanStateId)
                     throw new FailedCancelationUserPlanException("You cann't cancel unpending plan");
 
                 // 4. change status of user plan to canceled
 
-                UserPlanStatus canceledStatus = await _planService.FindUserPlanStatusByStatusNameAsync(UserPlanStatesEnum.Canceled);
+                UserPlanStatus canceledStatus = await _userPlanStateService.GetCanceledUserPlanStatus();
 
                 userPlan.UserPlanStatus = canceledStatus;
                 userPlan.UserPlanStateId = canceledStatus.Id;

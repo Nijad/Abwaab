@@ -16,6 +16,8 @@ namespace Abwaab.Application.Repositories
         Task<bool> UserHasPlan(Guid userId ,Guid planId);
         Task<Guid> GetUserPlanStateId(UserPlanStatesEnum state);
         Task ActiveUserPlan(Guid userId, Guid planId);
-        Task<UserPlan?> FindUserActivePlanAsync(Guid? userId);
+        Task<UserPlan?> FindUserActivePlanAsync(Guid userId);
+        Task UpdateUserPlanAsync(UserPlan userPlan);
+        Task<UserPlan?> FindUserPlanByIdAsync(Guid planId);
     }
 }

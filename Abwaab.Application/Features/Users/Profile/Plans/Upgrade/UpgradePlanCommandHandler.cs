@@ -24,7 +24,7 @@ namespace Abwaab.Application.Features.Users.Profile.Plans.Upgrade
 
         public async Task<UpgradePlanResponse> Handle(UpgradePlanComman request, CancellationToken cancellationToken)
         {
-            string? username = _userService.FindUserByContext();
+            string? username = _userService.FindUserNameByContext();
             if(username == null)
                 throw new NotFoundException("User", "Username", "Not found in context");
 

@@ -95,6 +95,7 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<PropertyState>
             {
+                new PropertyState { Id = new Guid(), StateName = PropertyStatesEnum.Preparing.ToString() },
                 new PropertyState { Id = new Guid(), StateName = PropertyStatesEnum.Pending.ToString() },
                 new PropertyState { Id = new Guid(), StateName = PropertyStatesEnum.Published.ToString() },
                 new PropertyState { Id = new Guid(), StateName = PropertyStatesEnum.Rejected.ToString() },

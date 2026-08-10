@@ -2,6 +2,7 @@
 {
     public enum PropertyStatesEnum
     {
+        Preparing,
         Pending,
         Published,
         Rejected,
