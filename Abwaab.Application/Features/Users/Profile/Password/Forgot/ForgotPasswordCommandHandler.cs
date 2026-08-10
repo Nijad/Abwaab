@@ -50,7 +50,12 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Forgot
 
             _cache.Set($"reset_{request.Identifier}", code, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
-            return new ForgotPasswordResponse { Success = true, Message = $"Reset code sent to your {request.IdentifierType.ToString().Replace("_", " ")}." };
+            return new ForgotPasswordResponse { 
+                Success = true, 
+                Message = $"Reset code sent to your {request.IdentifierType.ToString().Replace("_", " ")}." ,
+                CodeTimeOutInMinuts = GeneralConstants.CODE_TIMEOUT_MINUTES,
+                ExpireAt = DateTime.UtcNow.AddMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES),
+            };
         }
     }
 }
