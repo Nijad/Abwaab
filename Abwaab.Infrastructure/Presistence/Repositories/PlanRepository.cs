@@ -179,6 +179,11 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<List<UserPlan>> FindUserPlansByStatusAsync(Guid userId, Guid stateId)
+        {
+            return _context.UserPlans.Include(x=>x.Plan).Where(x=>x.UserId == userId && x.UserPlanStateId == stateId).ToList();
+        }
+
         public async Task<UserPlan?> FindUserActivePlanAsync(Guid userId)
         {
             //todo need checking

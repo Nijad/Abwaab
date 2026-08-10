@@ -24,6 +24,27 @@ namespace Abwaab.Server.Exceptions
         {
             ProblemDetails problem = exception switch
             {
+                UserHasMoreThanOneActivePlanException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    Title = "Failed To Add Property", //todo: make title dynamic
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
+                UserHasNoActivePlanException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    Title = "Failed To Add Property",
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
+                ExceededAllowedNumberException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status412PreconditionFailed,
+                    Title = ex.Title,
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
                 NotValidPaymentCodeException ex => new CustomProblemDetails
                 {
                     Status = StatusCodes.Status412PreconditionFailed,

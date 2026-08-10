@@ -7,7 +7,7 @@ using Abwaab.Application.Features.Users.Profile.Password.Change;
 using Abwaab.Application.Features.Users.Profile.Phone.Cancel;
 using Abwaab.Application.Features.Users.Profile.Phone.Confirm;
 using Abwaab.Application.Features.Users.Profile.Phone.InitiateChange;
-using Abwaab.Application.Features.Users.Profile.Plans.Upgrade;
+using Abwaab.Application.Features.Users.Profile.UserPlans.Upgrade;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -107,7 +107,7 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPost("UpgradePlan")]
-        public async Task<IActionResult> UpgradePlan([FromBody] UpgradePlanComman request)
+        public async Task<IActionResult> UpgradePlan([FromBody] UpgradeUserPlanComman request)
         {
             if (request == null)
                 return BadRequest();

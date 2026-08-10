@@ -1,8 +1,7 @@
 ﻿using Abwaab.Application.Common.Constants;
-using Abwaab.Application.Features.Plans.CancelPlan;
 using Abwaab.Application.Features.Plans.CreatePlan;
 using Abwaab.Application.Features.Plans.GetAllPlans;
-using Abwaab.Application.Features.Users.Profile.Plans.Cancel;
+using Abwaab.Application.Features.Users.Profile.UserPlans.Cancel;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

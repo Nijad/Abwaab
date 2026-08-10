@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Contracts;
+﻿using Abwaab.Application.Common.Exceptions.Plans;
+using Abwaab.Application.Contracts;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.UserEntities;
 
@@ -7,14 +8,10 @@ namespace Abwaab.Infrastructure.Services
     public class PlanService : IPlanService
     {
         private readonly IPlanRepository _planRepository;
-        private readonly IUserPlanStateService _userPlanStateService;
 
-        public PlanService(
-            IPlanRepository planRepository, 
-            IUserPlanStateService userPlanStateService)
+        public PlanService(IPlanRepository planRepository)
         {
             _planRepository = planRepository;
-            _userPlanStateService = userPlanStateService;
         }
 
         public async Task<UserPlan?> FindUserPlanByIdAsync(Guid planId)
@@ -23,11 +20,9 @@ namespace Abwaab.Infrastructure.Services
             return userPlan;
         }
 
-        public async Task<bool> IsPendingUserPlanAsync(UserPlan userPlan)
+        public async Task<bool> IsUserPlanHasStatusAsync(UserPlan userPlan, UserPlanStatus status)
         {
-            UserPlanStatus pendingUserPlanStatus = await _userPlanStateService.GetPendingUserPlanStatus();
-
-            return pendingUserPlanStatus.Id == userPlan.UserPlanStateId;
+            return status.Id == userPlan.UserPlanStateId;
         }
 
         public Task<bool> IsUserPlanBelongToUserAsync(Guid userPlanId, Guid userId)
@@ -40,30 +35,17 @@ namespace Abwaab.Infrastructure.Services
             await _planRepository.UpdateUserPlanAsync(userPlan);
         }
 
-        public async Task ActivatePlan(UserPlan userPlan)
+        public async Task<UserPlan> FindUserActivePlanAsync(Guid userId, Guid activeUserPlanStateId)
         {
-            UserPlanStatus? activeUserPlanState = await _userPlanStateService.GetActiveUserPlanStatus();
+            List<UserPlan> userPlans = await _planRepository.FindUserPlansByStatusAsync(userId, activeUserPlanStateId);
 
-            UserPlanStatus? workingUserPlanState = await _userPlanStateService.GetWorkingUserPlanStatus();
+            if (userPlans.Count == 0)
+                throw new UserHasNoActivePlanException();
 
-            //find active plan if exist and change status to working
-            UserPlan? activePlan = await FindUserActivePlanAsync(userPlan.UserId);
-            
-            if (activePlan != null)
-            {
-                activePlan.UserPlanStatus = workingUserPlanState;
-                activePlan.UserPlanStateId = workingUserPlanState.Id;
-                await UpdateUserPlan(activePlan);
-            }
+            if (userPlans.Count > 1)
+                throw new UserHasMoreThanOneActivePlanException();
 
-            userPlan!.UserPlanStateId = activeUserPlanState!.Id;
-            userPlan.UserPlanStatus = activeUserPlanState;
-            await UpdateUserPlan(userPlan);
-        }
-
-        public async Task<UserPlan?> FindUserActivePlanAsync(Guid userId)
-        {
-            return await _planRepository.FindUserActivePlanAsync(userId);
+            return userPlans.First();
         }
     }
 }

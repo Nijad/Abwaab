@@ -13,10 +13,15 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             _context = context;
         }
 
-        public async Task CreateProperty(Guid id)
+        public async Task CreateProperty(Property property)
         {
-            _context.Properties.Add(new Property() { Id = id });
+            _context.Properties.Add(property);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId)
+        {
+            return _context.Properties.Where(x=>x.UserPlandId == planId).Count();
         }
     }
 }

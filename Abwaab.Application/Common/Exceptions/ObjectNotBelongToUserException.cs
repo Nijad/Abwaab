@@ -1,6 +1,6 @@
 ﻿using Abwaab.Application.Common.Constants;
 
-namespace Abwaab.Application.Common.Exceptions.Plans
+namespace Abwaab.Application.Common.Exceptions
 {
     public class ObjectNotBelongToUserException(string objectType, string objectIdentifier, string identifierValue) : Exception($"{objectType} with {objectIdentifier} equal to {identifierValue} is not belong to you.")
     {

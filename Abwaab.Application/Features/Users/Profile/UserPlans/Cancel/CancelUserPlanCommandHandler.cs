@@ -10,7 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace Abwaab.Application.Features.Plans.CancelPlan
+namespace Abwaab.Application.Features.Users.Profile.UserPlans.Cancel
 {
     public class CancelUserPlanCommandHandler : IRequestHandler<CancelUserPlanCommand, CancelUserPlanResponse>
     {

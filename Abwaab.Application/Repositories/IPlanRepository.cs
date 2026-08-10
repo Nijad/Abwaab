@@ -18,6 +18,7 @@ namespace Abwaab.Application.Repositories
         Task ActiveUserPlan(Guid userId, Guid planId);
         Task<UserPlan?> FindUserActivePlanAsync(Guid userId);
         Task UpdateUserPlanAsync(UserPlan userPlan);
+        Task<List<UserPlan>> FindUserPlansByStatusAsync(Guid userId, Guid stateId);
         Task<UserPlan?> FindUserPlanByIdAsync(Guid planId);
     }
 }
