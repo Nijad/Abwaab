@@ -5,5 +5,6 @@ namespace Abwaab.Application.Common.Exceptions.Auth
     public class RegistrationFailedException(): Exception(ErrorMessages.RegistrationFailed)
     {
         public string ErrorCode { get; } = ErrorCodes.RegistrationFailed;
+        public string EnglishErrorMessage { get; } = ErrorMessagesEn.RegistrationFailed;
     }
 }

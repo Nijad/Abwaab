@@ -2,8 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions.Plans
 {
-    public class FailedCancelationUserPlanException(string message) : Exception(message)
+    public class FailedCancelationUserPlanException(string message, string messageEn="") : Exception(message)
     {
-        public string ErrorCode { get; set; } = ErrorCodes.FailedCancelationUserPlan;
+        public string ErrorCode { get; } = ErrorCodes.FailedCancelationUserPlan;
+        public string EnglishErrorMessage { get; } = messageEn;
     }
 }
