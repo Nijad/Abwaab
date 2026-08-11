@@ -14,12 +14,14 @@ namespace Abwaab.Application.Features.Payments.Confirm
         private readonly ITransactionManager _transactionManager;
         private readonly IPaymentService _paymentService;
         private readonly IPlanService _planService;
+        private readonly IUserPlanStateService _userPlanStateService;
 
-        public ConfirmPaymentHandler(IPaymentService paymentService, ITransactionManager transactionManager, IPlanService planService)
+        public ConfirmPaymentHandler(IPaymentService paymentService, ITransactionManager transactionManager, IPlanService planService, IUserPlanStateService userPlanStateService)
         {
             _paymentService = paymentService;
             _transactionManager = transactionManager;
             _planService = planService;
+            _userPlanStateService = userPlanStateService;
         }
 
         public async Task<ConfirmPaymentResponse> Handle(ConfirmPaymentCommand request, CancellationToken cancellationToken)
@@ -48,7 +50,22 @@ namespace Abwaab.Application.Features.Payments.Confirm
 
                 if (payment.ServiceType.ServiceName == ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " "))
                 {
-                    await _planService.ActivatePlan(payment.UserPlan);
+                    UserPlanStatus? activeUserPlanState = await _userPlanStateService.GetActiveUserPlanStatus();
+
+                    UserPlanStatus? workingUserPlanState = await _userPlanStateService.GetWorkingUserPlanStatus();
+
+                    //find active plan if exist and change status to working
+                    UserPlan activePlan = await _planService.FindUserActivePlanAsync(payment.UserPlan!.UserId, activeUserPlanState.Id);
+
+                    if (activePlan != null)
+                    {
+                        activePlan.UserPlanStatus = workingUserPlanState;
+                        activePlan.UserPlanStateId = workingUserPlanState.Id;
+                        await _planService.UpdateUserPlan(activePlan);
+                    }
+                    payment.UserPlan.UserPlanStateId = activeUserPlanState!.Id;
+                    payment.UserPlan.UserPlanStatus = activeUserPlanState;
+                    await _planService.UpdateUserPlan(payment.UserPlan);
                 }
                 else if (payment.ServiceType.ServiceName == ServiceTypesEnum.Advertisment.ToString())
                     throw new NotImplementedServiceTypeException(ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " "));
@@ -60,6 +77,7 @@ namespace Abwaab.Application.Features.Payments.Confirm
             catch (Exception ex)
             {
                 await _transactionManager.RollbackTransactionAsync(cancellationToken);
+                throw;
             }
             return new() { Success = true, Message = $"Payment Confirmed, and {ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " ")} activated successfully" };
         }

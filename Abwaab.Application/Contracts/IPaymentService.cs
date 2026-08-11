@@ -9,5 +9,6 @@ namespace Abwaab.Application.Contracts
         Task<Payment?> FindPaymentByPaymentCodeAsync(string paymentCode);
         Task<PaymentState> FindPaymentSateBySateNameAsync(PaymentStatesEnum stateName);
         Task<Payment?> FindPendingUserPlanPaymentAsync(Guid userPlanId);
+        Task UpdatePaymentAsync(Payment userPlanPendingPayment);
     }
 }

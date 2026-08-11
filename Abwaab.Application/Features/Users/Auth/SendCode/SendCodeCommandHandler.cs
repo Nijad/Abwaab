@@ -36,7 +36,9 @@ namespace Abwaab.Application.Features.Users.Auth.SendCode
             
             // Store the code in cache with a 5-minute expiry
             _cache.Set(request.Identifier, code, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
-
+            
+            result.ExpireAt = DateTime.UtcNow.AddMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES);
+            result.CodeTimeOutInMinuts = GeneralConstants.CODE_TIMEOUT_MINUTES;
             return result;
         }
     }

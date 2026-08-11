@@ -1,10 +1,9 @@
-﻿using Abwaab.Application.Features.Users.Profile.Password.Forgot;
-using FluentValidation;
-
-namespace Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode
+﻿namespace Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode
 {
-    public class VerifyResetCodeResponse : AbstractValidator<ForgotPasswordDTO>
+    public class VerifyResetCodeResponse 
     {
+        public DateTime ExpireAt { get; set; }
+        public int CodeTimeOutInMinuts { get; set; }
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
     }

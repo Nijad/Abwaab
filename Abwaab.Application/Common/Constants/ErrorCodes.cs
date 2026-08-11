@@ -42,5 +42,8 @@
         public const string ObjectNotBelongToUser = "OBJECT_NOT_BELONG_TO_USER";
         public const string FailedCancelationUserPlan = "FAILED_CANCELATION_USER_PLAN";
         public const string NotValidPaymentCode = "NON_PAYABLE";
+        public const string UserHasNoActivePlan = "USER_HAS_NO_ACTIVE_PLAN";
+        public const string UserHasMoreThanOneActivePlan = "USER_HAS_MORE_THAN_ONE_ACATIVE_PLAN";
+        public const string ExceededAllowedNumber = "EXCEEDED_ALLOWED_NUMBER";
     }
 }

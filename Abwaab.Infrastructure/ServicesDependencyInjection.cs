@@ -14,6 +14,8 @@ namespace Abwaab.Infrastructure
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IPlanService, PlanService>();
+            services.AddScoped<IUserPlanStateService, UserPlanStateService>();
+            services.AddScoped<IPropertyService, PropertyService>();
             services.AddScoped<IJwtService, JwtService>();
             return services;
         }

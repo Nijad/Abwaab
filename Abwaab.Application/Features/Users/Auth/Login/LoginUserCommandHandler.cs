@@ -74,7 +74,9 @@ namespace Abwaab.Application.Features.Users.Auth.Login
                 AccessToken = tokenResponse.AccessToken,
                 RefreshToken = tokenResponse.RefreshToken,
                 ExpiresIn = tokenResponse.ExpiresIn,
-                IsAdmin = isAdmin
+                IsAdmin = isAdmin,
+                FirstName = user.FirstName,
+                LastName = user.LastName
             };
 
             return response;

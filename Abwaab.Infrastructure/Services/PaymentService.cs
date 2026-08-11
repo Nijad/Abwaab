@@ -1,10 +1,8 @@
 ﻿using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
-using Abwaab.Application.Common.Exceptions.Payments;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PaymentEntities;
-using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -77,6 +75,12 @@ namespace Abwaab.Infrastructure.Services
             PaymentState pendingPaymentState = await FindPaymentSateBySateNameAsync(PaymentStatesEnum.Pending);
 
             return await _context.Payments.Where(x => x.UserPlandId == userPlanId && x.PaymentStateId == pendingPaymentState.Id).FirstOrDefaultAsync();
+        }
+
+        public async Task UpdatePaymentAsync(Payment userPlanPendingPayment)
+        {
+            _context.Payments.Update(userPlanPendingPayment);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -29,11 +29,22 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _planRepository = planRepository;
         }
 
-        public string? FindUserByContext()
+        public string FindUserNameByContext()
         {
             HttpContext? context = _httpContextAccessor.HttpContext;
-            var username = context?.User?.Identity?.Name;
-            return username;
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+
+            if(context.User == null)
+                throw new ArgumentNullException(nameof(context));
+
+            if(context.User.Identity == null)
+                throw new ArgumentNullException(nameof(context));
+
+            if(context.User.Identity.Name == null)
+                throw new ArgumentNullException(nameof(context));
+
+            return context.User.Identity.Name;
         }
 
         public async Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifiersEnum identifierType)
@@ -114,8 +125,10 @@ namespace Abwaab.Infrastructure.Services.UserServices
             // 1. check if user doesn't have active plan
             bool hasActivePlan = await _planRepository.CheckIfUserHasActivePlan(user.Id);
 
+            // if user already has active plan return and don't throw exception
+            // because if user add or change thier identifier
             if (hasActivePlan)
-                throw new UserAlreadyHasActivePlanException();
+                return; // throw new UserAlreadyHasActivePlanException();
 
             // 2. check if user already has default plan 
             Plan? defaultPlan = await _planRepository.GetDefaultPlanAsync();

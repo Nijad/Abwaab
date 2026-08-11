@@ -65,8 +65,15 @@ namespace Abwaab.Application.Features.Users.Auth.Register
 
             // Store the code in cache with a 5-minute expiry
             _cache.Set(request.Identifier, code, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
-
-            return new RegisterUserResponse(true, $"Register Successful, Verification code sent to your {request.IdentifierType.ToString().Replace('_', ' ')}");
+            var response = new RegisterUserResponse
+            {
+                Success = true,
+                Message = $"Register Successful, Verification code sent to your {request.IdentifierType.ToString().Replace('_', ' ')}",
+                CodeTimeOutInMinuts = GeneralConstants.CODE_TIMEOUT_MINUTES,
+                ExpireAt = DateTime.UtcNow.AddMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES),
+            };
+            
+            return response;
         }
     }
 }

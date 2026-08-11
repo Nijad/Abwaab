@@ -71,12 +71,9 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await _context.Plans.FirstOrDefaultAsync(p => p.Id == planId);
         }
 
-        public async Task<UserPlanStatus> FindUserPlanStatusByNameAsync(string palnName)
+        public async Task<UserPlanStatus?> FindUserPlanStatusByNameAsync(string palnName)
         {
             UserPlanStatus? userPlanStatus = await _context.UserPlansStatus.Where(x => x.StateName == palnName).FirstOrDefaultAsync();
-
-            if (userPlanStatus == null)
-                throw new NotFoundException(nameof(UserPlanStatus), nameof(userPlanStatus.StateName), palnName);
 
             return userPlanStatus;
         }
@@ -182,13 +179,34 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<UserPlan?> FindUserActivePlanAsync(Guid? userId)
+        public async Task<List<UserPlan>> FindUserPlansByStatusAsync(Guid userId, Guid stateId)
         {
-            UserPlanStatus activeUserPlanState = await FindUserPlanStatusByNameAsync(UserPlanStatesEnum.Active.ToString());
+            return _context.UserPlans.Include(x=>x.Plan).Where(x=>x.UserId == userId && x.UserPlanStateId == stateId).ToList();
+        }
+
+        public async Task<UserPlan?> FindUserActivePlanAsync(Guid userId)
+        {
+            //todo need checking
+            string stateName = UserPlanStatesEnum.Active.ToString();
+            UserPlanStatus? activeUserPlanState = await FindUserPlanStatusByNameAsync(stateName);
+
+            if(activeUserPlanState == null)
+                throw new NotFoundException(nameof(UserPlanStatus), nameof(UserPlanStatus.StateName), stateName);
 
             UserPlan? userPlan = await _context.UserPlans.Where(x=>x.UserId==userId && x.UserPlanStateId == activeUserPlanState.Id).FirstOrDefaultAsync();
 
             return userPlan;
+        }
+
+        public async Task UpdateUserPlanAsync(UserPlan userPlan)
+        {
+            _context.UserPlans.Update(userPlan);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<UserPlan?> FindUserPlanByIdAsync(Guid planId)
+        {
+            return await _context.UserPlans.Include(x => x.Payments).Where(x => x.Id == planId).FirstOrDefaultAsync();
         }
     }
 }

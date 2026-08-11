@@ -1,8 +1,7 @@
 ﻿using Abwaab.Application.Common.Constants;
-using Abwaab.Application.Features.Plans.CancelPlan;
 using Abwaab.Application.Features.Plans.CreatePlan;
 using Abwaab.Application.Features.Plans.GetAllPlans;
-using Abwaab.Application.Features.Users.Profile.Plans.Cancel;
+using Abwaab.Application.Features.Users.Profile.UserPlans.Cancel;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,8 +34,8 @@ namespace Abwaab.Server.Controllers
             return Ok(result);
         }
         
-        [HttpPost("cancel-plan")]
-        public async Task<IActionResult> CancelPlan([FromBody] CancelUserPlanCommand plan)
+        [HttpPost("cancel-user-plan")]
+        public async Task<IActionResult> CanceluserPlan([FromBody] CancelUserPlanCommand plan)
         {
             var result = await _mediator.Send(plan);
             return Ok(result);

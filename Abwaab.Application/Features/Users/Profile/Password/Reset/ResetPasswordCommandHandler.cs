@@ -42,36 +42,30 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Reset
             if (user == null)
                 throw new NotFoundException("User", request.IdentifierType.ToString().Replace("_", " "), request.Identifier);
 
-            if (request.IdentifierType == IdentifiersEnum.Email)
+            if (request.IdentifierType == IdentifiersEnum.Email && user.PreviousEmail == request.Identifier)
             {
-                if (user.PreviousEmail == request.Identifier)
-                {
-                    // Clear previous email if it matches the identifier
-                    user.PreviousEmail = null;
-                    // Update to the new email
-                    user.Email  = request.Identifier;
-                    // Mark email as unconfirmed
-                    user.EmailConfirmed = false;
-                }
+                // Reset username
+                user.UserName = request.Identifier;
+                // Clear previous email if it matches the identifier
+                user.PreviousEmail = null;
+                // Update to the new email
+                user.Email = request.Identifier;
+                // Mark email as unconfirmed
+                user.EmailConfirmed = false;
             }
-            else if (request.IdentifierType == IdentifiersEnum.Phone_Number)
+            else if (request.IdentifierType == IdentifiersEnum.Phone_Number && user.PreviousEmail == request.Identifier)
             {
-                if (user.PreviousEmail == request.Identifier)
-                {
-                    // Clear previous email if it matches the identifier
-                    user.PreviousPhoneNumber = null;
-                    // Update to the new email
-                    user.PhoneNumber = request.Identifier;
-                    // Mark phone number as unconfirmed
-                    user.PhoneNumberConfirmed = false;
-                }
+                // Reset username
+                user.UserName = request.Identifier;
+                // Clear previous email if it matches the identifier
+                user.PreviousPhoneNumber = null;
+                // Update to the new email
+                user.PhoneNumber = request.Identifier;
+                // Mark phone number as unconfirmed
+                user.PhoneNumberConfirmed = false;
             }
             else
                 throw new NotImplementedIdentifierException(request.IdentifierType.ToString().Replace("_", " "));
-
-            //todo : enable if reset password does not update user information
-            //await _userManager.UpdateAsync(user);
-
 
             // 3. Validate the code again
             var cacheKey = $"reset_{request.Identifier}";

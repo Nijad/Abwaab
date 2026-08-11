@@ -16,7 +16,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode
             _cache = cache;
         }
 
-        public Task<VerifyResetCodeResponse> Handle(VerifyResetCodeDTO request, CancellationToken cancellationToken)
+        public async Task<VerifyResetCodeResponse> Handle(VerifyResetCodeDTO request, CancellationToken cancellationToken)
         {
             var cacheKey = $"reset_{request.Identifier}";
             if (!_cache.TryGetValue(cacheKey, out string storedCode))
@@ -33,7 +33,12 @@ namespace Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode
             // Set a flag that code is verified
             _cache.Set($"reset_verified_{request.Identifier}", true, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
-            return Task.FromResult(new VerifyResetCodeResponse { Success = true, Message = "Code verified." });
+            return new VerifyResetCodeResponse { 
+                Success = true, 
+                Message = "Code verified.",
+                CodeTimeOutInMinuts = GeneralConstants.CODE_TIMEOUT_MINUTES,
+                ExpireAt = DateTime.UtcNow.AddMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES),
+            };
         }
     }
 }
