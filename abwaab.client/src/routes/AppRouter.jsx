@@ -22,6 +22,7 @@ import ManageUsers from "../pages/ManageUsers";
 import Admin from "../pages/Admin";
 import Register from "../pages/Register";
 import ConfirmRegisteration from "../pages/ConfirmRegisteration";
+import NoLayout from "../layouts/NoLayout";
 
 // Dashboard Pages
 // import { OverviewPage } from "../pages/dashboard/OverviewPage";
@@ -39,6 +40,12 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "properties", element: <Properties /> },
       { path: "properties/:id", element: <PropertyDetails /> },
+    ],
+  },
+  {
+    path: "/",
+    element: <NoLayout />,
+    children: [
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
       { path: "confirm-registeration", element: <ConfirmRegisteration /> },

@@ -121,6 +121,9 @@ export const AuthProvider = ({ children }) => {
   //   return allowedRoles.includes(user.role);
   // };
 
+  const setIdentifier = (identifier) => {
+    setUser({ ...user, identifier });
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -133,6 +136,7 @@ export const AuthProvider = ({ children }) => {
         codeRemainingSeconds,
         setRemainingSeconds,
         loading,
+        setIdentifier,
       }}
     >
       {!loading && children}

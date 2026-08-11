@@ -57,7 +57,7 @@ const theme = createTheme({
 const ThemeProviderMUI = ({ children }) => {
   return (
     <CacheProvider value={rtlCache}>
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
     </CacheProvider>
   );
 };
