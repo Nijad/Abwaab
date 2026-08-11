@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Abwaab.Application.Features.Plans.CancelPlan
+namespace Abwaab.Application.Features.Users.Profile.UserPlans.Cancel
 {
     public class CancelUserPlanCommand : IRequest<CancelUserPlanResponse>
     {

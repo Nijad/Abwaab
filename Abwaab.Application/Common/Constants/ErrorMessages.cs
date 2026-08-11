@@ -34,5 +34,7 @@
         public const string PlanNotAvailable = "The selected plan is not available.";
         public const string UserAlreadyHasActivePlan = "User already has an active plan";
         public const string NotValidPaymentCode = "Payment code is not valid";
+        public const string UserHasNoActivePlan = "User must have one active plan";
+        public const string UserHasMoreThanOneActivePlan = "User must have one active plan only";
     }
 }
