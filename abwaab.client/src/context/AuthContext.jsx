@@ -18,6 +18,7 @@ const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30 mins
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [codeRemainingSeconds, setCodeRemainingTime] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const timerRef = useRef(null);
@@ -111,6 +112,9 @@ export const AuthProvider = ({ children }) => {
     // setUser({ name: info.userName, isAdmin: info.isAdmin });
   };
 
+  const setRemainingSeconds = (date) => {
+    setCodeRemainingTime(date);
+  };
   // دالة للتحقق من الصلاحيات والـ Role المسموح
   // const isAdmin = (allowedRoles = []) => {
   //   if (!user) return false;
@@ -126,6 +130,8 @@ export const AuthProvider = ({ children }) => {
         isAdmin: user?.isAdmin,
         login,
         logout,
+        codeRemainingSeconds,
+        setRemainingSeconds,
         loading,
       }}
     >

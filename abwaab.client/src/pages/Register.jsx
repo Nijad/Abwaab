@@ -9,11 +9,11 @@ const Register = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const [fdata, setFData] = useState({
-    firstName: "",
-    lastName: "",
-    identifier: "",
-    password: "",
-    confirmPassword: "",
+    FirstName: "",
+    LastName: "",
+    Identifier: "",
+    Password: "",
+    ConfirmPassword: "",
   });
   const redirect = (to) => {
     navigate(`/${to}`);
@@ -31,18 +31,30 @@ const Register = () => {
       )
       .then((resp) => {
         console.log(resp.data);
-        redirect("confirm-account");
+        redirect(`confirm-registeration?id=${fdata.Identifier}`);
       })
       .catch((e) => {
-        console.log(e);
-        enqueueSnackbar(e);
+        // debugger;
+        if (e.response.data.errorCode === "USER_ALREADY_EXIST") {
+          console.log(e);
+          //save cde: code expiry date in session storage
+          // sessionStorage.setItem("ced",e.response.data.expiryDate);
+          enqueueSnackbar(e.response.data.detail, { variant: "error" });
+          navigate("/login", { replace: true });
+          enqueueSnackbar(
+            "قم بتسجيل الدخول باستخدام البريد الالكتروني/ رقم الموبايل",
+            {
+              variant: "info",
+              // transitionDuration: { enter: "400", exit: "800" },
+            }
+          );
+        }
       });
   };
   return (
     <div>
       <form method="post" onSubmit={(e) => handleSubmit(e)}>
         <div className="">
-          <label htmlFor="firstName"></label>
           <TextField
             id="firstName"
             name="FirstName"

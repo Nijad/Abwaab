@@ -27,15 +27,19 @@ const Login = () => {
       .then((resp) => {
         isAdmin = resp.data.isAdmin;
         login(resp.data);
-      })
-      .catch((e) => {
-        console.log(e);
-        enqueueSnackbar(e);
-      })
-      .finally(() => {
         if (isAdmin) redirect("admin");
         else redirect("portal");
-      });
+      })
+      .catch((e) => {
+        if (e.response.data.errorCode === "EMAIL_NOT_VERIFIED") {
+          // debugger;
+          console.log(e);
+          navigate("/confirm-registeration", { replace: true });
+          enqueueSnackbar(e.response.data.detail, { variant: "error" });
+          //then in confirm page, it will check the storage and reads if otp is still valid
+        }
+      })
+      .finally(() => {});
   };
   console.log(fdata);
   const redirect = (to) => {
@@ -47,7 +51,7 @@ const Login = () => {
 
   return (
     <div className="">
-      <form method="post" onSubmit={handleSubmit}>
+      <form method="post" onSubmit={handleSubmit} autoComplete="off">
         <div className="">
           <label>البريد الإلكتروني/ الموبايل</label>
           <input

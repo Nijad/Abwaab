@@ -21,6 +21,7 @@ import MyProperties from "../pages/MyProperties";
 import ManageUsers from "../pages/ManageUsers";
 import Admin from "../pages/Admin";
 import Register from "../pages/Register";
+import ConfirmRegisteration from "../pages/ConfirmRegisteration";
 
 // Dashboard Pages
 // import { OverviewPage } from "../pages/dashboard/OverviewPage";
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
       { path: "properties/:id", element: <PropertyDetails /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      { path: "confirm-registeration", element: <ConfirmRegisteration /> },
       { path: "reset-password", element: <ResetPassword /> },
     ],
   },
