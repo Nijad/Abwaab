@@ -5,5 +5,6 @@ namespace Abwaab.Application.Common.Exceptions.Role
     public class FailedToAddUserToRoleException() : Exception(ErrorMessages.FailedToAddUserToRole)
     {
         public string ErrorCode { get; } = ErrorCodes.FailedToAddUserToRole;
+        public string EnglishErrorMessage { get; } = ErrorMessagesEn.FailedToAddUserToRole;
     };
 }

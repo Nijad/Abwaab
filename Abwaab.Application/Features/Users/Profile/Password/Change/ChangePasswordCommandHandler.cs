@@ -1,5 +1,5 @@
 ﻿using Abwaab.Application.Common.Exceptions;
-using Abwaab.Application.Common.Exceptions.Profile;
+using Abwaab.Application.Common.Exceptions.Profile.Password;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;

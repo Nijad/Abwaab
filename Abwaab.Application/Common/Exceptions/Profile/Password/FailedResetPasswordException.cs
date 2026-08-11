@@ -4,5 +4,6 @@ namespace Abwaab.Application.Common.Exceptions.Profile.Password
     public class FailedResetPasswordException() :Exception(ErrorMessages.FailedResetPassword)
     {
         public string ErrorCode { get; } = ErrorCodes.FailedResetPassword;
+        public string EnglishErrorMessage { get; } = ErrorMessagesEn.FailedResetPassword;
     }
 }

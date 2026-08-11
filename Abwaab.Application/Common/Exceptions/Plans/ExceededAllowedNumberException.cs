@@ -2,9 +2,10 @@
 
 namespace Abwaab.Application.Common.Exceptions.Plans
 {
+    //todo: translate
     public class ExceededAllowedNumberException(string type, string planName) : Exception($"You have already added allowd number of {type} in plan '{planName}'")
     {
-        public string ErrorCode { get; set; } = ErrorCodes.ExceededAllowedNumber;
-        public string Title { get; set; } = $"Failed To Add {type}";
+        public string ErrorCode { get; } = ErrorCodes.ExceededAllowedNumber;
+        public string Title { get; } = $"Failed To Add {type}";
     }
 }

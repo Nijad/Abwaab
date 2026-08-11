@@ -2,8 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions
 {
+    //todo: translate
     public class ObjectNotBelongToUserException(string objectType, string objectIdentifier, string identifierValue) : Exception($"{objectType} with {objectIdentifier} equal to {identifierValue} is not belong to you.")
     {
-        public string ErrorCode { get; set; } = ErrorCodes.ObjectNotBelongToUser;
+        public string ErrorCode { get; } = ErrorCodes.ObjectNotBelongToUser;
     }
 }

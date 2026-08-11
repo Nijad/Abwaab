@@ -5,5 +5,6 @@ namespace Abwaab.Application.Common.Exceptions.Role
     public class FailedToRemoveUserFromRoleException() : Exception(ErrorMessages.FailedToRemoveUserFromRole)
     {
         public string ErrorCode { get; } = ErrorCodes.FailedToRemoveUserFromRole;
+        public string EnglishErrorMessage { get; } = ErrorMessagesEn.FailedToRemoveUserFromRole;
     };
 }

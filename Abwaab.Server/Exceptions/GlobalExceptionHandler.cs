@@ -3,7 +3,6 @@ using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Email;
 using Abwaab.Application.Common.Exceptions.Payments;
 using Abwaab.Application.Common.Exceptions.Plans;
-using Abwaab.Application.Common.Exceptions.Profile;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.NotificationWay;
 using Abwaab.Application.Common.Exceptions.Profile.Password;
@@ -29,7 +28,8 @@ namespace Abwaab.Server.Exceptions
                     Status = StatusCodes.Status500InternalServerError,
                     Title = "Failed To Add Property", //todo: make title dynamic
                     Detail = ex.Message,
-                    ErrorCode = ex.ErrorCode
+                    ErrorCode = ex.ErrorCode,
+                    
                 },
                 UserHasNoActivePlanException ex => new CustomProblemDetails
                 {
