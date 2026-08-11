@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Infrastructure.Presistence.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Abwaab.Infrastructure.Presistence.Repositories
 {
@@ -17,6 +18,11 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         {
             _context.Properties.Add(property);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<PropertyState?> FindPropertyStateByStateNameAsync(string propertyStateName)
+        {
+            return await _context.PropertyStates.Where(x=>x.StateName == propertyStateName).FirstOrDefaultAsync();
         }
 
         public async Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId)

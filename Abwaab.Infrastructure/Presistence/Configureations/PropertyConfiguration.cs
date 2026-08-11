@@ -19,7 +19,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .HasMaxLength(4000);
 
             builder.Property(p => p.Address)
-                   .IsRequired()
                    .HasMaxLength(1000);
 
             builder.Property(p => p.Price)
