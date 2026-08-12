@@ -4,6 +4,7 @@ using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
 using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
 using Abwaab.Application.Contracts;
+using Abwaab.Application.Features.Users.Auth.Login;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Domain.Enums;
@@ -20,19 +21,22 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
         private readonly IVerificationCodeService _verificationService;
         private readonly IProfileService _profileService;
         private readonly ILogger<VerifyCodeCommandHandler> _logger;
+        private readonly IJwtService _jwtService;
 
         public VerifyCodeCommandHandler(
             IUserService userService,
             UserManager<ApplicationUser> userManager,
             IVerificationCodeService verificationService,
             IProfileService profileService,
-            ILogger<VerifyCodeCommandHandler> logger)
+            ILogger<VerifyCodeCommandHandler> logger,
+            IJwtService jwtService)
         {
             _userService = userService;
             _userManager = userManager;
             _verificationService = verificationService;
             _profileService = profileService;
             _logger = logger;
+            _jwtService = jwtService;
         }
         public async Task<VerifyCodeResponse> Handle(VerifyCodeDTO request, CancellationToken cancellationToken)
         {
@@ -88,7 +92,29 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             // Subscribe the user to push notifications
             await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWaysEnum.Push_Notification);
 
-            return await Task.FromResult(new VerifyCodeResponse { Success = true, Message = "Verification successful." });
+
+            //get user roles
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+
+            // Generate access token
+            TokenResponseDTO tokenResponse = await _jwtService.GenerateTokenResponseAsync(user, roles);
+
+            // Check if user has Admin role
+            bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+            VerifyCodeResponse response = new VerifyCodeResponse
+            {
+                Success = true,
+                Message = "Verification successful. You are now logged in.",
+                AccessToken = tokenResponse.AccessToken,
+                RefreshToken = tokenResponse.RefreshToken,
+                ExpiresIn = tokenResponse.ExpiresIn,
+                IsAdmin = isAdmin,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
+
+            return response;
         }
     }
 }
