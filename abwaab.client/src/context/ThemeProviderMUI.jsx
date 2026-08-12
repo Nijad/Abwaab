@@ -53,6 +53,13 @@ const theme = createTheme({
     },
   },
   direction: "rtl",
+  components: {
+    MuiFilledInput: {
+      defaultProps: {
+        className: "!bg-neutral-100",
+      },
+    },
+  },
 });
 const ThemeProviderMUI = ({ children }) => {
   return (

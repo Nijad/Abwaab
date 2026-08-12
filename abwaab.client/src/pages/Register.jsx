@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import axios from "../services/axios";
 import useAuth from "../hooks/useAuth";
 import img from "../assets/imgs/register.webp";
+import logo from "../assets/imgs/logo.svg";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -58,113 +59,122 @@ const Register = () => {
       });
   };
   return (
-    <Grid container sx={{ height: "100v" }}>
-      <Grid size={8} container direction="column">
-        <Grid>Logo</Grid>
-        <Grid sx={{ padding: "50px" }}>
-          <form method="post" onSubmit={(e) => handleSubmit(e)}>
-            <div className="">
-              <TextField
-                id="firstName"
-                name="FirstName"
-                label="الأسم الأول"
-                variant="standard"
-                value={fdata.firstName}
-                onChange={(e) =>
-                  setFData({ ...fdata, [e.target.name]: e.target.value })
-                }
-              />
+    <Grid container className="bg-neutral-50 flex-wrap">
+      <Grid container direction="column" className="ms-10 flex-1 h-full">
+        <Grid>
+          <div className="m-5">
+            <img src={logo} alt="abwaab-logo" className="" />
+          </div>
+        </Grid>
+        <Grid sx={{ padding: "30px" }} size={7}>
+          <div className="bg-white p-6 rounded-3xl">
+            <div className="mb-6">
+              <h4 className="text-3xl text-teal-400 font-semibold">
+                إنشاء حساب
+              </h4>
+              <p className="text-base text-sky-700">
+                خطوتك الأولى نحو العقار الذي يليق بطموحك
+              </p>
             </div>
+            <form method="post" onSubmit={(e) => handleSubmit(e)}>
+              <div className="mb-6">
+                <TextField
+                  id="firstName"
+                  name="FirstName"
+                  label="الأسم الأول"
+                  variant="filled"
+                  size="small"
+                  color="sky"
+                  value={fdata.FirstName}
+                  onChange={(e) =>
+                    setFData({ ...fdata, [e.target.name]: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-6">
+                <TextField
+                  id="lastName"
+                  name="LastName"
+                  label="الأسم الأخير"
+                  variant="filled"
+                  size="small"
+                  value={fdata.LastName}
+                  onChange={(e) =>
+                    setFData({ ...fdata, [e.target.name]: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-6">
+                <TextField
+                  id="identifier"
+                  name="Identifier"
+                  label="البريد الإلكتروني أو رقم الموبايل"
+                  variant="filled"
+                  size="small"
+                  value={fdata.Identifier}
+                  onChange={(e) =>
+                    setFData({ ...fdata, [e.target.name]: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-6">
+                <TextField
+                  id="password"
+                  name="Password"
+                  label="كلمة المرور"
+                  variant="filled"
+                  type="password"
+                  size="small"
+                  value={fdata.Password}
+                  onChange={(e) =>
+                    setFData({ ...fdata, [e.target.name]: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-6">
+                <TextField
+                  id="confirmPassword"
+                  name="ConfirmPassword"
+                  label="تأكيد كلمة المرور"
+                  variant="filled"
+                  type="password"
+                  size="small"
+                  value={fdata.ConfirmPassword}
+                  onChange={(e) =>
+                    setFData({ ...fdata, [e.target.name]: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-6">
+                <Button type="submit" variant="contained" color="navy">
+                  انشاء الحساب
+                </Button>
+              </div>
+            </form>
             <div className="">
-              <TextField
-                id="lastName"
-                name="LastName"
-                label="الأسم الأخير"
-                variant="standard"
-                size="medium"
-                value={fdata.lastName}
-                onChange={(e) =>
-                  setFData({ ...fdata, [e.target.name]: e.target.value })
-                }
-              />
+              <p className="">
+                لديك حساب بالفعل؟ قم بـ
+                <Button
+                  type="button"
+                  variant="text"
+                  size="small"
+                  onClick={() => redirect("login")}
+                >
+                  بتسجيل الدخول
+                </Button>
+              </p>
             </div>
-            <div className="">
-              <TextField
-                id="identifier"
-                name="Identifier"
-                label="البريد الإلكتروني/ رقم الموبايل"
-                variant="standard"
-                size="medium"
-                value={fdata.identifier}
-                onChange={(e) =>
-                  setFData({ ...fdata, [e.target.name]: e.target.value })
-                }
-              />
-            </div>
-            <div className="">
-              <TextField
-                id="password"
-                name="Password"
-                label="كلمة المرور"
-                variant="standard"
-                type="password"
-                size="medium"
-                value={fdata.password}
-                onChange={(e) =>
-                  setFData({ ...fdata, [e.target.name]: e.target.value })
-                }
-              />
-            </div>
-            <div className="">
-              <TextField
-                id="confirmPassword"
-                name="ConfirmPassword"
-                label="تأكيد كلمة المرور"
-                variant="standard"
-                type="password"
-                size="medium"
-                value={fdata.confirmPassword}
-                onChange={(e) =>
-                  setFData({ ...fdata, [e.target.name]: e.target.value })
-                }
-              />
-            </div>
-            <div className="">
-              <Button type="submit" variant="contained" color="navy">
-                تسجيل
-              </Button>
-            </div>
-          </form>
-          <div className="">
-            <p className="">
-              لديك حساب بالفعل!
-              <Button
-                type="button"
-                variant="text"
-                size="small"
-                onClick={() => redirect("login")}
-              >
-                قم بتسجيل الدخول
-              </Button>
-            </p>
           </div>
         </Grid>
       </Grid>
-      <Grid size={4} sx={{ height: "100" }}>
+      <Grid size={4}>
         <div
-          className="w-full h-[100vh]"
+          className="w-full h-full"
           style={{
             backgroundImage: `url(${img})`,
             backgroundPosition: "center",
           }}
-        >
-          {/* <img
-            src={img}
-            alt="register"
-            className="h-full max-w-full"
-            style={{ objectFit: "fill" }}
-          /> */}
-        </div>
+        ></div>
       </Grid>
     </Grid>
   );
