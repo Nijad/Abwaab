@@ -24,6 +24,13 @@ namespace Abwaab.Server.Exceptions
         {
             ProblemDetails problem = exception switch
             {
+                ResendWaitException ex => new CustomProblemDetails
+                {
+                    Status = StatusCodes.Status429TooManyRequests,
+                    Title = "Resend Verification Code",
+                    Detail = ex.Message,
+                    ErrorCode = ex.ErrorCode
+                },
                 UserHasMoreThanOneActivePlanException ex => new CustomProblemDetails
                 {
                     Status = StatusCodes.Status500InternalServerError,
