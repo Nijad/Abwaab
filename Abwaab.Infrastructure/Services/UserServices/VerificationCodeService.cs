@@ -78,13 +78,10 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public Task<bool> VerifyCodeAsync(string identifier, string userInputCode)
         {
-            if (_cache.TryGetValue(identifier, out string? storedCode))
+            if (_cache.TryGetValue(identifier, out string? storedCode) && storedCode == userInputCode)
             {
-                if (storedCode == userInputCode)
-                {
                     _cache.Remove(identifier); // Invalidate code after successful use
                     return Task.FromResult(true);
-                }
             }
             return Task.FromResult(false);
         }

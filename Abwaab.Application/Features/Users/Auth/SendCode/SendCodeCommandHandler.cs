@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using MediatR;
@@ -29,14 +30,20 @@ namespace Abwaab.Application.Features.Users.Auth.SendCode
             if (user == null)
                 throw new NotFoundException("User", nameof(request.IdentifierType), request.Identifier);
 
+            string cooldownKey = $"resend_cooldown_{request.Identifier}";
+            if (_cache.TryGetValue(cooldownKey, out _))
+                throw new ResendWaitException();
+
             string code = _verificationCodeService.GenerateVerificationCode();
             request.Code = code;
-            
+
             var result = await _verificationCodeService.SendVerificationCodeAsync(request);
             
             // Store the code in cache with a 5-minute expiry
             _cache.Set(request.Identifier, code, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
-            
+
+            _cache.Set($"resend_cooldown_{request.Identifier}", code, TimeSpan.FromMinutes(GeneralConstants.WAIT_TIMEOUT_MINUTES));
+
             result.ExpireAt = DateTime.UtcNow.AddMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES);
             result.CodeTimeOutInMinuts = GeneralConstants.CODE_TIMEOUT_MINUTES;
             return result;
