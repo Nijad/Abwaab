@@ -2,9 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.VerificationCode
 {
-    public class InvalidRefreshTokenException() : Exception(ErrorMessages.InvalidRefreshToken)
+    public class InvalidRefreshTokenException() : Exception(ArabicErrorMessages.InvalidRefreshToken)
     {
         public string ErrorCode { get; } = ErrorCodes.InvalidRefreshToken;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.InvalidRefreshToken;
+        public string EnglishErrorMessage { get; } = EnglishErrorMessages.InvalidRefreshToken;
     }
 }

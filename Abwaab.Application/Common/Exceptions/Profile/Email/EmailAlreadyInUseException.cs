@@ -2,9 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.Email
 {
-    public class EmailAlreadyInUseException() : Exception(ErrorMessages.EmailAlreadyInUse)
+    public class EmailAlreadyInUseException() : Exception(ArabicErrorMessages.EmailAlreadyInUse)
     {
         public string ErrorCode { get; } = ErrorCodes.EmailAlreadyInUse;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.EmailAlreadyInUse;
+        public string EnglishErrorMessage { get; } = EnglishErrorMessages.EmailAlreadyInUse;
     };
 }

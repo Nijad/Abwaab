@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
@@ -42,7 +43,9 @@ namespace Abwaab.Application.Features.Users.Auth.Login
             SignInResult result = await _signInManager.PasswordSignInAsync(user, request.Password, false, lockoutOnFailure: true);
             
             if (result.IsLockedOut)
-                throw new AccountLockedOutException();
+                throw new AccountLockedOutException(
+                    title: ArabicErrorTitle.AccountLocked, 
+                    message: ArabicErrorMessages.AccountLocked);
 
             if (!result.Succeeded)
                 throw new InvalidCredentialsException();

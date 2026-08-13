@@ -2,9 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions.Email
 {
-    public class FailedSendignEmailException() : Exception(ErrorMessages.FailedSendingEmail)
+    public class FailedSendignEmailException() : Exception(ArabicErrorMessages.FailedSendingEmail)
     {
         public string ErrorCode { get; } = ErrorCodes.FailedSendingEmail;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.FailedSendingEmail;
+        public string EnglishErrorMessage { get; } = EnglishErrorMessages.FailedSendingEmail;
     }
 }

@@ -2,9 +2,14 @@
 
 namespace Abwaab.Application.Common.Exceptions.Auth
 {
-    public class AccountLockedOutException() : Exception(ErrorMessages.AccountLocked)
+    public class AccountLockedOutException : Exception
     {
-        public string ErrorCode { get; } = ErrorCodes.AccountLocked;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.AccountLocked;
-    };
+        public bool ReturnToUser { get; } = true;
+        public string Title { get; }
+
+        public AccountLockedOutException(string message, string title) : base(message)
+        {
+            Title = title;
+        }
+    }
 }

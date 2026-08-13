@@ -2,9 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions.Auth
 {
-    public class InvalidCredentialsException() : Exception(ErrorMessages.InvalidCredentials)
+    public class InvalidCredentialsException() : Exception(ArabicErrorMessages.InvalidCredentials)
     {
         public string ErrorCode { get; } = ErrorCodes.InvalidCredentials;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.InvalidCredentials;
+        public string EnglishErrorMessage { get; } = EnglishErrorMessages.InvalidCredentials;
     };
 }

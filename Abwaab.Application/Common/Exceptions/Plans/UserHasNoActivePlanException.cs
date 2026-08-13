@@ -2,9 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions.Plans
 {
-    public class UserHasNoActivePlanException() : Exception(ErrorMessages.UserHasNoActivePlan)
+    public class UserHasNoActivePlanException() : Exception(ArabicErrorMessages.UserHasNoActivePlan)
     {
         public string ErrorCode { get; } = ErrorCodes.UserHasNoActivePlan;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.UserHasNoActivePlan;
+        public string EnglishErrorMessage { get; } = EnglishErrorMessages.UserHasNoActivePlan;
     }
 }

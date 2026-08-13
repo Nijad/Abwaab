@@ -2,9 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.Email
 {
-    public class NoPendingEmailChangeException(): Exception(ErrorMessages.NoPendingEmailChange)
+    public class NoPendingEmailChangeException(): Exception(ArabicErrorMessages.NoPendingEmailChange)
     {
         public string ErrorCode { get; } = ErrorCodes.NoPendingEmailChange;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.NoPendingEmailChange;
+        public string EnglishErrorMessage { get; } = EnglishErrorMessages.NoPendingEmailChange;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.VerificationCode
 {
-    public class InvalidCodeOrEmailMissmatchException() : Exception(ErrorMessages.InvalidCodeOrEmailMismatch)
+    public class InvalidCodeOrEmailMissmatchException() : Exception(ArabicErrorMessages.InvalidCodeOrEmailMismatch)
     {
         public string ErrorCode { get; } = ErrorCodes.InvalidCodeOrEmailMismatch;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.InvalidCodeOrEmailMismatch;
+        public string EnglishErrorMessage { get; } = EnglishErrorMessages.InvalidCodeOrEmailMismatch;
     }
 }

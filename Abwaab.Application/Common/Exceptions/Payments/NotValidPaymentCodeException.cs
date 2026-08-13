@@ -2,9 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions.Payments
 {
-    public class NotValidPaymentCodeException() : Exception(ErrorMessages.NotValidPaymentCode)
+    public class NotValidPaymentCodeException() : Exception(ArabicErrorMessages.NotValidPaymentCode)
     {
         public string ErrorCode { get; } = ErrorCodes.NotValidPaymentCode;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.NotValidPaymentCode;
+        public string EnglishErrorMessage { get; } = EnglishErrorMessages.NotValidPaymentCode;
     }
 }

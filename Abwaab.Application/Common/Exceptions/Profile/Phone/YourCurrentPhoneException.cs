@@ -2,9 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.Phone
 {
-    public class YourCurrentPhoneException() : Exception(ErrorMessages.YourCurrentPhone)
+    public class YourCurrentPhoneException() : Exception(ArabicErrorMessages.YourCurrentPhone)
     {
         public string ErrorCode { get; } = ErrorCodes.YourCurrentPhone;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.YourCurrentPhone;
+        public string EnglishErrorMessage { get; } = EnglishErrorMessages.YourCurrentPhone;
     };
 }

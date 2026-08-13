@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Abwaab.Server.Exceptions
 {
+
     public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
     {
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
@@ -271,7 +272,7 @@ namespace Abwaab.Server.Exceptions
                 },
                 AccountLockedOutException ex=>new CustomProblemDetails
                 {
-                    Status = StatusCodes.Status403Forbidden,
+                    Status = StatusCodes.Status423Locked,
                     Title = "Account Locked Out",
                     Detail = exception.Message,
                     ErrorCode = ex.ErrorCode

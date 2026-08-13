@@ -2,9 +2,9 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.Phone
 {
-    public class NoVerifiedPhoneException() : Exception(ErrorMessages.NoVerifiedPhone)
+    public class NoVerifiedPhoneException() : Exception(ArabicErrorMessages.NoVerifiedPhone)
     {
         public string ErrorCode { get; } = ErrorCodes.NoVerifiedPhone;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.NoVerifiedPhone;
+        public string EnglishErrorMessage { get; } = EnglishErrorMessages.NoVerifiedPhone;
     };
 }

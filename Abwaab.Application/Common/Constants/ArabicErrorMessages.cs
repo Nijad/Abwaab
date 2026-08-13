@@ -1,6 +1,6 @@
 ﻿namespace Abwaab.Application.Common.Constants
 {
-    public static class ErrorMessages
+    public static class ArabicErrorMessages
     {
         public const string EmailNotVerified = "بريدك الإلكتروني غير مؤكد. يرجى تأكيد بريدك الإلكتروني.";
         public const string PhoneNotVerified = "رقم هاتفك غير مؤكد. يرجى تأكيد رقم هاتفك.";
