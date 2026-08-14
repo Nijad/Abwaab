@@ -1,6 +1,6 @@
 ﻿namespace Abwaab.Application.Common.Constants
 {
-    public static class ArabicErrorMessages
+    public static class ErrorMessages
     {
         public const string SystemError = "حدث خطأ في النظام، يرجى المحاولة لاحقاً.";
         public const string AccountLocked = "حسابك مقفل. انتقل إلى نسيت كلمة المرور.";

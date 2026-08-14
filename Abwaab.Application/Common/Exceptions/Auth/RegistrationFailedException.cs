@@ -1,5 +1,4 @@
 ﻿using Abwaab.Application.Common.Constants;
-using Whipstaff.Core.Entities;
 
 namespace Abwaab.Application.Common.Exceptions.Auth
 {
@@ -11,6 +10,6 @@ namespace Abwaab.Application.Common.Exceptions.Auth
             returnToUser: true)
     {
         public string ErrorCode { get; } = ErrorCodes.RegistrationFailed;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.RegistrationFailed;
+        public string EnglishErrorMessage { get; } = ErrorMessages.RegistrationFailed;
     }
 }
