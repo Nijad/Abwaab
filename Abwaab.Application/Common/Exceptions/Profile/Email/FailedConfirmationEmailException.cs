@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.Email
 {
-    public class FailedConfirmationEmailException() : Exception(ErrorMessages.FailedConfirmationEmail)
+    public class FailedConfirmationEmailException(string title) : CusotomException(
+            message: ErrorMessages.FailedConfirmationEmail,
+            title: title,
+            errorCode: ErrorCodes.FailedConfirmationEmail,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.FailedConfirmationEmail;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.FailedConfirmationEmail;
     }
 }

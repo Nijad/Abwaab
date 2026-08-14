@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.Email
 {
-    public class EmailNotVerifiedException() : Exception(ErrorMessages.EmailNotVerified)
+    public class EmailNotVerifiedException(string title) : CusotomException(
+            message: ErrorMessages.EmailNotVerified,
+            title: title,
+            errorCode: ErrorCodes.EmailNotVerified,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.EmailNotVerified;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.EmailNotVerified;
     };
 }

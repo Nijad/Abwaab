@@ -15,44 +15,44 @@ namespace Abwaab.Infrastructure.Services
             _planRepository = planRepository;
         }
 
-        public async Task<UserPlanStatus> FindUserPlanStatusByStatusNameAsync(string statusName)
+        public async Task<UserPlanStatus> FindUserPlanStatusByStatusNameAsync(string statusName, string errorTitle)
         {
             UserPlanStatus? userPlanStatus = await _planRepository.FindUserPlanStatusByNameAsync(statusName);
 
             if (userPlanStatus == null)
-                throw new NotFoundException(nameof(UserPlanStatus), nameof(userPlanStatus.StateName), statusName);
+                throw new NotFoundException(nameof(UserPlanStatus), nameof(userPlanStatus.StateName), statusName, errorTitle);
 
             return userPlanStatus;
         }
 
-        public async Task<UserPlanStatus> GetActiveUserPlanStatus()
+        public async Task<UserPlanStatus> GetActiveUserPlanStatus(string errorTitle)
         {
             string statusName = UserPlanStatesEnum.Active.ToString();
-            return await FindUserPlanStatusByStatusNameAsync(statusName);
+            return await FindUserPlanStatusByStatusNameAsync(statusName, errorTitle);
         }
 
-        public async Task<UserPlanStatus> GetWorkingUserPlanStatus()
+        public async Task<UserPlanStatus> GetWorkingUserPlanStatus(string errorTitle)
         {
             string statusName = UserPlanStatesEnum.Working.ToString();
-            return await FindUserPlanStatusByStatusNameAsync(statusName);
+            return await FindUserPlanStatusByStatusNameAsync(statusName, errorTitle);
         }
 
-        public async Task<UserPlanStatus> GetPendingUserPlanStatus()
+        public async Task<UserPlanStatus> GetPendingUserPlanStatus(string errorTitle)
         {
             string statusName = UserPlanStatesEnum.Pending.ToString();
-            return await FindUserPlanStatusByStatusNameAsync(statusName);
+            return await FindUserPlanStatusByStatusNameAsync(statusName, errorTitle);
         }
 
-        public async Task<UserPlanStatus> GetExpieredUserPlanStatus()
+        public async Task<UserPlanStatus> GetExpieredUserPlanStatus(string errorTitle)
         {
             string statusName = UserPlanStatesEnum.Expiered.ToString();
-            return await FindUserPlanStatusByStatusNameAsync(statusName);
+            return await FindUserPlanStatusByStatusNameAsync(statusName, errorTitle);
         }
 
-        public async Task<UserPlanStatus> GetCanceledUserPlanStatus()
+        public async Task<UserPlanStatus> GetCanceledUserPlanStatus(string errorTitle)
         {
             string statusName = UserPlanStatesEnum.Canceled.ToString();
-            return await FindUserPlanStatusByStatusNameAsync(statusName);
+            return await FindUserPlanStatusByStatusNameAsync(statusName, errorTitle);
         }
     }
 }

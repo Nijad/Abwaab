@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.NotificationWay;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
@@ -18,6 +19,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly INotificationWayRepository _notificationWayRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepo;
+
         public ProfileService(
             UserManager<ApplicationUser> userManager,
             INotificationWayRepository notificationWayRepository,
@@ -68,19 +70,19 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return await Task.FromResult(false);
         }
 
-        public async Task<NotificationWaySubscriptionResponse> SubscribeNotificationWayCommandAsync(ApplicationUser user, Guid notificationWayId)
+        public async Task<NotificationWaySubscriptionResponse> SubscribeNotificationWayCommandAsync(ApplicationUser user, Guid notificationWayId, string errorTitle)
         {
             //check if notification way exist
             NotificationWay? notificationWay = await _notificationWayRepository.GetNotificationWayByIdAsync(notificationWayId);
             if (notificationWay == null)
-                throw new NotFoundException(nameof(NotificationWay), nameof(notificationWayId), notificationWayId.ToString());
+                throw new NotFoundException(nameof(NotificationWay), nameof(notificationWayId), notificationWayId.ToString(), errorTitle);
 
             //check if user already has subscription
             UserNotificationSubscription? userSubscription = await _notificationWayRepository.GetUserSubscriptionAsync(user.Id, notificationWayId);
 
             if (userSubscription != null)
                 if (!userSubscription.IsInactive)
-                    throw new AlreadySubscribeNotificationWayException(notificationWay.WayName);
+                    throw new AlreadySubscribeNotificationWayException(notificationWay.WayName, errorTitle);
                 else
                 {
                     userSubscription.IsInactive = false;
@@ -92,16 +94,16 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
             //chkeck if user has contact method related
             if (notificationWay.WayName == NotificationWaysEnum.Email.ToString() && string.IsNullOrEmpty(user.Email))
-                throw new NoRegisterdEmailException();
+                throw new NoRegisterdEmailException(errorTitle);
 
             if (notificationWay.WayName == NotificationWaysEnum.Email.ToString() && !string.IsNullOrEmpty(user.Email) && !user.EmailConfirmed)
-                throw new NoVerifiedEmailException();
+                throw new NoVerifiedEmailException(errorTitle);
 
             if (notificationWay.WayName == NotificationWaysEnum.SMS.ToString() && string.IsNullOrEmpty(user.PhoneNumber))
-                throw new NoRegisterdPhoneException();
+                throw new NoRegisterdPhoneException(errorTitle);
 
             if (notificationWay.WayName == NotificationWaysEnum.SMS.ToString() && !string.IsNullOrEmpty(user.PhoneNumber) && !user.PhoneNumberConfirmed)
-                throw new NoVerifiedPhoneException();
+                throw new NoVerifiedPhoneException(errorTitle);
 
             //subscribe
             userSubscription = new()
@@ -121,18 +123,18 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return new() { Success = true, Message = "Subscription added successfully" };
         }
 
-        public async Task<NotificationWayUnsubscriptionResponse> UnsubscribeNotificationWayCommandAsync(ApplicationUser user, Guid notificationWayId)
+        public async Task<NotificationWayUnsubscriptionResponse> UnsubscribeNotificationWayCommandAsync(ApplicationUser user, Guid notificationWayId, string errorTitle)
         {
             //check if notification way exist
             NotificationWay? notificationWay = await _notificationWayRepository.GetNotificationWayByIdAsync(notificationWayId);
             if (notificationWay == null)
-                throw new NotFoundException(nameof(NotificationWay), nameof(notificationWayId), notificationWayId.ToString());
+                throw new NotFoundException(nameof(NotificationWay), nameof(notificationWayId), notificationWayId.ToString(), errorTitle);
 
             //check if user had already subscribe
             UserNotificationSubscription? userSubscription = await _notificationWayRepository.GetUserSubscriptionAsync(user.Id, notificationWayId);
 
             if (userSubscription == null || !userSubscription.IsInactive)
-                throw new AlreadyUnsubscribeNotificationWayException(notificationWay.WayName);
+                throw new AlreadyUnsubscribeNotificationWayException(notificationWay.WayName, errorTitle);
 
             userSubscription.IsInactive = true;
             userSubscription.LastModifiedAt = DateTime.Now;

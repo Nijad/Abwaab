@@ -2,9 +2,13 @@
 
 namespace Abwaab.Application.Common.Exceptions.Role
 {
-    //todo: translate
-    public class UserAlreadyInRoleException(string roleName) : Exception($"User already in role {roleName}")
+    public class UserAlreadyInRoleException(string username, string roleName, string title) : CusotomException(
+            message: "",
+            title: title,
+            errorCode: ErrorCodes.UserAlreadyInRole,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.UserAlreadyInRole;
+        string msg = $"المستخدم '{username}' لديه بالفعل الدور '{roleName}'";
+        public override string Message => msg;
     };
 }

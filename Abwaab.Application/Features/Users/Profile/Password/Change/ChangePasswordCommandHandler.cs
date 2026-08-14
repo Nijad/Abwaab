@@ -1,4 +1,6 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Profile.Password;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
@@ -19,6 +21,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
         private readonly ILogger<ChangePasswordCommandHandler> _logger;
         private readonly IUserService _userService;
         private readonly ITokenCacheService _tokenCacheService;
+        private readonly string errorTitle = ErrorTitle.ChangePassword;
 
         public ChangePasswordCommandHandler(
             IProfileService profileService, IUserContext userContext, UserManager<ApplicationUser> userManager, IEmailSender emailSender, ISmsSender smsSender, ILogger<ChangePasswordCommandHandler> logger, IUserService userService, ITokenCacheService tokenCacheService)
@@ -38,7 +41,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
             var userId = _userContext.UserId;
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
-                throw new NotFoundException("User", nameof(userId), userId.ToString());
+                throw new UserNotFoundException(userId.ToString(), errorTitle);
 
             // 1. Change the password
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
@@ -49,7 +52,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
 
                 _logger.LogError($"Failed to change password for user {userId}. Errors: {errors}");
 
-                throw new FailedChangePasswordException();
+                throw new FailedChangePasswordException(errorTitle);
             }
 
             // null = unlock immediately
@@ -84,14 +87,14 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
                     <p><strong>IP Address:</strong> {_userContext.RemoteIpAddress}</p>
                     <p>If you did NOT make this change, please reset your password immediately.</p>
                 ";
-                    await _emailSender.SendEmailAsync(user.Email, subject, body);
+                    await _emailSender.SendEmailAsync(user.Email, subject, body, errorTitle);
                 });
 
             if (user.PhoneNumber != null)
                 _ = Task.Run(async () =>
                 {
                     var message = $"Your account password was recently changed. If you did NOT make this change, please reset your password immediately.";
-                    await _smsSender.SendSmsAsync(user.PhoneNumber, message);
+                    await _smsSender.SendSmsAsync(user.PhoneNumber, message, errorTitle);
                 });
 
             return new ChangePasswordResponse { Success = true, Message = "Password changed successfully. You have been logged out of all other devices." };

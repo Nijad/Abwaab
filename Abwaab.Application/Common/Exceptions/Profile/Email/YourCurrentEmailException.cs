@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.Email
 {
-    public class YourCurrentEmailException() : Exception(ErrorMessages.YourCurrentEmail)
+    public class YourCurrentEmailException(string title) : CusotomException(
+            message: ErrorMessages.YourCurrentEmail,
+            title: title,
+            errorCode: ErrorCodes.YourCurrentEmail,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.YourCurrentEmail;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.YourCurrentEmail;
     };
 }

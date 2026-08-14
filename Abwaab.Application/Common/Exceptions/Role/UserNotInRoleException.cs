@@ -2,9 +2,13 @@
 
 namespace Abwaab.Application.Common.Exceptions.Role
 {
-    //todo: translate
-    public class UserNotInRoleException(string roleName) : Exception($"User not in role {roleName}")
+    public class UserNotInRoleException(string username, string roleName, string title) : CusotomException(
+            message: "",
+            title: title,
+            errorCode: ErrorCodes.UserNotInRole,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.UserNotInRole;
+        string msg = $"المستخدم '{username}' ليس لديه بالفعل الدور '{roleName}'";
+        public override string Message => msg;
     };
 }

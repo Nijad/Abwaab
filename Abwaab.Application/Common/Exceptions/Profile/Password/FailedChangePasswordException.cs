@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.Password
 {
-    public class FailedChangePasswordException() : Exception(ErrorMessages.FailedChangePassword)
+    public class FailedChangePasswordException(string title) : CusotomException(
+            message: ErrorMessages.FailedChangePassword,
+            title: title,
+            errorCode: ErrorCodes.FailedChangePassword,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.FailedChangePassword;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.FailedChangePassword;
     };
 }

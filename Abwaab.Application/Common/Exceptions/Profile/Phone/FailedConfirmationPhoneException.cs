@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.Phone
 {
-    public class FailedConfirmationPhoneException() : Exception(ErrorMessages.FailedConfirmationPhone)
+    public class FailedConfirmationPhoneException(string title) : CusotomException(
+            message: ErrorMessages.FailedConfirmationPhone,
+            title: title,
+            errorCode: ErrorCodes.FailedConfirmationPhone,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.FailedConfirmationPhone;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.FailedConfirmationPhone;
     }
 }

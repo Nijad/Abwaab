@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Plans;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
@@ -21,6 +22,7 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Cancel
         private readonly IUserService _userService;
         private readonly IPaymentService _paymentService;
         private readonly ITransactionManager _transactionManager;
+        private readonly string errorTitle = ErrorTitle.CancelUserPlan;
 
         public CancelUserPlanCommandHandler(
             IPlanService planService,
@@ -47,28 +49,25 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Cancel
                 // 1. check if there is a user plan with id equal to userplanId
                 UserPlan? userPlan = await _planService.FindUserPlanByIdAsync(request.UserPlanId);
                 if (userPlan == null)
-                    throw new NotFoundException(nameof(UserPlan), nameof(request.UserPlanId), request.UserPlanId.ToString());
+                    throw new NotFoundException(nameof(UserPlan), nameof(request.UserPlanId), request.UserPlanId.ToString(), errorTitle);
 
                 // 2. check if a plan belong to user or user is an admin
                 string username = currentUser.Identity!.Name!;
                 ApplicationUser? user = await _userService.FindUserByNameAsync(username);
                 if (user == null)
-                    throw new NotFoundException("User", nameof(username), username);
+                    throw new UserNotFoundException(username, errorTitle);
 
                 if (userPlan.UserId != user.Id && !currentUser.IsInRole(RoleConstants.ROLE_ADMIN))
-                    throw new ObjectNotBelongToUserException(
-                        nameof(UserPlan),
-                        nameof(request.UserPlanId),
-                        request.UserPlanId.ToString());
+                    throw new ObjectNotBelongToUserException(nameof(UserPlan),errorTitle);
 
                 // 3. check if user plan with pending status
-                UserPlanStatus activeStatus = await _userPlanStateService.GetActiveUserPlanStatus();
+                UserPlanStatus activeStatus = await _userPlanStateService.GetActiveUserPlanStatus(errorTitle);
                 if (activeStatus.Id != userPlan.UserPlanStateId)
-                    throw new FailedCancelationUserPlanException("You cann't cancel unpending plan");
+                    throw new FailedCancellationUserPlanException($"لا يمكنك إلغاء الاشتراك بهذه الخطة، لقد قمت بتثبيتها مسبقاً.", errorTitle);
 
                 // 4. change status of user plan to canceled
 
-                UserPlanStatus canceledStatus = await _userPlanStateService.GetCanceledUserPlanStatus();
+                UserPlanStatus canceledStatus = await _userPlanStateService.GetCanceledUserPlanStatus(errorTitle);
 
                 userPlan.UserPlanStatus = canceledStatus;
                 userPlan.UserPlanStateId = canceledStatus.Id;
@@ -78,10 +77,10 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Cancel
                 await _planService.UpdateUserPlan(userPlan);
 
                 // 5. cancel payment of this user plan
-                PaymentState pendingPaymentState = await _paymentService.FindPaymentSateBySateNameAsync(PaymentStatesEnum.Pending);
-                PaymentState canceledPaymentState = await _paymentService.FindPaymentSateBySateNameAsync(PaymentStatesEnum.Cancelled);
+                PaymentState pendingPaymentState = await _paymentService.FindPaymentSateBySateNameAsync(PaymentStatesEnum.Pending, errorTitle);
+                PaymentState canceledPaymentState = await _paymentService.FindPaymentSateBySateNameAsync(PaymentStatesEnum.Cancelled, errorTitle);
 
-                Payment? userPlanPendingPayment = await _paymentService.FindPendingUserPlanPaymentAsync(userPlan.Id);
+                Payment? userPlanPendingPayment = await _paymentService.FindPendingUserPlanPaymentAsync(userPlan.Id, errorTitle);
 
                 if (userPlanPendingPayment != null)
                 {

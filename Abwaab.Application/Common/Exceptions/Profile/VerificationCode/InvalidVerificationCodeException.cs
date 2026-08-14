@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.VerificationCode
 {
-    public class InvalidVerificationCodeException() : Exception(ErrorMessages.InvalidVerificationCode)
+    public class InvalidVerificationCodeException(string title) : CusotomException(
+            message: ErrorMessages.InvalidVerificationCode,
+            title: title,
+            errorCode: ErrorCodes.InvalidVerificationCode,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.InvalidVerificationCode;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.InvalidVerificationCode;
     }
 }

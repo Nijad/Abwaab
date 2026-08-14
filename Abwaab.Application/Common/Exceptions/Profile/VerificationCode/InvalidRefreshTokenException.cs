@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.VerificationCode
 {
-    public class InvalidRefreshTokenException() : Exception(ErrorMessages.InvalidRefreshToken)
+    public class InvalidRefreshTokenException(string title) : CusotomException(
+            message: ErrorMessages.InvalidRefreshToken,
+            title: title,
+            errorCode: ErrorCodes.InvalidRefreshToken,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.InvalidRefreshToken;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.InvalidRefreshToken;
     }
 }

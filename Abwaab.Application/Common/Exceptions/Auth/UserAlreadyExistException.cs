@@ -2,9 +2,12 @@
 
 namespace Abwaab.Application.Common.Exceptions.Auth
 {
-    public class UserAlreadyExistException() : Exception(ErrorMessages.UserAlreadyExist)
+    public class UserAlreadyExistException(string title) :
+        CusotomException(
+            message: ErrorMessages.UserAlreadyExist,
+            title: title,
+            errorCode: ErrorCodes.UserAlreadyExist,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.UserAlreadyExist;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.UserAlreadyExist;
     };
 }

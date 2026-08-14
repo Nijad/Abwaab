@@ -12,6 +12,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly IMemoryCache _cache;
+        private readonly string errorTitle = ErrorTitle.VerificationCode;
 
         public VerificationCodeService(
             IEmailSender emailSender,
@@ -52,7 +53,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     });
             }
 
-            throw new NotImplementedIdentifierException(resendCodeDTO.IdentifierType.ToString());
+            throw new NotImplementedIdentifierException(resendCodeDTO.IdentifierType.ToString(), errorTitle);
         }
 
         public async Task SendVerificationCodeViaEmailAsync(string email, string code)
@@ -66,14 +67,14 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 <p>If you didn't request this, please ignore this email.</p>
             ";
 
-            await _emailSender.SendEmailAsync(email, subject, body);
+            await _emailSender.SendEmailAsync(email, subject, body, errorTitle);
         }
 
         public async Task SendVerificationCodeViaSmsAsync(string phoneNo, string code)
         {
             var message = $"Your OTP is: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (valid {GeneralConstants.CODE_TIMEOUT_MINUTES} min)";
 
-            await _smsSender.SendSmsAsync(phoneNo, message);
+            await _smsSender.SendSmsAsync(phoneNo, message, errorTitle);
         }
 
         public Task<bool> VerifyCodeAsync(string identifier, string userInputCode)

@@ -69,12 +69,12 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return Convert.ToBase64String(randomNumber);
         }
 
-        public async Task<Guid> GetUserIdByTokenAsync(RefreshTokenCommand request)
+        public async Task<Guid> GetUserIdByTokenAsync(RefreshTokenCommand request, string errorTitle)
         {
             RefreshToken? storedToken = await _refreshTokenRepo.GetByTokenAsync(request.RefreshToken);
             
             if (storedToken == null || storedToken.IsRevoked || storedToken.ExpiryDate < DateTime.UtcNow)
-                throw new InvalidRefreshTokenException();
+                throw new InvalidRefreshTokenException(errorTitle);
 
             return storedToken.UserId;
         }

@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Plans
 {
-    public class UserHasMoreThanOneActivePlanException() : Exception(ErrorMessages.UserHasMoreThanOneActivePlan)
+    public class UserHasMoreThanOneActivePlanException(string title) : CusotomException(
+            message: ErrorMessages.UserHasMoreThanOneActivePlan,
+            title: title,
+            errorCode: ErrorCodes.UserHasMoreThanOneActivePlan,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.UserHasMoreThanOneActivePlan;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.UserHasMoreThanOneActivePlan;
     }
 }

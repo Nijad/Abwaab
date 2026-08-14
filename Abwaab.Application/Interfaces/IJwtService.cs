@@ -11,6 +11,6 @@ namespace Abwaab.Application.Interfaces
         Task<TokenResponseDTO> GenerateTokenResponseAsync(ApplicationUser user, IList<string> roles);
         Task<RefreshTokenResponse> RefreshTokenAsync(ApplicationUser user, IList<string> roles, string refreshToken);
 
-        Task<Guid> GetUserIdByTokenAsync(RefreshTokenCommand request);
+        Task<Guid> GetUserIdByTokenAsync(RefreshTokenCommand request, string errorTitle);
     }
 }

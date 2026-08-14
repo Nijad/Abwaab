@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using MediatR;
@@ -12,6 +13,7 @@ namespace Abwaab.Application.Features.Users.Auth.SendCode
         private readonly IVerificationCodeService _verificationCodeService;
         private readonly IUserService _userService;
         private readonly IMemoryCache _cache;
+        private readonly string errorTitle = ErrorTitle.SendCode;
 
         public SendCodeCommandHandler(
             IVerificationCodeService verificationCodeService,
@@ -24,10 +26,10 @@ namespace Abwaab.Application.Features.Users.Auth.SendCode
         }
         public async Task<SendCodeResponse> Handle(SendCodeDTO request, CancellationToken cancellationToken)
         {
-            var user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            var user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType, errorTitle);
 
             if (user == null)
-                throw new NotFoundException("User", nameof(request.IdentifierType), request.Identifier);
+                throw new UserNotFoundException(request.Identifier, errorTitle);
 
             string code = _verificationCodeService.GenerateVerificationCode();
             request.Code = code;

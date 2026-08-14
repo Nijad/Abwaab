@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.Phone
 {
-    public class NoPendingPhoneChangeException(): Exception(ErrorMessages.NoPendingPhoneChange)
+    public class NoPendingPhoneChangeException(string title) : CusotomException(
+            message: ErrorMessages.NoPendingPhoneChange,
+            title: title,
+            errorCode: ErrorCodes.NoPendingPhoneChange,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.NoPendingPhoneChange;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.NoPendingPhoneChange;
     }
 }

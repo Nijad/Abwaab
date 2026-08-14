@@ -1,5 +1,7 @@
-﻿using Abwaab.Application.Common.Enums;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Profile.Password;
 using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
 using Abwaab.Application.Contracts;
@@ -18,6 +20,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Reset
         private readonly IMemoryCache _cache;
         private readonly ILogger<ResetPasswordCommandHandler> _logger;
         private readonly IUserService _userService;
+        private readonly string errorTitle = ErrorTitle.ChangePassword;
 
         public ResetPasswordCommandHandler(
             UserManager<ApplicationUser> userManager,
@@ -35,12 +38,12 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Reset
         {
             // 1. Ensure code was verified (optional but recommended)
             if (!_cache.TryGetValue($"reset_verified_{request.Identifier}", out bool _))
-                throw new InvalidVerificationCodeException();
+                throw new InvalidVerificationCodeException(errorTitle);
 
             // 2. Find user
-            var user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            var user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType, errorTitle);
             if (user == null)
-                throw new NotFoundException("User", request.IdentifierType.ToString().Replace("_", " "), request.Identifier);
+                throw new UserNotFoundException(request.Identifier, errorTitle);
 
             if (request.IdentifierType == IdentifiersEnum.Email && user.PreviousEmail == request.Identifier)
             {
@@ -65,12 +68,12 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Reset
                 user.PhoneNumberConfirmed = false;
             }
             else
-                throw new NotImplementedIdentifierException(request.IdentifierType.ToString().Replace("_", " "));
+                throw new NotImplementedIdentifierException(request.IdentifierType.ToString().Replace("_", " "), errorTitle);
 
             // 3. Validate the code again
             var cacheKey = $"reset_{request.Identifier}";
             if (!_cache.TryGetValue(cacheKey, out string storedCode) || storedCode != request.Code)
-                throw new InvalidVerificationCodeException();
+                throw new InvalidVerificationCodeException(errorTitle);
 
             // 4. Generate password reset token via Identity
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -81,7 +84,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Reset
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 _logger.LogError("Password reset failed for user {UserId}: {Errors}", user.Id, errors);
 
-                throw new FailedResetPasswordException();
+                throw new FailedResetPasswordException(errorTitle);
             }
 
             // 5. Clear cache entries

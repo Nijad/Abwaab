@@ -2,9 +2,13 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.NotificationWay
 {
-    //todo: translate
-    public class AlreadySubscribeNotificationWayException(string notificationWayName) : Exception($"User already has {notificationWayName} subscription as notification way")
+    public class AlreadySubscribeNotificationWayException(string notificationWayName, string title) : CusotomException(
+            message: "",
+            title: title,
+            errorCode: ErrorCodes.AlreadySubscribeNotificationWay,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.AlreadySubscribeNotificationWay;
+        string msg = $"أنت مشترك فعلاً بطريقة الإشعارات '{notificationWayName}'";
+        public override string Message => msg;
     };
 }

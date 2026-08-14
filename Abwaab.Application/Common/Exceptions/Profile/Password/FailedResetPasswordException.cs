@@ -1,9 +1,11 @@
 ﻿using Abwaab.Application.Common.Constants;
 namespace Abwaab.Application.Common.Exceptions.Profile.Password
 {
-    public class FailedResetPasswordException() :Exception(ErrorMessages.FailedResetPassword)
+    public class FailedResetPasswordException(string title) : CusotomException(
+            message: ErrorMessages.FailedResetPassword,
+            title: title,
+            errorCode: ErrorCodes.FailedResetPassword,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.FailedResetPassword;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.FailedResetPassword;
     }
 }

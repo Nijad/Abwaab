@@ -1,4 +1,6 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
 using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
 using Abwaab.Application.Contracts;
@@ -20,6 +22,7 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Confirm
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMemoryCache _cache;
         private readonly ILogger<ConfirmPhoneNoChangeCommandHandler> _logger;
+        private readonly string errorTitle = ErrorTitle.ConfirmPhoneNoChange;
 
         public ConfirmPhoneNoChangeCommandHandler(IProfileService profileService, IUserContext userContext, UserManager<ApplicationUser> userManager, IMemoryCache cache, ILogger<ConfirmPhoneNoChangeCommandHandler> logger)
         {
@@ -35,14 +38,14 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Confirm
             ApplicationUser? user = await _userManager.FindByIdAsync(userId.ToString());
 
             if (user == null)
-                throw new NotFoundException("User", nameof(userId), userId.ToString());
+                throw new UserNotFoundException(userId.ToString(), errorTitle);
 
             string cacheKey = $"phone_change_{userId}";
             if (!_cache.TryGetValue(cacheKey, out PendingPhoneChange pending))
-                throw new NoPendingPhoneChangeException();
+                throw new NoPendingPhoneChangeException(errorTitle);
 
             if (pending.Code != request.Code || pending.NewPhoneNo != request.NewPhoneNo)
-                throw new InvalidCodeOrPhoneMissmatchException();
+                throw new InvalidCodeOrPhoneMissmatchException(errorTitle);
 
             // Double-check if the phone number is still available (race condition)
             var existingUser = await _userManager.Users
@@ -64,7 +67,7 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Confirm
                 
                 _logger.LogError("Phone update failed for user {UserId}: {Errors}", userId, errors);
                 
-                throw new FailedConfirmationPhoneException();
+                throw new FailedConfirmationPhoneException(errorTitle);
             }
 
             // Remove the cache entry (one-time use)

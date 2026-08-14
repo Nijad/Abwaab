@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Role
 {
-    public class FailedToRemoveUserFromRoleException() : Exception(ErrorMessages.FailedToRemoveUserFromRole)
+    public class FailedToRemoveUserFromRoleException(string title) : CusotomException(
+            message: ErrorMessages.FailedToRemoveUserFromRole,
+            title: title,
+            errorCode: ErrorCodes.FailedToRemoveUserFromRole,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.FailedToRemoveUserFromRole;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.FailedToRemoveUserFromRole;
     };
 }

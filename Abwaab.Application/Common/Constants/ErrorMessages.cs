@@ -2,9 +2,10 @@
 {
     public static class ErrorMessages
     {
+        public const string SystemError = "حدث خطأ في النظام، يرجى المحاولة لاحقاً.";
+        public const string AccountLocked = "حسابك مقفل. انتقل إلى نسيت كلمة المرور.";
         public const string EmailNotVerified = "بريدك الإلكتروني غير مؤكد. يرجى تأكيد بريدك الإلكتروني.";
         public const string PhoneNotVerified = "رقم هاتفك غير مؤكد. يرجى تأكيد رقم هاتفك.";
-        public const string AccountLocked = "حسابك مقفل. انتقل إلى نسيت كلمة المرور.";
         public const string InvalidCredentials = "اسم المستخدم أو كلمة المرور غير صحيحة.";
         public const string UserAlreadyExist = "المستخدم موجود بالفعل.";
         public const string RegistrationFailed = "فشل التسجيل.";

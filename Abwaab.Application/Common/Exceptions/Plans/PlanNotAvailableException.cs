@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Plans
 {
-    public class PlanNotAvailableException() : Exception(ErrorMessages.PlanNotAvailable)
+    public class PlanNotAvailableException(string title) : CusotomException(
+            message: ErrorMessages.PlanNotAvailable,
+            title: title,
+            errorCode: ErrorCodes.PlanNotAvailable,
+            returnToUser: false)
     {
-        public string ErrorCode { get; } = ErrorCodes.PlanNotAvailable;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.PlanNotAvailable;
     }
 }

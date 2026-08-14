@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Role
 {
-    public class FailedToAddUserToRoleException() : Exception(ErrorMessages.FailedToAddUserToRole)
+    public class FailedToAddUserToRoleException(string title) : CusotomException(
+            message: ErrorMessages.FailedToAddUserToRole,
+            title: title,
+            errorCode: ErrorCodes.FailedToAddUserToRole,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.FailedToAddUserToRole;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.FailedToAddUserToRole;
     };
 }

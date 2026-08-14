@@ -1,10 +1,13 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Whipstaff.Core.Entities;
 
 namespace Abwaab.Application.Common.Exceptions.Plans
 {
-    public class UserHasNoActivePlanException() : Exception(ErrorMessages.UserHasNoActivePlan)
+    public class UserHasNoActivePlanException(string title) : CusotomException(
+            message: ErrorMessages.UserHasNoActivePlan,
+            title: title,
+            errorCode: ErrorCodes.UserHasNoActivePlan,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.UserHasNoActivePlan;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.UserHasNoActivePlan;
     }
 }

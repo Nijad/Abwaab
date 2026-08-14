@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Payments
 {
-    public class NotImplementedServiceTypeException(string message, string messageEn = "") : Exception(message)
+    public class NotImplementedServiceTypeException(string message, string title) : CusotomException(
+            message: message,
+            title: title,
+            errorCode: ErrorCodes.NotImplementedServiceType,
+            returnToUser: false)
     {
-        public string ErrorCode { get; } = ErrorCodes.NotImplementedServiceType;
-        public string EnglishErrorMessage { get; } = messageEn;
     }
 }

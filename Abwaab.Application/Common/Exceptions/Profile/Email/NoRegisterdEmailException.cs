@@ -2,9 +2,11 @@
 
 namespace Abwaab.Application.Common.Exceptions.Profile.Email
 {
-    public class NoRegisterdEmailException() : Exception(ErrorMessages.NoRegisterdEmail)
+    public class NoRegisterdEmailException(string title) : CusotomException(
+            message: ErrorMessages.NoRegisterdEmail,
+            title: title,
+            errorCode: ErrorCodes.NoRegisterdEmail,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.NoRegisterdEmail;
-        public string EnglishErrorMessage { get; } = ErrorMessagesEn.NoRegisterdEmail;
     };
 }

@@ -2,9 +2,13 @@
 
 namespace Abwaab.Application.Common.Exceptions
 {
-    //todo: translate
-    public class NotImplementedIdentifierException(string identifierType) : Exception($"Identifier type of {identifierType} does not implemented yet.")
+    public class NotImplementedIdentifierException(string identifierType, string title) : CusotomException(
+            message: "",
+            title: title,
+            errorCode: ErrorCodes.NotImplementdIdentifier,
+            returnToUser: false)
     {
-        public string ErrorCode { get; } = ErrorCodes.NotImplementdIdentifier;
+        string msg = $"المعرف من النوع '{identifierType}' ليس منجزاً بعد";
+        public override string Message => msg;
     };
 }

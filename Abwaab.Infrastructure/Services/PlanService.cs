@@ -35,15 +35,15 @@ namespace Abwaab.Infrastructure.Services
             await _planRepository.UpdateUserPlanAsync(userPlan);
         }
 
-        public async Task<UserPlan> FindUserActivePlanAsync(Guid userId, Guid activeUserPlanStateId)
+        public async Task<UserPlan> FindUserActivePlanAsync(Guid userId, Guid activeUserPlanStateId, string errorTitle)
         {
             List<UserPlan> userPlans = await _planRepository.FindUserPlansByStatusAsync(userId, activeUserPlanStateId);
 
             if (userPlans.Count == 0)
-                throw new UserHasNoActivePlanException();
+                throw new UserHasNoActivePlanException(errorTitle);
 
             if (userPlans.Count > 1)
-                throw new UserHasMoreThanOneActivePlanException();
+                throw new UserHasMoreThanOneActivePlanException(errorTitle);
 
             return userPlans.First();
         }
