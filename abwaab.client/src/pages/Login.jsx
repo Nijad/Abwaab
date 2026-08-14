@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "../services/axios";
 import { Button, Grid, TextField } from "@mui/material";
 import useAuth from "../hooks/useAuth";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Admin from "./Admin";
 import { useSnackbar } from "notistack";
 import img from "../assets/imgs/login.webp";
@@ -55,9 +55,9 @@ const Login = () => {
     <Grid container className="bg-neutral-50 flex-wrap min-h-screen">
       <Grid container direction="column" className="ms-10 flex-1 h-full">
         <Grid>
-          <div className="m-5">
+          <Link to="/" className="m-5">
             <img src={logo} alt="abwaab-logo" className="" />
-          </div>
+          </Link>
         </Grid>
         <Grid sx={{ padding: "30px" }} size={7}>
           <div className="bg-white p-6 rounded-3xl">
@@ -130,6 +130,8 @@ const Login = () => {
           style={{
             backgroundImage: `url(${img})`,
             backgroundPosition: "center",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
           }}
         ></div>
       </Grid>

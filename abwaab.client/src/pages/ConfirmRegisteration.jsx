@@ -1,20 +1,39 @@
-import { Button, TextField } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import CountdownTimer from "../components/CountDownTimer";
 import axios from "../services/axios";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useSnackbar } from "notistack";
+import img from "../assets/imgs/register.webp";
+import logo from "../assets/imgs/logo.svg";
+import { detectIdentifierType, formatTime } from "../utils/helpers";
+import OtpVerification from "../components/OtpVerification";
 
 const ConfirmRegisteration = () => {
   const { user, codeRemainingSeconds, setRemainingSeconds, login } = useAuth();
   const [fdata, setFdata] = useState({
-    Identifier: user.identifier,
+    Identifier: user === null ? null : user.identifier,
     Code: "",
   });
-  console.log(fdata);
+  const timerRef = useRef(null);
+
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    if (codeRemainingSeconds > 0) {
+      timerRef.current = setInterval(() => {
+        setRemainingSeconds((prev) => prev - 1);
+      }, 1000);
+    } else if (codeRemainingSeconds === 0) {
+      clearInterval(timerRef.current);
+    }
+
+    return () => {
+      clearInterval(timerRef.current);
+    };
+  }, [codeRemainingSeconds, setRemainingSeconds]);
 
   const resendCode = async () => {
     try {
@@ -28,64 +47,108 @@ const ConfirmRegisteration = () => {
         .catch((err) => {});
     } catch (error) {}
   };
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
+  const handleFormSubmit = async (code) => {
+    console.log(code);
+
     try {
       await axios
-        .post("/auth/verifyaccount", { ...fdata })
+        .post("/auth/verifyaccount", {
+          Identifier: user.identifier,
+          Code: code,
+        })
         .then((resp) => {
           console.log(resp.data);
           // login(resp.data);
           navigate("/", { replace: true });
-          enqueueSnackbar("الرمز المدخل صحيح", { variant: "success" });
+          enqueueSnackbar("تم تأكيد الحساب بنجاح", { variant: "success" });
         })
-        .catch((err) => {});
-    } catch (error) {}
+        .catch((err) => {
+          enqueueSnackbar(err.response.data.detail, { variant: "error" });
+        });
+    } catch (error) {
+      enqueueSnackbar(error, { variant: "error" });
+    }
   };
 
   const handleCountdownEnd = () => {
     setRemainingSeconds(0);
   };
 
+  // if (!user) {
+  //   return <div>يجب انشاء حساب اولا</div>;
+  // }
+
   // check in auth context first then in session storage for code expiration date
   return (
-    <div>
-      {codeRemainingSeconds === 0 && <p>انتهت صلاحية الرمز الخاص بك!</p>}
-      {codeRemainingSeconds > 0 && (
-        <div>
-          {/* <p>{codeRemainingSeconds}</p> */}
-          <CountdownTimer
-            initialSeconds={codeRemainingSeconds}
-            onComplete={() => handleCountdownEnd()}
-            autoStart={true}
-          />
-          <form method="post" onSubmit={(e) => handleFormSubmit(e)}>
-            <TextField
-              label="الرمز الخاص"
-              size="medium"
-              variant="standard"
-              name="Code"
-              value={fdata.Code}
-              onChange={(e) =>
-                setFdata({ ...fdata, [e.target.name]: e.target.value })
-              }
-            />
-          </form>
-        </div>
-      )}
-      {codeRemainingSeconds == 0 && (
-        <div className="">
-          <Button
-            type="button"
-            variant="text"
-            size="small"
-            onClick={() => resendCode()}
-          >
-            إعادة ارسال الرمز الخاص
-          </Button>
-        </div>
-      )}
-    </div>
+    <Grid container className="bg-neutral-50 flex-wrap min-h-screen">
+      <Grid container direction="column" className="ms-10 flex-1 h-full">
+        <Grid>
+          <Link to="/" className="m-5">
+            <img src={logo} alt="abwaab-logo" className="" />
+          </Link>
+        </Grid>
+        <Grid sx={{ padding: "30px" }} size={7}>
+          <div className="bg-white p-6 rounded-3xl">
+            <div className="mb-6">
+              <h4 className="text-3xl text-teal-400 font-semibold">
+                تأكيد الحساب
+              </h4>
+            </div>
+            {user && (
+              <>
+                <div className="flex items-center">
+                  <OtpVerification
+                    identifier={user.identifier}
+                    onVerify={handleFormSubmit}
+                    onResend={resendCode}
+                  />
+                </div>
+                <div className="">
+                  <p className="px-2 text-neutral-700 text-sm">
+                    لم يصلك الرمز؟
+                    {codeRemainingSeconds > 0 ? (
+                      <Button
+                        type="button"
+                        variant="text"
+                        size="small"
+                        onClick={() => resendCode()}
+                        disabled
+                      >
+                        <span className="underline font-medium text-[13px] text-neutral-500">
+                          إعادة الإرسال {formatTime(codeRemainingSeconds)}
+                        </span>
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="text"
+                        size="small"
+                        onClick={() => resendCode()}
+                        className="!p-3"
+                      >
+                        إعادة الإرسال
+                      </Button>
+                    )}
+                  </p>
+                </div>
+              </>
+            )}
+            {!user && <p className="text-sky-700">يجب أنشاء حساب أولاً.</p>}
+          </div>
+        </Grid>
+      </Grid>
+      <Grid size={4}>
+        <div
+          className="w-full h-full"
+          style={{
+            backgroundImage: `url(${img})`,
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+          }}
+        ></div>
+      </Grid>
+    </Grid>
   );
 };
 

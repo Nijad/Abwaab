@@ -1,7 +1,7 @@
 import { Button, Grid, TextField } from "@mui/material";
 import { useSnackbar } from "notistack";
 import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import axios from "../services/axios";
 import useAuth from "../hooks/useAuth";
 import img from "../assets/imgs/register.webp";
@@ -62,9 +62,9 @@ const Register = () => {
     <Grid container className="bg-neutral-50 flex-wrap">
       <Grid container direction="column" className="ms-10 flex-1 h-full">
         <Grid>
-          <div className="m-5">
+          <Link to="/" className="m-5">
             <img src={logo} alt="abwaab-logo" className="" />
-          </div>
+          </Link>
         </Grid>
         <Grid sx={{ padding: "30px" }} size={7}>
           <div className="bg-white p-6 rounded-3xl">
@@ -173,6 +173,8 @@ const Register = () => {
           style={{
             backgroundImage: `url(${img})`,
             backgroundPosition: "center",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
           }}
         ></div>
       </Grid>
