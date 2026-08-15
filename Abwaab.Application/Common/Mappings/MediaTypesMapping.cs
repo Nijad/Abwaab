@@ -13,5 +13,14 @@ namespace Abwaab.Application.Common.Mappings
                 _ => ""
             };
         }
+
+        public static string Map(string type)
+        {
+            if(type == MediaTypesEnum.Image.ToString())
+                return Map(MediaTypesEnum.Image);
+            if(type == MediaTypesEnum.Video.ToString())
+                return Map(MediaTypesEnum.Video);
+            return "";
+        }
     }
 }

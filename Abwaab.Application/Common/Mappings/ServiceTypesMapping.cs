@@ -13,5 +13,14 @@ namespace Abwaab.Application.Common.Mappings
                 _ => ""
             };
         }
+
+        public static string Map(string type)
+        {
+            if(type == ServiceTypesEnum.Advertisment.ToString())
+                return Map(ServiceTypesEnum.Advertisment);
+            if(type == ServiceTypesEnum.Plan_Subscription.ToString())
+                return Map(ServiceTypesEnum.Plan_Subscription);
+            return "";
+        }
     }
 }

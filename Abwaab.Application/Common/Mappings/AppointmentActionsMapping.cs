@@ -17,5 +17,22 @@ namespace Abwaab.Application.Common.Mappings
                 _ => ""
             };
         }
+
+        public static string Map(string action)
+        {
+            if(action == AppointmentActionsEnum.Accept.ToString())
+                return Map(AppointmentActionsEnum.Accept);
+            if(action == AppointmentActionsEnum.Cancel.ToString())
+                return Map(AppointmentActionsEnum.Cancel);
+            if(action == AppointmentActionsEnum.Refuse.ToString())
+                return Map(AppointmentActionsEnum.Refuse);
+            if(action == AppointmentActionsEnum.Request.ToString())
+                return Map(AppointmentActionsEnum.Request);
+            if(action == AppointmentActionsEnum.Report.ToString())
+                return Map(AppointmentActionsEnum.Report);
+            if(action == AppointmentActionsEnum.Visit.ToString())
+                return Map(AppointmentActionsEnum.Visit);
+            return "";
+        }
     }
 }
