@@ -3,7 +3,6 @@ using Abwaab.Application.Common.Exceptions.Custom;
 
 namespace Abwaab.Application.Common.Exceptions
 {
-    //todo: translate
     public class ObjectNotBelongToUserException(string objectType, string title) :
         Forbidden403Exception(
             message: "",

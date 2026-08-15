@@ -117,6 +117,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return new LogoutResponse { Success = true, Message = "Logged out successfully." };
         }
 
+        //todo use service only not repository in following method
         public async Task ActiveDefaultPlantAsync(ApplicationUser user, string errorTitle)
         {
             HttpContext? httpContext = _httpContextAccessor.HttpContext;
@@ -136,18 +137,18 @@ namespace Abwaab.Infrastructure.Services.UserServices
             if (defaultPlan == null)
                 throw new NotFoundException(nameof(Plan), nameof(defaultPlan.DefaultPlan), "True", errorTitle);
 
-            bool hasDefultPlan = await _planRepository.UserHasPlan(user.Id, defaultPlan.Id, errorTitle);
+            bool hasDefultPlan = await _planRepository.UserHasPlanAsync(user.Id, defaultPlan.Id, errorTitle);
 
             // 3. active default plan if exists or create new one for user
             if (hasDefultPlan)
             {
                 // active defult plan for user
-                await _planRepository.ActiveUserPlan(user.Id, defaultPlan.Id, errorTitle);
+                await _planRepository.ActiveUserPlanAsync(user.Id, defaultPlan.Id, errorTitle);
             }
             else
             {
                 // assign defaul plan to user
-                Guid activeUserPlanStateId = await _planRepository.GetUserPlanStateId(UserPlanStatesEnum.Active, errorTitle);
+                Guid activeUserPlanStateId = await _planRepository.GetUserPlanStateIdAsync(UserPlanStatesEnum.Active, errorTitle);
 
                 await _planRepository.AssignPlanToUserAsync(user.Id, defaultPlan.Id, activeUserPlanStateId);
             }                

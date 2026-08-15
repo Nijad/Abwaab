@@ -68,7 +68,6 @@ namespace Abwaab.Application.Features.Users.Profile.Email.Confirm
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                //todo: get resutl error from here
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 
                 _logger.LogError("Failed to update user email for user {UserId}. Errors: {Errors}", userId, errors);

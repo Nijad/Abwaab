@@ -6,9 +6,6 @@ namespace Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.
     {
         public NotificationWayUnsubscriptionCommandValidation()
         {
-            RuleFor(nt => nt.UserId)
-                .NotEmpty().WithMessage("رقم تعريف المستخدم مطلوب");
-
             RuleFor(nt => nt.NotifiactionWayId)
                 .NotEmpty().WithMessage("طريقة الإشعار مطلوبة");
         }

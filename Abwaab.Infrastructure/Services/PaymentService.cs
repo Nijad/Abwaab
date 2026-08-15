@@ -11,20 +11,20 @@ namespace Abwaab.Infrastructure.Services
 {
     public class PaymentService : IPaymentService
     {
-        private readonly IPlanRepository _planRepository;
         private readonly AppDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IPaymentRepository _paymentRepository;
         private readonly string actionBy;
 
         public PaymentService(
             AppDbContext context,
             IHttpContextAccessor httpContextAccessor,
-            IPlanRepository planRepository)
+            IPaymentRepository paymentRepository)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             actionBy = _httpContextAccessor!.HttpContext!.User!.Identity!.Name!;
-            _planRepository = planRepository;
+            _paymentRepository = paymentRepository;
         }
 
         public async Task ConfirmPaymentAsync(Payment payment, string errorTitle)
@@ -81,6 +81,28 @@ namespace Abwaab.Infrastructure.Services
         {
             _context.Payments.Update(userPlanPendingPayment);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task AddPaymentAsync(Payment payment)
+        {
+            payment.CreatedAt = DateTime.Now;
+            payment.CreatedBy = actionBy;
+            await _context.Payments.AddAsync(payment);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<ServiceType> FindServicTypeByNameAsync(ServiceTypesEnum plan_Subscription, string errorTitle)
+        {
+            ServiceType? serviceType = await _paymentRepository.FindServiceTypeByName(plan_Subscription);
+
+            if (serviceType == null)
+                throw new NotFoundException(
+                    nameof(ServiceType),
+                    nameof(serviceType.ServiceName),
+                    plan_Subscription.ToString(),
+                    errorTitle);
+
+            return serviceType;
         }
     }
 }

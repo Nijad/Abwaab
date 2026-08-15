@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions.Auth;
+using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
@@ -8,6 +9,8 @@ using Abwaab.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Whipstaff.Core.Entities;
 
 namespace Abwaab.Application.Features.Users.Auth.Register
 {
@@ -17,27 +20,30 @@ namespace Abwaab.Application.Features.Users.Auth.Register
         private readonly IVerificationCodeService _verificationService;
         private readonly IMemoryCache _cache;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly string errorTilte = ErrorTitle.RegisterUser;
+        private readonly ILogger<RegisterUserCommandHandler> _logger;
+        private readonly string errorTitle = ErrorTitle.RegisterUser;
 
         public RegisterUserCommandHandler(
             IUserService userService,
             IVerificationCodeService verificationService,
             IMemoryCache cache,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ILogger<RegisterUserCommandHandler> logger)
         {
             _userService = userService;
             _verificationService = verificationService;
             _cache = cache;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public async Task<RegisterUserResponse> Handle(RegisterUserDTO request, CancellationToken cancellationToken)
         {
             //check if user already exists
-            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType, errorTilte);
+            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType, errorTitle);
 
             if (user != null)
-                throw new UserAlreadyExistException(errorTilte);
+                throw new UserAlreadyExistException(errorTitle);
 
             ApplicationUser newUser = new ApplicationUser
             {
@@ -54,9 +60,14 @@ namespace Abwaab.Application.Features.Users.Auth.Register
 
             IdentityResult result = await _userManager.CreateAsync(newUser, request.Password);
 
-            //todo: corrent error handling here
             if (!result.Succeeded)
-                throw new RegistrationFailedException(errorTilte);
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+
+                _logger.LogError("Failed to register user. Errors: {Errors}", errors);
+
+                throw new RegistrationFailedException(errorTitle);
+            }
 
             string code = _verificationService.GenerateVerificationCode();
 
