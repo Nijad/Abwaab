@@ -39,7 +39,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.Cancel
             // Revoke ALL refresh tokens (force logout on all devices)
             await _profileService.RevokeAllRefreshToken(userId, "Cancelled by user");
             
-            return new() { Success = true, Message = "Pending change cancelled. You have been logged out for security." };
+            return new() { Success = true, Message = "تم إلغاء التغيير وتسجيل خروجك لدواعي أمنية." };
         }
     }
 }

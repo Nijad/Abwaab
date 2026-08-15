@@ -59,7 +59,7 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Upgrade
             return new UpgradeUserPlanResponse
             {
                 Success = true,
-                Message = "Plan upgraded successfully"
+                Message = "تم ترقية اشتراكك بنجاح"
             };
         }
     }

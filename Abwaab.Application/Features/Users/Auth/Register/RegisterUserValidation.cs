@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Validations.Common;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Validations.Common;
 using FluentValidation;
 
 namespace Abwaab.Application.Features.Users.Auth.Register
@@ -8,25 +9,25 @@ namespace Abwaab.Application.Features.Users.Auth.Register
         public RegisterUserValidation()
         {
             RuleFor(x => x.Identifier)
-                .NotEmpty().WithMessage("Identifier is required.")
-                .Must(CommonValidation.IsEmailOrPhoneNo).WithMessage("Identifier must be either valide email or valid phone number(+9639XXXXXXXX)");
+                .NotEmpty().WithMessage("المعرف مطلوب")
+                .Must(CommonValidation.IsEmailOrPhoneNo).WithMessage("المعرف يجب أن يكون بريد الكتروني أو رقم موبايل (+9639XXXXXXXX)");
 
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required.")
-                .MinimumLength(8).WithMessage("Password must be at least 8 characters long.")
-                .Matches("[A-Z]").WithMessage("Password must contain an uppercase letter.")
-                .Matches("[a-z]").WithMessage("Password must contain a lowercase letter.")
-                .Matches("[0-9]").WithMessage("Password must contain a number.");
+                .NotEmpty().WithMessage("كلمة المرور مطلوبة")
+                .MinimumLength(8).WithMessage("كلمة المرور يجب أن تحتوي 8 محارف على الأقل")
+                .Matches("[A-Z]").WithMessage("كلمة المرور يجب أن تحتوي على حرف انكليزي كبير واحد على الأقل")
+                .Matches("[a-z]").WithMessage("كلمة المرور يجب أن تحتوي على حرف انكليزي صغير واحد على الأقل")
+                .Matches("[0-9]").WithMessage("كلمة المرور يجب أن تحتوي على رقم واحد على الأقل");
 
             RuleFor(x => x.FirstName)
-                .NotEmpty().WithMessage("First Name is required.")
-                .MinimumLength(2).WithMessage("First Name must be at least 2 characters long.");
+                .NotEmpty().WithMessage($"{GeneralConstants.FIRST_NAME} مطلوب")
+                .MinimumLength(2).WithMessage($"{GeneralConstants.FIRST_NAME} يجب أن يحتوي حرفين على الأقل");
             RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("Last Name is required.")
-                .MinimumLength(2).WithMessage("Last Name must be at least 2 characters long.");
+                .NotEmpty().WithMessage($"{GeneralConstants.LAST_NAME} مطلوبة")
+                .MinimumLength(2).WithMessage($"{GeneralConstants.LAST_NAME} يجب أن تحتوي حرفين على الأقل");
             RuleFor(x => x.ConfirmPassword)
-                .NotEmpty().WithMessage("Confirm Password is required.")
-                .Equal(x => x.Password).WithMessage("Passwords do not match.");
+                .NotEmpty().WithMessage("تأكيد كلمة المرور يجب مطلوب")
+                .Equal(x => x.Password).WithMessage("تأكيد كلمة المرور لا تتطابق مع كلمة المرور");
         }
     }
 }

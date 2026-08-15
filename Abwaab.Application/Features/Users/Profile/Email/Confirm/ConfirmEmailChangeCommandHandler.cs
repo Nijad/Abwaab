@@ -79,7 +79,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.Confirm
             // Remove the cache entry (one-time use)
             _cache.Remove(cacheKey);
 
-            return new ConfirmEmailChangeResponse { Success = true, Message = $"Email address changed successfully" };
+            return new ConfirmEmailChangeResponse { Success = true, Message = $"تغيير البريد الالكتروني تمت بنجاح" };
         }
     }
 }

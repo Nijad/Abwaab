@@ -1,9 +1,9 @@
 ﻿using Abwaab.Application.Common.Constants;
-using Whipstaff.Core.Entities;
+using Abwaab.Application.Common.Exceptions.Custom;
 
 namespace Abwaab.Application.Common.Exceptions.Plans
 {
-    public class UserHasNoActivePlanException(string title) : CusotomException(
+    public class UserHasNoActivePlanException(string title) : PreconditionRequired428Exception(
             message: ErrorMessages.UserHasNoActivePlan,
             title: title,
             errorCode: ErrorCodes.UserHasNoActivePlan,

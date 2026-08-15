@@ -79,13 +79,13 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
             if (user.Email != null)
                 _ = Task.Run(async () =>
                 {
-                    var subject = "Security Alert: Your Password Was Changed";
+                    var subject = "تحذير أمني: تم تغيير كلمة المرور الخاصة بك";
                     var body = $@"
-                    <h2>Password Changed</h2>
-                    <p>Your account password was recently changed.</p>
-                    <p><strong>Date/Time:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
-                    <p><strong>IP Address:</strong> {_userContext.RemoteIpAddress}</p>
-                    <p>If you did NOT make this change, please reset your password immediately.</p>
+                    <h2>تغيير كلمة المرور</h2>
+                    <p>كلمة مرور حسابك تم تغييرها للتو.</p>
+                    <p><strong>التاريخ/الوقت:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
+                    <p><strong>عنوان الانترنت:</strong> {_userContext.RemoteIpAddress}</p>
+                    <p>إذا لم تكن أنت من قام بهذا التغيير, الرجاء إعادة تغيير كلمة المرور حالاً.</p>
                 ";
                     await _emailSender.SendEmailAsync(user.Email, subject, body, errorTitle);
                 });
@@ -93,11 +93,11 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
             if (user.PhoneNumber != null)
                 _ = Task.Run(async () =>
                 {
-                    var message = $"Your account password was recently changed. If you did NOT make this change, please reset your password immediately.";
+                    var message = $"كلمة مرور حسابك تم تغييرها للتو. إذا لم تكن أنت من قام بهذا التغيير, الرجاء إعادة تغيير كلمة المرور حالاً.";
                     await _smsSender.SendSmsAsync(user.PhoneNumber, message, errorTitle);
                 });
 
-            return new ChangePasswordResponse { Success = true, Message = "Password changed successfully. You have been logged out of all other devices." };
+            return new ChangePasswordResponse { Success = true, Message = "تم تغيير كلمة المرور بنجاح، لقد تم تسجيل خروجك من جميع الأجهزة الأخرى." };
         }
     }
 }

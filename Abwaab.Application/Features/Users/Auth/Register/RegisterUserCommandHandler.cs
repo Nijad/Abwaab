@@ -70,7 +70,7 @@ namespace Abwaab.Application.Features.Users.Auth.Register
             var response = new RegisterUserResponse
             {
                 Success = true,
-                Message = $"Register Successful, Verification code sent to your {request.IdentifierType.ToString().Replace('_', ' ')}",
+                Message = $"عملية التسجيل تمت بنجاح، وتم إرسال رمز التحقق إلى  '{request.Identifier}'",
                 CodeTimeOutInMinuts = GeneralConstants.CODE_TIMEOUT_MINUTES,
                 ExpireAt = DateTime.UtcNow.AddMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES),
             };

@@ -74,7 +74,7 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Confirm
             _cache.Remove(cacheKey);
 
             _logger.LogInformation("Phone number changed successfully for user {UserId} to {NewPhone}", userId, request.NewPhoneNo);
-            return new ConfirmPhoneNoChangeResponse { Success = true, Message = "Phone number updated successfully." };
+            return new ConfirmPhoneNoChangeResponse { Success = true, Message = "تم تغيير رقم الموبايل الخاص بك بنجاح." };
 
 
 

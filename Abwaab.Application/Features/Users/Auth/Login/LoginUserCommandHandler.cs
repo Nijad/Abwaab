@@ -69,7 +69,7 @@ namespace Abwaab.Application.Features.Users.Auth.Login
             LoginUserResponse response = new LoginUserResponse
             {
                 Success = true,
-                Message = "Login successful",
+                Message = "تم تسجيل الدخول بنجاح",
                 AccessToken = tokenResponse.AccessToken,
                 RefreshToken = tokenResponse.RefreshToken,
                 ExpiresIn = tokenResponse.ExpiresIn,

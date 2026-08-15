@@ -1,9 +1,10 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions.Custom;
 
 namespace Abwaab.Application.Common.Exceptions.Auth
 {
     public class UserNotFoundException(string identifier, string title) :
-        CusotomException(
+        NotFound404Exception(
             message: "",
             title: title,
             errorCode: ErrorCodes.UserNotFound,

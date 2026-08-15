@@ -54,7 +54,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Forgot
 
             return new ForgotPasswordResponse { 
                 Success = true, 
-                Message = $"Reset code sent to your {request.IdentifierType.ToString().Replace("_", " ")}." ,
+                Message = $"تم إرسال رمز إعادة تعيين كلمة المرور إلى ' {request.Identifier}'.'" ,
                 CodeTimeOutInMinuts = GeneralConstants.CODE_TIMEOUT_MINUTES,
                 ExpireAt = DateTime.UtcNow.AddMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES),
             };

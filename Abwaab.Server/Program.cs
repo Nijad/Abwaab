@@ -15,8 +15,7 @@ namespace Abwaab.Server
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddProblemDetails();
 
-            builder.Services.AddExceptionHandler<AlternativeExceptionHandler>();
-            //builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Warning() // Global log level

@@ -1,8 +1,8 @@
 ﻿using Abwaab.Application.Common.Constants;
 
-namespace Abwaab.Application.Common.Exceptions
+namespace Abwaab.Application.Common.Exceptions.Custom
 {
-    public class CusotomException(string message, string title, string errorCode, bool returnToUser) : Exception
+    public class InternalServerError500Exception(string message, string title, string errorCode, bool returnToUser) : Exception
     {
         public override string Message => message;
         public string Title { get; } = title;

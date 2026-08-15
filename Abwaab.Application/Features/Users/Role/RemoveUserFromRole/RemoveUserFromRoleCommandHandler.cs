@@ -53,7 +53,7 @@ namespace Abwaab.Application.Features.Users.Role.RemoveUserFromRole
                 throw new FailedToRemoveUserFromRoleException(errorTitle);
             }
 
-            return new RemoveUserFromRoleResponse { Success = true, Message = $"User removed from role '{request.RoleName}' successfully." };
+            return new RemoveUserFromRoleResponse { Success = true, Message = $"تم استبعاد المستخدم من الدور '{request.RoleName}' بنجاح." };
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Common.Constants;
+﻿using Abwaab.Application.Common.Exceptions.Custom;
 
 namespace Abwaab.Application.Common.Exceptions
 {
@@ -9,7 +9,7 @@ namespace Abwaab.Application.Common.Exceptions
             string title,
             string errorCode = "",
             bool returnToUser = false) : 
-        CusotomException(
+        NotFound404Exception(
             message: "",
             title: title,
             errorCode: errorCode,

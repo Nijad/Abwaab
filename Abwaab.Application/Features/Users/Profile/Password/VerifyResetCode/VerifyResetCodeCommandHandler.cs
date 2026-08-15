@@ -36,7 +36,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode
 
             return new VerifyResetCodeResponse { 
                 Success = true, 
-                Message = "Code verified.",
+                Message = "تم التحقق من الرمز بنجاح.",
                 CodeTimeOutInMinuts = GeneralConstants.CODE_TIMEOUT_MINUTES,
                 ExpireAt = DateTime.UtcNow.AddMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES),
             };

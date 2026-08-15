@@ -51,7 +51,7 @@ namespace Abwaab.Application.Features.Properties.Add
                 throw new ExceededAllowedPropertyNumberException(activeUserPlan.Plan, errorTitle);
 
             Guid createdPropertyId = await _propertyService.CreatePropertyAsync(activeUserPlan, errorTitle);
-            return new AddPropertyResponse() { PropertyId = createdPropertyId, Message = "New property created successfully." };
+            return new AddPropertyResponse() { PropertyId = createdPropertyId, Message = "تم إضافة عقار جديد بنجاح" };
         }
     }
 }

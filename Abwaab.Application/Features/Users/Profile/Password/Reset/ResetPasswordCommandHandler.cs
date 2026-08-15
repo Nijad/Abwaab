@@ -93,7 +93,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Reset
 
 
 
-            return new ResetPasswordResponse { Success = true, Message = "Password has been reset." };
+            return new ResetPasswordResponse { Success = true, Message = "تم إعادة تعيين كلمة المرور بنجاح." };
         }
     }
 }

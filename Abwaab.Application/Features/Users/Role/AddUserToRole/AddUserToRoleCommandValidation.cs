@@ -8,12 +8,11 @@ namespace Abwaab.Application.Features.Users.Role.AddUserToRole
         public AddUserToRoleCommandValidation()
         {
             RuleFor(x => x.Identifier)
-                .NotEmpty().WithMessage("User identifier is required.")
-                .Must(CommonValidation.IsEmailOrPhoneNo).WithMessage("Identifier must be either valide email or valid phone number(+9639XXXXXXXX)");
+                .NotEmpty().WithMessage("المعرف مطلوب")
+                .Must(CommonValidation.IsEmailOrPhoneNo).WithMessage("المعرف يجب أن يكون بريد الكتروني أو رقم موبايل (+9639XXXXXXXX)");
 
             RuleFor(x => x.RoleName)
-                .NotEmpty().WithMessage("Role name is required.")
-                .MaximumLength(50);
+                .NotEmpty().WithMessage("الدور مطلوب.");
         }
     }
 }

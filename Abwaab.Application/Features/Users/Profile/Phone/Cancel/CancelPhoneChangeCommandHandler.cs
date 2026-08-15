@@ -34,7 +34,7 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Cancel
 
             await _profileService.RevokeAllRefreshToken(userId, "Cancelled by user");
             
-            return new CancelPhoneChangeResponse { Success = true, Message = "Pending change cancelled. You have been logged out for security." };
+            return new CancelPhoneChangeResponse { Success = true, Message = "تم إلغاء تعليق التغيير. You لقد تم تسجيل خروجك لدواعي أمنية." };
         }
     }
 }

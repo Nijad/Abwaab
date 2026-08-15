@@ -58,7 +58,7 @@ namespace Abwaab.Application.Features.Users.Role.AddUserToRole
                 throw new FailedToAddUserToRoleException(errorTitle);
             }
 
-            return new AddUserToRoleResponse { Success = true, Message = $"User added to role '{request.RoleName}' successfully." };
+            return new AddUserToRoleResponse { Success = true, Message = $"تم إضافة المستخدم إلى الدور '{request.RoleName}' بنجاح." };
         }
     }
 }

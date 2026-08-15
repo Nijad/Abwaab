@@ -1,9 +1,10 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions.Custom;
 using Abwaab.Domain.Entities.UserEntities;
 
 namespace Abwaab.Application.Common.Exceptions.Plans
 {
-    public class ExceededAllowedPropertyNumberException(Plan plan, string title ) : CusotomException(
+    public class ExceededAllowedPropertyNumberException(Plan plan, string title ) : UpgradeRequired426Exception(
             message: "",
             title: title,
             errorCode: ErrorCodes.ExceededAllowedNumber,

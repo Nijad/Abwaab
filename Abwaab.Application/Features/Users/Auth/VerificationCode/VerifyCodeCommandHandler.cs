@@ -107,7 +107,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             VerifyCodeResponse response = new VerifyCodeResponse
             {
                 Success = true,
-                Message = "Verification successful. You are now logged in.",
+                Message = "تم تأكيد الحساب وتسجيل دخولك بنجاح",
                 AccessToken = tokenResponse.AccessToken,
                 RefreshToken = tokenResponse.RefreshToken,
                 ExpiresIn = tokenResponse.ExpiresIn,

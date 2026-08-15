@@ -95,7 +95,7 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Cancel
                 await _transactionManager.RollbackTransactionAsync(cancellationToken);
                 throw;
             }
-            return new CancelUserPlanResponse() { Success = true, Message = "" };
+            return new CancelUserPlanResponse() { Success = true, Message = "لقد تم إلغاء عملية ترقية اشتراكك بنجاح." };
         }
     }
 }

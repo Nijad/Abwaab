@@ -1,8 +1,9 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions.Custom;
 
 namespace Abwaab.Application.Common.Exceptions.Profile.NotificationWay
 {
-    public class AlreadyUnsubscribeNotificationWayException(string notificationWayName, string title) : CusotomException(
+    public class AlreadyUnsubscribeNotificationWayException(string notificationWayName, string title) : BadRequest400Exception(
             message: "",
             title: title,
             errorCode: ErrorCodes.AlreadySubscribeNotificationWay,

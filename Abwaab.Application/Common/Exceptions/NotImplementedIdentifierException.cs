@@ -1,8 +1,9 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions.Custom;
 
 namespace Abwaab.Application.Common.Exceptions
 {
-    public class NotImplementedIdentifierException(string identifierType, string title) : CusotomException(
+    public class NotImplementedIdentifierException(string identifierType, string title) : NotImplemented501Exception(
             message: "",
             title: title,
             errorCode: ErrorCodes.NotImplementdIdentifier,

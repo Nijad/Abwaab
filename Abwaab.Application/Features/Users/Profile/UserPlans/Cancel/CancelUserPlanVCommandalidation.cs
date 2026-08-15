@@ -7,7 +7,7 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Cancel
         public CancelUserPlanVCommandalidation()
         {
             RuleFor(x => x.UserPlanId)
-                .NotEmpty().WithMessage("Plan Id is required");
+                .NotEmpty().WithMessage("الخطة مطلوبة");
         }
     }
 }

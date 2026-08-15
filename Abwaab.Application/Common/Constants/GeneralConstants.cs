@@ -6,5 +6,7 @@
         public const string AUTH_CONTROLLER = "auth";
         public const string CANCEL_PHONE_CHANGE_ACTION = "CancelPhoneChange";
         public const string CANCEL_EMAIL_CHANGE_ACTION = "CancelEmailChange";
+        public const string FIRST_NAME = "الاسم";
+        public const string LAST_NAME = "الكنية";
     }
 }
