@@ -1,4 +1,6 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Plans;
 using Abwaab.Application.Common.Exceptions.Profile.Plans;
 using Abwaab.Application.Contracts;
@@ -14,6 +16,7 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Upgrade
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPlanRepository _planRepository;
         private readonly IUserService _userService;
+        private readonly string errorTitle = ErrorTitle.UpgradeUserPlan;
 
         public UpgradeUserPlanCommandHandler(UserManager<ApplicationUser> userManager, IPlanRepository planRepository, IUserService userService)
         {
@@ -26,32 +29,37 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Upgrade
         {
             string? username = _userService.FindUserNameByContext();
             if(username == null)
-                throw new NotFoundException("User", "Username", "Not found in context");
+                throw new NotFoundException(
+                    entity: "user context",
+                    property: "username",
+                    value: "",
+                    title: errorTitle,
+                    returnToUser: false);
 
             ApplicationUser? user = await _userManager.FindByNameAsync(username);
             if(user == null)
-                throw new NotFoundException("User", "Username", username);
+                throw new UserNotFoundException(username, errorTitle);
 
             Plan? plan = await _planRepository.GetPlanByIdAsync(request.PlanId);
 
             if (plan == null)
-                throw new NotFoundException("Plan", nameof(request.PlanId), request.PlanId.ToString());
+                throw new NotFoundException("Plan", nameof(request.PlanId), request.PlanId.ToString(), errorTitle);
 
             // check if plan is disabled or expired
             if (plan.IsDisabled || plan.ExpieryDate < DateOnly.FromDateTime(DateTime.UtcNow))
-                throw new PlanNotAvailableException();
+                throw new PlanNotAvailableException(errorTitle);
 
             // check if the user already has the plan
-            bool userAlreadyHasPlan = await _planRepository.UserHasPlan(user.Id, plan.Id);
+            bool userAlreadyHasPlan = await _planRepository.UserHasPlan(user.Id, plan.Id, errorTitle);
             if (userAlreadyHasPlan)
-                throw new UserAlreadyHasPlanException();
+                throw new UserAlreadyHasPlanException(errorTitle);
 
-            await _planRepository.UpgradeUserPlanAsync(user, plan);
+            await _planRepository.UpgradeUserPlanAsync(user, plan, errorTitle);
 
             return new UpgradeUserPlanResponse
             {
                 Success = true,
-                Message = "Plan upgraded successfully"
+                Message = "تم ترقية اشتراكك بنجاح"
             };
         }
     }

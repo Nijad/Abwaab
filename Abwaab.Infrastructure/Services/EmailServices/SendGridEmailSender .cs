@@ -19,7 +19,7 @@ namespace Abwaab.Infrastructure.Services.EmailServices
             _logger = logger;
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body)
+        public async Task SendEmailAsync(string toEmail, string subject, string body, string errorTitle)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace Abwaab.Infrastructure.Services.EmailServices
             {
                 _logger.LogError(ex, "Exception occurred while sending email to {ToEmail}.", toEmail);
                 //return false;
-                throw new FailedSendignEmailException();
+                throw new FailedSendignEmailException(errorTitle);
             }
         }
     }

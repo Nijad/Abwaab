@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
@@ -17,6 +17,7 @@ namespace Abwaab.Application.Features.Users.Auth.Login
         private readonly IJwtService _jwtService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly string errorTitle = ErrorTitle.LoggingUser;
 
         public LoginUserCommandHandler(
             IUserService userService,
@@ -31,27 +32,25 @@ namespace Abwaab.Application.Features.Users.Auth.Login
         }
         public async Task<LoginUserResponse> Handle(LoginUserDTO request, CancellationToken cancellationToken)
         {
-            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType, errorTitle);
 
             if (user == null)
-                throw new NotFoundException(
-                    "User", 
-                    request.IdentifierType.ToString().Replace('_', ' '), 
-                    request.Identifier);
+                throw new InvalidCredentialsException(errorTitle);
 
             SignInResult result = await _signInManager.PasswordSignInAsync(user, request.Password, false, lockoutOnFailure: true);
             
             if (result.IsLockedOut)
-                throw new AccountLockedOutException();
+                throw new AccountLockedOutException(errorTitle);
 
+            //todo: corrent error handling here
             if (!result.Succeeded)
-                throw new InvalidCredentialsException();
+                throw new InvalidCredentialsException(errorTitle);
 
             if ((request.IdentifierType == IdentifiersEnum.Email) && !user.EmailConfirmed)
-                throw new EmailNotVerifiedException();
+                throw new EmailNotVerifiedException(errorTitle);
 
             if (request.IdentifierType == IdentifiersEnum.Phone_Number && !user.PhoneNumberConfirmed)
-                throw new PhoneNotVerifiedException();
+                throw new PhoneNotVerifiedException(errorTitle);
 
             // null = unlock immediately
             await _userManager.SetLockoutEndDateAsync(user, null);
@@ -70,7 +69,7 @@ namespace Abwaab.Application.Features.Users.Auth.Login
             LoginUserResponse response = new LoginUserResponse
             {
                 Success = true,
-                Message = "Login successful",
+                Message = "تم تسجيل الدخول بنجاح",
                 AccessToken = tokenResponse.AccessToken,
                 RefreshToken = tokenResponse.RefreshToken,
                 ExpiresIn = tokenResponse.ExpiresIn,

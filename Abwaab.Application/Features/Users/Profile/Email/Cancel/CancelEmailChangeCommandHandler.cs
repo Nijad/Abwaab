@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Exceptions.Profile.Email;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Users.Profile.Email.Pending;
 using Abwaab.Application.Interfaces;
@@ -12,6 +13,8 @@ namespace Abwaab.Application.Features.Users.Profile.Email.Cancel
         private readonly IProfileService _profileService;
         private readonly IUserContext _userContext;
         private readonly IMemoryCache _cache;
+        private readonly string errorTitle = ErrorTitle.CancelEmailChange;
+
         public CancelEmailChangeCommandHandler(
             IProfileService profileService,
             IUserContext userContext,
@@ -28,7 +31,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.Cancel
             // Check if there is a pending change
             var cacheKey = $"email_change_{userId}";
             if (!_cache.TryGetValue(cacheKey, out PendingEmailChange pending))
-                throw new NoPendingEmailChangeException();
+                throw new NoPendingEmailChangeException(errorTitle);
 
             // Remove the pending change from cache
             _cache.Remove(cacheKey);
@@ -36,7 +39,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.Cancel
             // Revoke ALL refresh tokens (force logout on all devices)
             await _profileService.RevokeAllRefreshToken(userId, "Cancelled by user");
             
-            return new() { Success = true, Message = "Pending change cancelled. You have been logged out for security." };
+            return new() { Success = true, Message = "تم إلغاء التغيير وتسجيل خروجك لدواعي أمنية." };
         }
     }
 }

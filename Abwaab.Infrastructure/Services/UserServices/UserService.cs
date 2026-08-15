@@ -47,7 +47,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return context.User.Identity.Name;
         }
 
-        public async Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifiersEnum identifierType)
+        public async Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifiersEnum identifierType, string errorTitel)
         {
             ApplicationUser? user = null;
             if (identifierType == IdentifiersEnum.Email)
@@ -68,7 +68,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     .FirstOrDefaultAsync(u => u.PreviousPhoneNumber == identifier);
             }
 
-            throw new NotImplementedIdentifierException(identifierType.ToString());
+            throw new NotImplementedIdentifierException(identifierType.ToString(), errorTitel);
         }
 
         public string? GetUserJti()
@@ -117,13 +117,13 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return new LogoutResponse { Success = true, Message = "Logged out successfully." };
         }
 
-        public async Task ActiveDefaultPlantAsync(ApplicationUser user)
+        public async Task ActiveDefaultPlantAsync(ApplicationUser user, string errorTitle)
         {
             HttpContext? httpContext = _httpContextAccessor.HttpContext;
             string? actionUser = httpContext?.User?.Identity?.Name;
 
             // 1. check if user doesn't have active plan
-            bool hasActivePlan = await _planRepository.CheckIfUserHasActivePlan(user.Id);
+            bool hasActivePlan = await _planRepository.CheckIfUserHasActivePlan(user.Id, errorTitle);
 
             // if user already has active plan return and don't throw exception
             // because if user add or change thier identifier
@@ -134,20 +134,20 @@ namespace Abwaab.Infrastructure.Services.UserServices
             Plan? defaultPlan = await _planRepository.GetDefaultPlanAsync();
 
             if (defaultPlan == null)
-                throw new NotFoundException(nameof(Plan), nameof(defaultPlan.DefaultPlan), "True");
+                throw new NotFoundException(nameof(Plan), nameof(defaultPlan.DefaultPlan), "True", errorTitle);
 
-            bool hasDefultPlan = await _planRepository.UserHasPlan(user.Id, defaultPlan.Id);
+            bool hasDefultPlan = await _planRepository.UserHasPlan(user.Id, defaultPlan.Id, errorTitle);
 
             // 3. active default plan if exists or create new one for user
             if (hasDefultPlan)
             {
                 // active defult plan for user
-                await _planRepository.ActiveUserPlan(user.Id, defaultPlan.Id);
+                await _planRepository.ActiveUserPlan(user.Id, defaultPlan.Id, errorTitle);
             }
             else
             {
                 // assign defaul plan to user
-                Guid activeUserPlanStateId = await _planRepository.GetUserPlanStateId(UserPlanStatesEnum.Active);
+                Guid activeUserPlanStateId = await _planRepository.GetUserPlanStateId(UserPlanStatesEnum.Active, errorTitle);
 
                 await _planRepository.AssignPlanToUserAsync(user.Id, defaultPlan.Id, activeUserPlanStateId);
             }                

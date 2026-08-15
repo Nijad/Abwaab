@@ -1,4 +1,6 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Role;
 using Abwaab.Application.Contracts;
 using Abwaab.Domain.Entities.UserEntities;
@@ -14,6 +16,7 @@ namespace Abwaab.Application.Features.Users.Role.RemoveUserFromRole
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IUserService _userService;
         private readonly ILogger<RemoveUserFromRoleCommandHandler> _logger;
+        private readonly string errorTitle = ErrorTitle.RemoveUserFromRole;
 
         public RemoveUserFromRoleCommandHandler(
             UserManager<ApplicationUser> userManager, 
@@ -28,17 +31,17 @@ namespace Abwaab.Application.Features.Users.Role.RemoveUserFromRole
         }
         public async Task<RemoveUserFromRoleResponse> Handle(RemoveUserFromRoleDTO request, CancellationToken cancellationToken)
         {
-            var user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            var user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType, errorTitle);
             if (user == null)
-                throw new NotFoundException("User", request.IdentifierType.ToString().Replace('_', ' '), request.Identifier);
+                throw new UserNotFoundException(request.Identifier, errorTitle);
 
             var roleExists = await _roleManager.RoleExistsAsync(request.RoleName);
             if (!roleExists)
-                throw new NotFoundException("Role", nameof(request.RoleName), request.RoleName);
+                throw new NotFoundException("Role", nameof(request.RoleName), request.RoleName, errorTitle);
 
             var isInRole = await _userManager.IsInRoleAsync(user, request.RoleName);
             if (!isInRole)
-                throw new UserNotInRoleException(request.RoleName);
+                throw new UserNotInRoleException(user.UserName ,request.RoleName, errorTitle);
 
             var result = await _userManager.RemoveFromRoleAsync(user, request.RoleName);
             if (!result.Succeeded)
@@ -47,10 +50,10 @@ namespace Abwaab.Application.Features.Users.Role.RemoveUserFromRole
                 
                 _logger.LogError($"Failed to remove user {user.Id} from role {request.RoleName}: {errors}", user.Id, request.RoleName, errors);
 
-                throw new FailedToRemoveUserFromRoleException();
+                throw new FailedToRemoveUserFromRoleException(errorTitle);
             }
 
-            return new RemoveUserFromRoleResponse { Success = true, Message = $"User removed from role '{request.RoleName}' successfully." };
+            return new RemoveUserFromRoleResponse { Success = true, Message = $"تم استبعاد المستخدم من الدور '{request.RoleName}' بنجاح." };
         }
     }
 }

@@ -1,9 +1,15 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions.Custom;
 
 namespace Abwaab.Application.Common.Exceptions.Role
 {
-    public class UserNotInRoleException(string roleName) : Exception($"User not in role {roleName}")
+    public class UserNotInRoleException(string username, string roleName, string title) : BadRequest400Exception(
+            message: "",
+            title: title,
+            errorCode: ErrorCodes.UserNotInRole,
+            returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.UserNotInRole;
+        string msg = $"المستخدم '{username}' ليس لديه بالفعل الدور '{roleName}'";
+        public override string Message => msg;
     };
 }

@@ -1,14 +1,21 @@
-﻿namespace Abwaab.Application.Common.Exceptions
+﻿using Abwaab.Application.Common.Exceptions.Custom;
+
+namespace Abwaab.Application.Common.Exceptions
 {
     public class NotFoundException(
-        string entity, 
-        string property, 
-        string id, 
-        string errorCode = "", 
-        string title ="") : 
-            Exception($"The {entity} with the {property}: '{id}' was not found.")
+        string entity,
+            string property,
+            string value,
+            string title,
+            string errorCode = "",
+            bool returnToUser = false) : 
+        NotFound404Exception(
+            message: "",
+            title: title,
+            errorCode: errorCode,
+            returnToUser: returnToUser)
     {
-        public  string Title { get; set; } = title;
-        public string ErrorCode { get; } = errorCode;
+        string msg = $"الكيان '{entity}' المعرف بالخاصية '{property}' والتي قيمتها تساوي '{value}' غير موجودة";
+        public override string Message => msg;
     }
 }

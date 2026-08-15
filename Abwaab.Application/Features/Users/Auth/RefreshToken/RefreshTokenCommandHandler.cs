@@ -1,4 +1,6 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
@@ -10,6 +12,7 @@ namespace Abwaab.Application.Features.Users.Auth.RefreshToken
     {
         private readonly IJwtService _jwtService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly string errorTitle = ErrorTitle.RefreshToken;
 
         public RefreshTokenCommandHandler(
             IJwtService jwtService,
@@ -21,12 +24,12 @@ namespace Abwaab.Application.Features.Users.Auth.RefreshToken
 
         public async Task<RefreshTokenResponse> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            Guid userId = await _jwtService.GetUserIdByTokenAsync(request);
+            Guid userId = await _jwtService.GetUserIdByTokenAsync(request, errorTitle);
 
             ApplicationUser? user = await _userManager.FindByIdAsync(userId.ToString());
 
             if (user == null)
-                throw new NotFoundException("User", nameof(userId), userId.ToString());
+                throw new UserNotFoundException(userId.ToString(), errorTitle);
 
             IList<string> roles = await _userManager.GetRolesAsync(user);
 

@@ -1,4 +1,6 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Plans;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Properties.Update;
@@ -13,6 +15,7 @@ namespace Abwaab.Application.Features.Properties.Add
         private readonly IUserService _userService;
         private readonly IPlanService _planService;
         private readonly IUserPlanStateService _userPlanStateService;
+        private readonly string errorTitle = ErrorTitle.AddingProperty;
 
         public AddPropertyHandler(
             IPropertyService propertyService,
@@ -33,22 +36,22 @@ namespace Abwaab.Application.Features.Properties.Add
 
             ApplicationUser? user = await _userService.FindUserByNameAsync(username);
             if (user == null)
-                throw new NotFoundException("User", nameof(username), username);
+                throw new UserNotFoundException(username, errorTitle);
 
             //check if user can add new property depend thier balance in plan
-            UserPlanStatus activUserPlanState = await _userPlanStateService.GetActiveUserPlanStatus();
+            UserPlanStatus activUserPlanState = await _userPlanStateService.GetActiveUserPlanStatus(errorTitle);
 
             // get user active plan
-            UserPlan activeUserPlan = await _planService.FindUserActivePlanAsync(user.Id, activUserPlanState.Id);
+            UserPlan activeUserPlan = await _planService.FindUserActivePlanAsync(user.Id, activUserPlanState.Id, errorTitle);
             
             // check if properties properties count less than allowed in the plan
             bool isAllowedToAdd = await _propertyService.HasBalanceToAddPropertyAsync(activeUserPlan);
 
             if (!isAllowedToAdd)
-                throw new ExceededAllowedNumberException("Property", activeUserPlan.Plan.Name);
+                throw new ExceededAllowedPropertyNumberException(activeUserPlan.Plan, errorTitle);
 
-            Guid createdPropertyId = await _propertyService.CreatePropertyAsync(activeUserPlan);
-            return new AddPropertyResponse() { PropertyId = createdPropertyId, Message = "New property created successfully." };
+            Guid createdPropertyId = await _propertyService.CreatePropertyAsync(activeUserPlan, errorTitle);
+            return new AddPropertyResponse() { PropertyId = createdPropertyId, Message = "تم إضافة عقار جديد بنجاح" };
         }
     }
 }

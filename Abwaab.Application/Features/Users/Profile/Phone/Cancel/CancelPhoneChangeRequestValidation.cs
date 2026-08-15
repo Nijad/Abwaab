@@ -2,7 +2,7 @@
 
 namespace Abwaab.Application.Features.Users.Profile.Phone.Cancel
 {
-    public class CancelPhoneChangeRequestValidator : AbstractValidator<CancelPhoneChangeCommand>
+    public class CancelPhoneChangeRequestValidation : AbstractValidator<CancelPhoneChangeCommand>
     {
         // No rules needed
     }

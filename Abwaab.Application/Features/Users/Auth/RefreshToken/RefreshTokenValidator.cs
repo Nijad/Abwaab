@@ -7,7 +7,7 @@ namespace Abwaab.Application.Features.Users.Auth.RefreshToken
         public RefreshTokenValidator()
         {
             RuleFor(x => x.RefreshToken)
-                .NotEmpty().WithMessage("Refresh token is required.");
+                .NotEmpty().WithMessage("رمز التحديث مطلوب");
         }
     }
 }

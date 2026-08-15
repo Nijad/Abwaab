@@ -7,7 +7,7 @@ namespace Abwaab.Application.Features.Payments.Confirm
         public ConfirmPaymentValidation()
         {
             RuleFor(x => x.paymentCode)
-                .NotEmpty().WithMessage("Payment code is required");
+                .NotEmpty().WithMessage("رمز الدفعة مطلوب");
         }
     }
 }

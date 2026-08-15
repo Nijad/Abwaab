@@ -8,10 +8,13 @@ namespace Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode
         public VerifyResetCodeValidation()
         {
             RuleFor(x => x.Identifier)
-                .NotEmpty().WithMessage("Identifier is required.")
-                .Must(CommonValidation.IsEmailOrPhoneNo).WithMessage("Identifier must be either valide email or valid phone number(+9639XXXXXXXX)");
+                .NotEmpty().WithMessage("المعرف مطلوب")
+                .Must(CommonValidation.IsEmailOrPhoneNo).WithMessage("المعرف يجب أن يكون بريد الكتروني أو رقم موبايل (+9639XXXXXXXX)");
 
-            RuleFor(x => x.Code).NotEmpty().Length(6).Matches(@"^\d{6}$");
+            RuleFor(x => x.Code)
+                .NotEmpty().WithMessage("رمز التحقق مطلوب")
+                .Length(6).WithMessage("رمز التحقق يجب أن يكون مكوناً من 6 أرقام")
+                .Matches("^[0-9]{6}$").WithMessage("رمز التحقق يجب أن يكون مكوناً من الأرقام فقط");
         }
     }
 }

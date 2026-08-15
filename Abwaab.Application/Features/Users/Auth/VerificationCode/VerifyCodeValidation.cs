@@ -8,15 +8,13 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
         public VerifyCodeValidation()
         {
             RuleFor(x => x.Identifier)
-                .NotEmpty().WithMessage("Identifier is required.")
-                .Must(CommonValidation.IsEmailOrPhoneNo).WithMessage("Identifier must be either valide email or valid phone number(+9639XXXXXXXX)");
-            
-            RuleFor(x => x.Code)
-                .NotEmpty().WithMessage("Verification code is required.")
-                .Length(6).WithMessage("Verification code must be 6 digits long.");
+                .NotEmpty().WithMessage("المعرف مطلوب")
+                .Must(CommonValidation.IsEmailOrPhoneNo).WithMessage("المعرف يجب أن يكون بريد الكتروني أو رقم موبايل (+9639XXXXXXXX)");
 
-            RuleFor(x=>x.Code)
-                .Matches("^[0-9]{6}$").WithMessage("Verification code must be numeric."); 
+            RuleFor(x => x.Code)
+                .NotEmpty().WithMessage("رمز التحقق مطلوب")
+                .Length(6).WithMessage("رمز التحقق يجب أن يكون مكوناً من 6 أرقام")
+                .Matches("^[0-9]{6}$").WithMessage("رمز التحقق يجب أن يكون مكوناً من الأرقام فقط"); 
         }
     }
 }

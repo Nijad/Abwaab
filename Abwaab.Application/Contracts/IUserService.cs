@@ -6,7 +6,7 @@ namespace Abwaab.Application.Contracts
 {
     public interface IUserService
     {
-        Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifiersEnum identifierType);
+        Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifiersEnum identifierType, string errorTitle);
 
         string FindUserNameByContext();
 
@@ -17,7 +17,7 @@ namespace Abwaab.Application.Contracts
         void RemoveCookie(string cookieName);
 
         Task<LogoutResponse> RevokeActiveToken(Guid userId, bool revokeAll);
-        Task ActiveDefaultPlantAsync(ApplicationUser user);
+        Task ActiveDefaultPlantAsync(ApplicationUser user, string errorTitle);
         Task<ApplicationUser?> FindUserByNameAsync(string username);
     }
 }

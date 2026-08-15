@@ -22,6 +22,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
         private readonly IEmailSender _emailSender;
         private readonly IVerificationCodeService _verificationService;
         private readonly IMemoryCache _cache;
+        private readonly string errorTitle = ErrorTitle.InitiateEmailChange;
 
         public InitiateEmailChangeCommandHandler(
             IProfileService profileService, 
@@ -48,22 +49,22 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
             var userId = _userContext.UserId;
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
-                throw new NotFoundException("User", nameof(userId), userId.ToString());
+                throw new UserNotFoundException(userId.ToString(), errorTitle);
 
             // ----------------------------------------------------------------
             // 1. SECURITY: Verify the user's current password (Critical!)
             // ----------------------------------------------------------------
             if (!await _userManager.CheckPasswordAsync(user, request.CurrentPassword))
-                throw new InvalidCredentialsException();
+                throw new InvalidCredentialsException(errorTitle);
 
             // Check if new email is the same as current
             if (user.Email?.Equals(request.NewEmail, StringComparison.OrdinalIgnoreCase) == true)
-                throw new YourCurrentEmailException();
+                throw new YourCurrentEmailException(errorTitle);
 
             // Check if new email is taken by another account
             var existingUser = await _userManager.FindByEmailAsync(request.NewEmail);
             if (existingUser != null && existingUser.Id != userId)
-                throw new EmailAlreadyInUseException();
+                throw new EmailAlreadyInUseException(errorTitle);
 
             // ----------------------------------------------------------------
             // 2. NOTIFY THE OLD CONTACT (Security Alert)
@@ -76,7 +77,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
                 {
                     var alertMessage = $"SECURITY ALERT: Your email is being changed to {request.NewEmail}. If this wasn't you, cancel at {cancelUrl}";
 
-                    await _smsSender.SendSmsAsync(user.PhoneNumber, alertMessage);
+                    await _smsSender.SendSmsAsync(user.PhoneNumber, alertMessage, errorTitle);
                 });
 
             if (!string.IsNullOrEmpty(user.Email))
@@ -93,7 +94,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
                         <p><a href='{cancelUrl}'>Cancel Email Change</a></p>
                         <p>This link will revoke all your active sessions for security.</p>
                     ";
-                    await _emailSender.SendEmailAsync(user.Email, alertSubject, alertBody);
+                    await _emailSender.SendEmailAsync(user.Email, alertSubject, alertBody, errorTitle);
                 });
 
             // ----------------------------------------------------------------

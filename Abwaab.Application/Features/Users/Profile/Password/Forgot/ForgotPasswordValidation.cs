@@ -8,8 +8,8 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Forgot
         public ForgotPasswordValidation()
         {
             RuleFor(x => x.Identifier)
-                .NotEmpty().WithMessage("Identifier is required.")
-                .Must(CommonValidation.IsEmailOrPhoneNo).WithMessage("Identifier must be either valide email or valid phone number(+9639XXXXXXXX)");
+                .NotEmpty().WithMessage("المعرف مطلوب")
+                .Must(CommonValidation.IsEmailOrPhoneNo).WithMessage("المعرف يجب أن يكون بريد الكتروني أو رقم موبايل (+9639XXXXXXXX)");
         }
     }
 }

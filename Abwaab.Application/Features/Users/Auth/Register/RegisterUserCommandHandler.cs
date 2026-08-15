@@ -17,6 +17,7 @@ namespace Abwaab.Application.Features.Users.Auth.Register
         private readonly IVerificationCodeService _verificationService;
         private readonly IMemoryCache _cache;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly string errorTilte = ErrorTitle.RegisterUser;
 
         public RegisterUserCommandHandler(
             IUserService userService,
@@ -33,10 +34,10 @@ namespace Abwaab.Application.Features.Users.Auth.Register
         public async Task<RegisterUserResponse> Handle(RegisterUserDTO request, CancellationToken cancellationToken)
         {
             //check if user already exists
-            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType, errorTilte);
 
             if (user != null)
-                throw new UserAlreadyExistException();
+                throw new UserAlreadyExistException(errorTilte);
 
             ApplicationUser newUser = new ApplicationUser
             {
@@ -53,8 +54,9 @@ namespace Abwaab.Application.Features.Users.Auth.Register
 
             IdentityResult result = await _userManager.CreateAsync(newUser, request.Password);
 
+            //todo: corrent error handling here
             if (!result.Succeeded)
-                throw new RegistrationFailedException();
+                throw new RegistrationFailedException(errorTilte);
 
             string code = _verificationService.GenerateVerificationCode();
 
@@ -68,11 +70,11 @@ namespace Abwaab.Application.Features.Users.Auth.Register
             var response = new RegisterUserResponse
             {
                 Success = true,
-                Message = $"Register Successful, Verification code sent to your {request.IdentifierType.ToString().Replace('_', ' ')}",
+                Message = $"عملية التسجيل تمت بنجاح، وتم إرسال رمز التحقق إلى  '{request.Identifier}'",
                 CodeTimeOutInMinuts = GeneralConstants.CODE_TIMEOUT_MINUTES,
                 ExpireAt = DateTime.UtcNow.AddMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES),
             };
-            
+
             return response;
         }
     }
