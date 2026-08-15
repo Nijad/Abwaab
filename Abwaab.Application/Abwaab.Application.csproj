@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Mappings\" />
     <Folder Include="Features\Payments\Remove\" />
     <Folder Include="Features\Properties\DeleteMedia\" />
     <Folder Include="Features\Properties\Save\" />

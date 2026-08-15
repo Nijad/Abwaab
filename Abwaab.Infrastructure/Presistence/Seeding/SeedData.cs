@@ -82,7 +82,7 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<AppointmentAction>
             {
-                new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Report.ToString() },
+                new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Request.ToString() },
                 new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Accept.ToString() },
                 new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Refuse.ToString() },
                 new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Cancel.ToString() },
