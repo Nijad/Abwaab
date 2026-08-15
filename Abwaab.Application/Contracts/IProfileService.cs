@@ -9,7 +9,7 @@ namespace Abwaab.Application.Contracts
     {
         Task<NotificationWaySubscriptionResponse> SubscribeNotificationWayCommandAsync(ApplicationUser user, Guid notificationWayId, string errorTitle);
         Task<NotificationWayUnsubscriptionResponse> UnsubscribeNotificationWayCommandAsync(ApplicationUser user, Guid notificationWayId, string errorTitle);
-        Task<bool> SubscribeNotificationWayCommandAsync(ApplicationUser user, NotificationWaysEnum notificationWayType);
+        Task SubscribeNotificationWayCommandAsync(ApplicationUser user, NotificationWaysEnum notificationWayType);
         Task RevokeAllRefreshToken(Guid userId, string reason);
     }
 }

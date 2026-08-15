@@ -74,7 +74,7 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
             {
                 new NotificationWay { Id = new Guid(), WayName = NotificationWaysEnum.Email.ToString() },
                 new NotificationWay { Id = new Guid(), WayName = NotificationWaysEnum.SMS.ToString() },
-                new NotificationWay { Id = new Guid(), WayName = NotificationWaysEnum.Push_Notification.ToString() }
+                new NotificationWay { Id = new Guid(), WayName = NotificationWaysEnum.Web_Application.ToString() }
             };
         }
 

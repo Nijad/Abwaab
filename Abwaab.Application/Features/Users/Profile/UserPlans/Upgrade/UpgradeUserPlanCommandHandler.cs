@@ -33,8 +33,7 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Upgrade
                     entity: "user context",
                     property: "username",
                     value: "",
-                    title: errorTitle,
-                    returnToUser: false);
+                    title: errorTitle);
 
             ApplicationUser? user = await _userManager.FindByNameAsync(username);
             if(user == null)
@@ -43,7 +42,7 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Upgrade
             Plan? plan = await _planRepository.GetPlanByIdAsync(request.PlanId);
 
             if (plan == null)
-                throw new NotFoundException("Plan", nameof(request.PlanId), request.PlanId.ToString(), errorTitle);
+                throw new PlanNotAvailableException(errorTitle);
 
             // check if plan is disabled or expired
             if (plan.IsDisabled || plan.ExpieryDate < DateOnly.FromDateTime(DateTime.UtcNow))

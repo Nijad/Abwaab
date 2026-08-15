@@ -3,6 +3,7 @@ using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.NotificationWay;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
+using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Subscribe;
 using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Unsubscribe;
@@ -42,7 +43,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             }
         }
               
-        public async Task<bool> SubscribeNotificationWayCommandAsync(ApplicationUser user, NotificationWaysEnum notificationWayType)
+        public async Task SubscribeNotificationWayCommandAsync(ApplicationUser user, NotificationWaysEnum notificationWayType)
         {
             NotificationWay? notificationWay = await _notificationWayRepository.GetNotificationWayByNameAsync(notificationWayType.ToString().Replace('_', ' '));
 
@@ -63,11 +64,9 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 if (!user.NotificationWaySubscriptions.Contains(userNotificationWay))
                 {
                     user.NotificationWaySubscriptions.Add(userNotificationWay);
-                    return _userManager.UpdateAsync(user).Result.Succeeded;
+                    await _userManager.UpdateAsync(user);
                 }
             }
-
-            return await Task.FromResult(false);
         }
 
         public async Task<NotificationWaySubscriptionResponse> SubscribeNotificationWayCommandAsync(ApplicationUser user, Guid notificationWayId, string errorTitle)
@@ -89,7 +88,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     userSubscription.LastModifiedAt = DateTime.Now;
                     userSubscription.LastModifiedBy = user.Id.ToString();
                     await _notificationWayRepository.UpdateSubscriptionAsync(userSubscription);
-                    return new() { Success = true, Message = "Subscription reactivated successfully" };
+                    return new() { Success = true, Message = "تم تفعيل الاشتراك بطريقة الاشعار بنجاح" };
                 }
 
             //chkeck if user has contact method related
@@ -120,7 +119,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
             await _notificationWayRepository.AddSubscriptionAsync(userSubscription);
 
-            return new() { Success = true, Message = "Subscription added successfully" };
+            return new() { Success = true, Message = "تمت إضافة طريقة الإشعار بنجاح" };
         }
 
         public async Task<NotificationWayUnsubscriptionResponse> UnsubscribeNotificationWayCommandAsync(ApplicationUser user, Guid notificationWayId, string errorTitle)
@@ -134,13 +133,15 @@ namespace Abwaab.Infrastructure.Services.UserServices
             UserNotificationSubscription? userSubscription = await _notificationWayRepository.GetUserSubscriptionAsync(user.Id, notificationWayId);
 
             if (userSubscription == null || !userSubscription.IsInactive)
-                throw new AlreadyUnsubscribeNotificationWayException(notificationWay.WayName, errorTitle);
+                throw new AlreadyUnsubscribeNotificationWayException(
+                    NotificationWaysMapping.Map(notificationWay.WayName), 
+                    errorTitle);
 
             userSubscription.IsInactive = true;
             userSubscription.LastModifiedAt = DateTime.Now;
             userSubscription.LastModifiedBy = user.Id.ToString();
             await _notificationWayRepository.UpdateSubscriptionAsync(userSubscription);
-            return new() { Success = true, Message = "Subscription deactivated successfully" };
+            return new() { Success = true, Message = "تم إلغاء تفعيل طريقة الاشعار بنجاح" };
         }
     }
 }

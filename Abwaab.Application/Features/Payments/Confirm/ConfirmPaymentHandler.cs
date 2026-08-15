@@ -2,6 +2,7 @@
 using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Payments;
+using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.PaymentEntities;
@@ -36,11 +37,7 @@ namespace Abwaab.Application.Features.Payments.Confirm
                 Payment? payment = await _paymentService.FindPaymentByPaymentCodeAsync(request.paymentCode);
 
                 if (payment == null)
-                    throw new NotFoundException(
-                        entity: nameof(Payment), 
-                        property: nameof(request.paymentCode), 
-                        value: request.paymentCode, 
-                        title: errorTitle);
+                    throw new NotValidPaymentCodeException(errorTitle);
 
                 PaymentState pendingPayment = await _paymentService.FindPaymentSateBySateNameAsync(PaymentStatesEnum.Pending, errorTitle);
 
@@ -85,7 +82,7 @@ namespace Abwaab.Application.Features.Payments.Confirm
                 await _transactionManager.RollbackTransactionAsync(cancellationToken);
                 throw;
             }
-            return new() { Success = true, Message = $"تم تأكيد الدفعة، وتفعيل الاشتراك بالخطة {ServiceTypesEnum.Plan_Subscription.ToString().Replace("_", " ")} بنجاح" };
+            return new() { Success = true, Message = $"تم تأكيد الدفعة، وتفعيل الاشتراك بالخطة '{ServiceTypesMapping.Map(ServiceTypesEnum.Plan_Subscription)}' بنجاح" };
         }
     }
 }

@@ -78,6 +78,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return userPlanStatus;
         }
 
+        //todo: move following actions to the service and separate upgrading plan from making payment using transaction manager
         public async Task UpgradeUserPlanAsync(ApplicationUser user, Plan plan, string errorTitle)
         {
             PaymentState? paymentState = await _context.PaymentStates.FirstOrDefaultAsync(ps => ps.StateName == PaymentStatesEnum.Pending.ToString());

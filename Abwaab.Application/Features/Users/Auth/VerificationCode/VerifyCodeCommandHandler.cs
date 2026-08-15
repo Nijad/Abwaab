@@ -92,7 +92,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             await _userService.ActiveDefaultPlantAsync(user, errorTitle);
 
             // Subscribe the user to push notifications
-            await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWaysEnum.Push_Notification);
+            await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWaysEnum.Web_Application);
 
 
             //get user roles
