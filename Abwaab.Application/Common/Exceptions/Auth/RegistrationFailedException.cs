@@ -10,7 +10,5 @@ namespace Abwaab.Application.Common.Exceptions.Auth
             errorCode: ErrorCodes.RegistrationFailed,
             returnToUser: true)
     {
-        public string ErrorCode { get; } = ErrorCodes.RegistrationFailed;
-        public string EnglishErrorMessage { get; } = ErrorMessages.RegistrationFailed;
     }
 }

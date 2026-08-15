@@ -33,7 +33,7 @@ namespace Abwaab.Application.Features.Users.Auth.SendCode
 
             string cooldownKey = $"resend_cooldown_{request.Identifier}";
             if (_cache.TryGetValue(cooldownKey, out _))
-                throw new ResendWaitException();
+                throw new ResendWaitException(errorTitle);
 
             string code = _verificationCodeService.GenerateVerificationCode();
             request.Code = code;
