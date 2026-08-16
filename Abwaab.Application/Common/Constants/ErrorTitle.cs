@@ -24,5 +24,6 @@
         public const string SendCode = "إرسال رمز تحقق";
         public const string GetUserRoles = "استعلام عن أدوار المستخدم";
         public const string LogoutUser = "تسجيل خروج المستخدم";
+        public const string ProfileData = "معلومات المستخدم";
     }
 }

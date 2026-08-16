@@ -7,7 +7,9 @@ using Abwaab.Application.Features.Users.Profile.Password.Change;
 using Abwaab.Application.Features.Users.Profile.Phone.Cancel;
 using Abwaab.Application.Features.Users.Profile.Phone.Confirm;
 using Abwaab.Application.Features.Users.Profile.Phone.InitiateChange;
+using Abwaab.Application.Features.Users.Profile.Queries.UserProfileData;
 using Abwaab.Application.Features.Users.Profile.UserPlans.Upgrade;
+using Abwaab.Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,12 +23,15 @@ namespace Abwaab.Server.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ILogger<ProfileController> _logger;
+        private readonly IUserContext _userContext;
         public ProfileController(
             IMediator mediator,
-            ILogger<ProfileController> logger)
+            ILogger<ProfileController> logger,
+            IUserContext userContext)
         {
             _mediator = mediator;
             _logger = logger;
+            _userContext = userContext;
         }
 
         [HttpPost("cancel-email-change")]
@@ -112,6 +117,15 @@ namespace Abwaab.Server.Controllers
             if (request == null)
                 return BadRequest();
             var result = await _mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpGet("ProfileData")]
+        public async Task<IActionResult> ProfileData()
+        {
+            var currentIdentifier = _userContext.LoginIdentifier;
+            var query = new UserProfileDataDTO { Identifier = currentIdentifier };
+            UserProfileDataResponse result = await _mediator.Send(query);
             return Ok(result);
         }
     }

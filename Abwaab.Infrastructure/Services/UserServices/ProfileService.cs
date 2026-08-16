@@ -1,5 +1,4 @@
-﻿using Abwaab.Application.Common.Constants;
-using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.NotificationWay;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
@@ -31,6 +30,50 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _refreshTokenRepo = refreshTokenRepo;
         }
 
+        public async Task<List<UserNotificationSubscription>> GetAllUserNotificationWaysAsync(Guid userId)
+        {
+            return await _notificationWayRepository.GetAllNotificationWaysOfUserAsync(userId);
+        }
+
+        public async Task<NotificationWay> FindNotificationWayByNameAsync(NotificationWaysEnum wayName, string errorTitle)
+        {
+            NotificationWay? notificationWay = await _notificationWayRepository.GetNotificationWayByNameAsync(wayName.ToString());
+            if (notificationWay == null)
+                throw new NotFoundException(
+                    nameof(NotificationWay),
+                    nameof(notificationWay.WayName),
+                    wayName.ToString(),
+                    errorTitle);
+
+            return notificationWay;
+        }
+
+        public async Task<bool>HasUserActiveNotificationWay(Guid userId, Guid notifiacationWayId, string errorTitle)
+        {
+            return await _notificationWayRepository.HasUserActiveNotificationWay(userId, notifiacationWayId);
+        }
+
+        public async Task<bool> HasActivatedEmailNotificationWay(Guid userId, string errorTitle)
+        {
+            NotificationWay emailNotifictionWay = await FindNotificationWayByNameAsync(NotificationWaysEnum.Email, errorTitle);
+
+            return await HasUserActiveNotificationWay(userId, emailNotifictionWay.Id, errorTitle);
+        }
+
+        public async Task<bool> HasActivatedSmsNotificationWay(Guid userId, string errorTitle)
+        {
+            NotificationWay emailNotifictionWay = await FindNotificationWayByNameAsync(NotificationWaysEnum.SMS, errorTitle);
+
+            return await HasUserActiveNotificationWay(userId, emailNotifictionWay.Id, errorTitle);
+        }
+
+        public async Task<bool> HasActivatedWebNotificationWay(Guid userId, string errorTitle)
+        {
+            NotificationWay emailNotifictionWay = await FindNotificationWayByNameAsync(NotificationWaysEnum.Web_Application, errorTitle);
+
+            return await HasUserActiveNotificationWay(userId, emailNotifictionWay.Id, errorTitle);
+        }
+
         public async Task RevokeAllRefreshToken(Guid userId, string reason)
         {
             // Revoke ALL refresh tokens (force logout on all devices)
@@ -45,7 +88,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
               
         public async Task SubscribeNotificationWayCommandAsync(ApplicationUser user, NotificationWaysEnum notificationWayType)
         {
-            NotificationWay? notificationWay = await _notificationWayRepository.GetNotificationWayByNameAsync(notificationWayType.ToString().Replace('_', ' '));
+            NotificationWay? notificationWay = await _notificationWayRepository.GetNotificationWayByNameAsync(notificationWayType.ToString());
 
             if (notificationWay != null)
             {
@@ -143,5 +186,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             await _notificationWayRepository.UpdateSubscriptionAsync(userSubscription);
             return new() { Success = true, Message = "تم إلغاء تفعيل طريقة الاشعار بنجاح" };
         }
+
+        
     }
 }
