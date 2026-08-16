@@ -1,4 +1,6 @@
-﻿using Abwaab.Application.Common.Exceptions.Plans;
+﻿using Abwaab.Application.Common.Enums;
+using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Plans;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.UserEntities;
@@ -35,17 +37,32 @@ namespace Abwaab.Infrastructure.Services
             await _planRepository.UpdateUserPlanAsync(userPlan);
         }
 
-        public async Task<UserPlan> FindUserActivePlanAsync(Guid userId, Guid activeUserPlanStateId)
+        public async Task<UserPlan> FindUserActivePlanAsync(Guid userId, Guid activeUserPlanStateId, string errorTitle)
         {
             List<UserPlan> userPlans = await _planRepository.FindUserPlansByStatusAsync(userId, activeUserPlanStateId);
 
             if (userPlans.Count == 0)
-                throw new UserHasNoActivePlanException();
+                throw new UserHasNoActivePlanException(errorTitle);
 
             if (userPlans.Count > 1)
-                throw new UserHasMoreThanOneActivePlanException();
+                throw new UserHasMoreThanOneActivePlanException(errorTitle);
 
             return userPlans.First();
+        }
+
+        public async Task AddUserPlanAsync(UserPlan userPlan)
+        {
+            await _planRepository.AddUserPlanAsync(userPlan);
+        }
+
+        public async Task<UserPlanStatus?> FindUserPlanStatusByNameAsync(UserPlanStatesEnum userPlanState, string errorTitle)
+        {
+            UserPlanStatus? userPlanStatus = await _planRepository.FindUserPlanStatusByNameAsync(userPlanState.ToString());
+
+            if (userPlanStatus == null)
+                throw new NotFoundException("UserPlanStatus", nameof(UserPlanStatus.StateName), userPlanState.ToString(), errorTitle);
+
+            return userPlanStatus;
         }
     }
 }

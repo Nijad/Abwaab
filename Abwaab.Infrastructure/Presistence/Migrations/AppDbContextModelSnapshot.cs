@@ -347,6 +347,9 @@ namespace Abwaab.Infrastructure.presistence.migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("CanDisable")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 

@@ -20,7 +20,7 @@ namespace Abwaab.Infrastructure.Services.SmsServices
             _logger = logger;
         }
 
-        public async Task SendSmsAsync(string phoneNumber, string message)
+        public async Task SendSmsAsync(string phoneNumber, string message,string errorTitle)
         {
             try
             {
@@ -46,12 +46,12 @@ namespace Abwaab.Infrastructure.Services.SmsServices
             {
                 // Twilio specific errors (e.g., invalid number, insufficient balance)
                 _logger.LogError(ex, $"Twilio API error sending SMS to {phoneNumber}: {ex.Message}");
-                throw new FailedSendignSMSException();
+                throw new FailedSendignSMSException(errorTitle);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Exception occurred while sending SMS to {phoneNumber}.");
-                throw new FailedSendignSMSException();
+                throw new FailedSendignSMSException(errorTitle);
             }
         }
     }

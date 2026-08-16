@@ -10,6 +10,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode
     public class VerifyResetCodeCommandHandler : IRequestHandler<VerifyResetCodeDTO, VerifyResetCodeResponse>
     {
         private readonly IMemoryCache _cache;
+        private readonly string errorTitle = ErrorTitle.VerificationCode;
 
         public VerifyResetCodeCommandHandler(IMemoryCache cache)
         {
@@ -21,21 +22,21 @@ namespace Abwaab.Application.Features.Users.Profile.Password.VerifyResetCode
             var cacheKey = $"reset_{request.Identifier}";
             if (!_cache.TryGetValue(cacheKey, out string storedCode))
                 if (request.IdentifierType == IdentifiersEnum.Email)
-                    throw new InvalidCodeOrEmailMissmatchException();
+                    throw new InvalidCodeOrEmailMissmatchException(errorTitle);
                 else if (request.IdentifierType == IdentifiersEnum.Phone_Number)
-                    throw new InvalidCodeOrPhoneMissmatchException();
+                    throw new InvalidCodeOrPhoneMissmatchException(errorTitle);
                 else
-                    throw new NotImplementedIdentifierException(request.IdentifierType.ToString().Replace("_", " "));
+                    throw new NotImplementedIdentifierException(request.IdentifierType.ToString().Replace("_", " "), errorTitle);
 
             if (storedCode != request.Code)
-                    throw new InvalidVerificationCodeException();
+                    throw new InvalidVerificationCodeException(errorTitle);
 
             // Set a flag that code is verified
             _cache.Set($"reset_verified_{request.Identifier}", true, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
             return new VerifyResetCodeResponse { 
                 Success = true, 
-                Message = "Code verified.",
+                Message = "تم التحقق من الرمز بنجاح.",
                 CodeTimeOutInMinuts = GeneralConstants.CODE_TIMEOUT_MINUTES,
                 ExpireAt = DateTime.UtcNow.AddMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES),
             };

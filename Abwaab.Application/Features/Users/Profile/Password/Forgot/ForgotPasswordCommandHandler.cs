@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
@@ -14,6 +15,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Forgot
         private readonly IVerificationCodeService _verificationService;
         private readonly IMemoryCache _cache;
         private readonly IUserService _userService;
+        private readonly string errorTitle = ErrorTitle.ChangePassword;
 
         public ForgotPasswordCommandHandler(
             IVerificationCodeService verificationService,
@@ -27,9 +29,9 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Forgot
 
         public async Task<ForgotPasswordResponse> Handle(ForgotPasswordDTO request, CancellationToken cancellationToken)
         {
-            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType, errorTitle);
             if (user == null)
-                throw new NotFoundException("User", nameof(request.Identifier), request.Identifier);
+                throw new UserNotFoundException(request.Identifier, errorTitle);
 
             string code = _verificationService.GenerateVerificationCode();
 
@@ -42,17 +44,17 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Forgot
             else if (request.Identifier == user.PreviousPhoneNumber)
                 await _verificationService.SendVerificationCodeViaSmsAsync(user.PreviousPhoneNumber!, code);
             else if (request.IdentifierType == IdentifiersEnum.Email)
-                throw new NotFoundException(nameof(request.Identifier), IdentifiersEnum.Email.ToString(), request.Identifier);
+                throw new NotFoundException(nameof(request.Identifier), IdentifiersEnum.Email.ToString(), request.Identifier, errorTitle);
             else if (request.IdentifierType == IdentifiersEnum.Phone_Number)
-                throw new NotFoundException(nameof(request.Identifier), IdentifiersEnum.Phone_Number.ToString().Replace("_", " "), request.Identifier);
+                throw new NotFoundException(nameof(request.Identifier), IdentifiersEnum.Phone_Number.ToString().Replace("_", " "), request.Identifier, errorTitle);
             else
-                throw new NotImplementedIdentifierException(request.IdentifierType.ToString());
+                throw new NotImplementedIdentifierException(request.IdentifierType.ToString(), errorTitle);
 
             _cache.Set($"reset_{request.Identifier}", code, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
             return new ForgotPasswordResponse { 
                 Success = true, 
-                Message = $"Reset code sent to your {request.IdentifierType.ToString().Replace("_", " ")}." ,
+                Message = $"تم إرسال رمز إعادة تعيين كلمة المرور إلى ' {request.Identifier}'.'" ,
                 CodeTimeOutInMinuts = GeneralConstants.CODE_TIMEOUT_MINUTES,
                 ExpireAt = DateTime.UtcNow.AddMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES),
             };

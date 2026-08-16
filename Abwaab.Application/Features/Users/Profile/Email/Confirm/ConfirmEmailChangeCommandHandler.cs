@@ -1,4 +1,6 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
 using Abwaab.Application.Features.Users.Profile.Email.Pending;
@@ -17,6 +19,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.Confirm
         private readonly IUserContext _userContext;
         private readonly IMemoryCache _cache;
         private readonly ILogger<ConfirmEmailChangeCommandHandler> _logger;
+        private readonly string errorTitle = ErrorTitle.ConfirmEmailChange;
 
         public ConfirmEmailChangeCommandHandler(
             UserManager<ApplicationUser> userManager,
@@ -36,22 +39,22 @@ namespace Abwaab.Application.Features.Users.Profile.Email.Confirm
             ApplicationUser? user = await _userManager.FindByIdAsync(userId.ToString());
 
             if (user == null)
-                throw new NotFoundException("User", nameof(userId), userId.ToString());
+                throw new UserNotFoundException(userId.ToString(), errorTitle);
 
             // Retrieve the pending change from cache
             var cacheKey = $"email_change_{userId}";
             if (!_cache.TryGetValue(cacheKey, out PendingEmailChange pending))
-                throw new NoPendingEmailChangeException();
+                throw new NoPendingEmailChangeException(errorTitle);
 
             // Validate the code and the new email
             if (pending.Code != request.Code || pending.NewEmail != request.NewEmail)
-                throw new InvalidCodeOrEmailMissmatchException();
+                throw new InvalidCodeOrEmailMissmatchException(errorTitle);
 
             // Check again if the email is still available (in case someone else took it while waiting)
             ApplicationUser? existingUser = await _userManager.FindByEmailAsync(request.NewEmail);
             
             if (existingUser != null && existingUser.Id != userId)
-                throw new EmailAlreadyInUseException();
+                throw new EmailAlreadyInUseException(errorTitle);
 
             // Store the old email before overwriting
             user.PreviousEmail = user.Email;
@@ -69,13 +72,13 @@ namespace Abwaab.Application.Features.Users.Profile.Email.Confirm
                 
                 _logger.LogError("Failed to update user email for user {UserId}. Errors: {Errors}", userId, errors);
 
-                throw new FailedConfirmationEmailException();
+                throw new FailedConfirmationEmailException(errorTitle);
             }
 
             // Remove the cache entry (one-time use)
             _cache.Remove(cacheKey);
 
-            return new ConfirmEmailChangeResponse { Success = true, Message = $"Email address changed successfully" };
+            return new ConfirmEmailChangeResponse { Success = true, Message = $"تغيير البريد الالكتروني تمت بنجاح" };
         }
     }
 }

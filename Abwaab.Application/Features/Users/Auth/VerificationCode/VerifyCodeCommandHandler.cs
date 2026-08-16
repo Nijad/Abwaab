@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Profile.Email;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
 using Abwaab.Application.Common.Exceptions.Profile.VerificationCode;
@@ -22,6 +23,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
         private readonly IProfileService _profileService;
         private readonly ILogger<VerifyCodeCommandHandler> _logger;
         private readonly IJwtService _jwtService;
+        private readonly string errorTitle = ErrorTitle.VerificationCode;
 
         public VerifyCodeCommandHandler(
             IUserService userService,
@@ -40,15 +42,15 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
         }
         public async Task<VerifyCodeResponse> Handle(VerifyCodeDTO request, CancellationToken cancellationToken)
         {
-            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType);
+            ApplicationUser? user = await _userService.FindUserByIdentifierAsync(request.Identifier, request.IdentifierType, errorTitle);
 
             if(user == null)
-                throw new NotFoundException("User", nameof(request.Identifier), request.Identifier);
+                throw new UserNotFoundException(request.Identifier, errorTitle);
 
             bool isValid = await _verificationService.VerifyCodeAsync(request.Identifier, request.Code);
 
             if (!isValid)
-                throw new InvalidVerificationCodeException();
+                throw new InvalidVerificationCodeException(errorTitle);
 
             // Confirm the user's email or phone number based on the identifier type
             if (request.IdentifierType == IdentifiersEnum.Email)
@@ -58,7 +60,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
                 IdentityResult result = await _userManager.ConfirmEmailAsync(user, token);
 
                 if (!result.Succeeded)
-                    throw new FailedConfirmationEmailException();
+                    throw new FailedConfirmationEmailException(errorTitle);
 
                 await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWaysEnum.Email);
             }
@@ -69,7 +71,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
                 IdentityResult result = await _userManager.ChangePhoneNumberAsync(user, request.Identifier, token);
 
                 if (!result.Succeeded)
-                    throw new FailedConfirmationPhoneException();
+                    throw new FailedConfirmationPhoneException(errorTitle);
 
                 await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWaysEnum.SMS);
             }
@@ -87,17 +89,17 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             }
 
             // Assign default plant to the new user
-            await _userService.ActiveDefaultPlantAsync(user);
+            await _userService.ActiveDefaultPlantAsync(user, errorTitle);
 
             // Subscribe the user to push notifications
-            await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWaysEnum.Push_Notification);
+            await _profileService.SubscribeNotificationWayCommandAsync(user, NotificationWaysEnum.Web_Application);
 
 
             //get user roles
             IList<string> roles = await _userManager.GetRolesAsync(user);
 
             // Generate access token
-            TokenResponseDTO tokenResponse = await _jwtService.GenerateTokenResponseAsync(user, roles);
+            TokenResponseDTO tokenResponse = await _jwtService.GenerateTokenResponseAsync(user, roles, request.Identifier);
 
             // Check if user has Admin role
             bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
@@ -105,7 +107,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             VerifyCodeResponse response = new VerifyCodeResponse
             {
                 Success = true,
-                Message = "Verification successful. You are now logged in.",
+                Message = "تم تأكيد الحساب وتسجيل دخولك بنجاح",
                 AccessToken = tokenResponse.AccessToken,
                 RefreshToken = tokenResponse.RefreshToken,
                 ExpiresIn = tokenResponse.ExpiresIn,

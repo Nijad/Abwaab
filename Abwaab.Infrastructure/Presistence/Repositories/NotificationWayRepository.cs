@@ -12,14 +12,18 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         {
             _context = context;
         }
+
         public async Task<NotificationWay?> GetNotificationWayByNameAsync(string wayName)
         {
             return await _context.NotificationWays.Where(nw => nw.WayName == wayName).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<NotificationWay>> GetNotificationAllWaysAsync()
+        public async Task<IEnumerable<NotificationWay>> GetAllNotificationWaysAsync(bool onlyCanDisable = true)
         {
-            return await _context.NotificationWays.ToListAsync();
+            IQueryable<NotificationWay> query = _context.NotificationWays.Where(x => x.WayName != "");
+            if (onlyCanDisable)
+                query = query.Where(x => x.CanDisable);
+            return await query.ToListAsync();
         }
 
         public async Task<List<UserNotificationSubscription>> GetNotificationWaysByUserAsync(Guid userId)
@@ -47,6 +51,18 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         {
             await _context.AddAsync(userSubscription);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<UserNotificationSubscription>> GetAllNotificationWaysOfUserAsync(Guid userId)
+        {
+            return await _context.UserNotificationSubscriptions.Include(x => x.NotificationWay).Where(x => x.UserId == userId).ToListAsync();
+        }
+
+        public async Task<bool> HasUserActiveNotificationWay(Guid userId, Guid notifiacationWayId)
+        {
+            UserNotificationSubscription? subscription = await _context.UserNotificationSubscriptions.Where(x => x.UserId == userId && x.NotificationWayId == notifiacationWayId).FirstOrDefaultAsync();
+
+            return !(subscription == null || subscription.IsInactive);
         }
     }
 }

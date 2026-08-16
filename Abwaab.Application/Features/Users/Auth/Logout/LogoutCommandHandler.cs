@@ -1,4 +1,6 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
@@ -12,6 +14,7 @@ namespace Abwaab.Application.Features.Users.Auth.Logout
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserService _userService;
         private readonly ITokenCacheService _tokenCacheService;
+        private readonly string errorTitle = ErrorTitle.LogoutUser;
 
         public LogoutCommandHandler(
             UserManager<ApplicationUser> userManager,
@@ -46,7 +49,7 @@ namespace Abwaab.Application.Features.Users.Auth.Logout
             ApplicationUser? user = await _userManager.FindByNameAsync(username);
 
             if (user == null)
-                throw new NotFoundException("User", nameof(username), username);
+                throw new UserNotFoundException(username, errorTitle);
 
             LogoutResponse response = await _userService.RevokeActiveToken(user.Id, request.RevokeAll);
 

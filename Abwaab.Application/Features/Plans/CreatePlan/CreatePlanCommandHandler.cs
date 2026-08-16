@@ -32,7 +32,7 @@ namespace Abwaab.Application.Features.Plans.CreatePlan
 
             await _planRepository.AddPlanAsync(plan);
             
-            return new CreatePlanResponse { Success = true, Message = "Plan created successfully." };
+            return new CreatePlanResponse { Success = true, Message = "تم إضافة الخطة بنجاح" };
         }
     }
 }

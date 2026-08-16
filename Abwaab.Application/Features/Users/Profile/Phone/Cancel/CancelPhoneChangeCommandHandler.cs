@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Exceptions.Profile.Phone;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions.Profile.Phone;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Users.Profile.Phone.Pending;
 using Abwaab.Application.Interfaces;
@@ -12,6 +13,7 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Cancel
         private readonly IProfileService _profileService;
         private readonly IUserContext _userContext;
         private readonly IMemoryCache _cache;
+        private readonly string errorTitle = ErrorTitle.CancelPhoneNoChange;
 
         public CancelPhoneChangeCommandHandler(
             IProfileService profileService, IUserContext userContext, IMemoryCache cache)
@@ -26,13 +28,13 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Cancel
             var cacheKey = $"phone_change_{userId}";
 
             if (!_cache.TryGetValue(cacheKey, out PendingPhoneChange pending))
-                throw new NoPendingPhoneChangeException();
+                throw new NoPendingPhoneChangeException(errorTitle);
 
             _cache.Remove(cacheKey);
 
             await _profileService.RevokeAllRefreshToken(userId, "Cancelled by user");
             
-            return new CancelPhoneChangeResponse { Success = true, Message = "Pending change cancelled. You have been logged out for security." };
+            return new CancelPhoneChangeResponse { Success = true, Message = "تم إلغاء تعليق التغيير. You لقد تم تسجيل خروجك لدواعي أمنية." };
         }
     }
 }

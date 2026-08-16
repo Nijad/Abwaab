@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Contracts;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
@@ -10,23 +11,30 @@ namespace Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.
     {
         private readonly IProfileService _profileService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
+        private readonly string errorTitle = ErrorTitle.NotificationWaySubscription;
 
         public NotificationWaySubscriptionCommandHandler(
-            IProfileService profileService, 
-            UserManager<ApplicationUser> userManager)
+            IProfileService profileService,
+            UserManager<ApplicationUser> userManager,
+            IUserService userService)
         {
             _profileService = profileService;
             _userManager = userManager;
+            _userService = userService;
         }
 
         public async Task<NotificationWaySubscriptionResponse> Handle(NotificationWaySubscriptionCommand request, CancellationToken cancellationToken)
         {
             //check if user exist
-            ApplicationUser? user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user == null)
-                throw new NotFoundException("User", nameof(request.UserId), request.UserId.ToString());
 
-            NotificationWaySubscriptionResponse response = await _profileService.SubscribeNotificationWayCommandAsync(user, request.NotifiactionWayId);
+            string username = _userService.FindUserNameByContext();
+            ApplicationUser? user = await _userManager.FindByNameAsync(username);
+            
+            if (user == null)
+                throw new UserNotFoundException(username, errorTitle);
+
+            NotificationWaySubscriptionResponse response = await _profileService.SubscribeNotificationWayCommandAsync(user, request.NotifiactionWayId, errorTitle);
 
             return response;
         }

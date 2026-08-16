@@ -7,7 +7,7 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Upgrade
         public UpgradeUserPlanCommandValidation()
         {
             RuleFor(x => x.PlanId)
-                .NotEmpty().WithMessage("PlanId is required.");
+                .NotEmpty().WithMessage("الخطة مطلوبة.");
         }
     }
 }

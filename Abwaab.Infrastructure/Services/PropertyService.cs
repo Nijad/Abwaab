@@ -17,10 +17,10 @@ namespace Abwaab.Infrastructure.Services
             _propertyRepository = propertyRepository;
         }
 
-        public async Task<Guid> CreatePropertyAsync(UserPlan userPlan)
+        public async Task<Guid> CreatePropertyAsync(UserPlan userPlan, string errorTitle)
         {
             Guid id = Guid.NewGuid();
-            PropertyState preparingPropertyState = await GetPreparingPropertyStateAsync();
+            PropertyState preparingPropertyState = await GetPreparingPropertyStateAsync(errorTitle);
             Property property = new()
             {
                 Id = id,
@@ -32,26 +32,26 @@ namespace Abwaab.Infrastructure.Services
             return id;
         }
 
-        public async Task<PropertyState> GetPreparingPropertyStateAsync() => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Preparing.ToString());
+        public async Task<PropertyState> GetPreparingPropertyStateAsync(string errorTitle) => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Preparing.ToString(), errorTitle);
 
-        public async Task<PropertyState> GetPendingPropertyStateAsync() => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Pending.ToString());
+        public async Task<PropertyState> GetPendingPropertyStateAsync(string errorTitle) => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Pending.ToString(), errorTitle);
 
-        public async Task<PropertyState> GetPublishedPropertyStateAsync() => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Published.ToString());
+        public async Task<PropertyState> GetPublishedPropertyStateAsync(string errorTitle) => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Published.ToString(), errorTitle);
 
-        public async Task<PropertyState> GetRejectedPropertyStateAsync() => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Rejected.ToString());
+        public async Task<PropertyState> GetRejectedPropertyStateAsync(string errorTitle) => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Rejected.ToString(), errorTitle);
 
-        public async Task<PropertyState> GetSoldPropertyStateAsync() => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Sold.ToString());
+        public async Task<PropertyState> GetSoldPropertyStateAsync(string errorTitle) => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Sold.ToString(), errorTitle);
 
-        public async Task<PropertyState> GetDisabledPropertyStateAsync() => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Disabled.ToString());
+        public async Task<PropertyState> GetDisabledPropertyStateAsync(string errorTitle) => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Disabled.ToString(), errorTitle);
 
-        public async Task<PropertyState> GetDeletedPropertyStateAsync() => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Deleted.ToString());
+        public async Task<PropertyState> GetDeletedPropertyStateAsync(string errorTitle) => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Deleted.ToString(), errorTitle);
 
-        public async Task<PropertyState> FindPropertyStateByStateNameAsync(string propertyStateName)
+        public async Task<PropertyState> FindPropertyStateByStateNameAsync(string propertyStateName, string errorTitle)
         {
             PropertyState? propertyState = await _propertyRepository.FindPropertyStateByStateNameAsync(propertyStateName);
 
             if (propertyState == null)
-                throw new NotFoundException(nameof(PropertyState), nameof(propertyStateName), propertyStateName);
+                throw new NotFoundException(nameof(PropertyState), nameof(propertyStateName), propertyStateName, errorTitle);
 
             return propertyState;
         }

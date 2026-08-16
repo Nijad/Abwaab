@@ -1,4 +1,5 @@
-﻿using Abwaab.Domain.Entities.UserEntities;
+﻿using Abwaab.Application.Common.Enums;
+using Abwaab.Domain.Entities.UserEntities;
 
 namespace Abwaab.Application.Contracts
 {
@@ -8,6 +9,8 @@ namespace Abwaab.Application.Contracts
         Task<bool> IsUserPlanHasStatusAsync(UserPlan userPlan, UserPlanStatus status);
         Task<bool> IsUserPlanBelongToUserAsync(Guid userPlanId, Guid userId);
         Task UpdateUserPlan(UserPlan userPlan);
-        Task<UserPlan> FindUserActivePlanAsync(Guid userId, Guid activeUserPlanStateId);
+        Task<UserPlan> FindUserActivePlanAsync(Guid userId, Guid activeUserPlanStateId, string errorTitle);
+        Task AddUserPlanAsync(UserPlan userPlan);
+        Task<UserPlanStatus?> FindUserPlanStatusByNameAsync(UserPlanStatesEnum pending, string errorTitle);
     }
 }

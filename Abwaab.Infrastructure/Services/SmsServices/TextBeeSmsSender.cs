@@ -29,7 +29,7 @@ namespace Abwaab.Infrastructure.Services.SmsServices
             _httpClient.DefaultRequestHeaders.Add("x-api-key", _settings.ApiKey);
         }
 
-        public async Task SendSmsAsync(string phoneNumber, string message)
+        public async Task SendSmsAsync(string phoneNumber, string message, string errorTitle)
         {
             // Build the request payload
             var payload = new
@@ -51,7 +51,7 @@ namespace Abwaab.Infrastructure.Services.SmsServices
                 var error = await response.Content.ReadAsStringAsync();
                 _logger.LogError($"TextBee API error: {response.StatusCode} - {error}", response.StatusCode, error);
 
-                throw new FailedSendignSMSException();
+                throw new FailedSendignSMSException(errorTitle);
             }
         }
     }

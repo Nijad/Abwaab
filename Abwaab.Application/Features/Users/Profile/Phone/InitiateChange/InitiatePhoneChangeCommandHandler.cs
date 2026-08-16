@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Common.Exceptions;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Profile.Phone;
 using Abwaab.Application.Features.Users.Profile.Phone.Pending;
@@ -22,6 +23,7 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
         private readonly IVerificationCodeService _verificationService;
         private readonly ILogger<InitiatePhoneChangeCommandHandler> _logger;
         private readonly IMemoryCache _cache;
+        private readonly string errorTitle = ErrorTitle.InitiatePhoneChange;
 
         public InitiatePhoneChangeCommandHandler(
             IUserContext userContext, 
@@ -48,23 +50,23 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
             var userId = _userContext.UserId;
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
-                throw new NotFoundException("User", nameof(userId), userId.ToString());
+                throw new UserNotFoundException(userId.ToString(), errorTitle);
 
             // ----------------------------------------------------------------
             // 1. SECURITY: Verify the user's current password (Critical!)
             // ----------------------------------------------------------------
             if (!await _userManager.CheckPasswordAsync(user, request.CurrentPassword))
-                throw new InvalidCredentialsException();
+                throw new InvalidCredentialsException(errorTitle);
 
             // Check if new phone is the same as current
             if (user.PhoneNumber?.Equals(request.NewPhoneNo, StringComparison.OrdinalIgnoreCase) == true)
-                throw new YourCurrentPhoneException();
+                throw new YourCurrentPhoneException(errorTitle);
 
             // Check if the new phone number is already taken by another user
             var existingUser = await _userManager.Users
                 .FirstOrDefaultAsync(u => u.PhoneNumber == request.NewPhoneNo);
             if (existingUser != null && existingUser.Id != userId)
-                throw new PhoneAlreadyInUseException();
+                throw new PhoneAlreadyInUseException(errorTitle);
 
             // ----------------------------------------------------------------
             // 2. NOTIFY THE OLD CONTACT (Security Alert)
@@ -76,26 +78,26 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
             if (!string.IsNullOrEmpty(user.PhoneNumber))
                 _ = Task.Run(async () =>
                 {
-                    var alertMessage = $"SECURITY ALERT: Your phone is being changed to {request.NewPhoneNo}. If this wasn't you, cancel at {cancelUrl}";
+                    var alertMessage = $"تنبيه أمني: رقم هاتفك يجري  تعديل الآن {request.NewPhoneNo}. إذا لم تكن أنت يرجى إلغاء العملية حالاً {cancelUrl}";
 
-                    await _smsSender.SendSmsAsync(user.PhoneNumber, alertMessage);
+                    await _smsSender.SendSmsAsync(user.PhoneNumber, alertMessage, errorTitle);
                 });
 
             if (!string.IsNullOrEmpty(user.Email))
                 _ = Task.Run(async () =>
                 {
-                    var alertSubject = "Security Alert: Phone Change Requested";
+                    var alertSubject = "تنبيه أمني: طلب تغيير رقم الموبايل";
                     var alertBody = $@"
-                        <h2>Security Alert: Phone Change Requested</h2>
-                        <p>We received a request to change the phone number associated with your account.</p>
-                        <p><strong>New phone requested:</strong> {request.NewPhoneNo}</p>
-                        <p><strong>Time:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
-                        <p>If you made this request, please enter the verification code sent to your new phone number.</p>
-                        <p><strong>If you did NOT request this, click the link below to cancel the change immediately:</strong></p>
-                        <p><a href='{cancelUrl}'>Cancel Phone Change</a></p>
-                        <p>This link will revoke all your active sessions for security.</p>
+                        <h2>تنبيه أمني: طلب تغيير  رقم الموبايل</h2>
+                        <p>لقد تلقينا طلب بتغيير رقم الموبايل المرتبط بحسابك.</p>
+                        <p><strong>رقم الموبايل الجديد:</strong> {request.NewPhoneNo}</p>
+                        <p><strong>الوقت:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
+                        <p>إذا كنت أنت من قام بهذا الطلب, يرجى إدخال رمز التحقق المرسل إلى الرقم الجديد.</p>
+                        <p><strong>إذا لم تكن أنت من قام بهذا الطلب, اضغط على الرباط أدناه لإلغاء عملية التغيير:</strong></p>
+                        <p><a href='{cancelUrl}'>إلغاء تغيير رقم الموبايل</a></p>
+                        <p>هذا الإجراء سيؤدي إلى تسجيل خروجك من جميع الأجهزة لدواعي أمنية.</p>
                     ";
-                    await _emailSender.SendEmailAsync(user.Email, alertSubject, alertBody);
+                    await _emailSender.SendEmailAsync(user.Email, alertSubject, alertBody, errorTitle);
                 });
 
             // ----------------------------------------------------------------
@@ -114,7 +116,7 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
             };
             _cache.Set($"phone_change_{userId}", pending, TimeSpan.FromMinutes(5));
 
-            return new InitiatePhoneNoChangeResponse { Success = true, Message = "Verification code sent to the new phone number." };
+            return new InitiatePhoneNoChangeResponse { Success = true, Message = "تم إرسال رمز تحقق إلى رقم الموبايل الجديد." };
         }
     }
 }

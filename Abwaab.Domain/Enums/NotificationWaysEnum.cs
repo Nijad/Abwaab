@@ -4,6 +4,6 @@
     {
         Email,
         SMS,
-        Push_Notification
+        Web_Application,
     }
 }

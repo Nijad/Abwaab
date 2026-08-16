@@ -45,6 +45,9 @@
         public const string UserHasNoActivePlan = "USER_HAS_NO_ACTIVE_PLAN";
         public const string UserHasMoreThanOneActivePlan = "USER_HAS_MORE_THAN_ONE_ACATIVE_PLAN";
         public const string ExceededAllowedNumber = "EXCEEDED_ALLOWED_NUMBER";
+        public const string NotFound = "NOT_FOUND";
+        public const string UserNotFound = "USER_NOT_FOUND";
         public const string ResendWait = "RESEND_WAIT";
+        public const string UpdateUserFailed = "UPDATE_USER_FAILED";
     }
 }

@@ -1,5 +1,7 @@
-﻿using Abwaab.Application.Common.Exceptions;
-using Abwaab.Application.Common.Exceptions.Profile;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
+using Abwaab.Application.Common.Exceptions.Profile.Password;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
@@ -19,6 +21,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
         private readonly ILogger<ChangePasswordCommandHandler> _logger;
         private readonly IUserService _userService;
         private readonly ITokenCacheService _tokenCacheService;
+        private readonly string errorTitle = ErrorTitle.ChangePassword;
 
         public ChangePasswordCommandHandler(
             IProfileService profileService, IUserContext userContext, UserManager<ApplicationUser> userManager, IEmailSender emailSender, ISmsSender smsSender, ILogger<ChangePasswordCommandHandler> logger, IUserService userService, ITokenCacheService tokenCacheService)
@@ -38,7 +41,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
             var userId = _userContext.UserId;
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
-                throw new NotFoundException("User", nameof(userId), userId.ToString());
+                throw new UserNotFoundException(userId.ToString(), errorTitle);
 
             // 1. Change the password
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
@@ -49,7 +52,7 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
 
                 _logger.LogError($"Failed to change password for user {userId}. Errors: {errors}");
 
-                throw new FailedChangePasswordException();
+                throw new FailedChangePasswordException(errorTitle);
             }
 
             // null = unlock immediately
@@ -76,25 +79,25 @@ namespace Abwaab.Application.Features.Users.Profile.Password.Change
             if (user.Email != null)
                 _ = Task.Run(async () =>
                 {
-                    var subject = "Security Alert: Your Password Was Changed";
+                    var subject = "تحذير أمني: تم تغيير كلمة المرور الخاصة بك";
                     var body = $@"
-                    <h2>Password Changed</h2>
-                    <p>Your account password was recently changed.</p>
-                    <p><strong>Date/Time:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
-                    <p><strong>IP Address:</strong> {_userContext.RemoteIpAddress}</p>
-                    <p>If you did NOT make this change, please reset your password immediately.</p>
+                    <h2>تغيير كلمة المرور</h2>
+                    <p>كلمة مرور حسابك تم تغييرها للتو.</p>
+                    <p><strong>التاريخ/الوقت:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
+                    <p><strong>عنوان الانترنت:</strong> {_userContext.RemoteIpAddress}</p>
+                    <p>إذا لم تكن أنت من قام بهذا التغيير, الرجاء إعادة تغيير كلمة المرور حالاً.</p>
                 ";
-                    await _emailSender.SendEmailAsync(user.Email, subject, body);
+                    await _emailSender.SendEmailAsync(user.Email, subject, body, errorTitle);
                 });
 
             if (user.PhoneNumber != null)
                 _ = Task.Run(async () =>
                 {
-                    var message = $"Your account password was recently changed. If you did NOT make this change, please reset your password immediately.";
-                    await _smsSender.SendSmsAsync(user.PhoneNumber, message);
+                    var message = $"كلمة مرور حسابك تم تغييرها للتو. إذا لم تكن أنت من قام بهذا التغيير, الرجاء إعادة تغيير كلمة المرور حالاً.";
+                    await _smsSender.SendSmsAsync(user.PhoneNumber, message, errorTitle);
                 });
 
-            return new ChangePasswordResponse { Success = true, Message = "Password changed successfully. You have been logged out of all other devices." };
+            return new ChangePasswordResponse { Success = true, Message = "تم تغيير كلمة المرور بنجاح، لقد تم تسجيل خروجك من جميع الأجهزة الأخرى." };
         }
     }
 }
