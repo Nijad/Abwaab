@@ -59,7 +59,7 @@ const ConfirmRegisteration = () => {
         .then((resp) => {
           console.log(resp.data);
           // login(resp.data);
-          navigate("/", { replace: true });
+          navigate("/portal", { replace: true });
           enqueueSnackbar("تم تأكيد الحساب بنجاح", { variant: "success" });
         })
         .catch((err) => {

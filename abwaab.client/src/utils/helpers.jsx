@@ -56,3 +56,12 @@ export const formatTime = (totalSeconds) => {
 
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 };
+
+export const AvatarString = (name) => {
+  var parts = name.split(" ");
+  if (parts.count > 1) {
+    return `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`;
+  } else {
+    return name[0];
+  }
+};
