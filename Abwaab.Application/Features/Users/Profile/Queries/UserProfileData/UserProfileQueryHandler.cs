@@ -31,7 +31,6 @@ namespace Abwaab.Application.Features.Users.Profile.Queries.UserProfileData
 
             bool hasActivatedEmailWay = await _profileService.HasActivatedEmailNotificationWay(user.Id, errorTitle);
             bool hasActivatedSmsWay = await _profileService.HasActivatedSmsNotificationWay(user.Id, errorTitle);
-            bool hasActivatedWebWay = await _profileService.HasActivatedWebNotificationWay(user.Id, errorTitle);
 
             UserProfileDataResponse response = new()
             {
@@ -44,8 +43,6 @@ namespace Abwaab.Application.Features.Users.Profile.Queries.UserProfileData
                 MobileIsVerified = user.PhoneNumberConfirmed,
                 EmailNotificationStatus = hasActivatedEmailWay,
                 SmsNotificationStatus = hasActivatedSmsWay,
-                WebAppNotificationStatus = hasActivatedWebWay,
-                PasswordLastModified = "Not Implemented",
                 PendingChanges = "Not Implemented"
             };
 

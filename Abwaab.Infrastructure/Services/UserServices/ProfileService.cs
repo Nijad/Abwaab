@@ -172,6 +172,9 @@ namespace Abwaab.Infrastructure.Services.UserServices
             if (notificationWay == null)
                 throw new NotFoundException(nameof(NotificationWay), nameof(notificationWayId), notificationWayId.ToString(), errorTitle);
 
+            if(!notificationWay.CanDisable)
+                throw new UnsubscriptionNotificationWayNotAllowedException(NotificationWaysMapping.Map(notificationWay.WayName) ,errorTitle);
+
             //check if user had already subscribe
             UserNotificationSubscription? userSubscription = await _notificationWayRepository.GetUserSubscriptionAsync(user.Id, notificationWayId);
 

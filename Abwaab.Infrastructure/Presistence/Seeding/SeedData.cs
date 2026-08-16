@@ -72,9 +72,24 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<NotificationWay>
             {
-                new NotificationWay { Id = new Guid(), WayName = NotificationWaysEnum.Email.ToString() },
-                new NotificationWay { Id = new Guid(), WayName = NotificationWaysEnum.SMS.ToString() },
-                new NotificationWay { Id = new Guid(), WayName = NotificationWaysEnum.Web_Application.ToString() }
+                new NotificationWay 
+                { 
+                    Id = new Guid(), 
+                    WayName = NotificationWaysEnum.Email.ToString(),
+                    CanDisable = true,
+                },
+                new NotificationWay 
+                { 
+                    Id = new Guid(), 
+                    WayName = NotificationWaysEnum.SMS.ToString(),
+                    CanDisable = true
+                },
+                new NotificationWay 
+                {
+                    Id = new Guid(),
+                    WayName = NotificationWaysEnum.Web_Application.ToString(),
+                    CanDisable = false
+                }
             };
         }
 
@@ -152,41 +167,41 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<Attribute>
             {
-                new Attribute 
+                new Attribute
                 {
                     Id = new Guid("2f4afcee-5179-4a65-ab34-0a7641f0c5b1"),
                     AttributeName = "Number of Rooms",
                     DataType = AttributeDataType.number
                 },
 
-                new Attribute 
-                { 
-                    Id = new Guid("6c0851d8-fc13-465c-94ab-373c25e9228b"), 
+                new Attribute
+                {
+                    Id = new Guid("6c0851d8-fc13-465c-94ab-373c25e9228b"),
                     AttributeName = "Number of Bathrooms",
                     DataType = AttributeDataType.number
                 },
 
-                new Attribute 
-                { 
-                    Id = new Guid("2988ec33-46ff-4301-9f67-4e69fc700875"), 
+                new Attribute
+                {
+                    Id = new Guid("2988ec33-46ff-4301-9f67-4e69fc700875"),
                     AttributeName = "Floor Number",
                     DataType = AttributeDataType.number
                 },
 
-                new Attribute { 
-                    Id = new Guid("2b0ffaba-bd0d-4a3b-a263-d0b61a9cb2f4"), 
+                new Attribute {
+                    Id = new Guid("2b0ffaba-bd0d-4a3b-a263-d0b61a9cb2f4"),
                     AttributeName = "Has Garage",
                     DataType = AttributeDataType.possibleValues
                 },
 
-                new Attribute { 
-                    Id = new Guid("75d70597-6f68-46a8-9056-39622952fd10"), 
+                new Attribute {
+                    Id = new Guid("75d70597-6f68-46a8-9056-39622952fd10"),
                     AttributeName = "Has Garden",
                     DataType = AttributeDataType.possibleValues
                 },
 
-                new Attribute { 
-                    Id = new Guid("158bfbe6-46c7-4f0c-adc0-f2059b0c64b1"), 
+                new Attribute {
+                    Id = new Guid("158bfbe6-46c7-4f0c-adc0-f2059b0c64b1"),
                     AttributeName = "Has Swimming Pool",
                     DataType = AttributeDataType.possibleValues
                 }

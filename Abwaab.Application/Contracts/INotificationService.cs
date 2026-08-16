@@ -4,6 +4,6 @@ namespace Abwaab.Application.Contracts
 {
     public interface INotificationService
     {
-        Task<List<GetAllWaysResponse>> GetAllNotificationWaysAsync();
+        Task<List<GetAllWaysResponse>> GetAllNotificationWaysAsync(bool onlyCanDisable = true);
     }
 }

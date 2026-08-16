@@ -14,9 +14,9 @@ namespace Abwaab.Infrastructure.Services
             _notificationWayRepository = notificationWayRepository;
         }
 
-        public async Task<List<GetAllWaysResponse>> GetAllNotificationWaysAsync()
+        public async Task<List<GetAllWaysResponse>> GetAllNotificationWaysAsync(bool onlyCanDisable = true)
         {
-            var ways =  await _notificationWayRepository.GetNotificationAllWaysAsync();
+            var ways =  await _notificationWayRepository.GetAllNotificationWaysAsync(onlyCanDisable);
 
             List<GetAllWaysResponse> responses = new();
             foreach (var way in ways)

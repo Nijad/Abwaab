@@ -68,6 +68,16 @@ namespace Abwaab.Server.Exceptions
                     Detail = ex.ReturnToUser ? ex.Message : ErrorMessages.SystemError,
                     ErrorCode = ex.ErrorCode
                 },
+                MethodNotAllowed405Exception ex => new CustomProblemDetails
+                {
+                    Status = ex.ReturnToUser ?
+                        StatusCodes.Status405MethodNotAllowed :
+                        StatusCodes.Status500InternalServerError,
+
+                    Title = ex.Title,
+                    Detail = ex.ReturnToUser ? ex.Message : ErrorMessages.SystemError,
+                    ErrorCode = ex.ErrorCode
+                },
                 Precondition412Exception ex => new CustomProblemDetails
                 {
                     Status = ex.ReturnToUser ?

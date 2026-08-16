@@ -14,7 +14,7 @@ namespace Abwaab.Application.Features.Notifications.AllNotificationWays
 
         public async Task<List<GetAllWaysResponse>> Handle(GetAllWaysQuery request, CancellationToken cancellationToken)
         {
-            return await _notificationService.GetAllNotificationWaysAsync();
+            return await _notificationService.GetAllNotificationWaysAsync(false);
         }
     }
 }

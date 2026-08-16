@@ -6,7 +6,7 @@ namespace Abwaab.Application.Repositories
     {
         Task AddSubscriptionAsync(UserNotificationSubscription userSubscription);
         Task<List<UserNotificationSubscription>> GetAllNotificationWaysOfUserAsync(Guid userId);
-        Task<IEnumerable<NotificationWay>> GetNotificationAllWaysAsync();
+        Task<IEnumerable<NotificationWay>> GetAllNotificationWaysAsync(bool onlyCanDisable = true);
         
         Task<NotificationWay?> GetNotificationWayByIdAsync(Guid id);
         
