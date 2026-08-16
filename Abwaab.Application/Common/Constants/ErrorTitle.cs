@@ -25,5 +25,6 @@
         public const string GetUserRoles = "استعلام عن أدوار المستخدم";
         public const string LogoutUser = "تسجيل خروج المستخدم";
         public const string ProfileData = "معلومات المستخدم";
+        public const string UpdateUser = "تعديل بيانات المستخدم";
     }
 }

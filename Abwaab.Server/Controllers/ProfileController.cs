@@ -9,6 +9,7 @@ using Abwaab.Application.Features.Users.Profile.Phone.Cancel;
 using Abwaab.Application.Features.Users.Profile.Phone.Confirm;
 using Abwaab.Application.Features.Users.Profile.Phone.InitiateChange;
 using Abwaab.Application.Features.Users.Profile.Queries.UserProfileData;
+using Abwaab.Application.Features.Users.Profile.UpdateInfo;
 using Abwaab.Application.Features.Users.Profile.UserPlans.Upgrade;
 using Abwaab.Application.Interfaces;
 using MediatR;
@@ -134,6 +135,13 @@ namespace Abwaab.Server.Controllers
         public async Task<IActionResult> GetAllNotificationWays()
         {
             List<GetAllWaysResponse> result = await _mediator.Send(new GetAllWaysQuery());
+            return Ok(result);
+        }
+        
+        [HttpPost("UpdateUser")]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateInfoCommand command)
+        {
+            UpdateInfoResponse result = await _mediator.Send(command);
             return Ok(result);
         }
     }
