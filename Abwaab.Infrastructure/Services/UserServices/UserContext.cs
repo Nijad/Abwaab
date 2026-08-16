@@ -43,6 +43,8 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public string? RemoteIpAddress => _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
 
+        public string? LoginIdentifier => _httpContextAccessor.HttpContext?.User.FindFirstValue("LoginIdentifier") ?? "Unknown";
+
         public bool IsInRole(string role) => _httpContextAccessor.HttpContext?.User?.IsInRole(role) ?? false;
     }
 }

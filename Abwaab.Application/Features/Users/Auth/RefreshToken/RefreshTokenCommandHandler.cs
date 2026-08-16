@@ -4,7 +4,9 @@ using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace Abwaab.Application.Features.Users.Auth.RefreshToken
 {
@@ -12,14 +14,17 @@ namespace Abwaab.Application.Features.Users.Auth.RefreshToken
     {
         private readonly IJwtService _jwtService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHttpContextAccessor _contextAccessor;
         private readonly string errorTitle = ErrorTitle.RefreshToken;
 
         public RefreshTokenCommandHandler(
             IJwtService jwtService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IHttpContextAccessor contextAccessor)
         {
             _jwtService = jwtService;
             _userManager = userManager;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task<RefreshTokenResponse> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
@@ -33,7 +38,9 @@ namespace Abwaab.Application.Features.Users.Auth.RefreshToken
 
             IList<string> roles = await _userManager.GetRolesAsync(user);
 
-            RefreshTokenResponse reuslt = await _jwtService.RefreshTokenAsync(user, roles, request.RefreshToken);
+            var httpContext = _contextAccessor.HttpContext;
+            var oldLoginIdentifier = httpContext.User.FindFirstValue("LoginIdentifier") ?? user.Email ?? user.PhoneNumber;
+            RefreshTokenResponse reuslt = await _jwtService.RefreshTokenAsync(user, roles, request.RefreshToken, oldLoginIdentifier);
 
             return await Task.FromResult(reuslt);
         }

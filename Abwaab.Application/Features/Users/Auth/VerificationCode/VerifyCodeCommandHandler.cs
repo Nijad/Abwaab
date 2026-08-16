@@ -99,7 +99,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             IList<string> roles = await _userManager.GetRolesAsync(user);
 
             // Generate access token
-            TokenResponseDTO tokenResponse = await _jwtService.GenerateTokenResponseAsync(user, roles);
+            TokenResponseDTO tokenResponse = await _jwtService.GenerateTokenResponseAsync(user, roles, request.Identifier);
 
             // Check if user has Admin role
             bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");

@@ -31,7 +31,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string GenerateAccessToken(ApplicationUser user, IList<string> roles)
+        public string GenerateAccessToken(ApplicationUser user, IList<string> roles, string loginIdentifier)
         {
             List<Claim> claims = new()
             {
@@ -39,7 +39,8 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.PhoneNumber, user.PhoneNumber ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Name, user.UserName ?? user.Id.ToString())
+                new Claim(ClaimTypes.Name, user.UserName ?? user.Id.ToString()),
+                new Claim("LoginIdentifier", loginIdentifier)
             };
 
             foreach (var role in roles)
@@ -72,17 +73,17 @@ namespace Abwaab.Infrastructure.Services.UserServices
         public async Task<Guid> GetUserIdByTokenAsync(RefreshTokenCommand request, string errorTitle)
         {
             RefreshToken? storedToken = await _refreshTokenRepo.GetByTokenAsync(request.RefreshToken);
-            
+
             if (storedToken == null || storedToken.IsRevoked || storedToken.ExpiryDate < DateTime.UtcNow)
                 throw new InvalidRefreshTokenException(errorTitle);
 
             return storedToken.UserId;
         }
 
-        public async Task<RefreshTokenResponse> RefreshTokenAsync(ApplicationUser user, IList<string> roles, string refreshToken)
+        public async Task<RefreshTokenResponse> RefreshTokenAsync(ApplicationUser user, IList<string> roles, string refreshToken, string loginIdentifier)
         {
             await _refreshTokenRepo.RevokeAsync(refreshToken, "Rotation");
-            var newAccessToken = GenerateAccessToken(user, roles);
+            var newAccessToken = GenerateAccessToken(user, roles, loginIdentifier);
             var newRefreshToken = GenerateRefreshToken();
             var newStoredToken = new RefreshToken
             {
@@ -110,9 +111,9 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return Convert.ToBase64String(bytes);
         }
 
-        public async Task<TokenResponseDTO> GenerateTokenResponseAsync(ApplicationUser user, IList<string> roles)
+        public async Task<TokenResponseDTO> GenerateTokenResponseAsync(ApplicationUser user, IList<string> roles, string loginIdentifier)
         {
-            string accessToken = GenerateAccessToken(user, roles);
+            string accessToken = GenerateAccessToken(user, roles, loginIdentifier);
             string refreshTokenString = GenerateRefreshToken();
             string tokenHash = HashToken(refreshTokenString);
             var refreshToken = new RefreshToken

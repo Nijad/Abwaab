@@ -8,5 +8,6 @@
         bool IsAuthenticated { get; }
         public string? RemoteIpAddress { get; }
         bool IsInRole(string role);
+        string? LoginIdentifier { get; }
     }
 }
