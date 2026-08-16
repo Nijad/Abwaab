@@ -175,7 +175,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             //check if user had already subscribe
             UserNotificationSubscription? userSubscription = await _notificationWayRepository.GetUserSubscriptionAsync(user.Id, notificationWayId);
 
-            if (userSubscription == null || !userSubscription.IsInactive)
+            if (userSubscription == null || userSubscription.IsInactive)
                 throw new AlreadyUnsubscribeNotificationWayException(
                     NotificationWaysMapping.Map(notificationWay.WayName), 
                     errorTitle);

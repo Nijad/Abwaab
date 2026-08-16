@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Features.Users.Profile.Email.Cancel;
+﻿using Abwaab.Application.Features.Notifications.AllNotificationWays;
+using Abwaab.Application.Features.Users.Profile.Email.Cancel;
 using Abwaab.Application.Features.Users.Profile.Email.Confirm;
 using Abwaab.Application.Features.Users.Profile.Email.InitiateChange;
 using Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.Subscribe;
@@ -126,6 +127,13 @@ namespace Abwaab.Server.Controllers
             var currentIdentifier = _userContext.LoginIdentifier;
             var query = new UserProfileDataDTO { Identifier = currentIdentifier };
             UserProfileDataResponse result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("NotificationWays")]
+        public async Task<IActionResult> GetAllNotificationWays()
+        {
+            List<GetAllWaysResponse> result = await _mediator.Send(new GetAllWaysQuery());
             return Ok(result);
         }
     }
