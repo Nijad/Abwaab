@@ -32,7 +32,12 @@ const useAxiosPrivate = () => {
           prevRequest.headers["Authorization"] = `Bearer ${newAccessTokent}`;
           return axiosPrivate(prevRequest);
         }
-        return Promise.reject(error);
+        const serverMessage =
+          error.response?.data || // Standard custom backend error message
+          // error.response?.data?.title || // ASP.NET Validation problem details
+          error.message || // Network / Axios error message
+          "An unexpected error occurred";
+        return Promise.reject(serverMessage);
       }
     );
     return () => {

@@ -7,7 +7,7 @@ const VerificationStatus = ({ isVerified = false, label }) => {
     : "bg-warning-100 text-warning-500";
   return (
     <p
-      className={`${colors} font-semibold text-sm rounded-full w-fit py-1 px-3 mx-1`}
+      className={`${colors} font-semibold text-sm rounded-full w-fit py-1 px-3 mx-0`}
     >
       {label}
       <Circle sx={{ width: "13px", marginInlineStart: 1 }} />

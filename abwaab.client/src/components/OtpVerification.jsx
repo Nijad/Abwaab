@@ -7,9 +7,13 @@ import { detectIdentifierType } from "../utils/helpers";
  *
  * @param {string} identifier - The identifier either email or phone number (e.g., "someone@gmail.com")
  * @param {function} onVerify - Callback function triggered when submitting the code
- * @param {function} onResend - Optional callback for resending the code
+ * @param {boolean} submit_cancel_buttons - Optional callback for resending the code
  */
-const OtpVerification = ({ identifier, onVerify, onResend }) => {
+const OtpVerification = ({
+  identifier,
+  onVerify,
+  submit_cancel_buttons = false,
+}) => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
   const identifierType = detectIdentifierType(identifier);
@@ -68,7 +72,7 @@ const OtpVerification = ({ identifier, onVerify, onResend }) => {
   const isComplete = otp.join("").length === 6;
 
   return (
-    <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-0 shadow-sm dark:bg-slate-900 my-3">
+    <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-0  dark:bg-slate-900 my-3">
       {/* Title & Sent Destination */}
       <div className="mb-6 ">
         <p className="text-base text-sky-700">
@@ -111,28 +115,42 @@ const OtpVerification = ({ identifier, onVerify, onResend }) => {
         </div>
 
         {/* Submit Button */}
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={!isComplete}
-          color="navy"
-          fullWidth
-          sx={{ padding: 1.5 }}
-          className="disabled:!bg-neutral-200"
-        >
-          تحقق ومتابعة
-        </Button>
-        {/* <button
-          type="submit"
-          disabled={!isComplete}
-          className={`w-full rounded-xl py-3.5 text-base font-bold text-white shadow-md transition-all ${
-            isComplete
-              ? "bg-[#0F2847] hover:bg-[#163862] active:scale-[0.99]"
-              : "cursor-not-allowed bg-slate-300 dark:bg-slate-700"
-          }`}
-        >
-          تحقق والمتابعة
-        </button> */}
+        {submit_cancel_buttons ? (
+          <div className="flex items-center gap-3">
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={!isComplete}
+              color="navy"
+              sx={{ padding: 1.5 }}
+              className="disabled:!bg-neutral-200"
+            >
+              تأكيد ومتابعة
+            </Button>
+            <Button
+              type="button"
+              variant="text"
+              disabled={!isComplete}
+              color="navy"
+              sx={{ padding: 1.5 }}
+              className="disabled:!bg-neutral-200"
+            >
+              الغاء الأمر
+            </Button>
+          </div>
+        ) : (
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={!isComplete}
+            color="navy"
+            fullWidth
+            sx={{ padding: 1.5 }}
+            className="disabled:!bg-neutral-200"
+          >
+            تحقق ومتابعة
+          </Button>
+        )}
       </form>
     </div>
   );

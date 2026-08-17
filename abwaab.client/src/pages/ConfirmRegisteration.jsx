@@ -101,6 +101,7 @@ const ConfirmRegisteration = () => {
                     identifier={user.identifier}
                     onVerify={handleFormSubmit}
                     onResend={resendCode}
+                    submit_cancel_buttons={false}
                   />
                 </div>
                 <div className="">

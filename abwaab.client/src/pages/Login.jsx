@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "../services/axios";
 import { Button, Grid, TextField } from "@mui/material";
 import useAuth from "../hooks/useAuth";
 import { Link, useNavigate } from "react-router";
@@ -7,6 +6,7 @@ import Admin from "./Admin";
 import { useSnackbar } from "notistack";
 import img from "../assets/imgs/login.webp";
 import logo from "../assets/imgs/logo.svg";
+import { authApi } from "../api";
 
 const Login = () => {
   // const axiosPrivate = useAxiosPrivate();
@@ -18,30 +18,47 @@ const Login = () => {
     e.preventDefault();
     const controller = new AbortController();
     var isAdmin;
-    await axios
-      .post(
-        "/auth/loginuser",
-        { ...fdata },
-        {
-          signal: controller.signal,
-        }
-      )
-      .then((resp) => {
-        isAdmin = resp.data.isAdmin;
-        login(resp.data);
-        if (isAdmin) redirect("admin");
-        else redirect("portal");
-      })
-      .catch((e) => {
-        if (e.response.data.errorCode === "EMAIL_NOT_VERIFIED") {
-          // debugger;
-          console.log(e);
-          navigate("/confirm-registeration", { replace: true });
-          enqueueSnackbar(e.response.data.detail, { variant: "error" });
-          //then in confirm page, it will check the storage and reads if otp is still valid
-        }
-      })
-      .finally(() => {});
+    try {
+      const resp = await authApi.login(fdata.identifier, fdata.password);
+      console.log(resp.data);
+      isAdmin = resp.data.isAdmin;
+      login(resp.data);
+      if (isAdmin) redirect("admin");
+      else redirect("portal");
+    } catch (error) {
+      if (error.response.data.errorCode === "EMAIL_NOT_VERIFIED") {
+        // debugger;
+        console.log(e);
+        navigate("/confirm-registeration", { replace: true });
+        //then in confirm page, it will check the storage and reads if otp is still valid
+      }
+      enqueueSnackbar(error.response.data.detail, { variant: "error" });
+    }
+
+    // await axios
+    //   .post(
+    //     "/auth/loginuser",
+    //     { ...fdata },
+    //     {
+    //       signal: controller.signal,
+    //     }
+    //   )
+    //   .then((resp) => {
+    //     isAdmin = resp.data.isAdmin;
+    //     login(resp.data);
+    //     if (isAdmin) redirect("admin");
+    //     else redirect("portal");
+    //   })
+    //   .catch((e) => {
+    //     if (e.response.data.errorCode === "EMAIL_NOT_VERIFIED") {
+    //       // debugger;
+    //       console.log(e);
+    //       navigate("/confirm-registeration", { replace: true });
+    //       enqueueSnackbar(e.response.data.detail, { variant: "error" });
+    //       //then in confirm page, it will check the storage and reads if otp is still valid
+    //     }
+    //   })
+    //   .finally(() => {});
   };
   console.log(fdata);
   const redirect = (to) => {
@@ -69,7 +86,7 @@ const Login = () => {
                 عقارك القادم أقرب مما تتخيل
               </p>
             </div>
-            <form method="post" onSubmit={handleSubmit} autoComplete="off">
+            <form method="post" onSubmit={handleSubmit} autoComplete="on">
               <div className="mb-6">
                 <TextField
                   id="identifier"

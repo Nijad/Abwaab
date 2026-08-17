@@ -17,6 +17,7 @@ import ChangeEmail from "../components/profile/ChangeEmail";
 import StyledSwitch from "../components/StyledSwitch";
 import ChangePhnoeNo from "../components/profile/ChangePhnoeNo";
 import ChangePassword from "../components/profile/ChancePassword";
+import VerifyChange from "../components/profile/VerifyChange";
 
 const profileData = {
   firstName: "حسام",
@@ -65,8 +66,10 @@ const Profile = () => {
     email: { show: false, action: "" },
     phoneNo: { show: false, action: "" },
     password: { show: false },
+    verification: { show: true, type: "email" },
     code: "",
     currentPassword: "",
+    newIdentifier: "",
     // change: { action: "", type: "" },
     // newEmail: "",
     // newPhoneNo: "",
@@ -131,7 +134,13 @@ const Profile = () => {
     const data = Object.fromEntries(frmdata.entries());
     await axiosPrivate
       .post(`profile/initiate-email-change`, { ...data })
-      .then((resp) => {})
+      .then((resp) => {
+        setChanges({
+          ...changes,
+          verification: { show: true, type: "email" },
+          newIdentifier: data.newEmail,
+        });
+      })
       .catch((err) => {});
   };
   const modifyPhoneNo = async (e) => {
@@ -140,7 +149,13 @@ const Profile = () => {
     const data = Object.fromEntries(frmdata.entries());
     await axiosPrivate
       .post(`profile/initiate-phone-change`, { ...data })
-      .then((resp) => {})
+      .then((resp) => {
+        setChanges({
+          ...changes,
+          verification: { show: true, type: "phone" },
+          newIdentifier: data.newPhoneNo,
+        });
+      })
       .catch((err) => {});
   };
   const modifyPassword = async (e) => {
@@ -151,6 +166,30 @@ const Profile = () => {
       .post(`profile/ChangePassword`, { ...data })
       .then((resp) => {})
       .catch((err) => {});
+  };
+  const cancelChange = async () => {
+    await axiosPrivate
+      .post(`auth/VerifyAccount`, {
+        identifier: changes.newIdentifier,
+        code: code,
+      })
+      .then((resp) => {
+        console.log(resp.data);
+      })
+      .catch((err) => {});
+    console.log("canceled");
+  };
+  const verfiyChangeHandler = async (code) => {
+    await axiosPrivate
+      .post(`auth/VerifyAccount`, {
+        identifier: changes.newIdentifier,
+        code: code,
+      })
+      .then((resp) => {
+        console.log(resp.data);
+      })
+      .catch((err) => {});
+    console.log("canceled");
   };
   return (
     <div className="flex flex-col md:px-28 w-full max-w-[1536px] mx-auto">
@@ -430,6 +469,18 @@ const Profile = () => {
           setChanges({ ...changes, password: { show: false } })
         }
         handleSubmit={modifyPassword}
+      />
+      <VerifyChange
+        title={`تحقق من ${
+          changes.verification.type === "email"
+            ? "البريد الإلكتروني الجديد"
+            : "رقم الموبايل الجديد"
+        }`}
+        description={""}
+        open={changes.verification.show}
+        newIdentifier={changes.newIdentifier}
+        handleClose={cancelChange}
+        handleSubmit={verfiyChangeHandler}
       />
     </div>
   );

@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const timerRef = useRef(null);
-  console.log(token);
+  console.log(user);
 
   // 1. تسجيل الخروج
   const logout = useCallback((reason = "manual") => {
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         const decoded = parseJwt(token.token);
         if (decoded) {
-          console.log("work1");
+          console.log(decoded);
           setUser({
             name: decoded[
               "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
@@ -67,6 +67,7 @@ export const AuthProvider = ({ children }) => {
               ] === "Admin"
                 ? true
                 : false,
+            identifier: decoded.LoginIdentifier,
           });
         }
       } else {
