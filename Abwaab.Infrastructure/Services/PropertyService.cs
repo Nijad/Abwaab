@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Properties;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
@@ -61,6 +62,37 @@ namespace Abwaab.Infrastructure.Services
             int propertyCount = await _propertyRepository.GetPropertiesCountBelongToPlanAsync(userPlan.Id);
 
             return propertyCount < userPlan.Plan.MaxPropertiesCountAtSameTime;
+        }
+
+        public async Task<Property> FindPropertyByIdAsync(Guid propertyId, string errorTitle)
+        {
+            Property? property = await _propertyRepository.FindPropertyByIdAsync(propertyId);
+
+            if (property == null)
+                throw new PropertyNotFoundException(errorTitle);
+
+            return property;
+        }
+
+        public async Task<bool> PropertyBelongToUser(Guid userId, Guid propertyId)
+        {
+            return await _propertyRepository.PropertyBelongToUser(userId, propertyId);
+        }
+
+        public async Task<PropertyState> GetNewState(PropertyState propertyState, string errorTitle)
+        {
+            PropertyState rejected = await GetRejectedPropertyStateAsync(errorTitle);
+            PropertyState pending = await GetPendingPropertyStateAsync(errorTitle);
+
+            if(propertyState.Id == rejected.Id ||  propertyState.Id == pending.Id)
+                return await GetPreparingPropertyStateAsync(errorTitle);
+
+            return propertyState;
+        }
+
+        public async Task UpdatePropertyAsync(Property property)
+        {
+            await _propertyRepository.UpdatePropertyAsync(property);
         }
     }
 }
