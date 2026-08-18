@@ -39,5 +39,7 @@
         public const string UserHasMoreThanOneActivePlan = "يجب أن يكون لدى المستخدم خطة نشطة واحدة فقط.";
         public const string UpdateUserFailed = "فشل تعديل بيانات المستخدم.";
         public const string PropertyNotFound = "العقار المطلوب غير موجود";
+        public const string PropertyTypeNotFound = "نوع العقار المطلوب غير موجود";
+        public const string PropertyFinishingNotFound = "كسوة العقار المطلوبة غير موجودة";
     }
 }

@@ -50,5 +50,7 @@
         public const string ResendWait = "RESEND_WAIT";
         public const string UpdateUserFailed = "UPDATE_USER_FAILED";
         public const string PropertyNotFound = "PROPERTY_NOT_FOUND";
+        public const string PropertyTypeNotFound = "PROPERTY_TYPE_NOT_FOUND";
+        public const string PropertyFinishingNotFound = "PROPERTY_FINISHING_TYPE_NOT_FOUND";
     }
 }

@@ -29,14 +29,35 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<Finishing?> FindPropertyFinishingByIdAsync(Guid finishingId)
+        {
+            return await _context.Finishings.Where(x => x.Id == finishingId).FirstOrDefaultAsync();
+        }
+
         public async Task<PropertyState?> FindPropertyStateByStateNameAsync(string propertyStateName)
         {
             return await _context.PropertyStates.Where(x => x.StateName == propertyStateName).FirstOrDefaultAsync();
         }
 
+        public async Task<PropertyType?> FindPropertyTypeByIdAsync(Guid propertyTypeId)
+        {
+            return await _context.PropertyTypes.Where(x=>x.Id== propertyTypeId).FirstOrDefaultAsync();
+        }
+
         public async Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId)
         {
             return _context.Properties.Where(x => x.UserPlandId == planId).Count();
+        }
+
+        public async Task<List<Finishing>> GetPropertyFinishingListAsync()
+        {
+            return await _context.Finishings.ToListAsync();
+            
+        }
+
+        public async Task<List<PropertyType>> GetProperyTypesList()
+        {
+            return await _context.PropertyTypes.ToListAsync();
         }
 
         public async Task<bool> PropertyBelongToUser(Guid userId, Guid propertyId)

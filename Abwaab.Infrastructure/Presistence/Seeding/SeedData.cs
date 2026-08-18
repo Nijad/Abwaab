@@ -146,9 +146,10 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<Finishing>
             {
-                new Finishing { Id = new Guid(), FinishingName = "New" },
-                new Finishing { Id = new Guid(), FinishingName = "Good" },
-                new Finishing { Id = new Guid(), FinishingName = "Old" }
+                new Finishing { Id = new Guid(), FinishingName = "جديد" },
+                new Finishing { Id = new Guid(), FinishingName = "جيد" },
+                new Finishing { Id = new Guid(), FinishingName = "قديم" },
+                new Finishing { Id = new Guid(), FinishingName = "ممتاز" }
             };
         }
 
@@ -156,10 +157,10 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<PropertyType>
             {
-                new PropertyType { Id = new Guid(), TypeName = "Apartment" },
-                new PropertyType { Id = new Guid(), TypeName = "House" },
-                new PropertyType { Id = new Guid(), TypeName = "Villa" },
-                new PropertyType { Id = new Guid(), TypeName = "Land" }
+                new PropertyType { Id = new Guid(), TypeName = "شقة" },
+                new PropertyType { Id = new Guid(), TypeName = "منزل" },
+                new PropertyType { Id = new Guid(), TypeName = "فيلا" },
+                new PropertyType { Id = new Guid(), TypeName = "أرض" }
             };
         }
 

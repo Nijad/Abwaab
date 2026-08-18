@@ -3,7 +3,9 @@ using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Plans;
 using Abwaab.Application.Contracts;
+using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Properties.Update;
+using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
 
@@ -12,6 +14,7 @@ namespace Abwaab.Application.Features.Properties.Add
     public class AddPropertyHandler : IRequestHandler<AddPropertyCommand, AddPropertyResponse>
     {
         private readonly IPropertyService _propertyService;
+        private readonly IPropertyStatesService _propertyStatesService;
         private readonly IUserService _userService;
         private readonly IPlanService _planService;
         private readonly IUserPlanStateService _userPlanStateService;
@@ -21,12 +24,14 @@ namespace Abwaab.Application.Features.Properties.Add
             IPropertyService propertyService,
             IUserService userService,
             IPlanService planService,
-            IUserPlanStateService userPlanStateService)
+            IUserPlanStateService userPlanStateService,
+            IPropertyStatesService propertyStatesService)
         {
             _propertyService = propertyService;
             _userService = userService;
             _planService = planService;
             _userPlanStateService = userPlanStateService;
+            _propertyStatesService = propertyStatesService;
         }
 
         public async Task<AddPropertyResponse> Handle(AddPropertyCommand request, CancellationToken cancellationToken)
@@ -50,7 +55,9 @@ namespace Abwaab.Application.Features.Properties.Add
             if (!isAllowedToAdd)
                 throw new ExceededAllowedPropertyNumberException(activeUserPlan.Plan, errorTitle);
 
-            Guid createdPropertyId = await _propertyService.CreatePropertyAsync(activeUserPlan, errorTitle);
+            PropertyState preparingPropertyState = await _propertyStatesService.GetPreparingPropertyStateAsync(errorTitle);
+
+            Guid createdPropertyId = await _propertyService.CreatePropertyAsync(activeUserPlan, preparingPropertyState, errorTitle);
             return new AddPropertyResponse() { PropertyId = createdPropertyId, Message = "تم إضافة عقار جديد بنجاح" };
         }
     }

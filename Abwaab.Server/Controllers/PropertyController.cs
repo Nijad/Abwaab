@@ -1,4 +1,7 @@
-﻿using Abwaab.Application.Features.Properties.Update;
+﻿using Abwaab.Application.Features.Notifications.AllNotificationWays;
+using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
+using Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList;
+using Abwaab.Application.Features.Properties.Update;
 using Abwaab.Application.Features.Properties.Update.BasicInfo;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +30,7 @@ namespace Abwaab.Server.Controllers
         }
 
         //2.1.  update basic information
-        [HttpPost("update-property")]
+        [HttpPut("update-property")]
         public async Task<IActionResult> UpdateProperty([FromBody] UpdatePropertyBasicInfoCommand command)
         {
             var result = await _mediator.Send(command);
@@ -53,5 +56,19 @@ namespace Abwaab.Server.Controllers
         //          and temp turns to published
 
         //  another scenario: reflect modification to original and delete temp (which is easier)
+
+        [HttpGet("finishing-list")]
+        public async Task<IActionResult> GetFinishingList()
+        {
+            var result = await _mediator.Send(new FinishingQuery());
+            return Ok(result);
+        }
+
+        [HttpGet("property-types-list")]
+        public async Task<IActionResult> GetPropertyTypesList()
+        {
+            var result = await _mediator.Send(new PropertyTypeQuery());
+            return Ok(result);
+        }
     }
 }

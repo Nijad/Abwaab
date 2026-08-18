@@ -3,6 +3,7 @@ using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
+using Abwaab.Application.Contracts.Properties;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
@@ -11,16 +12,25 @@ namespace Abwaab.Application.Features.Properties.Update.BasicInfo
 {
     public class UpdatePropertyBasicInfoHandler : IRequestHandler<UpdatePropertyBasicInfoCommand, UpdatePropertyBasicInfoResponse>
     {
-        private readonly IPropertyService _propertyService;
         private readonly IUserService _userService;
+        private readonly IPropertyService _propertyService;
+        private readonly IPropertyStatesService _propertyStatesService;
+        private readonly IPropertyTypeService _propertyPropertyTypeService;
+        private readonly IPropertyFinishingService _propertyFinishingService;
         private readonly string errorTitle = ErrorTitle.UpdateProperty;
 
         public UpdatePropertyBasicInfoHandler(
+            IUserService userService,
             IPropertyService propertyService,
-            IUserService userService)
+            IPropertyStatesService propertyStatesService,
+            IPropertyTypeService propertyPropertyTypeService,
+            IPropertyFinishingService propertyFinishingService)
         {
-            _propertyService = propertyService;
             _userService = userService;
+            _propertyService = propertyService;
+            _propertyStatesService = propertyStatesService;
+            _propertyPropertyTypeService = propertyPropertyTypeService;
+            _propertyFinishingService = propertyFinishingService;
         }
 
         public async Task<UpdatePropertyBasicInfoResponse> Handle(UpdatePropertyBasicInfoCommand request, CancellationToken cancellationToken)
@@ -28,20 +38,26 @@ namespace Abwaab.Application.Features.Properties.Update.BasicInfo
             //check if property exist
             Property property = await _propertyService.FindPropertyByIdAsync(request.PropertyId, errorTitle);
 
+            //check if property type exist
+            PropertyType propertyType = await _propertyPropertyTypeService.FindPropertyTypeByIdAsync(request.PropertyTypeId, errorTitle);
+
+            //check if property finishing exist
+            Finishing finishing = await _propertyFinishingService.FindPropertyFinishingByIdAsycn(request.FinishingId, errorTitle);
+
             //check if property belong to user
             string username = _userService.FindUserNameByContext();
             ApplicationUser? user = await _userService.FindUserByNameAsync(username);
 
             if (user == null)
                 throw new UserNotFoundException(username, errorTitle);
-            
+
             //check if property belong to user
             if (property.UserPlan.UserId != user.Id)
                 throw new ObjectNotBelongToUserException("العقار", errorTitle);
 
             //check current state and if need to change
-            PropertyState propertyState = await _propertyService.GetNewState(property.PropertyState, errorTitle);
-            
+            PropertyState propertyState = await _propertyStatesService.GetNewState(property.PropertyState, errorTitle);
+
             //reflect changes
             property.Title = request.Title;
             property.Description = request.Description;
