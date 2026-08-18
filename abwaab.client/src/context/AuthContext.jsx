@@ -7,6 +7,7 @@ import React, {
   useRef,
 } from "react";
 import { parseJwt } from "../utils/helpers";
+import { authApi } from "../api";
 
 const AuthContext = createContext(null);
 
@@ -23,6 +24,38 @@ export const AuthProvider = ({ children }) => {
 
   const timerRef = useRef(null);
   console.log(user);
+
+  useEffect(() => {
+    const initialize = async () => {
+      const storedRefreshToken = sessionStorage.getItem("refreshToken");
+      console.log(storedRefreshToken);
+      if (!storedRefreshToken) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const response = await authApi.refreshToken(storedRefreshToken);
+        console.log(response.data);
+
+        setToken({
+          token: response.data.accessToken,
+          refreshToken: response.data.refreshToken,
+        });
+        if (response.data.refreshToken) {
+          sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        }
+      } catch (error) {
+        console.log(error);
+        sessionStorage.removeItem("refreshToken");
+        setUser(null);
+        setToken(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    debugger;
+    initialize();
+  }, []);
 
   // 1. تسجيل الخروج
   const logout = useCallback((reason = "manual") => {
@@ -108,7 +141,7 @@ export const AuthProvider = ({ children }) => {
   // 5. دالة تسجيل الدخول
   const login = (info) => {
     console.log("work2");
-
+    sessionStorage.setItem("refreshToken", info.refreshToken);
     setToken({ token: info.accessToken, refreshToken: info.refreshToken });
     // setUser({ name: info.userName, isAdmin: info.isAdmin });
   };
@@ -137,10 +170,11 @@ export const AuthProvider = ({ children }) => {
         codeRemainingSeconds,
         setRemainingSeconds,
         loading,
+        setLoading,
         setIdentifier,
       }}
     >
-      {!loading && children}
+      {!loading ? children : <div>Loading Session{">>>>>"}</div>}
     </AuthContext.Provider>
   );
 };

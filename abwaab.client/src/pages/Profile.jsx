@@ -18,6 +18,7 @@ import StyledSwitch from "../components/StyledSwitch";
 import ChangePhnoeNo from "../components/profile/ChangePhnoeNo";
 import ChangePassword from "../components/profile/ChancePassword";
 import VerifyChange from "../components/profile/VerifyChange";
+import { profileApi } from "../api";
 
 const profileData = {
   firstName: "حسام",
@@ -66,7 +67,7 @@ const Profile = () => {
     email: { show: false, action: "" },
     phoneNo: { show: false, action: "" },
     password: { show: false },
-    verification: { show: true, type: "email" },
+    verification: { show: false, type: "email" },
     code: "",
     currentPassword: "",
     newIdentifier: "",
@@ -82,18 +83,24 @@ const Profile = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    const fetchData = async () => {
-      await axiosPrivate
-        .get(`/profile/getdata`)
-        .then((resp) => {
-          setProfile(resp.data);
-          console.log(resp.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    // fetchData()
+    try {
+      const response = profileApi.getProfileData();
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+    // const fetchData = async () => {
+    //   await axiosPrivate
+    //     .get(`/profile/getdata`)
+    //     .then((resp) => {
+    //       setProfile(resp.data);
+    //       console.log(resp.data);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // };
+    // fetchData();
     return () => {
       controller.abort;
     };
