@@ -6,6 +6,7 @@ import axios from "../services/axios";
 import useAuth from "../hooks/useAuth";
 import img from "../assets/imgs/register.webp";
 import logo from "../assets/imgs/logo.svg";
+import { authApi } from "../api";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -25,41 +26,69 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const controller = new AbortController();
-    await axios
-      .post(
-        "/auth/registeruser",
-        { ...fdata },
-        {
-          signal: controller.signal,
-        }
-      )
-      .then((resp) => {
-        console.log(resp.data);
-        setIdentifier(fdata.Identifier);
-        setRemainingSeconds(resp.data.codeTimeOutInMinuts * 60);
-        // sessionStorage.setItem("ced",e.response.data.expiryAt);
-        navigate("/confirm-registeration", { replace: true });
-      })
-      .catch((e) => {
-        // debugger;
-        if (e.response.data.errorCode === "USER_ALREADY_EXIST") {
-          console.log(e);
-          //save cde: code expiry date in session storage
-          // sessionStorage.setItem("ced",e.response.data.expiryDate);
-          enqueueSnackbar(e.response.data.detail, { variant: "error" });
-          navigate("/login", { replace: true });
-          enqueueSnackbar(
-            "قم بتسجيل الدخول باستخدام البريد الالكتروني/ رقم الموبايل",
-            {
-              variant: "info",
-              transitionDuration: { enter: "600", exit: "1200" },
-            }
-          );
-        }
-      });
+    try {
+      const response = await authApi.register(
+        ...Object.values(fdata),
+        controller.signal
+      );
+      console.log(response.data);
+      setIdentifier(fdata.Identifier);
+      setRemainingSeconds(response.data.codeTimeOutInMinuts * 60);
+      // sessionStorage.setItem("ced",e.response.data.expiryAt);
+      navigate("/confirm-registeration", { replace: true });
+    } catch (error) {
+      // debugger;
+      if (error.response.data.errorCode === "USER_ALREADY_EXIST") {
+        console.log(error);
+        //save cde: code expiry date in session storage
+        // sessionStorage.setItem("ced",e.response.data.expiryDate);
+        enqueueSnackbar(error.response.data.detail, { variant: "error" });
+        navigate("/login", { replace: true });
+        enqueueSnackbar(
+          "قم بتسجيل الدخول باستخدام البريد الالكتروني/ رقم الموبايل",
+          {
+            variant: "info",
+            transitionDuration: { enter: "600", exit: "1200" },
+          }
+        );
+      }
+    }
+
+    // await axios
+    //   .post(
+    //     "/auth/registeruser",
+    //     { ...fdata },
+    //     {
+    //       signal: controller.signal,
+    //     }
+    //   )
+    //   .then((resp) => {
+    //     console.log(resp.data);
+    //     setIdentifier(fdata.Identifier);
+    //     setRemainingSeconds(resp.data.codeTimeOutInMinuts * 60);
+    //     // sessionStorage.setItem("ced",e.response.data.expiryAt);
+    //     navigate("/confirm-registeration", { replace: true });
+    //   })
+    //   .catch((e) => {
+    //     // debugger;
+    //     if (e.response.data.errorCode === "USER_ALREADY_EXIST") {
+    //       console.log(e);
+    //       //save cde: code expiry date in session storage
+    //       // sessionStorage.setItem("ced",e.response.data.expiryDate);
+    //       enqueueSnackbar(e.response.data.detail, { variant: "error" });
+    //       navigate("/login", { replace: true });
+    //       enqueueSnackbar(
+    //         "قم بتسجيل الدخول باستخدام البريد الالكتروني/ رقم الموبايل",
+    //         {
+    //           variant: "info",
+    //           transitionDuration: { enter: "600", exit: "1200" },
+    //         }
+    //       );
+    //     }
+    //   });
   };
   return (
-    <Grid container className="bg-neutral-50 flex-wrap">
+    <Grid container className="bg-neutral-50 flex-wrap min-h-screen">
       <Grid container direction="column" className="ms-10 flex-1 h-full">
         <Grid>
           <Link to="/" className="m-5">

@@ -3,7 +3,7 @@ import useAuth from "../hooks/useAuth";
 import { Navigate } from "react-router";
 
 const ProtectedRoute = ({ children, isAdminRoute }) => {
-  debugger;
+  // debugger;
   const { isAdmin, isAuthenticated, loading } = useAuth();
   if (loading) return <div>CHecking authentication</div>;
   if (!isAuthenticated) return <Navigate to="/login" replace />;

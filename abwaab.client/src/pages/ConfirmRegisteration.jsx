@@ -9,6 +9,7 @@ import img from "../assets/imgs/register.webp";
 import logo from "../assets/imgs/logo.svg";
 import { detectIdentifierType, formatTime } from "../utils/helpers";
 import OtpVerification from "../components/OtpVerification";
+import { authApi } from "../api";
 
 const ConfirmRegisteration = () => {
   const { user, codeRemainingSeconds, setRemainingSeconds, login } = useAuth();
@@ -17,9 +18,18 @@ const ConfirmRegisteration = () => {
     Code: "",
   });
   const timerRef = useRef(null);
+  const ControllerRef = useRef(null);
 
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    return () => {
+      if (ControllerRef.current) {
+        ControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (codeRemainingSeconds > 0) {
@@ -36,38 +46,65 @@ const ConfirmRegisteration = () => {
   }, [codeRemainingSeconds, setRemainingSeconds]);
 
   const resendCode = async () => {
+    if (ControllerRef.current) {
+      ControllerRef.current.abort();
+    }
+    ControllerRef.current = new AbortController();
     try {
-      await axios
-        .post("/auth/resendcode", { Identifier: user.identifier })
-        .then((resp) => {
-          setRemainingSeconds(resp.data.codeTimeOutInMinuts * 60);
-          enqueueSnackbar(resp.data.message, { variant: "success" });
-          console.log(resp.data);
-        })
-        .catch((err) => {});
+      const response = await authApi.resendCode(
+        user.identifier,
+        ControllerRef.current.signal
+      );
+      setRemainingSeconds(response.data.codeTimeOutInMinuts * 60);
+      enqueueSnackbar(response.data.message, { variant: "success" });
+
+      // await axios
+      //   .post("/auth/resendcode", { Identifier: user.identifier })
+      //   .then((resp) => {
+      //     setRemainingSeconds(resp.data.codeTimeOutInMinuts * 60);
+      //     enqueueSnackbar(resp.data.message, { variant: "success" });
+      //     console.log(resp.data);
+      //   })
+      //   .catch((err) => {});
     } catch (error) {}
   };
   const handleFormSubmit = async (code) => {
-    console.log(code);
-
-    try {
-      await axios
-        .post("/auth/verifyaccount", {
-          Identifier: user.identifier,
-          Code: code,
-        })
-        .then((resp) => {
-          console.log(resp.data);
-          // login(resp.data);
-          navigate("/portal", { replace: true });
-          enqueueSnackbar("تم تأكيد الحساب بنجاح", { variant: "success" });
-        })
-        .catch((err) => {
-          enqueueSnackbar(err.response.data.detail, { variant: "error" });
-        });
-    } catch (error) {
-      enqueueSnackbar(error, { variant: "error" });
+    if (ControllerRef.current) {
+      ControllerRef.current.abort();
     }
+    ControllerRef.current = new AbortController();
+    try {
+      const response = await authApi.verifyAccount(
+        user.identifier,
+        code,
+        ControllerRef.current.signal
+      );
+      console.log(response.data);
+      // login(resp.data);
+      navigate("/portal", { replace: true });
+      enqueueSnackbar("تم تأكيد الحساب بنجاح", { variant: "success" });
+    } catch (error) {
+      enqueueSnackbar(error.response.data.detail, { variant: "error" });
+    }
+
+    // try {
+    //   await axios
+    //     .post("/auth/verifyaccount", {
+    //       Identifier: user.identifier,
+    //       Code: code,
+    //     })
+    //     .then((resp) => {
+    //       console.log(resp.data);
+    //       // login(resp.data);
+    //       navigate("/portal", { replace: true });
+    //       enqueueSnackbar("تم تأكيد الحساب بنجاح", { variant: "success" });
+    //     })
+    //     .catch((err) => {
+    //       enqueueSnackbar(err.response.data.detail, { variant: "error" });
+    //     });
+    // } catch (error) {
+    //   enqueueSnackbar(error, { variant: "error" });
+    // }
   };
 
   const handleCountdownEnd = () => {
@@ -100,7 +137,6 @@ const ConfirmRegisteration = () => {
                   <OtpVerification
                     identifier={user.identifier}
                     onVerify={handleFormSubmit}
-                    onResend={resendCode}
                     submit_cancel_buttons={false}
                   />
                 </div>

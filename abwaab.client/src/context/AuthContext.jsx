@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     };
-    debugger;
+    // debugger;
     initialize();
   }, []);
 
