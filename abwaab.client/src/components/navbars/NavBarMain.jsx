@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,10 +12,11 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import logo from "../../assets/imgs/logo.svg";
 import useAuth from "../../hooks/useAuth";
 import { ChevronLeft } from "@mui/icons-material";
+import { replace } from "stylis";
 
 const pages = {
   public: [
@@ -76,9 +77,10 @@ const pages = {
 const settings = ["الملف الشخصي", "Account", "Dashboard", "Logout"];
 
 const NavBarMain = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
   const { user, isAdmin, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -93,6 +95,14 @@ const NavBarMain = () => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+  const navigateToProfile = () => {
+    setAnchorElUser(null);
+    navigate("/portal/profile", { replace });
+  };
+  const logoutHandler = () => {
+    logout();
+    // navigate("/portal/profile", { replace });
   };
 
   return (
@@ -224,7 +234,7 @@ const NavBarMain = () => {
                   }}
                   key={`setting-profile`}
                   className="hover:!bg-sky-50 !border-neutral-900 !border-4"
-                  onClick={handleCloseUserMenu}
+                  onClick={navigateToProfile}
                 >
                   <div className="flex w-full justify-between items-center">
                     <div className="">
@@ -248,7 +258,7 @@ const NavBarMain = () => {
                   }}
                   key={`setting-logout`}
                   className="hover:!bg-sky-50 !border-neutral-900 !border-4"
-                  onClick={handleCloseUserMenu}
+                  onClick={logoutHandler}
                 >
                   <div className="flex w-full justify-between items-center">
                     <div className="">

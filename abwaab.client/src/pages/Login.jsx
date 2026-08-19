@@ -9,7 +9,6 @@ import logo from "../assets/imgs/logo.svg";
 import { authApi } from "../api";
 
 const Login = () => {
-  // const axiosPrivate = useAxiosPrivate();
   const { login } = useAuth();
   const navigate = useNavigate();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();

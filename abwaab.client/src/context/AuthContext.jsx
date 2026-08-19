@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { parseJwt } from "../utils/helpers";
 import { authApi } from "../api";
+import { useSnackbar } from "notistack";
 
 const AuthContext = createContext(null);
 
@@ -21,8 +22,10 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [codeRemainingSeconds, setCodeRemainingTime] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { enqueueSnackbar } = useSnackbar();
 
   const timerRef = useRef(null);
+  const signalRef = useRef(null);
   console.log(user);
 
   useEffect(() => {
@@ -54,18 +57,28 @@ export const AuthProvider = ({ children }) => {
       }
     };
     // debugger;
-    initialize();
+    // initialize();
   }, []);
-
   // 1. تسجيل الخروج
   const logout = useCallback((reason = "manual") => {
-    setToken(null);
-    setUser(null);
-    if (timerRef.current) clearTimeout(timerRef.current);
-
     if (reason === "inactivity") {
       alert("تم إنهاء الجلسة تلقائياً لعدم النشاط لمدة 30 دقيقة.");
     }
+    const callLogout = async () => {
+      signalRef.current = new AbortController();
+      try {
+        const response = await authApi.logout(true, signalRef.current.signal);
+        setToken(null);
+        setUser(null);
+        sessionStorage.removeItem("refreshToken");
+        sessionStorage.removeItem("token");
+        if (timerRef.current) clearTimeout(timerRef.current);
+        enqueueSnackbar(response.data.message, { variant: "success" });
+      } catch (error) {
+        enqueueSnackbar(error.response.data.title, { variant: "error" });
+      }
+    };
+    callLogout();
   }, []);
 
   // 2. إعادة ضبط مؤقت الخمول (Inactivity Timer)
@@ -106,7 +119,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(null);
       }
-      setLoading(false);
+      // setLoading(false);
     }, 0);
     return () => clearTimeout(to);
   }, [token]);
@@ -142,8 +155,24 @@ export const AuthProvider = ({ children }) => {
   const login = (info) => {
     console.log("work2");
     sessionStorage.setItem("refreshToken", info.refreshToken);
+    sessionStorage.setItem("token", info.accessToken);
     setToken({ token: info.accessToken, refreshToken: info.refreshToken });
     // setUser({ name: info.userName, isAdmin: info.isAdmin });
+  };
+
+  const refreshToken = async () => {
+    // debugger;
+    const storedRefreshToken = sessionStorage.getItem("refreshToken");
+    if (!storedRefreshToken) {
+      return "";
+    }
+    try {
+      const response = await authApi.refreshToken(storedRefreshToken);
+      login(response.data);
+      return response.data.accessToken;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const setRemainingSeconds = (date) => {
@@ -172,9 +201,11 @@ export const AuthProvider = ({ children }) => {
         loading,
         setLoading,
         setIdentifier,
+        refreshToken,
       }}
     >
-      {!loading ? children : <div>Loading Session{">>>>>"}</div>}
+      {/* {!loading ? children : <div>Loading Session{">>>>>"}</div>} */}
+      {children}
     </AuthContext.Provider>
   );
 };

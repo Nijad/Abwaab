@@ -11,7 +11,6 @@ import {
   Switch,
   TextField,
 } from "@mui/material";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useSnackbar } from "notistack";
 import ChangeEmail from "../components/profile/ChangeEmail";
 import StyledSwitch from "../components/StyledSwitch";
@@ -78,7 +77,6 @@ const Profile = () => {
     // newPassword: "",
     // confirmPassword: "",
   });
-  const axiosPrivate = useAxiosPrivate();
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {

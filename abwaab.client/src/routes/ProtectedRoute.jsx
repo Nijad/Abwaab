@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children, isAdminRoute }) => {
   // debugger;
   const { isAdmin, isAuthenticated, loading } = useAuth();
   if (loading) return <div>CHecking authentication</div>;
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  // if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (isAdminRoute && !isAdmin)
     return <Navigate to={"/unauthorized"} replace />;
   if (!isAdminRoute && !isAdmin) return children;

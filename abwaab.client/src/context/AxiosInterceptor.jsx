@@ -1,21 +1,17 @@
+import React, { useEffect } from "react";
+import useAuth from "../hooks/useAuth";
 import { axiosPrivate } from "../services/axios";
-import { useEffect } from "react";
-import useRefreshToken from "./useRefreshToken";
-import useAuth from "./useAuth";
-// import useAuth from "./useAuth";
 
-const useAxiosPrivate = () => {
-  const refresh = useRefreshToken();
-  const { token } = useAuth();
-  console.log(token);
-
-  // const { auth } = null;
+const AxiosInterceptor = ({ children }) => {
+  const { token, refreshToken, loading, logout } = useAuth();
+  console.log("loadin is:", loading);
+  const storedToken = sessionStorage.getItem("token");
 
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
-        if (!config.headers["Authorization"] && token) {
-          config.headers["Authorization"] = `Bearer ${token}`;
+        if (!config.headers["Authorization"] && storedToken) {
+          config.headers["Authorization"] = `Bearer ${storedToken}`;
         }
         return config;
       },
@@ -30,8 +26,10 @@ const useAxiosPrivate = () => {
           !prevRequest?.sent
         ) {
           prevRequest.sent = true;
-          const newAccessTokent = await refresh();
-          prevRequest.headers["Authorization"] = `Bearer ${newAccessTokent}`;
+          const newToken = await refreshToken();
+          console.log("from axios- after refresh-token is:", newToken);
+
+          prevRequest.headers["Authorization"] = `Bearer ${newToken}`;
           return axiosPrivate(prevRequest);
         }
         const serverMessage =
@@ -46,7 +44,8 @@ const useAxiosPrivate = () => {
       axiosPrivate.interceptors.response.eject(responsIntercept);
       axiosPrivate.interceptors.response.eject(requestIntercept);
     };
-  }, [token, refresh]);
-  return axiosPrivate;
+  }, [token, refreshToken]);
+  return children;
 };
-export default useAxiosPrivate;
+
+export default AxiosInterceptor;

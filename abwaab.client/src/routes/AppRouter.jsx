@@ -25,6 +25,7 @@ import ConfirmRegisteration from "../pages/ConfirmRegisteration";
 import NoLayout from "../layouts/NoLayout";
 import Subscriptions from "../pages/Subscriptions";
 import AboutUs from "../pages/AboutUs";
+import PresistLogin from "./PresistLogin";
 
 // Dashboard Pages
 // import { OverviewPage } from "../pages/dashboard/OverviewPage";
@@ -84,9 +85,11 @@ const router = createBrowserRouter([
   {
     path: "/portal",
     element: (
-      <ProtectedRoute isAdminRoute={false}>
-        <UserLayout />
-      </ProtectedRoute>
+      <PresistLogin>
+        <ProtectedRoute isAdminRoute={false}>
+          <UserLayout />
+        </ProtectedRoute>
+      </PresistLogin>
     ),
     children: [
       { index: true, element: <Home /> },

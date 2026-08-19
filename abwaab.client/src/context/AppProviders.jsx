@@ -3,15 +3,18 @@ import { AuthProvider } from "./AuthContext";
 import { NoftificationProvider } from "./NoftificationContext";
 import ThemeProviderMUI from "./ThemeProviderMUI";
 import NotistackProvider from "./NotistackProvider";
+import AxiosInterceptor from "./AxiosInterceptor";
 
 const AppProviders = ({ children }) => {
   return (
     <AuthProvider>
-      <NoftificationProvider>
-        <NotistackProvider>
-          <ThemeProviderMUI>{children}</ThemeProviderMUI>
-        </NotistackProvider>
-      </NoftificationProvider>
+      <AxiosInterceptor>
+        <NoftificationProvider>
+          <NotistackProvider>
+            <ThemeProviderMUI>{children}</ThemeProviderMUI>
+          </NotistackProvider>
+        </NoftificationProvider>
+      </AxiosInterceptor>
     </AuthProvider>
   );
 };

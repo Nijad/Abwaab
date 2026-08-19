@@ -1,3 +1,5 @@
+import useAuth from "../hooks/useAuth";
+
 export const parseJwt = (token) => {
   try {
     const base64Url = token.split(".")[1];
@@ -57,7 +59,7 @@ export const formatTime = (totalSeconds) => {
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 };
 
-export const AvatarString = (name) => {
+export const avatarString = (name) => {
   var parts = name.split(" ");
   if (parts.count > 1) {
     return `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`;
