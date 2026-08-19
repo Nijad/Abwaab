@@ -48,6 +48,7 @@ namespace Abwaab.Infrastructure.Presistence.Context
         public DbSet<PropertyState> PropertyStates { get; set; }
         public DbSet<PropertyType> PropertyTypes { get; set; }
         public DbSet<TimeSlot> TimeSlots { get; set; }
+        public DbSet<AttributeDataType> AttributeDataTypes { get; set; }
 
         public DbSet<OTP> OTPs { get; set; }
         public DbSet<Plan> Plans { get; set; }
