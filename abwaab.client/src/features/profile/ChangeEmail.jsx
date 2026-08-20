@@ -8,13 +8,15 @@ import {
   TextField,
 } from "@mui/material";
 import React from "react";
+import ShowErrors from "../../components/ShowErrors";
 
-const ChangePhnoeNo = ({
+const ChangeEmail = ({
   title,
   open,
   description,
   handleClose,
   handleSubmit,
+  errors = null,
 }) => {
   return (
     <Dialog
@@ -32,19 +34,24 @@ const ChangePhnoeNo = ({
         >
           <TextField
             autoFocus
+            error={errors == null ? false : errors["NewEmail"] ? true : false}
+            helperText={ShowErrors({ object: errors, key: "NewEmail" })}
             required
             margin="dense"
-            id="newPhoneNo"
-            name="newPhoneNo"
-            label="رقم الموبايل الجديد"
-            type="tel"
+            id="newEmail"
+            name="newEmail"
+            label="البريد الإلكتروني الجديد"
+            type="email"
             fullWidth
             variant="standard"
             size="medium"
-            helperText="استخدم رقماً قادراً على استقبال الرسائل النصية"
           />
           <TextField
             required
+            error={
+              errors == null ? false : errors["CurrentPassword"] ? true : false
+            }
+            helperText={ShowErrors({ object: errors, key: "CurrentPassword" })}
             margin="dense"
             id="currentPassword"
             name="currentPassword"
@@ -54,6 +61,7 @@ const ChangePhnoeNo = ({
             variant="standard"
             size="medium"
             placeholder="أدخل كلمة المرور الحالية"
+            autoComplete="new-password"
           />
         </form>
       </DialogContent>
@@ -72,4 +80,4 @@ const ChangePhnoeNo = ({
   );
 };
 
-export default ChangePhnoeNo;
+export default ChangeEmail;

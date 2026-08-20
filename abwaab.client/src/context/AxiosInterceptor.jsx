@@ -44,7 +44,7 @@ const AxiosInterceptor = ({ children }) => {
       axiosPrivate.interceptors.response.eject(responsIntercept);
       axiosPrivate.interceptors.response.eject(requestIntercept);
     };
-  }, [token, refreshToken]);
+  }, [token, refreshToken, storedToken]);
   return children;
 };
 

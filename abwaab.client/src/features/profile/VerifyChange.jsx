@@ -8,7 +8,7 @@ import {
   TextField,
 } from "@mui/material";
 import React from "react";
-import OtpVerification from "../OtpVerification";
+import OtpVerification from "../../components/OtpVerification";
 import useAuth from "../../hooks/useAuth";
 
 const VerifyChange = ({

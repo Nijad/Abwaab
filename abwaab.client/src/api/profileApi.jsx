@@ -1,65 +1,103 @@
 import { axiosPrivate } from "../services/axios";
 
 export const profileApi = {
-  getProfileData: () => axiosPrivate.get("/api/Profile/ProfileData"),
+  getProfileData: (signal) =>
+    axiosPrivate.get("/api/Profile/ProfileData", { signal: signal }),
 
-  getNotificationWays: () => axiosPrivate.get("/api/Profile/NotificationWays"),
+  getNotificationWays: (signal) =>
+    axiosPrivate.get("/api/Profile/NotificationWays", { signal: signal }),
 
-  updateUser: (firstName, lastName) =>
-    axiosPrivate.post("/api/Profile/UpdateUser", {
-      firstName,
-      lastName,
-    }),
+  updateUser: (firstName, lastName, signal) =>
+    axiosPrivate.post(
+      "/api/Profile/UpdateUser",
+      {
+        firstName,
+        lastName,
+      },
+      { signal: signal }
+    ),
 
-  changePassword: (currentPassword, newPassword, confirmPassword) =>
-    axiosPrivate.post("/api/Profile/ChangePassword", {
-      currentPassword,
-      newPassword,
-      confirmPassword,
-    }),
+  changePassword: (currentPassword, newPassword, confirmPassword, signal) =>
+    axiosPrivate.post(
+      "/api/Profile/ChangePassword",
+      {
+        currentPassword,
+        newPassword,
+        confirmPassword,
+      },
+      { signal: signal }
+    ),
 
-  initiateEmailChange: (newEmail, currentPassword) =>
-    axiosPrivate.post("/api/Profile/initiate-email-change", {
-      newEmail,
-      currentPassword,
-    }),
+  initiateEmailChange: (newEmail, currentPassword, signal) =>
+    axiosPrivate.post(
+      "/api/Profile/initiate-email-change",
+      {
+        newEmail,
+        currentPassword,
+      },
+      { signal: signal }
+    ),
 
-  confirmEmailChange: (newEmail, code) =>
-    axiosPrivate.post("/api/Profile/confirm-email-change", {
-      newEmail,
-      code,
-    }),
+  confirmEmailChange: (newEmail, code, signal) =>
+    axiosPrivate.post(
+      "/api/Profile/confirm-email-change",
+      {
+        newEmail,
+        code,
+      },
+      { signal: signal }
+    ),
 
-  cancelEmailChange: () =>
-    axiosPrivate.post("/api/Profile/cancel-email-change"),
+  cancelEmailChange: (signal) =>
+    axiosPrivate.post("/api/Profile/cancel-email-change", { signal: signal }),
 
-  initiatePhoneChange: (newPhoneNo, currentPassword) =>
-    axiosPrivate.post("/api/Profile/initiate-phone-change", {
-      newPhoneNo,
-      currentPassword,
-    }),
+  initiatePhoneChange: (newPhoneNo, currentPassword, signal) =>
+    axiosPrivate.post(
+      "/api/Profile/initiate-phone-change",
+      {
+        newPhoneNo,
+        currentPassword,
+      },
+      { signal: signal }
+    ),
 
-  confirmPhoneChange: (newPhoneNo, code) =>
-    axiosPrivate.post("/api/Profile/confirm-phone-change", {
-      newPhoneNo,
-      code,
-    }),
+  confirmPhoneChange: (newPhoneNo, code, signal) =>
+    axiosPrivate.post(
+      "/api/Profile/confirm-phone-change",
+      {
+        newPhoneNo,
+        code,
+      },
+      { signal: signal }
+    ),
 
-  cancelPhoneChange: () =>
-    axiosPrivate.post("/api/Profile/cancel-phone-change"),
+  cancelPhoneChange: (signal) =>
+    axiosPrivate.post("/api/Profile/cancel-phone-change", { signal: signal }),
 
-  subscribeNotificationWay: (notifiactionWayId) =>
-    axiosPrivate.post("/api/Profile/SubscribeNotificationWay", {
-      notifiactionWayId,
-    }),
+  subscribeNotificationWay: (notifiactionWayId, signal) =>
+    axiosPrivate.post(
+      "/api/Profile/SubscribeNotificationWay",
+      {
+        notifiactionWayId,
+      },
+      { signal: signal }
+    ),
 
-  unsubscribeNotificationWay: (notifiactionWayId) =>
-    axiosPrivate.post("/api/Profile/UnsubscribeNotificationWay", {
-      notifiactionWayId,
-    }),
+  unsubscribeNotificationWay: (notifiactionWayId, signal) =>
+    axiosPrivate.post(
+      "/api/Profile/UnsubscribeNotificationWay",
+      {
+        notifiactionWayId,
+      },
+      { signal: signal }
+    ),
 
-  upgradePlan: (planId) =>
-    axiosPrivate.post("/api/Profile/UpgradePlan", {
-      planId,
-    }),
+  upgradePlan: (planId, signal) =>
+    axiosPrivate.post(
+      "/api/Profile/UpgradePlan",
+      {
+        planId,
+      },
+      { signal: signal }
+    ),
 };

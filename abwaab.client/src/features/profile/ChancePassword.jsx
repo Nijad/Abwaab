@@ -8,8 +8,9 @@ import {
   TextField,
 } from "@mui/material";
 import React from "react";
+import ShowErrors from "../../components/ShowErrors";
 
-const ChangePassword = ({ open, handleClose, handleSubmit }) => {
+const ChangePassword = ({ open, handleClose, handleSubmit, errors = null }) => {
   return (
     <Dialog
       open={open}
@@ -29,6 +30,11 @@ const ChangePassword = ({ open, handleClose, handleSubmit }) => {
         >
           <TextField
             required
+            autoComplete="new-password"
+            error={
+              errors == null ? false : errors["CurrentPassword"] ? true : false
+            }
+            helperText={ShowErrors({ object: errors, key: "CurrentPassword" })}
             margin="dense"
             id="currentPassword"
             name="currentPassword"
@@ -41,6 +47,11 @@ const ChangePassword = ({ open, handleClose, handleSubmit }) => {
           />
           <TextField
             required
+            autoComplete="new-password"
+            error={
+              errors == null ? false : errors["NewPassword"] ? true : false
+            }
+            helperText={ShowErrors({ object: errors, key: "NewPassword" })}
             margin="dense"
             id="newPassword"
             name="newPassword"
@@ -53,6 +64,18 @@ const ChangePassword = ({ open, handleClose, handleSubmit }) => {
           />
           <TextField
             required
+            autoComplete="new-password"
+            error={
+              errors == null
+                ? false
+                : errors["ConfirmNewPassword"]
+                ? true
+                : false
+            }
+            helperText={ShowErrors({
+              object: errors,
+              key: "ConfirmNewPassword",
+            })}
             margin="dense"
             id="confirmPassword"
             name="confirmPassword"
