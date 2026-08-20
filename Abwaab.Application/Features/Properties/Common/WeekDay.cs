@@ -1,4 +1,4 @@
-﻿namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
+﻿namespace Abwaab.Application.Features.Properties.Common
 {
     public class WeekDay
     {

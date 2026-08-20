@@ -1,8 +1,8 @@
 ﻿using MediatR;
 
-namespace Abwaab.Application.Features.Properties.Update.BasicInfo
+namespace Abwaab.Application.Features.Properties.Update
 {
-    public class UpdatePropertyBasicInfoCommand : IRequest<UpdatePropertyBasicInfoResponse>
+    public class UpdatePropertyCommand : IRequest<UpdatePropertyResponse>
     {
         public Guid PropertyId { get; set; }
         public Guid PropertyTypeId { get; set; }

@@ -1,9 +1,9 @@
-﻿using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
+﻿using Abwaab.Application.Features.Properties.Common;
 
 namespace Abwaab.Application.Contracts
 {
     public interface IPropertyAttributeService
     {
-        Task<List<AttributeForUpdate>> GetAttributesListAsync();
+        Task<List<AttributeDTO>> GetAttributesListAsync();
     }
 }

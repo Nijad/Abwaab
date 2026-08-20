@@ -1,9 +1,9 @@
-﻿using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
+﻿using Abwaab.Application.Features.Properties.Common;
 
 namespace Abwaab.Application.Contracts
 {
     public interface IPropertyTimeSlotService
     {
-        Task<List<TimeSlotForUpdate>> GetPropertyTimeSlotsListAsync(Guid propertyId);
+        Task<List<TimeSlotDTO>> GetPropertyTimeSlotsListAsync(Guid propertyId);
     }
 }

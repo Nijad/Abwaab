@@ -1,5 +1,5 @@
 ﻿using Abwaab.Application.Contracts.Properties;
-using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
+using Abwaab.Application.Features.Properties.Common;
 using Abwaab.Domain.Entities.PropertyEntities;
 using MediatR;
 
@@ -16,7 +16,7 @@ namespace Abwaab.Application.Features.Properties.Queries.GetFinishingList
 
         public async Task<List<FinishingRespons>> Handle(FinishingQuery request, CancellationToken cancellationToken)
         {
-            List<PropertyFinishingForUpdate> finishings = await _propertyFinishingService.GetPropertyFinishingListAsync();
+            List<PropertyFinishingDTO> finishings = await _propertyFinishingService.GetPropertyFinishingListAsync();
             
             List<FinishingRespons> finishingRespons = new();
             foreach (var item in finishings)

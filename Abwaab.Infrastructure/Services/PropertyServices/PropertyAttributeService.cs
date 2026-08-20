@@ -1,5 +1,5 @@
 ﻿using Abwaab.Application.Contracts;
-using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
+using Abwaab.Application.Features.Properties.Common;
 using Abwaab.Application.Repositories;
 using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
 
@@ -14,14 +14,14 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             _propertyRepository = propertyRepository;
         }
 
-        public async Task<List<AttributeForUpdate>> GetAttributesListAsync()
+        public async Task<List<AttributeDTO>> GetAttributesListAsync()
         {
             List<Attribute> attributes = await _propertyRepository.GetAttributesListAsync();
 
-            List<AttributeForUpdate> list = new();
+            List<AttributeDTO> list = new();
             foreach (var attribute in attributes)
             {
-                List<AttributePossibleValuForUpdate> apvl = null!;
+                List<AttributePossibleValueDTO> apvl = null!;
                 if (attribute.PossibleValues != null)
                 {
                     apvl = new();

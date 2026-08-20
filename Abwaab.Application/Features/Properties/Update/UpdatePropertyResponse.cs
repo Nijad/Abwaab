@@ -1,6 +1,6 @@
-﻿namespace Abwaab.Application.Features.Properties.Update.BasicInfo
+﻿namespace Abwaab.Application.Features.Properties.Update
 {
-    public class UpdatePropertyBasicInfoResponse
+    public class UpdatePropertyResponse
     {
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;

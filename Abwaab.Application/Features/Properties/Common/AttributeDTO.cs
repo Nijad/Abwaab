@@ -1,11 +1,11 @@
-﻿namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
+﻿namespace Abwaab.Application.Features.Properties.Common
 {
-    public class AttributeForUpdate
+    public class AttributeDTO
     {
         public Guid AttributeId { get; set; }
         public string AttributeName { get; set; }
         public Guid DataTypeId { get; set; }
         public string DatayTypeDescription { get; set; }
-        public List<AttributePossibleValuForUpdate>? PossibleValues { get; set; }
+        public List<AttributePossibleValueDTO>? PossibleValues { get; set; }
     } 
 }

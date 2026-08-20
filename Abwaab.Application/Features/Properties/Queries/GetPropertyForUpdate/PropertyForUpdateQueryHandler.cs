@@ -3,6 +3,7 @@ using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
+using Abwaab.Application.Features.Properties.Common;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
@@ -51,13 +52,13 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                 throw new ObjectNotBelongToUserException("العقار", errorTitle);
 
             // 4.    get property types list
-            List<PropertyTypeForUpdate> typesList = await _propertyTypeService.GetProperyTypesListAsync();
+            List<PropertyTypeDTO> typesList = await _propertyTypeService.GetProperyTypesListAsync();
 
             // 5.    get property finishins list
-            List<PropertyFinishingForUpdate> finishingList = await _propertyFinishingService.GetPropertyFinishingListAsync();
+            List<PropertyFinishingDTO> finishingList = await _propertyFinishingService.GetPropertyFinishingListAsync();
 
             // 6.    get property time slots list
-            List<TimeSlotForUpdate> timeSlotsList = new();
+            List<TimeSlotDTO> timeSlotsList = new();
             if (property.TimeSlots != null)
                 foreach (var timeSlot in property.TimeSlots)
                     timeSlotsList.Add(new()
@@ -70,7 +71,7 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                     });
 
             // 7.    get property attributes list
-            List<PropertyAttributeForUpdate> propertyAttributes = null!;
+            List<PropertyAttributeDTO> propertyAttributes = null!;
             if (property.PropertyAttributes != null)
             {
                 propertyAttributes = new();
@@ -86,7 +87,7 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                     });
             }
             // 8.   get attributes
-            List<AttributeForUpdate> attributes = await _propertyAttributeService.GetAttributesListAsync();
+            List<AttributeDTO> attributes = await _propertyAttributeService.GetAttributesListAsync();
 
             PropertyForUpdateResponse response = new()
             {
@@ -103,7 +104,6 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                 PropertyTypesList = typesList,
                 PropertyFinishingsList = finishingList,
                 TimeSlots = timeSlotsList,
-                WeekDaysList = WeekDay.GetWeekDaysList(),
                 PropertyAttributesList = propertyAttributes,
                 Attributes = attributes,
                 IsStar = property.IsStard

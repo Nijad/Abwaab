@@ -1,6 +1,6 @@
-﻿namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
+﻿namespace Abwaab.Application.Features.Properties.Common
 {
-    public class TimeSlotForUpdate
+    public class TimeSlotDTO
     {
         public Guid TimeSlotId { get; set; }
         public int Day { get; set; }

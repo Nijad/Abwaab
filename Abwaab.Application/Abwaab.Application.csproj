@@ -11,12 +11,6 @@
     <Folder Include="Features\Properties\DeleteMedia\" />
     <Folder Include="Features\Properties\Queries\GetPropertyDetails\" />
     <Folder Include="Features\Properties\Save\" />
-    <Folder Include="Features\Properties\Update\AddAttribue\" />
-    <Folder Include="Features\Properties\Update\AddMedia\" />
-    <Folder Include="Features\Properties\Update\AddTimeSlote\" />
-    <Folder Include="Features\Properties\Update\RemoveTimeSlot\" />
-    <Folder Include="Features\Properties\Update\RemoveMedia\" />
-    <Folder Include="Features\Properties\Update\RemoveAttribute\" />
     <Folder Include="Features\Properties\UploadMedia\" />
   </ItemGroup>
 

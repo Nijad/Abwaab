@@ -1,5 +1,5 @@
 ﻿using Abwaab.Application.Contracts;
-using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
+using Abwaab.Application.Features.Properties.Common;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
 
@@ -14,11 +14,11 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             _propertyRepository = propertyRepository;
         }
 
-        public async Task<List<TimeSlotForUpdate>> GetPropertyTimeSlotsListAsync(Guid propertyId)
+        public async Task<List<TimeSlotDTO>> GetPropertyTimeSlotsListAsync(Guid propertyId)
         {
             List<TimeSlot> timeSlots = await _propertyRepository.GetTimeSlotsByPropertyIdAsync(propertyId);
 
-            List<TimeSlotForUpdate> ptsl = new();
+            List<TimeSlotDTO> ptsl = new();
             foreach (var timeSlot in timeSlots)
                 ptsl.Add(new()
                 {

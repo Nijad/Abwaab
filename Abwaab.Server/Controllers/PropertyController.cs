@@ -2,7 +2,6 @@
 using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList;
 using Abwaab.Application.Features.Properties.Update;
-using Abwaab.Application.Features.Properties.Update.BasicInfo;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +38,7 @@ namespace Abwaab.Server.Controllers
 
         //2.1.  update basic information
         [HttpPut("update-property")]
-        public async Task<IActionResult> UpdateProperty([FromBody] UpdatePropertyBasicInfoCommand command)
+        public async Task<IActionResult> UpdateProperty([FromBody] UpdatePropertyCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

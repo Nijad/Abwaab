@@ -1,6 +1,6 @@
-﻿namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
+﻿namespace Abwaab.Application.Features.Properties.Common
 {
-    public class PropertyAttributeForUpdate
+    public class PropertyAttributeDTO
     {
         public Guid PropertyAttributeId { get; set; }
         public string? Value { get; set; }

@@ -8,9 +8,9 @@ using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
 
-namespace Abwaab.Application.Features.Properties.Update.BasicInfo
+namespace Abwaab.Application.Features.Properties.Update
 {
-    public class UpdatePropertyBasicInfoHandler : IRequestHandler<UpdatePropertyBasicInfoCommand, UpdatePropertyBasicInfoResponse>
+    public class UpdatePropertyHandler : IRequestHandler<UpdatePropertyCommand, UpdatePropertyResponse>
     {
         private readonly IUserService _userService;
         private readonly IPropertyService _propertyService;
@@ -19,7 +19,7 @@ namespace Abwaab.Application.Features.Properties.Update.BasicInfo
         private readonly IPropertyFinishingService _propertyFinishingService;
         private readonly string errorTitle = ErrorTitle.UpdateProperty;
 
-        public UpdatePropertyBasicInfoHandler(
+        public UpdatePropertyHandler(
             IUserService userService,
             IPropertyService propertyService,
             IPropertyStatesService propertyStatesService,
@@ -33,7 +33,7 @@ namespace Abwaab.Application.Features.Properties.Update.BasicInfo
             _propertyFinishingService = propertyFinishingService;
         }
 
-        public async Task<UpdatePropertyBasicInfoResponse> Handle(UpdatePropertyBasicInfoCommand request, CancellationToken cancellationToken)
+        public async Task<UpdatePropertyResponse> Handle(UpdatePropertyCommand request, CancellationToken cancellationToken)
         {
             //check if property exist
             Property property = await _propertyService.FindPropertyByIdAsync(request.PropertyId, errorTitle);
@@ -73,7 +73,7 @@ namespace Abwaab.Application.Features.Properties.Update.BasicInfo
             //update and save
             await _propertyService.UpdatePropertyAsync(property);
 
-            return new UpdatePropertyBasicInfoResponse() { Success = true, Message = $"تم تعديل العقار بنجاح. حالة العقار الآن هي '{PropertySTatesMapping.Map(propertyState.StateName)}'" };
+            return new UpdatePropertyResponse() { Success = true, Message = $"تم تعديل العقار بنجاح. حالة العقار الآن هي '{PropertySTatesMapping.Map(propertyState.StateName)}'" };
         }
     }
 }
