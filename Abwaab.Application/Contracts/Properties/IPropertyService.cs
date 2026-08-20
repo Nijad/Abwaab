@@ -10,5 +10,6 @@ namespace Abwaab.Application.Contracts.Properties
         Task<Property> FindPropertyByIdAsync(Guid propertyId, string errorTitle);
         Task<bool> PropertyBelongToUser(Guid userId, Guid propertyId);
         Task UpdatePropertyAsync(Property property);
+        Task<Property> FindPropertyByIdForUpdateAsync(Guid propertyId, string errorTitle);
     }
 }

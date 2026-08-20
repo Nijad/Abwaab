@@ -1,4 +1,6 @@
 ﻿using Abwaab.Application.Contracts.Properties;
+using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
+using Abwaab.Domain.Entities.PropertyEntities;
 using MediatR;
 
 namespace Abwaab.Application.Features.Properties.Queries.GetFinishingList
@@ -14,7 +16,13 @@ namespace Abwaab.Application.Features.Properties.Queries.GetFinishingList
 
         public async Task<List<FinishingRespons>> Handle(FinishingQuery request, CancellationToken cancellationToken)
         {
-            return await _propertyFinishingService.GetPropertyFinishingListAsync();
+            List<PropertyFinishingForUpdate> finishings = await _propertyFinishingService.GetPropertyFinishingListAsync();
+            
+            List<FinishingRespons> finishingRespons = new();
+            foreach (var item in finishings)
+                finishingRespons.Add(new() { Id = item.FinishingId, Name = item.FinishingName });
+            
+            return finishingRespons;
         }
     }
 }

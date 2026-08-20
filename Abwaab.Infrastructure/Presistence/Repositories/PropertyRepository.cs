@@ -2,6 +2,7 @@
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
 
 namespace Abwaab.Infrastructure.Presistence.Repositories
 {
@@ -24,8 +25,22 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         {
             return await _context.Properties
                 .Include(x => x.PropertyState)
-                .Include(x=> x.UserPlan)
+                .Include(x => x.UserPlan)
                 .Where(x => x.Id == propertyId)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<Property?> FindPropertyByIdForUpdateAsync(Guid propertyId)
+        {
+            return await _context.Properties
+                .Include(p => p.UserPlan)
+                .Include(p => p.PropertyType)
+                .Include(p => p.Finishing)
+                .Include(p => p.TimeSlots)
+                .Include(p => p.PropertyAttributes)
+                .ThenInclude(x=>x.Attribute)
+                .ThenInclude(x=>x.AttributeDataType)
+                .Where(p => p.Id == propertyId)
                 .FirstOrDefaultAsync();
         }
 
@@ -41,7 +56,15 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
 
         public async Task<PropertyType?> FindPropertyTypeByIdAsync(Guid propertyTypeId)
         {
-            return await _context.PropertyTypes.Where(x=>x.Id== propertyTypeId).FirstOrDefaultAsync();
+            return await _context.PropertyTypes.Where(x => x.Id == propertyTypeId).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<Attribute>> GetAttributesListAsync()
+        {
+            return await _context.Attributes
+                .Include(x => x.AttributeDataType)
+                .Include(x => x.PossibleValues)
+                .ToListAsync();
         }
 
         public async Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId)
@@ -52,12 +75,16 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         public async Task<List<Finishing>> GetPropertyFinishingListAsync()
         {
             return await _context.Finishings.ToListAsync();
-            
         }
 
         public async Task<List<PropertyType>> GetProperyTypesList()
         {
             return await _context.PropertyTypes.ToListAsync();
+        }
+
+        public async Task<List<TimeSlot>> GetTimeSlotsByPropertyIdAsync(Guid propertyId)
+        {
+            return await _context.TimeSlots.Where(x => x.PropertyId == propertyId).ToListAsync();
         }
 
         public async Task<bool> PropertyBelongToUser(Guid userId, Guid propertyId)

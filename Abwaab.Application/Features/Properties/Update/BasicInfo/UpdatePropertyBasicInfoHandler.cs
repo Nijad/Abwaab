@@ -15,7 +15,7 @@ namespace Abwaab.Application.Features.Properties.Update.BasicInfo
         private readonly IUserService _userService;
         private readonly IPropertyService _propertyService;
         private readonly IPropertyStatesService _propertyStatesService;
-        private readonly IPropertyTypeService _propertyPropertyTypeService;
+        private readonly IPropertyTypeService _propertyTypeService;
         private readonly IPropertyFinishingService _propertyFinishingService;
         private readonly string errorTitle = ErrorTitle.UpdateProperty;
 
@@ -29,7 +29,7 @@ namespace Abwaab.Application.Features.Properties.Update.BasicInfo
             _userService = userService;
             _propertyService = propertyService;
             _propertyStatesService = propertyStatesService;
-            _propertyPropertyTypeService = propertyPropertyTypeService;
+            _propertyTypeService = propertyPropertyTypeService;
             _propertyFinishingService = propertyFinishingService;
         }
 
@@ -39,7 +39,7 @@ namespace Abwaab.Application.Features.Properties.Update.BasicInfo
             Property property = await _propertyService.FindPropertyByIdAsync(request.PropertyId, errorTitle);
 
             //check if property type exist
-            PropertyType propertyType = await _propertyPropertyTypeService.FindPropertyTypeByIdAsync(request.PropertyTypeId, errorTitle);
+            PropertyType propertyType = await _propertyTypeService.FindPropertyTypeByIdAsync(request.PropertyTypeId, errorTitle);
 
             //check if property finishing exist
             Finishing finishing = await _propertyFinishingService.FindPropertyFinishingByIdAsycn(request.FinishingId, errorTitle);
@@ -67,7 +67,7 @@ namespace Abwaab.Application.Features.Properties.Update.BasicInfo
             property.Latitude = request.Latitude;
             property.AreaInSquareMeter = request.AreaInSquareMeter;
             property.FinishingId = request.FinishingId;
-            property.PropertyTypeId = property.PropertyTypeId;
+            property.PropertyTypeId = request.PropertyTypeId;
             property.PropertyStateId = propertyState.Id;
 
             //update and save

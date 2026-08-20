@@ -1,6 +1,4 @@
-﻿using Abwaab.Application.Common.Enums;
-using Abwaab.Application.Common.Exceptions;
-using Abwaab.Application.Common.Exceptions.Properties;
+﻿using Abwaab.Application.Common.Exceptions.Properties;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
@@ -58,6 +56,16 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
         public async Task UpdatePropertyAsync(Property property)
         {
             await _propertyRepository.UpdatePropertyAsync(property);
+        }
+
+        public Task<Property> FindPropertyByIdForUpdateAsync(Guid propertyId, string errorTitle)
+        {
+            Task<Property?> property = _propertyRepository.FindPropertyByIdForUpdateAsync(propertyId);
+
+            if(property==null)
+                throw new PropertyNotFoundException(errorTitle);
+
+            return property;
         }
     }
 }

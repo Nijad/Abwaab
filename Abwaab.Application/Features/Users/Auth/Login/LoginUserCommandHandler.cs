@@ -42,7 +42,7 @@ namespace Abwaab.Application.Features.Users.Auth.Login
             if (result.IsLockedOut)
                 throw new AccountLockedOutException(errorTitle);
 
-            //todo: corrent error handling here
+            //todo: correct error handling here
             if (!result.Succeeded)
                 throw new InvalidCredentialsException(errorTitle);
 

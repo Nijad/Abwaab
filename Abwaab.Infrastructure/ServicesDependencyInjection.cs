@@ -21,6 +21,8 @@ namespace Abwaab.Infrastructure
             services.AddScoped<IPropertyStatesService, PropertyStatesService>();
             services.AddScoped<IPropertyTypeService, PropertyTypeService>();
             services.AddScoped<IPropertyFinishingService, PropertyFinishingService>();
+            services.AddScoped<IPropertyTimeSlotService, PropertyTimeSlotService>();
+            services.AddScoped<IPropertyAttributeService, PropertyAttributeService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IJwtService, JwtService>();
             return services;

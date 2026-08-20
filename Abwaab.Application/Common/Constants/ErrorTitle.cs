@@ -27,5 +27,6 @@
         public const string ProfileData = "معلومات المستخدم";
         public const string UpdateUser = "تعديل بيانات المستخدم";
         public const string UpdateProperty = "تعديل بيانات العقار";
+        public const string PropertyQuery = "استعلام عن عقار";
     }
 }

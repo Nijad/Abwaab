@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.Common.Exceptions.Properties;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
+using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
 
@@ -25,13 +26,13 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             return finishing;
         }
 
-        public async Task<List<FinishingRespons>> GetPropertyFinishingListAsync()
+        public async Task<List<PropertyFinishingForUpdate>> GetPropertyFinishingListAsync()
         {
-            List<Finishing> finishings = await _propertyRepository.GetPropertyFinishingListAsync();
-            List<FinishingRespons> finishingRespons = new();
-            foreach (var item in finishings)
-                finishingRespons.Add(new() { Id = item.Id, Name = item.FinishingName });
-            return finishingRespons;
+            var finishingList = await _propertyRepository.GetPropertyFinishingListAsync();
+            List<PropertyFinishingForUpdate> pfl = new();
+            foreach (Finishing finishing in finishingList)
+                pfl.Add(new() { FinishingId = finishing.Id, FinishingName = finishing.FinishingName });
+            return pfl;
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Abwaab.Application.Contracts.Properties;
+using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
+using Abwaab.Domain.Entities.PropertyEntities;
 using MediatR;
 
 namespace Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList
@@ -14,7 +16,11 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList
 
         public async Task<List<PropertyTypeResponse>> Handle(PropertyTypeQuery request, CancellationToken cancellationToken)
         {
-            return await _propertyTypeService.GetProperyTypesList();
+            List<PropertyTypeForUpdate> propertyTypes = await _propertyTypeService.GetProperyTypesListAsync();
+            List<PropertyTypeResponse> response = new();
+            foreach (var propertyType in propertyTypes)
+                response.Add(new() { Id = propertyType.TypeId, Name = propertyType.TypeName });
+            return response;
         }
     }
 }

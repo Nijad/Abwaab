@@ -1,8 +1,9 @@
 ﻿using Abwaab.Application.Common.Exceptions.Properties;
 using Abwaab.Application.Contracts.Properties;
-using Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList;
+using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
+using System.ComponentModel;
 
 namespace Abwaab.Infrastructure.Services.PropertyServices
 {
@@ -25,13 +26,13 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             return propertyType;
         }
 
-        public async Task<List<PropertyTypeResponse>> GetProperyTypesList()
+        public async Task<List<PropertyTypeForUpdate>> GetProperyTypesListAsync()
         {
-            List<PropertyType> propertyTypes = await _propertyRepository.GetProperyTypesList();
-            List<PropertyTypeResponse> response = new();
-            foreach (PropertyType propertyType in propertyTypes)
-                response.Add(new() { Id = propertyType.Id, Name = propertyType.TypeName });
-            return response;
+            var typesList = await _propertyRepository.GetProperyTypesList();
+            List<PropertyTypeForUpdate> ptl = new();
+            foreach (PropertyType type in typesList)
+                ptl.Add(new() { TypeId = type.Id, TypeName = type.TypeName });
+            return ptl;
         }
     }
 }
