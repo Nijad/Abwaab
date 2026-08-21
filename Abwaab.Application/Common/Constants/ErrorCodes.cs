@@ -49,5 +49,6 @@
         public const string UserNotFound = "USER_NOT_FOUND";
         public const string ResendWait = "RESEND_WAIT";
         public const string UpdateUserFailed = "UPDATE_USER_FAILED";
+        public const string ValdiationFailed = "VALIDATION_FAILED";
     }
 }

@@ -12,11 +12,12 @@ namespace Abwaab.Server.Exceptions
         {
             ProblemDetails problem = exception switch
             {
-                ValidationException ex => new ValidationProblemDetails(ex.Errors.GroupBy(g => g.PropertyName).ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray()))
+                ValidationException ex => new CustomValidationProblemDetails(ex.Errors.GroupBy(g => g.PropertyName).ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray()))
                 {
                     Status = StatusCodes.Status400BadRequest,
                     Title = "فشل التحقق",
-                    Detail = "حدث خطأ واحد أو أكثر في التحقق من صحة المدخلات."
+                    Detail = "حدث خطأ واحد أو أكثر في التحقق من صحة المدخلات.",
+                    ErrorCode = ErrorCodes.ValdiationFailed
                 },
                 BadRequest400Exception ex => new CustomProblemDetails
                 {
@@ -129,7 +130,7 @@ namespace Abwaab.Server.Exceptions
                     ErrorCode = ex.ErrorCode
                 },
                 InternalServerError500Exception ex => new CustomProblemDetails
-                { 
+                {
                     Status = ex.ReturnToUser ?
                         StatusCodes.Status500InternalServerError :
                         StatusCodes.Status500InternalServerError,
