@@ -9,16 +9,16 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
 {
     public class PropertyAttributeService : IPropertyAttributeService
     {
-        private readonly IPropertyRepository _propertyRepository;
+        private readonly IAttributeRepository _attributeRepository;
 
-        public PropertyAttributeService(IPropertyRepository propertyRepository)
+        public PropertyAttributeService(IAttributeRepository attributeRepository)
         {
-            _propertyRepository = propertyRepository;
+            _attributeRepository = attributeRepository;
         }
 
         public async Task<List<AttributeDTO>> GetAttributesListAsync()
         {
-            List<Attribute> attributes = await _propertyRepository.GetAttributesListAsync();
+            List<Attribute> attributes = await _attributeRepository.GetAttributesListAsync();
 
             List<AttributeDTO> list = new();
             foreach (var attribute in attributes)
@@ -71,19 +71,19 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
                 AttributeValue = comming.Value!
             };
             
-            await _propertyRepository.AddPropertyAttribute(propertyAttribute);
+            await _attributeRepository.AddPropertyAttribute(propertyAttribute);
         }
 
         private async Task UpdatePropertyAttributeAsync(PropertyAttribute existing, PropertyAttributeDTO comming)
         {
             existing.AttributeId = (Guid)comming.AttributeId!;
             existing.AttributeValue = comming.Value!;
-            await _propertyRepository.UpdatePropertyAttributeAsync(existing);
+            await _attributeRepository.UpdatePropertyAttributeAsync(existing);
         }
 
         private async Task DeletePropertyAttributeAsync(PropertyAttribute existing)
         {
-            await _propertyRepository.DeletePropertyAttributeAsync(existing);
+            await _attributeRepository.DeletePropertyAttributeAsync(existing);
         }
     }
 }

@@ -8,16 +8,16 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
 {
     public class PropertyTimeSlotService : IPropertyTimeSlotService
     {
-        private readonly IPropertyRepository _propertyRepository;
+        private readonly ITimeSlotRepository _timeSlotRepository;
 
-        public PropertyTimeSlotService(IPropertyRepository propertyRepository)
+        public PropertyTimeSlotService( ITimeSlotRepository timeSlotRepository)
         {
-            _propertyRepository = propertyRepository;
+            _timeSlotRepository = timeSlotRepository;
         }
 
         public async Task<List<TimeSlotDTO>> GetPropertyTimeSlotsListAsync(Guid propertyId)
         {
-            List<TimeSlot> timeSlots = await _propertyRepository.GetTimeSlotsByPropertyIdAsync(propertyId);
+            List<TimeSlot> timeSlots = await _timeSlotRepository.GetTimeSlotsByPropertyIdAsync(propertyId);
 
             List<TimeSlotDTO> ptsl = new();
             foreach (var timeSlot in timeSlots)
@@ -46,7 +46,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
 
         private async Task DeleteTimeSlotAsync(TimeSlot existing)
         {
-            await _propertyRepository.DeleteTimeSlotAsync(existing);
+            await _timeSlotRepository.DeleteTimeSlotAsync(existing);
         }
 
         private async Task UpdateTimeSlotAsync(TimeSlot existing, TimeSlotDTO comming)
@@ -56,7 +56,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             existing.EndTime = comming.EndTime;
             existing.Notes = comming.Notes;
 
-            await _propertyRepository.UpdateTimeSlotAsync(existing);
+            await _timeSlotRepository.UpdateTimeSlotAsync(existing);
         }
 
         private async Task AddTimeSlotAsync(TimeSlotDTO comming, Guid propetyId)
@@ -71,7 +71,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
                 Notes = comming.Notes
             };
 
-            await _propertyRepository.AddTimeSlotAsync(timeSlot);
+            await _timeSlotRepository.AddTimeSlotAsync(timeSlot);
         }
     }
 }

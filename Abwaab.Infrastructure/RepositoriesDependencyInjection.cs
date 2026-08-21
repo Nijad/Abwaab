@@ -13,6 +13,8 @@ namespace Abwaab.Infrastructure
             services.AddScoped<IPlanRepository, PlanRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IPropertyRepository, PropertyRepository>();
+            services.AddScoped<ITimeSlotRepository, TimeSlotRepository>();
+            services.AddScoped<IAttributeRepository, AttributeRepository>();
             return services;
         }
     }

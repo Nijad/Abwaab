@@ -15,33 +15,9 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             _context = context;
         }
 
-        public async Task AddPropertyAttribute(PropertyAttribute comming)
-        {
-            await _context.PropertyAttributes.AddAsync(comming);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task AddTimeSlotAsync(TimeSlot timeSlot)
-        {
-            await _context.TimeSlots.AddAsync(timeSlot);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task CreateProperty(Property property)
         {
             _context.Properties.Add(property);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeletePropertyAttributeAsync(PropertyAttribute existing)
-        {
-            _context.PropertyAttributes.Remove(existing);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteTimeSlotAsync(TimeSlot existing)
-        {
-            _context.TimeSlots.Remove(existing);
             await _context.SaveChangesAsync();
         }
 
@@ -85,14 +61,6 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await _context.PropertyTypes.Where(x => x.Id == propertyTypeId).FirstOrDefaultAsync();
         }
 
-        public async Task<List<Attribute>> GetAttributesListAsync()
-        {
-            return await _context.Attributes
-                .Include(x => x.AttributeDataType)
-                .Include(x => x.PossibleValues)
-                .ToListAsync();
-        }
-
         public async Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId)
         {
             return _context.Properties.Where(x => x.UserPlandId == planId).Count();
@@ -108,11 +76,6 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await _context.PropertyTypes.ToListAsync();
         }
 
-        public async Task<List<TimeSlot>> GetTimeSlotsByPropertyIdAsync(Guid propertyId)
-        {
-            return await _context.TimeSlots.Where(x => x.PropertyId == propertyId).ToListAsync();
-        }
-
         public async Task<bool> PropertyBelongToUser(Guid userId, Guid propertyId)
         {
             Property property = await _context.Properties.Include(x => x.UserPlan).Where(x => x.Id == propertyId).FirstAsync();
@@ -122,18 +85,6 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         public async Task UpdatePropertyAsync(Property property)
         {
             _context.Properties.Update(property);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdatePropertyAttributeAsync(PropertyAttribute existing)
-        {
-            _context.PropertyAttributes.Update(existing);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateTimeSlotAsync(TimeSlot existing)
-        {
-            _context.TimeSlots.Update(existing);
             await _context.SaveChangesAsync();
         }
     }
