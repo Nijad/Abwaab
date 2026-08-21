@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Features.Properties.Common;
+﻿using Abwaab.Application.Features.Properties.Common.DTOs;
 
 namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
 {

@@ -1,6 +1,6 @@
 ﻿using Abwaab.Application.Common.Exceptions.Properties;
 using Abwaab.Application.Contracts.Properties;
-using Abwaab.Application.Features.Properties.Common;
+using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;

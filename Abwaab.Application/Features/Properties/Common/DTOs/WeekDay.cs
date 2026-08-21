@@ -1,4 +1,4 @@
-﻿namespace Abwaab.Application.Features.Properties.Common
+﻿namespace Abwaab.Application.Features.Properties.Common.DTOs
 {
     public class WeekDay
     {
@@ -38,6 +38,21 @@
             });
 
             return list;
+        }
+
+        public static string GetDayName(int dayIndex)
+        {
+            return dayIndex switch
+            {
+                0 => DayOfWeek.Sunday.ToString(),
+                1 => DayOfWeek.Monday.ToString(),
+                2 => DayOfWeek.Tuesday.ToString(),
+                3 => DayOfWeek.Wednesday.ToString(),
+                4 => DayOfWeek.Thursday.ToString(),
+                5 => DayOfWeek.Friday.ToString(),
+                6 => DayOfWeek.Saturday.ToString(),
+                _ => ""
+            };
         }
     }
 }

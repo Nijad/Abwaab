@@ -2,7 +2,7 @@
 {
     public class TimeSlot : BaseEntity
     {
-        public DayOfWeek Day { get; set; }
+        public int Day { get; set; }
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }
         public string? Notes { get; set; }

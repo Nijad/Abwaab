@@ -3,7 +3,7 @@ using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
-using Abwaab.Application.Features.Properties.Common;
+using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
@@ -64,7 +64,8 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                     timeSlotsList.Add(new()
                     {
                         TimeSlotId = timeSlot.Id,
-                        Day = (int)timeSlot.Day,
+                        Day = timeSlot.Day,
+                        DayName = WeekDay.GetDayName(timeSlot.Day),
                         StartTime = timeSlot.StartTime,
                         EndTime = timeSlot.EndTime,
                         Notes = timeSlot.Notes
@@ -99,7 +100,7 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                 Price = property.Price,
                 Latitude = property.Latitude,
                 Longitude = property.Longitude,
-                ProperytTypeId = property.PropertyTypeId,
+                PropertyTypeId = property.PropertyTypeId,
                 PropertyFinishingId = property.FinishingId,
                 PropertyTypesList = typesList,
                 PropertyFinishingsList = finishingList,

@@ -1,7 +1,8 @@
 ﻿using Abwaab.Application.Contracts;
-using Abwaab.Application.Features.Properties.Common;
+using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
+using Abwaab.Infrastructure.Services.Common;
 
 namespace Abwaab.Infrastructure.Services.PropertyServices
 {
@@ -30,6 +31,47 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
                 });
 
             return ptsl;
+        }
+
+        // C#
+        public async Task SyncronizePropertyTimeSlotsAsync(List<TimeSlot>? existingTimeSlots, List<TimeSlotDTO>? commingTimeSlots, Guid propertyId)
+        {
+            await SyncronizingCollection.Sync(
+                existingTimeSlots, commingTimeSlots,
+                (existing, comming) => existing.Id == comming.TimeSlotId,
+                async (existing) => await DeleteTimeSlotAsync(existing),
+                async (existing, comming) => await UpdateTimeSlotAsync(existing, comming),
+                async (comming) => await AddTimeSlotAsync(comming, propertyId));
+        }
+
+        private async Task DeleteTimeSlotAsync(TimeSlot existing)
+        {
+            await _propertyRepository.DeleteTimeSlotAsync(existing);
+        }
+
+        private async Task UpdateTimeSlotAsync(TimeSlot existing, TimeSlotDTO comming)
+        {
+            existing.Day = comming.Day;
+            existing.StartTime = comming.StartTime;
+            existing.EndTime = comming.EndTime;
+            existing.Notes = comming.Notes;
+
+            await _propertyRepository.UpdateTimeSlotAsync(existing);
+        }
+
+        private async Task AddTimeSlotAsync(TimeSlotDTO comming, Guid propetyId)
+        {
+            TimeSlot timeSlot = new()
+            {
+                Id = Guid.NewGuid(),
+                PropertyId = propetyId,
+                Day = comming.Day,
+                StartTime = comming.StartTime,
+                EndTime = comming.EndTime,
+                Notes = comming.Notes
+            };
+
+            await _propertyRepository.AddTimeSlotAsync(timeSlot);
         }
     }
 }

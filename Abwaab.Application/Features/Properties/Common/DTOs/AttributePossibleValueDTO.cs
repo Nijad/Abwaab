@@ -1,4 +1,4 @@
-﻿namespace Abwaab.Application.Features.Properties.Common
+﻿namespace Abwaab.Application.Features.Properties.Common.DTOs
 {
     public class AttributePossibleValueDTO
     {

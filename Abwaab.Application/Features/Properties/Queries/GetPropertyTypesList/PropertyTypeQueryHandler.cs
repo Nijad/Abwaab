@@ -1,5 +1,5 @@
 ﻿using Abwaab.Application.Contracts.Properties;
-using Abwaab.Application.Features.Properties.Common;
+using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Domain.Entities.PropertyEntities;
 using MediatR;
 
