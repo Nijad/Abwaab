@@ -79,7 +79,7 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
             if (!string.IsNullOrEmpty(user.PhoneNumber))
                 _ = Task.Run(async () =>
                 {
-                    var alertMessage = $"تنبيه أمني: رقم هاتفك يجري  تعديل الآن {request.NewPhoneNo}. إذا لم تكن أنت يرجى إلغاء العملية حالاً {cancelUrl}";
+                    var alertMessage = $"تنبيه أمني: رقم هاتفك يجري  تعديله الآن {request.NewPhoneNo}. إذا لم تكن أنت يرجى إلغاء العملية حالاً من خلال الضغط على الرابط التالي: {cancelUrl}";
 
                     await _smsSender.SendSmsAsync(user.PhoneNumber, alertMessage, errorTitle);
                 });

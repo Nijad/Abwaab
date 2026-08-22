@@ -76,7 +76,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
             if (!string.IsNullOrEmpty(user.PhoneNumber))
                 _ = Task.Run(async () =>
                 {
-                    var alertMessage = $"SECURITY ALERT: Your email is being changed to {request.NewEmail}. If this wasn't you, cancel at {cancelUrl}";
+                    var alertMessage = $"تنبيه أمني: بريدك الالكتروني يجري تعديله الآن to {request.NewEmail}. إذا لم تكن أنت يرجى إلغاء العملية حالاً من خلال الضغط على الرابط التالي: {cancelUrl}";
 
                     await _smsSender.SendSmsAsync(user.PhoneNumber, alertMessage, errorTitle);
                 });
@@ -84,17 +84,17 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
             if (!string.IsNullOrEmpty(user.Email))
                 _ = Task.Run(async () =>
                 {
-                    var alertSubject = "Security Alert: Email Change Requested";
-                    var alertBody = $"<h2>Security Alert: Email Change Requested</h2>" +
-                    $"<p>We received a request to change the email address associated with your account.</p>" +
-                    $"<p><strong>New email requested:</strong> {request.NewEmail}</p>" +
-                    $"<p><strong>Time:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>" +
-                    $"<p>If you made this request, please enter the verification code sent to your new email.</p>" +
-                    $"<p><strong>If you did NOT request this, click the link below to cancel the change immediately:</strong></p>" +
+                    var alertSubject = "تنبيه أمني: طلب تغيير البريد الالكتروني";
+                    var alertBody = $"<h2>تنبيه أمني: طلب تغيير البريد الالكتروني</h2>" +
+                    $"<p>لقد تلقينا طلب تغيير البريد الالكتروني المرتبط بحسابك.</p>" +
+                    $"<p><strong>البريد الالكتروني الجديد:</strong> {request.NewEmail}</p>" +
+                    $"<p><strong>الوقت:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>" +
+                    $"<p>إذا كنت أنت من قام بهذا الطلب، يرجى إدخال رمز التحقق المرسل إلى البريد الالكتروني الجديد.</p>" +
+                    $"<p><strong>إذا لم تكن أنت من قام بهذا الطلب, اضغط على الرباط أدناه لإلغاء عملية التغيير:</strong></p>" +
                     $"<p>" +
-                    $"<a href=\""+cancelUrl+"\">Cancel Email Change</a>" +
+                    $"<a href=\""+cancelUrl+"\">إلغاء تغيير البريد الالكتروني</a>" +
                     "</p>" +
-                    "<p>This link will revoke all your active sessions for security.</p>";
+                    "<p>هذا الإجراء سيؤدي إلى تسجيل خروجك من جميع الأجهزة لدواعي أمنية.</p>";
                     await _emailSender.SendEmailAsync(user.Email, alertSubject, alertBody, errorTitle);
                 });
 
@@ -122,7 +122,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
             _cache.Set($"email_change_{changingCode}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
             // We don't mention the alert to the user to avoid confusion, but it's sent.
-            return new InitiateEmailChangeResponse { Success = true, Message = "Verification code sent to the new email address." };
+            return new InitiateEmailChangeResponse { Success = true, Message = "تم إرسال رمز تحقق إلى عنوان البريد الالكتروني الجديد." };
         }
     }
 }
