@@ -115,6 +115,8 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
                 CreatedAt = DateTime.UtcNow
             };
 
+            _cache.Set($"email_change_{request.NewEmail}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
+
             _cache.Set($"email_change_{changingCode}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
             // We don't mention the alert to the user to avoid confusion, but it's sent.

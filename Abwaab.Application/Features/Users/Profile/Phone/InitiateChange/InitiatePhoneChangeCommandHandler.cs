@@ -117,6 +117,9 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
                 Code = code,
                 CreatedAt = DateTime.UtcNow
             };
+
+            _cache.Set($"email_change_{request.NewPhoneNo}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
+
             _cache.Set($"phone_change_{changingCode}", pending, TimeSpan.FromMinutes(5));
 
             return new InitiatePhoneNoChangeResponse { Success = true, Message = "تم إرسال رمز تحقق إلى رقم الموبايل الجديد." };
