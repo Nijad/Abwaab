@@ -36,17 +36,19 @@ namespace Abwaab.Server.Controllers
             _userContext = userContext;
         }
 
-        [HttpPost("cancel-email-change")]
-        public async Task<IActionResult> CancelEmailChange()
+        [AllowAnonymous]
+        [HttpGet("cancel-email-change")]
+        public async Task<IActionResult> CancelEmailChange([FromQuery]string changingCode)
         {
-            var result = await _mediator.Send(new CancelEmailChangeCommand());
+            var result = await _mediator.Send(new CancelEmailChangeCommand() { ChangingCode = changingCode });
             return result.Success ? Ok(result) : BadRequest(result);
         }
 
-        [HttpPost("cancel-phone-change")]
-        public async Task<IActionResult> CancelPhoneChange()
+        [AllowAnonymous]
+        [HttpGet("cancel-phone-change")]
+        public async Task<IActionResult> CancelPhoneChange([FromQuery] string changingCode)
         {
-            var result = await _mediator.Send(new CancelPhoneChangeCommand());
+            var result = await _mediator.Send(new CancelPhoneChangeCommand() { ChangingCode = changingCode});
             return result.Success ? Ok(result) : BadRequest(result);
         }
 

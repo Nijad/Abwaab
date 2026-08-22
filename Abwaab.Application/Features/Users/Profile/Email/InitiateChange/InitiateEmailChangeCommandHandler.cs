@@ -71,7 +71,8 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
             //    Send an email to the OLD address to alert the user.
             //    This runs in the background (fire and forget) so we don't slow down the response.
             // ----------------------------------------------------------------
-            var cancelUrl = _urlBuilder.GetCancelEmailChangeUrl();
+            string changingCode = Guid.NewGuid().ToString();
+            var cancelUrl = _urlBuilder.GetCancelEmailChangeUrl(changingCode);
             if (!string.IsNullOrEmpty(user.PhoneNumber))
                 _ = Task.Run(async () =>
                 {
@@ -84,16 +85,16 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
                 _ = Task.Run(async () =>
                 {
                     var alertSubject = "Security Alert: Email Change Requested";
-                    var alertBody = $@"
-                        <h2>Security Alert: Email Change Requested</h2>
-                        <p>We received a request to change the email address associated with your account.</p>
-                        <p><strong>New email requested:</strong> {request.NewEmail}</p>
-                        <p><strong>Time:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
-                        <p>If you made this request, please enter the verification code sent to your new email.</p>
-                        <p><strong>If you did NOT request this, click the link below to cancel the change immediately:</strong></p>
-                        <p><a href='{cancelUrl}'>Cancel Email Change</a></p>
-                        <p>This link will revoke all your active sessions for security.</p>
-                    ";
+                    var alertBody = $"<h2>Security Alert: Email Change Requested</h2>" +
+                    $"<p>We received a request to change the email address associated with your account.</p>" +
+                    $"<p><strong>New email requested:</strong> {request.NewEmail}</p>" +
+                    $"<p><strong>Time:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>" +
+                    $"<p>If you made this request, please enter the verification code sent to your new email.</p>" +
+                    $"<p><strong>If you did NOT request this, click the link below to cancel the change immediately:</strong></p>" +
+                    $"<p>" +
+                    $"<a href=\""+cancelUrl+"\">Cancel Email Change</a>" +
+                    "</p>" +
+                    "<p>This link will revoke all your active sessions for security.</p>";
                     await _emailSender.SendEmailAsync(user.Email, alertSubject, alertBody, errorTitle);
                 });
 
@@ -108,11 +109,13 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
             var pending = new PendingEmailChange
             {
                 NewEmail = request.NewEmail,
+                OldEmail = user.Email,
+                OldPhoneNo = user.PhoneNumber,
                 Code = code,
                 CreatedAt = DateTime.UtcNow
             };
 
-            _cache.Set($"email_change_{userId}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
+            _cache.Set($"email_change_{changingCode}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
             // We don't mention the alert to the user to avoid confusion, but it's sent.
             return new InitiateEmailChangeResponse { Success = true, Message = "Verification code sent to the new email address." };

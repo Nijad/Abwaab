@@ -74,7 +74,8 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
             //    Fire-and-forget (background) so we don't slow down the response.
             // ----------------------------------------------------------------
 
-            var cancelUrl = _urlBuilder.GetCancelPhoneChangeUrl();
+            string changingCode = Guid.NewGuid().ToString();
+            var cancelUrl = _urlBuilder.GetCancelPhoneChangeUrl(changingCode);
             if (!string.IsNullOrEmpty(user.PhoneNumber))
                 _ = Task.Run(async () =>
                 {
@@ -111,10 +112,12 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
             var pending = new PendingPhoneChange
             {
                 NewPhoneNo = request.NewPhoneNo,
+                OldPhoneNo = user.PhoneNumber,
+                OldEmail = user.Email,
                 Code = code,
                 CreatedAt = DateTime.UtcNow
             };
-            _cache.Set($"phone_change_{userId}", pending, TimeSpan.FromMinutes(5));
+            _cache.Set($"phone_change_{changingCode}", pending, TimeSpan.FromMinutes(5));
 
             return new InitiatePhoneNoChangeResponse { Success = true, Message = "تم إرسال رمز تحقق إلى رقم الموبايل الجديد." };
         }

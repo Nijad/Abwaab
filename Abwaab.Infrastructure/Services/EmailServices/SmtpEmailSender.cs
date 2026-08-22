@@ -34,7 +34,10 @@ namespace Abwaab.Infrastructure.Services.EmailServices
                 message.From.Add(new MailboxAddress(_settings.FromName ?? "No-Reply", _settings.FromEmail));
                 message.To.Add(new MailboxAddress("", toEmail));
                 message.Subject = subject;
-                message.Body = new TextPart("html") { Text = body };
+
+                var bodyBuilder = new BodyBuilder();
+                bodyBuilder.HtmlBody=body;
+                message.Body = bodyBuilder.ToMessageBody(); ;
 
                 using var client = new SmtpClient();
 
