@@ -74,8 +74,8 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
             //    Fire-and-forget (background) so we don't slow down the response.
             // ----------------------------------------------------------------
 
-            string changingCode = Guid.NewGuid().ToString();
-            var cancelUrl = _urlBuilder.GetCancelPhoneChangeUrl(changingCode);
+            Guid changingCode = Guid.NewGuid();
+            var cancelUrl = _urlBuilder.GetCancelPhoneChangeUrl(changingCode.ToString());
             if (!string.IsNullOrEmpty(user.PhoneNumber))
                 _ = Task.Run(async () =>
                 {
@@ -116,7 +116,8 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
                 OldPhoneNo = user.PhoneNumber,
                 OldEmail = user.Email,
                 Code = code,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                CancelCode = changingCode
             };
 
             _cache.Set($"email_change_{userId}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));

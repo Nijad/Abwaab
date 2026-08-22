@@ -71,8 +71,8 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
             //    Send an email to the OLD address to alert the user.
             //    This runs in the background (fire and forget) so we don't slow down the response.
             // ----------------------------------------------------------------
-            string changingCode = Guid.NewGuid().ToString();
-            var cancelUrl = _urlBuilder.GetCancelEmailChangeUrl(changingCode);
+            Guid changingCode = Guid.NewGuid();
+            var cancelUrl = _urlBuilder.GetCancelEmailChangeUrl(changingCode.ToString());
             if (!string.IsNullOrEmpty(user.PhoneNumber))
                 _ = Task.Run(async () =>
                 {
@@ -113,7 +113,8 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
                 OldEmail = user.Email,
                 OldPhoneNo = user.PhoneNumber,
                 Code = code,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                CancelCode = changingCode
             };
 
             _cache.Set($"email_change_{userId}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));

@@ -8,5 +8,6 @@
         public string OldEmail { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+        public Guid CancelCode { get; set; }
     }
 }
