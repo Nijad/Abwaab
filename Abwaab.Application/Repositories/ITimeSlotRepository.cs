@@ -8,5 +8,6 @@ namespace Abwaab.Application.Repositories
         Task DeleteTimeSlotAsync(TimeSlot existing);
         Task UpdateTimeSlotAsync(TimeSlot existing);
         Task<List<TimeSlot>> GetTimeSlotsByPropertyIdAsync(Guid propertyId);
+        Task<TimeSlot?> FindTimeSlotByIdAsync(Guid? timeSlotId);
     }
 }

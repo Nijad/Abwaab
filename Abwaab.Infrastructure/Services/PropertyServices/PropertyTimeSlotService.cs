@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Contracts;
+﻿using Abwaab.Application.Common.Exceptions.Properties;
+using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
@@ -10,7 +11,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
     {
         private readonly ITimeSlotRepository _timeSlotRepository;
 
-        public PropertyTimeSlotService( ITimeSlotRepository timeSlotRepository)
+        public PropertyTimeSlotService(ITimeSlotRepository timeSlotRepository)
         {
             _timeSlotRepository = timeSlotRepository;
         }
@@ -72,6 +73,14 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             };
 
             await _timeSlotRepository.AddTimeSlotAsync(timeSlot);
+        }
+
+        public async Task<TimeSlot> FindTimeSlotByIdAsync(Guid? timeSlotId, string errorTitle)
+        {
+            TimeSlot? timeSlot = await _timeSlotRepository.FindTimeSlotByIdAsync(timeSlotId);
+            if (timeSlot == null)
+                throw new TimeSlotNotFoundException(errorTitle);
+            return timeSlot;
         }
     }
 }

@@ -37,5 +37,9 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await _context.TimeSlots.Where(x => x.PropertyId == propertyId).ToListAsync();
         }
 
+        public async Task<TimeSlot?> FindTimeSlotByIdAsync(Guid? timeSlotId)
+        {
+            return await _context.TimeSlots.Where(x=>x.Id==timeSlotId).FirstOrDefaultAsync();
+        }
     }
 }

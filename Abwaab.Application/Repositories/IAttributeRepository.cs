@@ -9,5 +9,9 @@ namespace Abwaab.Application.Repositories
         Task DeletePropertyAttributeAsync(PropertyAttribute existing);
         Task UpdatePropertyAttributeAsync(PropertyAttribute existing);
         Task<List<Attribute>> GetAttributesListAsync();
+        Task<PropertyAttribute?> FindPropertyAttributeByIdAsync(Guid? propertyAttributeId);
+        Task<Attribute?> FindAttributeByIdAsync(Guid? attributeId);
+        Task<AttributeDataType?> FindAttributeDataTypeByIdAsync(Guid attributeDataTypeId);
+        Task<AttributePossibleValue?> FindAttributePossibleValueByIdAsync(Guid? possibleValueId);
     }
 }

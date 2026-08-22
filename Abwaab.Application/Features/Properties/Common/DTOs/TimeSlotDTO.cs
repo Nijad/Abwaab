@@ -2,7 +2,7 @@
 {
     public class TimeSlotDTO
     {
-        public Guid TimeSlotId { get; set; }
+        public Guid? TimeSlotId { get; set; }
         public int Day { get; set; }
         public string? DayName { get; set; }
         public TimeOnly StartTime { get; set; }

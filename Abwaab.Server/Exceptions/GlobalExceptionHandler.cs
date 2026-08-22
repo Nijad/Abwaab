@@ -78,6 +78,16 @@ namespace Abwaab.Server.Exceptions
                     Detail = ex.ReturnToUser ? ex.Message : ErrorMessages.SystemError,
                     ErrorCode = ex.ErrorCode
                 },
+                NotAcceptable406Exception ex => new CustomProblemDetails
+                {
+                    Status = ex.ReturnToUser ?
+                        StatusCodes.Status406NotAcceptable :
+                        StatusCodes.Status500InternalServerError,
+
+                    Title = ex.Title,
+                    Detail = ex.ReturnToUser ? ex.Message : ErrorMessages.SystemError,
+                    ErrorCode = ex.ErrorCode
+                },
                 Precondition412Exception ex => new CustomProblemDetails
                 {
                     Status = ex.ReturnToUser ?

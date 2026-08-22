@@ -41,5 +41,32 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 .ToListAsync();
         }
 
+        public async Task<PropertyAttribute?> FindPropertyAttributeByIdAsync(Guid? propertyAttributeId)
+        {
+            return await _context.PropertyAttributes
+                //.Include(x=>x.Attribute)
+                //.ThenInclude(x=>x.AttributeDataType)
+                //.Include(x => x.Attribute)
+                //.ThenInclude(x=> x.PossibleValues)
+                .Where(x => x.Id == propertyAttributeId)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<Attribute?> FindAttributeByIdAsync(Guid? attributeId)
+        {
+            return await _context.Attributes
+                .Where(x => x.Id == attributeId)
+                .FirstOrDefaultAsync();
+        }
+
+        public Task<AttributeDataType?> FindAttributeDataTypeByIdAsync(Guid attributeDataTypeId)
+        {
+            return _context.AttributeDataTypes.Where(x=>x.Id==attributeDataTypeId).FirstOrDefaultAsync();
+        }
+
+        public async Task<AttributePossibleValue?> FindAttributePossibleValueByIdAsync(Guid? possibleValueId)
+        {
+            return await _context.AttributePossibleValues.Where(x => x.Id == possibleValueId).FirstOrDefaultAsync();
+        }
     }
 }

@@ -52,5 +52,17 @@
         public const string PropertyNotFound = "PROPERTY_NOT_FOUND";
         public const string PropertyTypeNotFound = "PROPERTY_TYPE_NOT_FOUND";
         public const string PropertyFinishingNotFound = "PROPERTY_FINISHING_TYPE_NOT_FOUND";
+        public const string TimeSlotNotFound = "TIME_SLOT_NOT_FOUND";
+        public const string PropertyAttributeNotFound = "PROPERTY_ATTRIBUTE_NOT_FOUND";
+        public const string AttributeNotFound = "ATTRIBUTE_NOT_FOUND";
+        public const string TimeSlotNotBelongToProperty = "TIME_SLOT_NOT_BELONG_TO_PROPERTY";
+        public const string PropertyAttributeNotBolongToProperty = "PROPERTY_ATTRIBUTE_NOT_BELONG_TO_PROPERTY";
+        public const string DataTypeNotImplemented = "DATA_TYPE_NOT_IMPLEMENTED";
+        public const string NotValidNumber = "NOT_VALID_NUMBER";
+        public const string NotValidBoolean = "NOT_VALID_BOOLEAN";
+        public const string AttributePossibleValueNotFound = "ATTRIBUTE_POSSIBLE_VALUE_NOT_FOUND";
+        public const string PossibleValueNotBelongToAttribute = "POSSIBLE_VALUE_NOT_BELONG_TO_ATTRIBUTE";
+        public const string NoNullAllowed = "NO_NULL_ALLOWED";
+        public const string NotValidFormat = "NOT_VALID_FORMAT";
     }
 }

@@ -1,8 +1,11 @@
-﻿using Abwaab.Application.Contracts;
+﻿using Abwaab.Application.Common.Exceptions.Properties;
+using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Infrastructure.Services.Common;
+using Org.BouncyCastle.Asn1.Cms;
+using System.Reflection;
 using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
 
 namespace Abwaab.Infrastructure.Services.PropertyServices
@@ -50,7 +53,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
 
         public async Task SyncronizePropertyAttributesAsync(
             List<PropertyAttribute>? existingPropertyAttributes,
-            List<PropertyAttributeDTO>? commingPropertyAttributes, 
+            List<PropertyAttributeDTO>? commingPropertyAttributes,
             Guid propertyId)
         {
             await SyncronizingCollection.Sync(
@@ -70,7 +73,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
                 AttributeId = (Guid)comming.AttributeId!,
                 AttributeValue = comming.Value!
             };
-            
+
             await _attributeRepository.AddPropertyAttribute(propertyAttribute);
         }
 
@@ -84,6 +87,40 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
         private async Task DeletePropertyAttributeAsync(PropertyAttribute existing)
         {
             await _attributeRepository.DeletePropertyAttributeAsync(existing);
+        }
+
+        public async Task<PropertyAttribute> FindPropertyAttributeByIdAsync(Guid? propertyAttributeId, string errorTitle)
+        {
+            PropertyAttribute? propertyAttribute = await _attributeRepository.FindPropertyAttributeByIdAsync(propertyAttributeId);
+            if (propertyAttribute == null)
+                throw new PropertyAttributeNotFoundException(errorTitle);
+            return propertyAttribute;
+        }
+
+        public async Task<Attribute> FindAttributeByIdAsync(Guid? attributeId, string errorTitle)
+        {
+            Attribute? attribute = await _attributeRepository.FindAttributeByIdAsync(attributeId);
+            if (attribute == null)
+                throw new AttributeNotFoundException(errorTitle);
+            return attribute;
+        }
+
+        public async Task<AttributeDataType> FindAttributeDataTypeByIdAsync(Guid attributeDataTypeId, string errorTitle)
+        {
+            AttributeDataType? attributeDataType = await _attributeRepository.FindAttributeDataTypeByIdAsync(attributeDataTypeId);
+            if (attributeDataType == null)
+                throw new DataTypeNotImplementedException(errorTitle);
+            return attributeDataType;
+        }
+
+        public async Task<AttributePossibleValue> FindAttributePossibleValueByIdAsync(Guid? possibleValueId, string errorTitle)
+        {
+            AttributePossibleValue? attributePossibleValue = await _attributeRepository.FindAttributePossibleValueByIdAsync(possibleValueId);
+
+            if(attributePossibleValue == null)
+                throw new AttributePossibleValueNotFoundException(errorTitle);
+            
+            return attributePossibleValue;
         }
     }
 }

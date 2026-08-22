@@ -28,6 +28,8 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 .Include(x => x.UserPlan)
                 .Include(p => p.TimeSlots)
                 .Include(p => p.PropertyAttributes)
+                //.ThenInclude(x=>x.Attribute)
+                //.ThenInclude(x=>x.AttributeDataType)
                 .Where(x => x.Id == propertyId)
                 .FirstOrDefaultAsync();
         }

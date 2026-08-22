@@ -1,13 +1,18 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
+using Abwaab.Application.Common.Exceptions.Properties;
 using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
+using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
+using System.Text.Json;
+using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
 
 namespace Abwaab.Application.Features.Properties.Update
 {
@@ -74,8 +79,63 @@ namespace Abwaab.Application.Features.Properties.Update
             //check current state and if need to change
             PropertyState propertyState = await _propertyStatesService.GetNewState(property.PropertyState, errorTitle);
 
-            // todo: check attributes here if exist
-            // todo: check validation of its value if compatible with its data type
+            //check time slot
+            if (request.TimeSlots != null && request.TimeSlots.Count > 0)
+                foreach (var item in request.TimeSlots)
+                    if (item.TimeSlotId != null && item.TimeSlotId != Guid.Empty)
+                    {
+                        TimeSlot timeSlot = await _timeSlotService.FindTimeSlotByIdAsync(item.TimeSlotId, errorTitle);
+
+                        //check if time slot belong to the same property
+                        if (timeSlot.PropertyId != property.Id)
+                            throw new TimeSlotNotBelongToPropertyException(errorTitle);
+                    }
+
+            if (request.PropertyAttributesList != null && request.PropertyAttributesList.Count > 0)
+                foreach (var item in request.PropertyAttributesList)
+                    if (item.PropertyAttributeId != null && item.PropertyAttributeId != Guid.Empty)
+                    {
+                        PropertyAttribute? propertyAttribute = await _attributeService.FindPropertyAttributeByIdAsync(item.PropertyAttributeId, errorTitle);
+
+                        if (propertyAttribute.PropertyId != property.Id)
+                            throw new PropertyAttributeNotBolongToPropertyException(errorTitle);
+
+                        Attribute attribute = await _attributeService.FindAttributeByIdAsync(item.AttributeId, errorTitle);
+
+                        //check if data type exist
+                        AttributeDataType attributeDataType = await _attributeService.FindAttributeDataTypeByIdAsync(attribute.AttributeDataTypeId, errorTitle);
+
+                        if (attributeDataType.Name == AttributeDataTypeEnum.number.ToString())
+                        {
+                            int o;
+                            if (!int.TryParse(item.Value, out o))
+                                throw new NotValidNumberException(errorTitle);
+                            if (o <= 0)
+                                throw new NotValidNumberException(errorTitle);
+                        }
+                        else if (attributeDataType.Name == AttributeDataTypeEnum.boolean.ToString())
+                        {
+                            if (item.Value != "0" &&
+                                item.Value != "1" &&
+                                item.Value.ToLower() != "false" &&
+                                item.Value.ToLower() != "true")
+                                throw new NotValidBooleanException(errorTitle);
+                        }
+                        else if (attributeDataType.Name == AttributeDataTypeEnum.list.ToString())
+                        {
+                            //check if value belong to the list
+                            PossibleValueDTO? pvDto;
+                            pvDto = JsonSerializer.Deserialize<PossibleValueDTO>(item.Value);
+                            
+                            if (pvDto.UnmatchedProperties != null)
+                                throw new NotValidFormatException(errorTitle);
+                            
+                            AttributePossibleValue apv = await _attributeService.FindAttributePossibleValueByIdAsync(pvDto.possibleValueId, errorTitle);
+
+                            if (apv.AttributeId != attribute.Id)
+                                throw new PossibleValueNotBelongToAttributeException(errorTitle);
+                        }
+                    }
 
             //reflect changes
             property.Title = request.Title;
@@ -95,14 +155,14 @@ namespace Abwaab.Application.Features.Properties.Update
             {
                 //update and save
                 await _propertyService.UpdatePropertyAsync(property);
-                
+
                 //update property time solots
                 await _timeSlotService.SyncronizePropertyTimeSlotsAsync(property.TimeSlots, request.TimeSlots, property.Id);
 
                 //update property attributes
                 await _attributeService.SyncronizePropertyAttributesAsync(
                     property.PropertyAttributes,
-                    request.PropertyAttributesList, 
+                    request.PropertyAttributesList,
                     property.Id);
 
                 await _transactionManager.CommitTransactionAsync(cancellationToken);

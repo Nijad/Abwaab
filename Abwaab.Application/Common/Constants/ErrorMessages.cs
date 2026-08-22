@@ -41,5 +41,14 @@
         public const string PropertyNotFound = "العقار المطلوب غير موجود";
         public const string PropertyTypeNotFound = "نوع العقار المطلوب غير موجود";
         public const string PropertyFinishingNotFound = "كسوة العقار المطلوبة غير موجودة";
+        public const string TimeSlotNotFound = "الفترة الزمنية التي تطلبها غير موجودة";
+        public const string PropertyAttributeNotFound = "ميزة العقار التي تطلبها غير موجودة";
+        public const string AttributeNotFound = "الميزة المطلبوة غير موجودة.";
+        public const string DataTypeNotImplemented = "نوع البيانات المطلوب غير منجز.";
+        public const string NotValidNumber = "القيمة يجب أن تكون رقماً صحيحاً موجباً.";
+        public const string NotValidBoolean = "القيمة يجب أن تكون صح أو خطأ.";
+        public const string NoNullAllowed = "القيمة المدخلة يجب ألا تكون فارغة.";
+        public const string NotValidFormat = "القيم المدخلة لا تتطابق مع التنسيق الصحيح";
+        public const string AttributePossibleValueNotFound = "قيمة ميزة العقار المطلوبة غير موجودة ضمن القيم المعرفة مسبقاً";
     }
 }

@@ -213,10 +213,10 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<AttributeDataType>
             {
-                new AttributeDataType { Id = new Guid("85ecffc0-07cf-4bc8-aed7-423bdb8738ee"), Name = "string" },
-                new AttributeDataType { Id = new Guid("937c0e65-b4ec-47f2-8aa9-d758603e20a5"), Name = "number" },
-                new AttributeDataType { Id = new Guid("883a9f1e-e227-4079-a929-f0aa0ff40990"), Name = "boolean" },
-                new AttributeDataType { Id = new Guid("f374db99-2e52-4152-958b-fb1f3e24eaf5"), Name = "list" }
+                new AttributeDataType { Id = new Guid("85ecffc0-07cf-4bc8-aed7-423bdb8738ee"), Name = AttributeDataTypeEnum.text.ToString() },
+                new AttributeDataType { Id = new Guid("937c0e65-b4ec-47f2-8aa9-d758603e20a5"), Name = AttributeDataTypeEnum.number.ToString() },
+                new AttributeDataType { Id = new Guid("883a9f1e-e227-4079-a929-f0aa0ff40990"), Name = AttributeDataTypeEnum.boolean.ToString() },
+                new AttributeDataType { Id = new Guid("f374db99-2e52-4152-958b-fb1f3e24eaf5"), Name = AttributeDataTypeEnum.list.ToString() }
             };
         }
 /*
