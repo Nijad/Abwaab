@@ -108,6 +108,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
             // Store pending change
             var pending = new PendingEmailChange
             {
+                UserId = userId,
                 NewEmail = request.NewEmail,
                 OldEmail = user.Email,
                 OldPhoneNo = user.PhoneNumber,
@@ -115,7 +116,7 @@ namespace Abwaab.Application.Features.Users.Profile.Email.InitiateChange
                 CreatedAt = DateTime.UtcNow
             };
 
-            _cache.Set($"email_change_{request.NewEmail}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
+            _cache.Set($"email_change_{userId}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 
             _cache.Set($"email_change_{changingCode}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
 

@@ -34,21 +34,24 @@ namespace Abwaab.Application.Features.Users.Profile.Email.Cancel
             //var userId = _userContext.UserId;
 
             // Check if there is a pending change
-            var cacheKey = $"email_change_{request.ChangingCode}";
+            var cacheCancelKey = $"email_change_{request.ChangingCode}";
 
-            if (!_cache.TryGetValue(cacheKey, out PendingEmailChange pending))
+            if (!_cache.TryGetValue(cacheCancelKey, out PendingEmailChange pending))
                 throw new NoPendingEmailChangeException(errorTitle);
 
             string oldEmail = pending.OldEmail;
             string oldPhoneNo = pending.OldPhoneNo;
 
             // Remove the pending change from cache
-            _cache.Remove(cacheKey);
+            _cache.Remove(cacheCancelKey);
 
             // Revoke ALL refresh tokens (force logout on all devices)
             ApplicationUser? user = await _userService.FindUserByIdentifierAsync(oldEmail, IdentifiersEnum.Email, errorTitle);
             if (user == null)
                 user = await _userService.FindUserByIdentifierAsync(oldPhoneNo, IdentifiersEnum.Email, errorTitle);
+
+            var cacheConfirmlKey = $"email_change_{user.Id}";
+            _cache.Remove(cacheConfirmlKey);
 
             await _profileService.RevokeAllRefreshToken(user.Id, "Cancelled by user");
 

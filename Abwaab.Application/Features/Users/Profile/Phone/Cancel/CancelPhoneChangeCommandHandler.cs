@@ -32,9 +32,10 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Cancel
         public async Task<CancelPhoneChangeResponse> Handle(CancelPhoneChangeCommand request, CancellationToken cancellationToken)
         {
             //var userId = _userContext.UserId;
-            var cacheKey = $"phone_change_{request.ChangingCode}";
+            var cacheCancelKey = $"phone_change_{request.ChangingCode}";
+            
 
-            if (!_cache.TryGetValue(cacheKey, out PendingPhoneChange pending))
+            if (!_cache.TryGetValue(cacheCancelKey, out PendingPhoneChange pending))
                 throw new NoPendingPhoneChangeException(errorTitle);
 
 
@@ -42,12 +43,15 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Cancel
             string oldPhoneNo = pending.OldPhoneNo;
 
             // Remove the pending change from cache
-            _cache.Remove(cacheKey);
+            _cache.Remove(cacheCancelKey);
 
             // Revoke ALL refresh tokens (force logout on all devices)
             ApplicationUser? user = await _userService.FindUserByIdentifierAsync(oldEmail, IdentifiersEnum.Email, errorTitle);
             if (user == null)
                 user = await _userService.FindUserByIdentifierAsync(oldPhoneNo, IdentifiersEnum.Email, errorTitle);
+
+            var cacheConfirmlKey = $"phone_change_{user.Id}";
+            _cache.Remove(cacheConfirmlKey);
 
             await _profileService.RevokeAllRefreshToken(user.Id, "Cancelled by user");
 

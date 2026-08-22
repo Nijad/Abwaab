@@ -2,6 +2,7 @@
 {
     public class PendingPhoneChange
     {
+        public Guid UserId { get; set; }
         public string NewPhoneNo { get; set; } = string.Empty;
         public string OldPhoneNo { get; set; } = string.Empty;
         public string OldEmail { get; set; } = string.Empty;
