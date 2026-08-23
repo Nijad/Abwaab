@@ -6,7 +6,7 @@ import React, {
   useCallback,
   useRef,
 } from "react";
-import { parseJwt } from "../utils/helpers";
+import { detectIdentifierType, parseJwt } from "../utils/helpers";
 import { authApi } from "../api";
 import { useSnackbar } from "notistack";
 
@@ -114,6 +114,7 @@ export const AuthProvider = ({ children }) => {
                 ? true
                 : false,
             identifier: decoded.LoginIdentifier,
+            identifierType: detectIdentifierType(decoded.LoginIdentifier),
           });
         }
       } else {
@@ -185,7 +186,8 @@ export const AuthProvider = ({ children }) => {
   // };
 
   const setIdentifier = (identifier) => {
-    setUser({ ...user, identifier });
+    const identifierType = detectIdentifierType(identifier);
+    setUser({ ...user, identifier, identifierType });
   };
   return (
     <AuthContext.Provider

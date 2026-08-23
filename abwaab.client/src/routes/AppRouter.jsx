@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 // Layouts
@@ -20,12 +19,14 @@ import Profile from "../pages/Profile";
 import MyProperties from "../pages/MyProperties";
 import ManageUsers from "../pages/ManageUsers";
 import Admin from "../pages/Admin";
-import Register from "../pages/Register";
 import ConfirmRegisteration from "../pages/ConfirmRegisteration";
 import NoLayout from "../layouts/NoLayout";
 import Subscriptions from "../pages/Subscriptions";
 import AboutUs from "../pages/AboutUs";
 import PresistLogin from "./PresistLogin";
+import Registeration from "../pages/Registeration";
+import NotFound from "../pages/NotFound";
+import AddProperty from "../pages/AddProperty";
 
 // Dashboard Pages
 // import { OverviewPage } from "../pages/dashboard/OverviewPage";
@@ -53,7 +54,7 @@ const router = createBrowserRouter([
     element: <NoLayout />,
     children: [
       { path: "login", element: <Login /> },
-      { path: "register", element: <Register /> },
+      { path: "registeration", element: <Registeration /> },
       { path: "confirm-registeration", element: <ConfirmRegisteration /> },
       { path: "reset-password", element: <ResetPassword /> },
     ],
@@ -96,9 +97,13 @@ const router = createBrowserRouter([
       { path: "profile", element: <Profile /> },
       { path: "properties", element: <Properties /> },
       { path: "properties/:id", element: <PropertyDetails /> },
-      { path: "my-properties", element: <MyProperties /> },
+      {
+        path: "my-properties",
+        element: <MyProperties />,
+      },
+      { path: "my-properties/add", element: <AddProperty /> },
+      { path: "my-properties/edit", element: <AddProperty /> },
       { path: "my-properties/:id", element: <PropertyDetails /> },
-      { path: "profile", element: <Profile /> },
     ],
   },
   // ----------------------------------------------------------------------
@@ -106,11 +111,7 @@ const router = createBrowserRouter([
   // ----------------------------------------------------------------------
   {
     path: "*",
-    element: (
-      <div className="flex h-screen items-center justify-center text-xl font-bold">
-        404 - الصفحة غير موجودة
-      </div>
-    ),
+    element: <NotFound />,
   },
 ]);
 

@@ -1,70 +1,33 @@
-import React, { useState } from "react";
-import { Button, Grid, TextField } from "@mui/material";
+// import React from "react";
+import { Button, Grid } from "@mui/material";
 import useAuth from "../hooks/useAuth";
 import { Link, useNavigate } from "react-router";
-import Admin from "./Admin";
 import { useSnackbar } from "notistack";
 import img from "../assets/imgs/login.webp";
 import logo from "../assets/imgs/logo.svg";
-import { authApi } from "../api";
+import LoginUser from "../features/LoginUser";
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, setIdentifier } = useAuth();
   const navigate = useNavigate();
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const [fdata, setFdata] = useState({ identifier: "", password: "" });
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const controller = new AbortController();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const hanldleLogin = (data, response) => {
     var isAdmin;
     try {
-      const resp = await authApi.login(fdata.identifier, fdata.password);
-      console.log(resp.data);
-      isAdmin = resp.data.isAdmin;
-      login(resp.data);
-      if (isAdmin) redirect("admin");
-      else redirect("portal");
+      isAdmin = response.isAdmin;
+      login(response);
+      setIdentifier(data.identifier);
+      if (isAdmin) navigate("/admin", { replace: true });
+      else navigate("/portal", { replace: true });
     } catch (error) {
-      if (error.response.data.errorCode === "EMAIL_NOT_VERIFIED") {
-        // debugger;
-        console.log(e);
-        navigate("/confirm-registeration", { replace: true });
-        //then in confirm page, it will check the storage and reads if otp is still valid
-      }
-      enqueueSnackbar(error.response.data.detail, { variant: "error" });
+      console.log(error);
+      enqueueSnackbar(error, { variant: "error" });
     }
+  };
 
-    // await axios
-    //   .post(
-    //     "/auth/loginuser",
-    //     { ...fdata },
-    //     {
-    //       signal: controller.signal,
-    //     }
-    //   )
-    //   .then((resp) => {
-    //     isAdmin = resp.data.isAdmin;
-    //     login(resp.data);
-    //     if (isAdmin) redirect("admin");
-    //     else redirect("portal");
-    //   })
-    //   .catch((e) => {
-    //     if (e.response.data.errorCode === "EMAIL_NOT_VERIFIED") {
-    //       // debugger;
-    //       console.log(e);
-    //       navigate("/confirm-registeration", { replace: true });
-    //       enqueueSnackbar(e.response.data.detail, { variant: "error" });
-    //       //then in confirm page, it will check the storage and reads if otp is still valid
-    //     }
-    //   })
-    //   .finally(() => {});
-  };
-  console.log(fdata);
-  const redirect = (to) => {
-    navigate(`/${to}`);
-  };
   const handleForgotPassword = () => {
-    redirect("reset-password");
+    navigate("/reset-password", { replace: true });
   };
 
   return (
@@ -85,55 +48,24 @@ const Login = () => {
                 عقارك القادم أقرب مما تتخيل
               </p>
             </div>
-            <form method="post" onSubmit={handleSubmit} autoComplete="on">
-              <div className="mb-6">
-                <TextField
-                  id="identifier"
-                  label="البريد الإلكتروني أو رقم الموبايل"
-                  name="Identifier"
-                  type="text"
-                  variant="filled"
-                  size="small"
-                  value={fdata.identifier}
-                  onChange={(e) =>
-                    setFdata({ ...fdata, identifier: e.target.value })
-                  }
-                />
-              </div>
-              <div className="mb-2">
-                <TextField
-                  id=""
-                  label="كلمة المرور"
-                  name="Password"
-                  type="password"
-                  variant="filled"
-                  size="small"
-                  value={fdata.password}
-                  onChange={(e) =>
-                    setFdata({ ...fdata, password: e.target.value })
-                  }
-                />
-              </div>
-              <div className="mb-6">
-                <Button
-                  type="button"
-                  variant="text"
-                  color="sky"
-                  onClick={() => handleForgotPassword()}
-                  className="mb-5"
-                >
-                  هل نسيت كلمة المرور؟
-                </Button>
-              </div>
-              <div className="mb-6">
-                <Button type="submit" variant="contained" color="navy">
-                  دخول
-                </Button>
-              </div>
-            </form>
+            <LoginUser onSuccess={hanldleLogin} />
+            <div className="mb-6">
+              <Button
+                type="button"
+                variant="text"
+                color="sky"
+                onClick={() => handleForgotPassword()}
+                className="mb-5"
+              >
+                هل نسيت كلمة المرور؟
+              </Button>
+            </div>
             <p className="">
               ليس لديك حساب؟ قم
-              <Button type="button" onClick={() => redirect("register")}>
+              <Button
+                type="button"
+                onClick={() => navigate("/registeration", { relative: true })}
+              >
                 بالتسجيل الآن
               </Button>
             </p>

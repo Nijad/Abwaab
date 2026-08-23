@@ -1,22 +1,13 @@
-import React, { useState, useRef } from "react";
-import { Button, Grid, TextField } from "@mui/material";
-import { detectIdentifierType } from "../utils/helpers";
+import { useState, useRef, useEffect } from "react";
 
 /**
- * Reusable 6-Digit OTP Verification Component
+ * Reusable 6-Digit OTP Input Component
  *
- * @param {string} identifier - The identifier either email or phone number (e.g., "someone@gmail.com")
- * @param {function} onVerify - Callback function triggered when submitting the code
- * @param {boolean} submit_cancel_buttons - Optional callback for resending the code
+ * @param {function} onChange - Callback function triggered when entring code
  */
-const OtpVerification = ({
-  identifier,
-  onVerify,
-  submit_cancel_buttons = false,
-}) => {
+const OtpVerification = ({ onChange }) => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
-  const identifierType = detectIdentifierType(identifier);
 
   // Handle single digit input
   const handleChange = (e, index) => {
@@ -59,99 +50,33 @@ const OtpVerification = ({
       inputRefs.current[5]?.focus();
     }
   };
-
-  // Submit Handler
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const completeOtp = otp.join("");
-    if (completeOtp.length === 6) {
-      if (onVerify) onVerify(completeOtp);
-    }
-  };
-
-  const isComplete = otp.join("").length === 6;
+  useEffect(() => {
+    onChange(otp.join(""));
+  }, [otp, onChange]);
 
   return (
     <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-0  dark:bg-slate-900 my-3">
-      {/* Title & Sent Destination */}
-      <div className="mb-6 ">
-        <p className="text-base text-sky-700">
-          أرسلنا رمز تحقق مكوناً من 6 أرقام الى
-          {identifierType === "email"
-            ? " البريد الإلكتروني"
-            : identifierType === "phone"
-            ? " الرقم"
-            : ""}
-        </p>
-        <p className="text-navy-700 font-semibold text-lg text-end" dir="ltr">
-          {identifier}
-        </p>
-        <p className="mt-2 text-xs text-neutral-700 ">
-          *تنتهي صلاحية الرمز بعد 5 دقائق.
-        </p>
-      </div>
-
       {/* 6-Digit Inputs Grid */}
-      <form onSubmit={handleSubmit}>
-        <div className="mb-8 flex justify-between gap-2 sm:gap-3" dir="ltr">
-          {otp.map((digit, index) => (
-            <input
-              key={index}
-              type="text"
-              inputMode="numeric"
-              maxLength={1}
-              value={digit}
-              ref={(el) => (inputRefs.current[index] = el)}
-              onChange={(e) => handleChange(e, index)}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-              onPaste={handlePaste}
-              className={`h-14 w-12 rounded-xl bg-neutral-100 text-center text-xl font-bold transition-all focus:outline-teal-400 focus:border-tea sm:h-16 sm:w-14 ${
-                digit
-                  ? "border-emerald-500 bg-emerald-50/20 text-slate-900 dark:bg-slate-800 dark:text-white"
-                  : "border-slate-100 bg-slate-100/70 text-slate-900 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-800 dark:bg-slate-800 dark:text-white"
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Submit Button */}
-        {submit_cancel_buttons ? (
-          <div className="flex items-center gap-3">
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={!isComplete}
-              color="navy"
-              sx={{ padding: 1.5 }}
-              className="disabled:!bg-neutral-200"
-            >
-              تأكيد ومتابعة
-            </Button>
-            <Button
-              type="button"
-              variant="text"
-              disabled={!isComplete}
-              color="navy"
-              sx={{ padding: 1.5 }}
-              className="disabled:!bg-neutral-200"
-            >
-              الغاء الأمر
-            </Button>
-          </div>
-        ) : (
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={!isComplete}
-            color="navy"
-            fullWidth
-            sx={{ padding: 1.5 }}
-            className="disabled:!bg-neutral-200"
-          >
-            تحقق ومتابعة
-          </Button>
-        )}
-      </form>
+      <div className="mb-3 flex justify-between gap-2 sm:gap-3" dir="ltr">
+        {otp.map((digit, index) => (
+          <input
+            key={index}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            value={digit}
+            ref={(el) => (inputRefs.current[index] = el)}
+            onChange={(e) => handleChange(e, index)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
+            onPaste={handlePaste}
+            className={`h-14 w-12 rounded-xl bg-neutral-100 text-center text-xl font-bold transition-all focus:outline-teal-400 focus:border-tea sm:h-16 sm:w-14 ${
+              digit
+                ? "border-emerald-500 bg-emerald-50/20 text-slate-900 dark:bg-slate-800 dark:text-white"
+                : "border-slate-100 bg-slate-100/70 text-slate-900 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 dark:border-slate-800 dark:bg-slate-800 dark:text-white"
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 };

@@ -7,21 +7,50 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-import React from "react";
+import { useRef, useState } from "react";
 import ShowErrors from "../../components/ShowErrors";
+import { useSnackbar } from "notistack";
+import { profileApi } from "../../api";
 
-const ChangeEmail = ({
-  title,
-  open,
-  description,
-  handleClose,
-  handleSubmit,
-  errors = null,
-}) => {
+const ChangeEmail = ({ title, description, onClose, onSuccess }) => {
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const signalRef = useRef();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const modifyEmail = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    if (signalRef.current) {
+      signalRef.current.abort();
+    }
+    const frmdata = new FormData(e.target);
+    const data = Object.fromEntries(frmdata.entries());
+    try {
+      signalRef.current = new AbortController();
+      const resp = await profileApi.initiateEmailChange(
+        ...Object.values(data),
+        signalRef.current.signal
+      );
+      enqueueSnackbar(resp.data.message, { variant: "success" });
+      if (onSuccess) onSuccess(data.newEmail, resp.data);
+    } catch (err) {
+      //list related error codes
+      if (err.errorCode === "VALIDATION_FAILED") {
+        setErrors(err.errors);
+        enqueueSnackbar(err.detail, { variant: "error" });
+        return;
+      } else if (err.errorCode === "") {
+        enqueueSnackbar(err.response.data.message, { variant: "error" });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Dialog
-      open={open}
-      onClose={() => handleClose()}
+      open={true}
+      onClose={() => onClose()}
       sx={{ ".MuiPaper-root": { borderRadius: "20px" } }}
     >
       <DialogTitle>{title}</DialogTitle>
@@ -29,7 +58,7 @@ const ChangeEmail = ({
         <DialogContentText>{description}</DialogContentText>
         <form
           method="post"
-          onSubmit={(e) => handleSubmit(e)}
+          onSubmit={(e) => modifyEmail(e)}
           id="subscription-form"
         >
           <TextField
@@ -71,10 +100,11 @@ const ChangeEmail = ({
           form="subscription-form"
           color="navy"
           variant="contained"
+          loading={loading}
         >
           إرسال رمز التحقق
         </Button>
-        <Button onClick={handleClose}>إلغاء</Button>
+        <Button onClick={() => onClose()}>إلغاء</Button>
       </DialogActions>
     </Dialog>
   );

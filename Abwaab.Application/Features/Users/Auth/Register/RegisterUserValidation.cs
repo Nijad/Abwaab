@@ -26,7 +26,7 @@ namespace Abwaab.Application.Features.Users.Auth.Register
                 .NotEmpty().WithMessage($"{GeneralConstants.LAST_NAME} مطلوبة")
                 .MinimumLength(2).WithMessage($"{GeneralConstants.LAST_NAME} يجب أن تحتوي حرفين على الأقل");
             RuleFor(x => x.ConfirmPassword)
-                .NotEmpty().WithMessage("تأكيد كلمة المرور يجب مطلوب")
+                .NotEmpty().WithMessage("تأكيد كلمة المرور مطلوب")
                 .Equal(x => x.Password).WithMessage("تأكيد كلمة المرور لا تتطابق مع كلمة المرور");
         }
     }
