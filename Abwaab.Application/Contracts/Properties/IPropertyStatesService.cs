@@ -1,13 +1,9 @@
-﻿
-using Abwaab.Domain.Entities.PropertyEntities;
-using Abwaab.Domain.Entities.UserEntities;
+﻿using Abwaab.Domain.Entities.PropertyEntities;
 
-namespace Abwaab.Application.Contracts
+namespace Abwaab.Application.Contracts.Properties
 {
-    public interface IPropertyService
+    public interface IPropertyStatesService
     {
-        Task<Guid> CreatePropertyAsync(UserPlan userPlan, string errorTitle);
-        Task<bool> HasBalanceToAddPropertyAsync(UserPlan userPlan);
         Task<PropertyState> GetPreparingPropertyStateAsync(string errorTitle);
         Task<PropertyState> GetPendingPropertyStateAsync(string errorTitle);
         Task<PropertyState> GetPublishedPropertyStateAsync(string errorTitle);
@@ -16,7 +12,6 @@ namespace Abwaab.Application.Contracts
         Task<PropertyState> GetDisabledPropertyStateAsync(string errorTitle);
         Task<PropertyState> GetDeletedPropertyStateAsync(string errorTitle);
         Task<PropertyState> FindPropertyStateByStateNameAsync(string propertyStateName, string errorTitle);
-
-
+        Task<PropertyState> GetNewState(PropertyState propertyState, string errorTitle);
     }
 }

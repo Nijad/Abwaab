@@ -9,8 +9,7 @@
   <ItemGroup>
     <Folder Include="Features\Payments\Remove\" />
     <Folder Include="Features\Properties\DeleteMedia\" />
-    <Folder Include="Features\Properties\Save\" />
-    <Folder Include="Features\Properties\Update\" />
+    <Folder Include="Features\Properties\Queries\GetPropertyDetails\" />
     <Folder Include="Features\Properties\UploadMedia\" />
   </ItemGroup>
 
