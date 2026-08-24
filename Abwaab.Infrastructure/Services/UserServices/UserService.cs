@@ -114,7 +114,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     await _refreshTokenRepo.RevokeAsync(refreshToken, "Logout");
             }
 
-            return new LogoutResponse { Success = true, Message = "Logged out successfully." };
+            return new LogoutResponse { Success = true, Message = "تم تسجيل خروجك بنجاح." };
         }
 
         //todo use service only not repository in following method

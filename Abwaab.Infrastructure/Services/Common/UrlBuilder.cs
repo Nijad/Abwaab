@@ -22,12 +22,12 @@ namespace Abwaab.Infrastructure.Services.Common
             _configuration = configuration;
         }
 
-        public string GetCancelEmailChangeUrl() => BuildUrl(GeneralConstants.CANCEL_EMAIL_CHANGE_ACTION, GeneralConstants.AUTH_CONTROLLER);
+        public string GetCancelEmailChangeUrl(string changingCode) => BuildUrl(GeneralConstants.CANCEL_EMAIL_CHANGE_ACTION, GeneralConstants.AUTH_CONTROLLER, changingCode);
 
-        public string GetCancelPhoneChangeUrl() => BuildUrl(GeneralConstants.CANCEL_PHONE_CHANGE_ACTION, GeneralConstants.AUTH_CONTROLLER);
+        public string GetCancelPhoneChangeUrl(string changingCode) => BuildUrl(GeneralConstants.CANCEL_PHONE_CHANGE_ACTION, GeneralConstants.AUTH_CONTROLLER, changingCode);
 
 
-        private string BuildUrl(string action, string controller)
+        private string BuildUrl(string action, string controller, string changingCode)
         {
             var httpContext = _httpContextAccessor.HttpContext;
 
@@ -38,7 +38,7 @@ namespace Abwaab.Infrastructure.Services.Common
                     httpContext,
                     action: action,
                     controller: controller,
-                    values: null,
+                    values: new { changingCode = changingCode },
                     scheme: httpContext.Request.Scheme,
                     host: httpContext.Request.Host,
                     pathBase: httpContext.Request.PathBase

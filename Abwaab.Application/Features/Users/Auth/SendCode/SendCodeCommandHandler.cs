@@ -38,7 +38,7 @@ namespace Abwaab.Application.Features.Users.Auth.SendCode
             string code = _verificationCodeService.GenerateVerificationCode();
             request.Code = code;
 
-            var result = await _verificationCodeService.SendVerificationCodeAsync(request);
+            var result = await _verificationCodeService.SendVerificationCodeAsync(request, errorTitle);
             
             // Store the code in cache with a 5-minute expiry
             _cache.Set(request.Identifier, code, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));

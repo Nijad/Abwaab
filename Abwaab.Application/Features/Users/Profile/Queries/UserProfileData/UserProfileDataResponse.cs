@@ -11,6 +11,6 @@
         public bool MobileIsVerified { get; set; }
         public bool EmailNotificationStatus { get; set; }
         public bool SmsNotificationStatus { get; set; }
-        public string PendingChanges { get; set; } = string.Empty;
+        public List<PendingChangeIdentifierDTO>? PendingChanges { get; set; }
     }
 }

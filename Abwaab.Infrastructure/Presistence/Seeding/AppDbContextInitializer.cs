@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Interfaces;
+using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.AspNetCore.Identity;
@@ -59,7 +60,7 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
             var adminRole = new ApplicationRole { Id = new Guid(), Name = RoleConstants.ROLE_ADMIN, NormalizedName = RoleConstants.ROLE_ADMIN.ToUpper() };
             var userRole = new ApplicationRole { Id = new Guid(), Name = RoleConstants.ROLE_USER, NormalizedName = RoleConstants.ROLE_USER.ToUpper() };
 
-            if (! await _roleManager.Roles.AnyAsync())
+            if (!await _roleManager.Roles.AnyAsync())
             {
                 await _roleManager.CreateAsync(adminRole);
                 await _roleManager.CreateAsync(userRole);
@@ -85,28 +86,28 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
                 }
             }
 
-            if(! await _context.MediaTypes.AnyAsync())
+            if (!await _context.MediaTypes.AnyAsync())
                 await _context.MediaTypes.AddRangeAsync(SeedData.LoadMediaTypes());
 
-            if(! await _context.ServiceTypes.AnyAsync())
+            if (!await _context.ServiceTypes.AnyAsync())
                 await _context.ServiceTypes.AddRangeAsync(SeedData.LoadServiceTypes());
 
-            if(! await _context.PaymentStates.AnyAsync())
+            if (!await _context.PaymentStates.AnyAsync())
                 await _context.PaymentStates.AddRangeAsync(SeedData.LoadPaymentStates());
 
-            if(! await _context.AppointmentStates.AnyAsync())
+            if (!await _context.AppointmentStates.AnyAsync())
                 await _context.AppointmentStates.AddRangeAsync(SeedData.LoadAppointmentStates());
 
-            if(! await _context.NotificationStates.AnyAsync())
+            if (!await _context.NotificationStates.AnyAsync())
                 await _context.NotificationStates.AddRangeAsync(SeedData.LoadNotificationStates());
 
-            if(! await _context.NotificationWays.AnyAsync())
+            if (!await _context.NotificationWays.AnyAsync())
                 await _context.NotificationWays.AddRangeAsync(SeedData.LoadNotificationWays());
 
-            if(! await _context.AppointmentActions.AnyAsync())
+            if (!await _context.AppointmentActions.AnyAsync())
                 await _context.AppointmentActions.AddRangeAsync(SeedData.LoadAppointmentActions());
 
-            if(! await _context.PropertyStates.AnyAsync())
+            if (!await _context.PropertyStates.AnyAsync())
                 await _context.PropertyStates.AddRangeAsync(SeedData.LoadPropertyStates());
 
             if (!await _context.Plans.AnyAsync())
@@ -118,13 +119,16 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
             if (!await _context.PropertyTypes.AnyAsync())
                 await _context.AddRangeAsync(SeedData.LoadPropertyTypes());
 
+            if (!await _context.AttributeDataTypes.AnyAsync())
+                await _context.AddRangeAsync(SeedData.LoadAttributeDataTypeValues());
+
             if (!await _context.Attributes.AnyAsync())
                 await _context.AddRangeAsync(SeedData.LoadAttributes());
 
-            if (!await _context.AttributePossibleValues.AnyAsync())
-                await _context.AddRangeAsync(SeedData.LoadAttributePossibleValues());
+            //if (!await _context.AttributePossibleValues.AnyAsync())
+            //    await _context.AddRangeAsync(SeedData.LoadAttributePossibleValues());
 
-            if(!await _context.UserPlansStatus.AnyAsync())
+            if (!await _context.UserPlansStatus.AnyAsync())
                 await _context.AddRangeAsync(SeedData.LoadUserPlanStates());
 
             await _context.SaveChangesAsync();

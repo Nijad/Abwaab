@@ -5,7 +5,7 @@ namespace Abwaab.Application.Interfaces
     public interface IVerificationCodeService
     {
         string GenerateVerificationCode(); // Generates a 6-digit numeric code
-        Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO);
+        Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO, string errorTitle);
         
         Task SendVerificationCodeViaEmailAsync(string email, string code);
 

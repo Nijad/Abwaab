@@ -72,19 +72,19 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<NotificationWay>
             {
-                new NotificationWay 
-                { 
-                    Id = new Guid(), 
+                new NotificationWay
+                {
+                    Id = new Guid(),
                     WayName = NotificationWaysEnum.Email.ToString(),
                     CanDisable = true,
                 },
-                new NotificationWay 
-                { 
-                    Id = new Guid(), 
+                new NotificationWay
+                {
+                    Id = new Guid(),
                     WayName = NotificationWaysEnum.SMS.ToString(),
                     CanDisable = true
                 },
-                new NotificationWay 
+                new NotificationWay
                 {
                     Id = new Guid(),
                     WayName = NotificationWaysEnum.Web_Application.ToString(),
@@ -146,9 +146,10 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<Finishing>
             {
-                new Finishing { Id = new Guid(), FinishingName = "New" },
-                new Finishing { Id = new Guid(), FinishingName = "Good" },
-                new Finishing { Id = new Guid(), FinishingName = "Old" }
+                new Finishing { Id = new Guid(), FinishingName = "جديد" },
+                new Finishing { Id = new Guid(), FinishingName = "جيد" },
+                new Finishing { Id = new Guid(), FinishingName = "قديم" },
+                new Finishing { Id = new Guid(), FinishingName = "ممتاز" }
             };
         }
 
@@ -156,10 +157,10 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
         {
             return new List<PropertyType>
             {
-                new PropertyType { Id = new Guid(), TypeName = "Apartment" },
-                new PropertyType { Id = new Guid(), TypeName = "House" },
-                new PropertyType { Id = new Guid(), TypeName = "Villa" },
-                new PropertyType { Id = new Guid(), TypeName = "Land" }
+                new PropertyType { Id = new Guid(), TypeName = "شقة" },
+                new PropertyType { Id = new Guid(), TypeName = "منزل" },
+                new PropertyType { Id = new Guid(), TypeName = "فيلا" },
+                new PropertyType { Id = new Guid(), TypeName = "أرض" }
             };
         }
 
@@ -171,43 +172,54 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
                 {
                     Id = new Guid("2f4afcee-5179-4a65-ab34-0a7641f0c5b1"),
                     AttributeName = "Number of Rooms",
-                    DataType = AttributeDataType.number
+                    AttributeDataTypeId = new Guid("937c0e65-b4ec-47f2-8aa9-d758603e20a5")
                 },
 
                 new Attribute
                 {
                     Id = new Guid("6c0851d8-fc13-465c-94ab-373c25e9228b"),
                     AttributeName = "Number of Bathrooms",
-                    DataType = AttributeDataType.number
+                    AttributeDataTypeId = new Guid("937c0e65-b4ec-47f2-8aa9-d758603e20a5")
                 },
 
                 new Attribute
                 {
                     Id = new Guid("2988ec33-46ff-4301-9f67-4e69fc700875"),
                     AttributeName = "Floor Number",
-                    DataType = AttributeDataType.number
+                    AttributeDataTypeId = new Guid("937c0e65-b4ec-47f2-8aa9-d758603e20a5")
                 },
 
                 new Attribute {
                     Id = new Guid("2b0ffaba-bd0d-4a3b-a263-d0b61a9cb2f4"),
                     AttributeName = "Has Garage",
-                    DataType = AttributeDataType.possibleValues
+                    AttributeDataTypeId = new Guid("883a9f1e-e227-4079-a929-f0aa0ff40990")
                 },
 
                 new Attribute {
                     Id = new Guid("75d70597-6f68-46a8-9056-39622952fd10"),
                     AttributeName = "Has Garden",
-                    DataType = AttributeDataType.possibleValues
+                    AttributeDataTypeId = new Guid("883a9f1e-e227-4079-a929-f0aa0ff40990")
                 },
 
                 new Attribute {
                     Id = new Guid("158bfbe6-46c7-4f0c-adc0-f2059b0c64b1"),
                     AttributeName = "Has Swimming Pool",
-                    DataType = AttributeDataType.possibleValues
+                    AttributeDataTypeId = new Guid("883a9f1e-e227-4079-a929-f0aa0ff40990")
                 }
             };
         }
 
+        public static List<AttributeDataType> LoadAttributeDataTypeValues()
+        {
+            return new List<AttributeDataType>
+            {
+                new AttributeDataType { Id = new Guid("85ecffc0-07cf-4bc8-aed7-423bdb8738ee"), Name = AttributeDataTypeEnum.text.ToString() },
+                new AttributeDataType { Id = new Guid("937c0e65-b4ec-47f2-8aa9-d758603e20a5"), Name = AttributeDataTypeEnum.number.ToString() },
+                new AttributeDataType { Id = new Guid("883a9f1e-e227-4079-a929-f0aa0ff40990"), Name = AttributeDataTypeEnum.boolean.ToString() },
+                new AttributeDataType { Id = new Guid("f374db99-2e52-4152-958b-fb1f3e24eaf5"), Name = AttributeDataTypeEnum.list.ToString() }
+            };
+        }
+/*
         public static List<AttributePossibleValue> LoadAttributePossibleValues()
         {
             return new List<AttributePossibleValue>
@@ -249,7 +261,7 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
                 }
             };
         }
-
+*/
         public static List<UserPlanStatus> LoadUserPlanStates()
         {
             return new List<UserPlanStatus>()

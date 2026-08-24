@@ -51,14 +51,14 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Confirm
             var existingUser = await _userManager.Users
                 .FirstOrDefaultAsync(u => u.PhoneNumber == request.NewPhoneNo);
             if (existingUser != null && existingUser.Id != userId)
-                return new ConfirmPhoneNoChangeResponse { Success = false, Message = "Phone number is already in use by another account." };
+                throw new PhoneAlreadyInUseException(errorTitle);
 
             // Store the old phone
             user.PreviousPhoneNumber = user.PhoneNumber;
             // Update the user's phone number
             user.PhoneNumber = request.NewPhoneNo;
             // Force re-verification
-            user.PhoneNumberConfirmed = false;
+            //user.PhoneNumberConfirmed = false;
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
@@ -75,12 +75,6 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.Confirm
 
             _logger.LogInformation("Phone number changed successfully for user {UserId} to {NewPhone}", userId, request.NewPhoneNo);
             return new ConfirmPhoneNoChangeResponse { Success = true, Message = "تم تغيير رقم الموبايل الخاص بك بنجاح." };
-
-
-
-            //ConfirmPhoneNoChangeResponse response = await _profileService.ConfirmPhoneNoChangeCommandAsync(request);
-
-            //return response;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Abwaab.Application.Common.Exceptions.Auth
             errorCode: ErrorCodes.ResendWait,
             returnToUser: true)
     {
-        string msg = $"Please wait {GeneralConstants.WAIT_TIMEOUT_MINUTES * 60} seconds before requesting a new verification code.";
+        string msg = $"الرجاء الانتظار لمدة  {GeneralConstants.WAIT_TIMEOUT_MINUTES * 60} ثانية قبل إعادة طلب رمز تفعيل جديد.";
         public override string Message => msg;
     }
 }

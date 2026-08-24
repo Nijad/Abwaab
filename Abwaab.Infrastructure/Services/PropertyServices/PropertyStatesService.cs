@@ -1,35 +1,18 @@
 ﻿using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
-using Abwaab.Application.Contracts;
+using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
-using Abwaab.Domain.Entities.UserEntities;
 
-namespace Abwaab.Infrastructure.Services
+namespace Abwaab.Infrastructure.Services.PropertyServices
 {
-    public class PropertyService : IPropertyService
+    public class PropertyStatesService : IPropertyStatesService
     {
         private readonly IPropertyRepository _propertyRepository;
 
-        public PropertyService(
-            IPropertyRepository propertyRepository)
+        public PropertyStatesService(IPropertyRepository propertyRepository)
         {
             _propertyRepository = propertyRepository;
-        }
-
-        public async Task<Guid> CreatePropertyAsync(UserPlan userPlan, string errorTitle)
-        {
-            Guid id = Guid.NewGuid();
-            PropertyState preparingPropertyState = await GetPreparingPropertyStateAsync(errorTitle);
-            Property property = new()
-            {
-                Id = id,
-                UserPlan = userPlan,
-                PropertyState = preparingPropertyState
-            };
-
-            await _propertyRepository.CreateProperty(property);
-            return id;
         }
 
         public async Task<PropertyState> GetPreparingPropertyStateAsync(string errorTitle) => await FindPropertyStateByStateNameAsync(PropertyStatesEnum.Preparing.ToString(), errorTitle);
@@ -56,11 +39,15 @@ namespace Abwaab.Infrastructure.Services
             return propertyState;
         }
 
-        public async Task<bool> HasBalanceToAddPropertyAsync(UserPlan userPlan)
+        public async Task<PropertyState> GetNewState(PropertyState propertyState, string errorTitle)
         {
-            int propertyCount = await _propertyRepository.GetPropertiesCountBelongToPlanAsync(userPlan.Id);
+            PropertyState rejected = await GetRejectedPropertyStateAsync(errorTitle);
+            PropertyState pending = await GetPendingPropertyStateAsync(errorTitle);
 
-            return propertyCount < userPlan.Plan.MaxPropertiesCountAtSameTime;
+            if (propertyState.Id == rejected.Id || propertyState.Id == pending.Id)
+                return await GetPreparingPropertyStateAsync(errorTitle);
+
+            return propertyState;
         }
     }
 }

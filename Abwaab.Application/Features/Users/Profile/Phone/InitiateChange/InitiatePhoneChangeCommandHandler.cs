@@ -74,11 +74,12 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
             //    Fire-and-forget (background) so we don't slow down the response.
             // ----------------------------------------------------------------
 
-            var cancelUrl = _urlBuilder.GetCancelPhoneChangeUrl();
+            Guid changingCode = Guid.NewGuid();
+            var cancelUrl = _urlBuilder.GetCancelPhoneChangeUrl(changingCode.ToString());
             if (!string.IsNullOrEmpty(user.PhoneNumber))
                 _ = Task.Run(async () =>
                 {
-                    var alertMessage = $"تنبيه أمني: رقم هاتفك يجري  تعديل الآن {request.NewPhoneNo}. إذا لم تكن أنت يرجى إلغاء العملية حالاً {cancelUrl}";
+                    var alertMessage = $"تنبيه أمني: رقم هاتفك يجري  تعديله الآن {request.NewPhoneNo}. إذا لم تكن أنت يرجى إلغاء العملية حالاً من خلال الضغط على الرابط التالي: {cancelUrl}";
 
                     await _smsSender.SendSmsAsync(user.PhoneNumber, alertMessage, errorTitle);
                 });
@@ -110,11 +111,18 @@ namespace Abwaab.Application.Features.Users.Profile.Phone.InitiateChange
             // Store the pending change in cache (valid for 5 minutes)
             var pending = new PendingPhoneChange
             {
+                UserId  = userId,
                 NewPhoneNo = request.NewPhoneNo,
+                OldPhoneNo = user.PhoneNumber,
+                OldEmail = user.Email,
                 Code = code,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                CancelCode = changingCode
             };
-            _cache.Set($"phone_change_{userId}", pending, TimeSpan.FromMinutes(5));
+
+            _cache.Set($"email_change_{userId}", pending, TimeSpan.FromMinutes(GeneralConstants.CODE_TIMEOUT_MINUTES));
+
+            _cache.Set($"phone_change_{changingCode}", pending, TimeSpan.FromMinutes(5));
 
             return new InitiatePhoneNoChangeResponse { Success = true, Message = "تم إرسال رمز تحقق إلى رقم الموبايل الجديد." };
         }

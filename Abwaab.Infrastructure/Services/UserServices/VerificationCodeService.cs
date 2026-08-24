@@ -30,7 +30,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return random.Next(100000, 999999).ToString();
         }
 
-        public async Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO)
+        public async Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO, string errorTitle)
         {
             if (resendCodeDTO.IdentifierType == IdentifiersEnum.Email)
             {
@@ -39,7 +39,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     .ContinueWith(task => new SendCodeResponse
                     {
                         Success = true,
-                        Message = "Verification code resent to email."
+                        Message = "تم إرسال رمز التحقق إلى بريدك الالكتروني."
                     });
             }
             else if (resendCodeDTO.IdentifierType == IdentifiersEnum.Phone_Number)
@@ -49,7 +49,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     .ContinueWith(task => new SendCodeResponse
                     {
                         Success = true,
-                        Message = "Verification code resent to phone number."
+                        Message = "تم إرسال رمز التحقق إلى رقم هاتفك."
                     });
             }
 
@@ -58,13 +58,13 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task SendVerificationCodeViaEmailAsync(string email, string code)
         {
-            var subject = "Your Account Verification Code";
+            var subject = "رمز التحقق الخاص بحسابك";
             var body = $@"
-                <h2>Email Verification</h2>
-                <p>Thank you for registering. Please use the following code to verify your account:</p>
+                <h2>التحقق من البريد الالكتروني</h2>
+                <p>نشكرك على التسجيل. يرجى استخدام الرمز التالي للتحقق من حسابك:</p>
                 <h1 style='font-size: 32px; letter-spacing: 5px; color: #2d3748;'>{code}</h1>
-                <p>This code will expire in {GeneralConstants.CODE_TIMEOUT_MINUTES} minutes.</p>
-                <p>If you didn't request this, please ignore this email.</p>
+                <p>هذا الرمز صالح لمدة {GeneralConstants.CODE_TIMEOUT_MINUTES} دقائق.</p>
+                <p>إذا لم تطلب ذلك، فيرجى تجاهل هذه الرسالة الإلكترونية.</p>
             ";
 
             await _emailSender.SendEmailAsync(email, subject, body, errorTitle);
@@ -72,7 +72,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task SendVerificationCodeViaSmsAsync(string phoneNo, string code)
         {
-            var message = $"Your OTP is: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (valid {GeneralConstants.CODE_TIMEOUT_MINUTES} min)";
+            var message = $"رمز التحقق هذا: {code[0]}{code[1]}{code[2]}-{code[3]}{code[4]}{code[5]} (صالح لمدة {GeneralConstants.CODE_TIMEOUT_MINUTES} دقائق)";
 
             await _smsSender.SendSmsAsync(phoneNo, message, errorTitle);
         }

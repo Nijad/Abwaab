@@ -550,6 +550,9 @@ namespace Abwaab.Infrastructure.presistence.migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("AttributeDataTypeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("AttributeName")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -561,9 +564,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DataType")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("LastModifiedAt")
                         .HasColumnType("datetime2");
 
@@ -572,10 +572,43 @@ namespace Abwaab.Infrastructure.presistence.migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AttributeDataTypeId");
+
                     b.HasIndex("AttributeName")
                         .IsUnique();
 
                     b.ToTable("Attributes", (string)null);
+                });
+
+            modelBuilder.Entity("Abwaab.Domain.Entities.PropertyEntities.AttributeDataType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("AttributeDataTypes", (string)null);
                 });
 
             modelBuilder.Entity("Abwaab.Domain.Entities.PropertyEntities.AttributePossibleValue", b =>
@@ -860,8 +893,8 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("Day")
-                        .HasColumnType("date");
+                    b.Property<int>("Day")
+                        .HasColumnType("int");
 
                     b.Property<TimeOnly>("EndTime")
                         .HasColumnType("time");
@@ -883,11 +916,7 @@ namespace Abwaab.Infrastructure.presistence.migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EndTime");
-
                     b.HasIndex("PropertyId");
-
-                    b.HasIndex("StartTime");
 
                     b.ToTable("TimeSlots", (string)null);
                 });
@@ -1465,6 +1494,17 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Navigation("UserPlan");
                 });
 
+            modelBuilder.Entity("Abwaab.Domain.Entities.PropertyEntities.Attribute", b =>
+                {
+                    b.HasOne("Abwaab.Domain.Entities.PropertyEntities.AttributeDataType", "AttributeDataType")
+                        .WithMany("Attributes")
+                        .HasForeignKey("AttributeDataTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AttributeDataType");
+                });
+
             modelBuilder.Entity("Abwaab.Domain.Entities.PropertyEntities.AttributePossibleValue", b =>
                 {
                     b.HasOne("Abwaab.Domain.Entities.PropertyEntities.Attribute", "Attribute")
@@ -1689,6 +1729,11 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Navigation("PossibleValues");
 
                     b.Navigation("PropertyAttributes");
+                });
+
+            modelBuilder.Entity("Abwaab.Domain.Entities.PropertyEntities.AttributeDataType", b =>
+                {
+                    b.Navigation("Attributes");
                 });
 
             modelBuilder.Entity("Abwaab.Domain.Entities.PropertyEntities.Finishing", b =>

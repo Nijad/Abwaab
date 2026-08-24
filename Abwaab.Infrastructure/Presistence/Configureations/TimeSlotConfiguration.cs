@@ -12,6 +12,9 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
 
             builder.HasKey(t => t.Id);
 
+            builder.Property(t => t.Day)
+                .IsRequired();
+
             builder.Property(t => t.StartTime)
                    .IsRequired();
 
@@ -25,8 +28,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasIndex(t => t.PropertyId);
-            builder.HasIndex(t => t.StartTime);
-            builder.HasIndex(t => t.EndTime);
         }
     }
 }

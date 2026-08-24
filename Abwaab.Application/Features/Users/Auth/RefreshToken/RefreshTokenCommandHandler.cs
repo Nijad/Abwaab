@@ -42,7 +42,7 @@ namespace Abwaab.Application.Features.Users.Auth.RefreshToken
             var oldLoginIdentifier = httpContext.User.FindFirstValue("LoginIdentifier") ?? user.Email ?? user.PhoneNumber;
             RefreshTokenResponse reuslt = await _jwtService.RefreshTokenAsync(user, roles, request.RefreshToken, oldLoginIdentifier);
 
-            return await Task.FromResult(reuslt);
+            return reuslt;
         }
     }
 }

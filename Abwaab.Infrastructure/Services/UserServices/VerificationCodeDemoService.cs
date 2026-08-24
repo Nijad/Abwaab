@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Features.Users.Auth.SendCode;
+﻿using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Features.Users.Auth.SendCode;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Enums;
 using Microsoft.Extensions.Caching.Memory;
@@ -19,7 +20,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
             return "123456";
         }
 
-        public Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO)
+        public Task<SendCodeResponse> SendVerificationCodeAsync(SendCodeDTO resendCodeDTO, string errorTitle)
         {
             string code = GenerateVerificationCode();
             if (resendCodeDTO.IdentifierType == IdentifiersEnum.Email)
@@ -28,7 +29,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     .ContinueWith(task => new SendCodeResponse
                     {
                         Success = true,
-                        Message = "Verification code resent to email."
+                        Message = "تم إرسال رمز التفعيل إلى بريدك الالكتروني."
                     });
             }
             else if (resendCodeDTO.IdentifierType == IdentifiersEnum.Phone_Number)
@@ -37,16 +38,12 @@ namespace Abwaab.Infrastructure.Services.UserServices
                     .ContinueWith(task => new SendCodeResponse
                     {
                         Success = true,
-                        Message = "Verification code resent to phone number."
+                        Message = "تم إرسال رمز التفعيل إلى رقم هاتفك."
                     });
             }
             else
             {
-                return Task.FromResult(new SendCodeResponse
-                {
-                    Success = false,
-                    Message = "Invalid identifier. Must be a valid email or phone number."
-                });
+                throw new NotImplementedIdentifierException(resendCodeDTO.IdentifierType.ToString(), errorTitle);
             }
         }
 
