@@ -25,7 +25,6 @@ namespace Abwaab.Infrastructure.Presistence.Context
         public DbSet<AppointmentState> AppointmentStates { get; set; }
         public DbSet<AppointmentAction> AppointmentActions { get; set; }
 
-        public DbSet<Advertisment> Advertisments { get; set; }
         public DbSet<Media> Media { get; set; }
         public DbSet<MediaType> MediaTypes { get; set; }
 
