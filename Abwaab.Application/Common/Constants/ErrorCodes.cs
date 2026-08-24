@@ -64,5 +64,6 @@
         public const string PossibleValueNotBelongToAttribute = "POSSIBLE_VALUE_NOT_BELONG_TO_ATTRIBUTE";
         public const string NoNullAllowed = "NO_NULL_ALLOWED";
         public const string NotValidFormat = "NOT_VALID_FORMAT";
+        public const string ValdiationFailed = "VALIDATION_FAILED";
     }
 }
