@@ -21,6 +21,5 @@ namespace Abwaab.Domain.Entities.PaymentEntities
         public Guid? UserPlandId { get; set; }
         public UserPlan? UserPlan { get; set; }
         public Guid? AdvertismentId { get; set; }
-        public Advertisment? Advertisment { get; set; }
     }
 }

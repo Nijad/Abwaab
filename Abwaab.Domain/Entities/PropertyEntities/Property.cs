@@ -26,5 +26,6 @@ namespace Abwaab.Domain.Entities.PropertyEntities
         public List<Appointment>? Appointments { get; set; }
         public List<TimeSlot>? TimeSlots { get; set; }
         public List<PropertyAttribute>? PropertyAttributes { get; set; }
+        public int NumberOfView { get; set; }
     }
 }

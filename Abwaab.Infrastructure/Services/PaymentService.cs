@@ -55,7 +55,6 @@ namespace Abwaab.Infrastructure.Services
             return await _context.Payments
                 .Include(x => x.ServiceType)
                 .Include(x => x.UserPlan)
-                .Include(x => x.Advertisment)
                 .Where(x => x.PaymentCode == paymentCode)
                 .FirstOrDefaultAsync();
         }
