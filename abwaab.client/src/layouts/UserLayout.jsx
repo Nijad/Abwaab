@@ -9,7 +9,7 @@ const UserLayout = () => {
       <div className="">
         <NavBarMain />
       </div>
-      <div className="flex-1 bg-neutral-50">
+      <div className="flex-1 bg-neutral-50 flex w-full">
         <Outlet />
       </div>
       <div className="">

@@ -193,7 +193,7 @@ const NavBarMain = () => {
               ))}
           </Box>
           {!isAuthenticated && (
-            <NavLink to={"login"} end className={"mx-3 text-navy-500"}>
+            <NavLink to={"/login"} end className={"mx-3 text-navy-500"}>
               تسجيل الدخول
             </NavLink>
           )}
