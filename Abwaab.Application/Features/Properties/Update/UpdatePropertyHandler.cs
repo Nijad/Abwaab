@@ -55,7 +55,7 @@ namespace Abwaab.Application.Features.Properties.Update
 
 
             //check if property belong to user
-            string username = _userService.FindUserNameByContext();
+            string username = _userService.FindUserNameByContext(errorTitle);
             ApplicationUser? user = await _userService.FindUserByNameAsync(username);
 
             if (user == null)
@@ -148,7 +148,6 @@ namespace Abwaab.Application.Features.Properties.Update
             property.FinishingId = request.PropertyFinishingId;
             property.PropertyTypeId = request.PropertyTypeId;
             property.PropertyStateId = propertyState.Id;
-            property.IsStard = request.IsStar;
 
             await _transactionManager.BeginTransactionAsync(cancellationToken);
             try

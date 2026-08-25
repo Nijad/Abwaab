@@ -1,15 +1,15 @@
-﻿using Abwaab.Application.Features.Commands.DeleteMedia;
-using Abwaab.Application.Features.Commands.UploadMedia;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Features.Medias.DeleteMedia;
+using Abwaab.Application.Features.Medias.UploadMedia;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Abwaab.Server.Controllers
 {
-    // Presentation/Controllers/MediaController.cs
     [ApiController]
-    [Route("api/media")]
-    [Authorize] // Require authentication
+    [Route("api/[controller]")]
+    [Authorize]
     public class MediaController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -20,23 +20,24 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPost("upload")]
-        [RequestSizeLimit(50 * 1024 * 1024)] // 50MB limit
-        public async Task<IActionResult> UploadMedia([FromForm] IFormFile file, [FromForm] Guid? propertyId, [FromForm] string mediaType)
+        [RequestSizeLimit(GeneralConstants.MAX_MEDIA_SIZE_ALLOWED_MB * 1024 * 1024)]
+        public async Task<IActionResult> UploadMedia([FromForm] UploadMediaRequest request)
         {
-            if (file == null || file.Length == 0)
+            if (request.File == null || request.File.Length == 0)
                 return BadRequest("No file uploaded.");
 
             // Validate MediaType matches file content
-            using var stream = file.OpenReadStream();
+            using var stream = request.File.OpenReadStream();
 
             var command = new UploadMediaCommand
             {
-                FileName = file.FileName,
-                Size = file.Length,
-                ContentType = file.ContentType,
+                FileName = request.File.FileName,
+                Size = request.File.Length,
+                ContentType = request.File.ContentType,
                 Content = stream,
-                PropertyId = (Guid)propertyId,
-                MediaType = mediaType
+                PropertyId = request.PropertyId,
+                MediaTypeId = request.MediaTypeId,
+                MediaTypeName = request.MediaTypeName
             };
 
             var result = await _mediator.Send(command);
@@ -46,11 +47,9 @@ namespace Abwaab.Server.Controllers
         [HttpDelete("{mediaId}")]
         public async Task<IActionResult> DeleteMedia(Guid mediaId)
         {
-            var command = new DeleteMediaCommand { MediaId = mediaId };
-            var result = await _mediator.Send(command);
-            if (result)
-                return Ok(new { Message = "Media deleted successfully." });
-            return NotFound(new { Message = "Media not found." });
+            DeleteMediaResponse result = await _mediator.Send(new DeleteMediaCommand { MediaId = mediaId });
+            
+            return Ok(result);
         }
     }
 }

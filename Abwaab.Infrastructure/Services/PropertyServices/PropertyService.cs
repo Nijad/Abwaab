@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.Common.Exceptions.Properties;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Repositories;
+using Abwaab.Domain.Entities.MediaEntities;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 
@@ -58,9 +59,9 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             await _propertyRepository.UpdatePropertyAsync(property);
         }
 
-        public Task<Property> FindPropertyByIdForUpdateAsync(Guid propertyId, string errorTitle)
+        public async Task<Property> FindPropertyByIdForUpdateAsync(Guid propertyId, string errorTitle)
         {
-            Task<Property?> property = _propertyRepository.FindPropertyByIdForUpdateAsync(propertyId);
+            Property? property = await _propertyRepository.FindPropertyByIdForUpdateAsync(propertyId);
 
             if(property==null)
                 throw new PropertyNotFoundException(errorTitle);

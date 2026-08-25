@@ -13,27 +13,21 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
 
             builder.HasKey(m => m.Id);
 
-            builder.Property(m => m.FileName)
-                   .IsRequired()
-                   .HasMaxLength(50);
-
-            builder.Property(m => m.StoredFileName)
-                   .IsRequired()
-                   .HasMaxLength(200);
-
             builder.Property(m => m.FilePath)
                    .IsRequired()
                    .HasMaxLength(200);
 
-            builder.Property(m => m.FilePath)
-                   .IsRequired()
-                   .HasMaxLength(50);
 
-             //Relationship: Media -> Property (assumes Media.Property and Media.PropertyId exist)
             builder.HasOne(m => m.Property)
                    .WithMany(p => p.MediaList)
                    .HasForeignKey(m=>m.PropertyId)
                    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(m => m.MediaType)
+                .WithMany(t => t.MediaList)
+                .HasForeignKey(m => m.MediaTypeId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
 
             builder.HasIndex(m => m.PropertyId);
         }

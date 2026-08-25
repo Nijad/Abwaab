@@ -8,7 +8,7 @@ namespace Abwaab.Application.Contracts
     {
         Task<ApplicationUser?> FindUserByIdentifierAsync(string identifier, IdentifiersEnum identifierType, string errorTitle);
 
-        string FindUserNameByContext();
+        string FindUserNameByContext(string errorTitle);
 
         string? GetUserJti();
 

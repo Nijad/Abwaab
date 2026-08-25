@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
+using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Profile.Plans;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Users.Auth.Logout;
@@ -29,20 +30,24 @@ namespace Abwaab.Infrastructure.Services.UserServices
             _planRepository = planRepository;
         }
 
-        public string FindUserNameByContext()
+        public string FindUserNameByContext(string errorTitle)
         {
             HttpContext? context = _httpContextAccessor.HttpContext;
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
+
             if(context.User == null)
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(context.User));
 
             if(context.User.Identity == null)
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(context.User.Identity));
+
+            if (!context.User.Identity.IsAuthenticated)
+                throw new UserNotAuthenticatedException(errorTitle);
 
             if(context.User.Identity.Name == null)
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(context.User.Identity.Name));
 
             return context.User.Identity.Name;
         }

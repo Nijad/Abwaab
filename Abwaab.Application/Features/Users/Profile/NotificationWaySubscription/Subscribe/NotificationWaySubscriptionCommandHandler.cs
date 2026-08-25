@@ -28,7 +28,7 @@ namespace Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.
         {
             //check if user exist
 
-            string username = _userService.FindUserNameByContext();
+            string username = _userService.FindUserNameByContext(errorTitle);
             ApplicationUser? user = await _userManager.FindByNameAsync(username);
             
             if (user == null)
