@@ -201,7 +201,11 @@ const NavBarMain = () => {
             <Box sx={{ flexGrow: 0, position: "relative" }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="حسام حبال" src="/static/images/avatar/2.jpg" />
+                  <Avatar
+                    alt={user.name}
+                    src="/static/images/avatar/2.jpg"
+                    className="!bg-navy-600"
+                  />
                 </IconButton>
               </Tooltip>
               <Menu

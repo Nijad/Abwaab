@@ -1,23 +1,39 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  TextField,
-} from "@mui/material";
+import { Button } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import ShowErrors from "../../components/ShowErrors";
 import { useSnackbar } from "notistack";
-import { profileApi, propertyApi } from "../../api";
+import { propertyApi } from "../../api";
 import UserProperty from "../../components/UserProperty";
 import { useNavigate } from "react-router";
 import HomeIcon from "../../components/HomeIcon";
+import PreviewPropertyVisits from "./PreviewPropertyVisits";
 
 const dataTest = [
   {
-    propertyId: "1231-sdf1121-14fs",
+    propertyId: "8baa7af8-4c2d-4cfc-afbc-e34ba2371c96",
+    coverImage:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiBv7lL1ce0REGvvOPJsrBALnXqqjgD7svLzpZmlf0gg&s=10",
+    title: "شقة سكنية بمشروع دمر",
+    address: "دمشق مشروع دمر الجزيرة 3",
+    propertyType: "شقة سكنية",
+    propertyFinishing: "سوبر ديلوكس",
+    price: "3000000000",
+    areaInSquareMeter: 155,
+    visitRequests: 3,
+  },
+  {
+    propertyId: "1231-fsdf342-32vx",
+    coverImage:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiBv7lL1ce0REGvvOPJsrBALnXqqjgD7svLzpZmlf0gg&s=10",
+    title: "شقة سكنية بمشروع دمر",
+    address: "دمشق مشروع دمر الجزيرة 3",
+    propertyType: "شقة سكنية",
+    propertyFinishing: "سوبر ديلوكس",
+    price: "3000000000",
+    areaInSquareMeter: 155,
+    visitRequests: 3,
+  },
+  {
+    propertyId: "s23-cxvz-dsaf34",
     coverImage:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiBv7lL1ce0REGvvOPJsrBALnXqqjgD7svLzpZmlf0gg&s=10",
     title: "شقة سكنية بمشروع دمر",
@@ -45,7 +61,7 @@ const MyPropertiesList = ({ onPromote, onEdit, onVisitPreview, onSuccess }) => {
     }
     try {
       signalRef.current = new AbortController();
-      const resp = await propertyApi.get(signalRef.current.signal);
+      const resp = await propertyApi.getMyProperties(signalRef.current.signal);
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
       setData(resp.data);
       if (onSuccess) onSuccess(resp.data);
@@ -68,7 +84,9 @@ const MyPropertiesList = ({ onPromote, onEdit, onVisitPreview, onSuccess }) => {
     }, 0);
 
     return () => {
-      signalRef.current.abort();
+      if (signalRef.current) {
+        signalRef.current.abort();
+      }
     };
   }, []);
   return (

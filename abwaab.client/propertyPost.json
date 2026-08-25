@@ -1,0 +1,33 @@
+{
+    "propertyId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "title": "string",
+    "description": "string",
+    "address": "string",
+    "areaInSquareMeter": 0,
+    "price": 0,
+    "latitude": 0,
+    "longitude": 0,
+    "propertyTypeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "propertyFinishingId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "timeSlots": [
+        {
+            "timeSlotId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "day": 0,
+            "dayName": "string",
+            "startTime": "string",
+            "endTime": "string",
+            "notes": "string"
+        }
+    ],
+    "propertyAttributesList": [
+        {
+            "propertyAttributeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "value": "string",
+            "attributeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "attributeName": "string",
+            "dataTypeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "dataTypeDescription": "string"
+        }
+    ],
+    "isStar": true
+}

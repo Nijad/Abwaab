@@ -1,0 +1,223 @@
+{
+    "propertyTypesList": [
+        {
+            "typeId": "da186099-0b09-49be-93c7-08def51dd8f2",
+            "typeName": "Apartment"
+        },
+        {
+            "typeId": "de5cdca9-de81-4aac-93c8-08def51dd8f2",
+            "typeName": "House"
+        },
+        {
+            "typeId": "e058cea0-9069-481d-93c9-08def51dd8f2",
+            "typeName": "Villa"
+        },
+        {
+            "typeId": "e8a32cca-5eda-417c-93ca-08def51dd8f2",
+            "typeName": "Land"
+        }
+    ],
+    "propertyFinishingsList": [
+        {
+            "finishingId": "ab060e64-4917-4d5b-255c-08def51dd8ef",
+            "finishingName": "New"
+        },
+        {
+            "finishingId": "297e879a-1cb6-4d8c-255d-08def51dd8ef",
+            "finishingName": "Good"
+        },
+        {
+            "finishingId": "25ad7e56-c1fd-4b47-255e-08def51dd8ef",
+            "finishingName": "Old"
+        }
+    ],
+    "weekDaysList": [
+        {
+            "dayIndex": 0,
+            "dayName": "Sunday"
+        },
+        {
+            "dayIndex": 1,
+            "dayName": "Monday"
+        },
+        {
+            "dayIndex": 2,
+            "dayName": "Tuesday"
+        },
+        {
+            "dayIndex": 3,
+            "dayName": "Wednesday"
+        },
+        {
+            "dayIndex": 4,
+            "dayName": "Thursday"
+        },
+        {
+            "dayIndex": 5,
+            "dayName": "Friday"
+        },
+        {
+            "dayIndex": 6,
+            "dayName": "Saturday"
+        }
+    ],
+    "attributes": [
+        {
+            "attributeId": "2f4afcee-5179-4a65-ab34-0a7641f0c5b1",
+            "attributeName": "Number of Rooms",
+            "dataTypeId": "937c0e65-b4ec-47f2-8aa9-d758603e20a5",
+            "datayTypeDescription": "number",
+            "possibleValues": []
+        },
+        {
+            "attributeId": "6c0851d8-fc13-465c-94ab-373c25e9228b",
+            "attributeName": "Number of Bathrooms",
+            "dataTypeId": "937c0e65-b4ec-47f2-8aa9-d758603e20a5",
+            "datayTypeDescription": "number",
+            "possibleValues": []
+        },
+        {
+            "attributeId": "8bd971a5-b3d4-4115-9c16-388702fa84cf",
+            "attributeName": "View Side",
+            "dataTypeId": "f374db99-2e52-4152-958b-fb1f3e24eaf5",
+            "datayTypeDescription": "list",
+            "possibleValues": [
+                {
+                    "possibleValueId": "2b574213-971f-4102-b103-1061963a22a7",
+                    "possibleValueDescription": "North-East"
+                },
+                {
+                    "possibleValueId": "08293131-a530-47d0-b8d0-150693141bcd",
+                    "possibleValueDescription": "East-South-West-Noth"
+                },
+                {
+                    "possibleValueId": "c5e02c3e-ede3-4160-b06a-1b0fc143063e",
+                    "possibleValueDescription": "North-West"
+                },
+                {
+                    "possibleValueId": "cd7c2212-05f2-4613-8d04-246043fc616b",
+                    "possibleValueDescription": "Other"
+                },
+                {
+                    "possibleValueId": "64bb5088-a987-47e4-b281-5222e51014df",
+                    "possibleValueDescription": "East-South-West"
+                },
+                {
+                    "possibleValueId": "9f811d2a-ad1e-4ef0-b095-54f3071d636b",
+                    "possibleValueDescription": "South-East"
+                },
+                {
+                    "possibleValueId": "567e2b51-957e-49c6-a564-68258b65b630",
+                    "possibleValueDescription": "North-West-South"
+                },
+                {
+                    "possibleValueId": "bf7943f3-c543-49a8-9ab6-6a8066432d40",
+                    "possibleValueDescription": "East-Noth-West"
+                },
+                {
+                    "possibleValueId": "21183e4b-6dd2-4589-8046-d39be018b5aa",
+                    "possibleValueDescription": "South-West"
+                },
+                {
+                    "possibleValueId": "adacce06-d7e7-4280-b19d-df3343868444",
+                    "possibleValueDescription": "North-East-South"
+                },
+                {
+                    "possibleValueId": "8eab43dd-0414-4c59-ae43-ed87a9ba7930",
+                    "possibleValueDescription": "Non"
+                }
+            ]
+        },
+        {
+            "attributeId": "75d70597-6f68-46a8-9056-39622952fd10",
+            "attributeName": "Has Garden",
+            "dataTypeId": "883a9f1e-e227-4079-a929-f0aa0ff40990",
+            "datayTypeDescription": "boolean",
+            "possibleValues": []
+        },
+        {
+            "attributeId": "2988ec33-46ff-4301-9f67-4e69fc700875",
+            "attributeName": "Floor Number",
+            "dataTypeId": "937c0e65-b4ec-47f2-8aa9-d758603e20a5",
+            "datayTypeDescription": "number",
+            "possibleValues": []
+        },
+        {
+            "attributeId": "2b0ffaba-bd0d-4a3b-a263-d0b61a9cb2f4",
+            "attributeName": "Has Garage",
+            "dataTypeId": "883a9f1e-e227-4079-a929-f0aa0ff40990",
+            "datayTypeDescription": "boolean",
+            "possibleValues": []
+        },
+        {
+            "attributeId": "158bfbe6-46c7-4f0c-adc0-f2059b0c64b1",
+            "attributeName": "Has Swimming Pool",
+            "dataTypeId": "883a9f1e-e227-4079-a929-f0aa0ff40990",
+            "datayTypeDescription": "boolean",
+            "possibleValues": []
+        }
+    ],
+    "propertyId": "02558b74-37b5-4918-a8cb-9cca0bb2823c",
+    "title": "شقة مكسية",
+    "description": "شقة مكسية كسوة ممتازة، تتمتعل باطلالة مميزة على دمشق",
+    "address": "دمشق مهاجرين شارع الشارع حي الحي بناء رقم 10 الطابق 5",
+    "areaInSquareMeter": 110,
+    "price": 200000000,
+    "latitude": 33.434095034268864,
+    "longitude": 36.07537799549284,
+    "propertyTypeId": "da186099-0b09-49be-93c7-08def51dd8f2",
+    "propertyFinishingId": "297e879a-1cb6-4d8c-255d-08def51dd8ef",
+    "timeSlots": [
+        {
+            "timeSlotId": "5b9f85c1-dd8e-4351-92ed-0756c8b488b0",
+            "day": 3,
+            "dayName": "Wednesday",
+            "startTime": "10:30:00",
+            "endTime": "11:00:00",
+            "notes": "الفترة الثالثة"
+        },
+        {
+            "timeSlotId": "626743de-f96c-4ac8-9462-087a61259a67",
+            "day": 1,
+            "dayName": "Monday",
+            "startTime": "10:00:00",
+            "endTime": "10:30:00",
+            "notes": "الفترة الأولى"
+        },
+        {
+            "timeSlotId": "d43ffa63-43ca-40d7-b122-1d7a080a19e6",
+            "day": 2,
+            "dayName": "Tuesday",
+            "startTime": "10:30:00",
+            "endTime": "11:00:00",
+            "notes": "الفترة الثانية"
+        }
+    ],
+    "propertyAttributesList": [
+        {
+            "propertyAttributeId": "9595b7df-6d8d-4d71-8041-00690071d907",
+            "value": "3",
+            "attributeId": "6c0851d8-fc13-465c-94ab-373c25e9228b",
+            "attributeName": "Number of Bathrooms",
+            "dataTypeId": "937c0e65-b4ec-47f2-8aa9-d758603e20a5",
+            "dataTypeDescription": "number"
+        },
+        {
+            "propertyAttributeId": "21dbda59-fc72-4647-9257-a6e9d162ae27",
+            "value": "true",
+            "attributeId": "2b0ffaba-bd0d-4a3b-a263-d0b61a9cb2f4",
+            "attributeName": "Has Garage",
+            "dataTypeId": "883a9f1e-e227-4079-a929-f0aa0ff40990",
+            "dataTypeDescription": "boolean"
+        },
+        {
+            "propertyAttributeId": "da63f010-a26a-4276-b0c7-f4472ec6fb16",
+            "value": "{\"possibleValueId\": \"08293131-a530-47d0-b8d0-150693141bcd\"}",
+            "attributeId": "8bd971a5-b3d4-4115-9c16-388702fa84cf",
+            "attributeName": "View Side",
+            "dataTypeId": "f374db99-2e52-4152-958b-fb1f3e24eaf5",
+            "dataTypeDescription": "list"
+        }
+    ],
+    "isStar": false
+}

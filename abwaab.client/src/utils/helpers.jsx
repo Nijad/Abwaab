@@ -67,3 +67,105 @@ export const avatarString = (name) => {
     return name[0];
   }
 };
+
+export const timeSlots = (before = null, after = null) => {
+  const slots = [
+    "09:00:00",
+    "09:30:00",
+    "10:00:00",
+    "10:30:00",
+    "11:00:00",
+    "11:30:00",
+    "12:00:00",
+    "12:30:00",
+    "13:00:00",
+    "13:30:00",
+    "14:00:00",
+    "14:30:00",
+    "15:00:00",
+    "15:30:00",
+    "16:00:00",
+    "16:30:00",
+    "17:00:00",
+    "17:30:00",
+    "18:00:00",
+    "18:30:00",
+    "19:00:00",
+    "19:30:00",
+    "20:00:00",
+    "20:30:00",
+    "21:00:00",
+  ];
+  const result = [];
+  // debugger;
+  if (before) {
+    for (const slot of slots) {
+      if (before !== slot) {
+        result.push(slot);
+      } else break;
+    }
+    return result;
+  } else if (after) {
+    var indx = slots.findIndex((s) => s === after);
+    if (indx !== -1) {
+      for (indx; indx < slots.length; indx++) {
+        result.push(slots[indx]);
+      }
+    }
+    return result;
+  } else return slots;
+};
+
+/**
+ * Generates an array of 30-minute time slots between two times.
+ * @param {string} startTime - Format "HH:MM" (e.g., "10:30")
+ * @param {string} endTime - Format "HH:MM" (e.g., "15:00" or "03:00")
+ * @returns {Array<{startTime: string, endTime: string}>}
+ */
+export function generateTimeSlots(day, startTime, endTime) {
+  const slots = [];
+
+  // Helper to convert "HH:MM" string to total minutes from midnight
+  const parseMinutes = (timeStr) => {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  // Helper to convert total minutes back to double-digit "HH:MM" format
+  const formatTime = (totalMinutes) => {
+    const hours = Math.floor(totalMinutes / 60) % 24;
+    const minutes = totalMinutes % 60;
+    const formattedHours = String(hours).padStart(2, "0");
+    const formattedMinutes = String(minutes).padStart(2, "0");
+    return `${formattedHours}:${formattedMinutes}:00`;
+  };
+
+  let startMins = parseMinutes(startTime);
+  let endMins = parseMinutes(endTime);
+
+  // Handle overnight/over-midnight periods (e.g., 22:00 to 02:00)
+  if (endMins < startMins) {
+    endMins += 24 * 60;
+  }
+
+  const SLOT_DURATION = 30; // in minutes
+
+  // Generate slots in 30-minute increments
+  while (startMins + SLOT_DURATION <= endMins) {
+    const slotStart = formatTime(startMins);
+    const slotEnd = formatTime(startMins + SLOT_DURATION);
+
+    slots.push({
+      timeSlotId: null,
+      day: day.dayIndex,
+      dayName: day.dayName,
+      startTime: slotStart,
+      endTime: slotEnd,
+      notes: "",
+    });
+
+    startMins += SLOT_DURATION;
+  }
+
+  return slots;
+}

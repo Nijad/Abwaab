@@ -1,9 +1,5 @@
-const LabelTag = ({ label }) => {
-  return (
-    <p className="p-2 bg-sky-50 text-navy-700 w-fit rounded-2xl my-2">
-      {label}
-    </p>
-  );
+const LabelTag = ({ classes, label }) => {
+  return <p className={`p-1 w-fit rounded-2xl my-2 ${classes}`}>{label}</p>;
 };
 
 export default LabelTag;
