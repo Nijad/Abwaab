@@ -26,6 +26,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await _context.Properties
                 .Include(x => x.PropertyState)
                 .Include(x => x.UserPlan)
+                .ThenInclude(x=>x.Plan)
                 .Include(p => p.TimeSlots)
                 .Include(p => p.PropertyAttributes)
                 //.ThenInclude(x=>x.Attribute)
@@ -38,12 +39,17 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         {
             return await _context.Properties
                 .Include(p => p.UserPlan)
+                .ThenInclude(x=>x.Properties)
+                .Include(p => p.UserPlan)
+                .ThenInclude(x => x.Plan)
                 .Include(p => p.PropertyType)
                 .Include(p => p.Finishing)
                 .Include(p => p.TimeSlots)
                 .Include(p => p.PropertyAttributes)
                 .ThenInclude(x=>x.Attribute)
                 .ThenInclude(x=>x.AttributeDataType)
+                .Include(x=>x.MediaList)
+                .ThenInclude(x=>x.MediaType)
                 .Where(p => p.Id == propertyId)
                 .FirstOrDefaultAsync();
         }

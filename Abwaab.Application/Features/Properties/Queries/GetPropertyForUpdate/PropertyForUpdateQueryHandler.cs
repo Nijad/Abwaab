@@ -1,9 +1,11 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Properties.Common.DTOs;
+using Abwaab.Domain.Entities.MediaEntities;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
@@ -16,8 +18,8 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
         private readonly IPropertyService _propertyService;
         private readonly IPropertyTypeService _propertyTypeService;
         private readonly IPropertyFinishingService _propertyFinishingService;
-        private readonly IPropertyTimeSlotService _propertyTimeSlotService;
         private readonly IPropertyAttributeService _propertyAttributeService;
+        private readonly IMediaService _mediaService;
         private readonly string errorTitle = ErrorTitle.PropertyQuery;
 
         public PropertyForUpdateQueryHandler(
@@ -25,15 +27,15 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
             IPropertyService propertyService,
             IPropertyTypeService propertyTypeService,
             IPropertyFinishingService propertyFinishingService,
-            IPropertyTimeSlotService propertyTimeSlotService,
-            IPropertyAttributeService propertyAttributeService)
+            IPropertyAttributeService propertyAttributeService,
+            IMediaService mediaService)
         {
             _userService = userService;
             _propertyService = propertyService;
             _propertyTypeService = propertyTypeService;
             _propertyFinishingService = propertyFinishingService;
-            _propertyTimeSlotService = propertyTimeSlotService;
             _propertyAttributeService = propertyAttributeService;
+            _mediaService = mediaService;
         }
 
         public async Task<PropertyForUpdateResponse> Handle(PropertyForUpdateQuery request, CancellationToken cancellationToken)
@@ -42,7 +44,7 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
             Property property = await _propertyService.FindPropertyByIdForUpdateAsync(request.PropertyId, errorTitle);
 
             // 2.   get current user
-            string username = _userService.FindUserNameByContext();
+            string username = _userService.FindUserNameByContext(errorTitle);
             ApplicationUser? user = await _userService.FindUserByNameAsync(username);
             if (user == null)
                 throw new UserNotFoundException(username, errorTitle);
@@ -90,6 +92,37 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
             // 8.   get attributes
             List<AttributeDTO> attributes = await _propertyAttributeService.GetAttributesListAsync();
 
+            //9.    get remaining stars allowed
+            int remainingStars = property.UserPlan.Plan.MaxStardPropertiesCountAtSameTime -
+                property.UserPlan.Properties.Where(x => x.IsStard).Count();
+
+            //10.   get remaining images allowed
+
+            MediaType imageMediaType = await _mediaService.FindMediaTypeByTypeAsync(MediaTypesEnum.Image, errorTitle);
+
+            int remainingImages = property.UserPlan.Plan.MaxImagesCount -
+                property.MediaList.Where(x => x.MediaType == imageMediaType && !x.IsDeleted).Count();
+
+            //11.   get remaingin videos allowed
+            MediaType vedioMediaType = await _mediaService.FindMediaTypeByTypeAsync(MediaTypesEnum.Video, errorTitle);
+
+            int remainingVedios = property.UserPlan.Plan.MaxImagesCount -
+                property.MediaList.Where(x => x.MediaType == vedioMediaType && !x.IsDeleted).Count();
+
+            //12.   get media types list
+            List<MediaTypeDTO> mediaTypes = await _mediaService.GetAllMediaTypesListAsync();
+
+            //13.   get property media list
+            List<MediaDTO> mediaDTOs = new List<MediaDTO>();
+            foreach (var media in property.MediaList)
+                mediaDTOs.Add(new()
+                {
+                    MediaId = media.Id,
+                    FilePath = media.FilePath,
+                    MediaTypeId = media.MediaTypeId,
+                    MediaTypeName = media.MediaType.Name
+                });
+
             PropertyForUpdateResponse response = new()
             {
                 PropertyId = request.PropertyId,
@@ -105,9 +138,14 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                 PropertyTypesList = typesList,
                 PropertyFinishingsList = finishingList,
                 TimeSlots = timeSlotsList,
+                MediaTypes = mediaTypes,
                 PropertyAttributesList = propertyAttributes,
+                PropertyMediaList = mediaDTOs,
                 Attributes = attributes,
-                IsStar = property.IsStard
+                RemainingStarsAllowed = remainingStars,
+                RemainingImagesAllowed = remainingImages,
+                RemainingVideosAllowed = remainingVedios,
+                IsStar = property.IsStard,
             };
             return response;
         }

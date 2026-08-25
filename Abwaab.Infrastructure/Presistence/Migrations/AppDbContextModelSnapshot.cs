@@ -130,66 +130,29 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.ToTable("AppointmentStates", (string)null);
                 });
 
-            modelBuilder.Entity("Abwaab.Domain.Entities.MediaEntities.Advertisment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateOnly>("EndDisplayDate")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly>("StartDisplayDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EndDisplayDate");
-
-                    b.HasIndex("StartDisplayDate");
-
-                    b.ToTable("Advertisments", (string)null);
-                });
-
             modelBuilder.Entity("Abwaab.Domain.Entities.MediaEntities.Media", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AdvertismentId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsCover")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -206,14 +169,10 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Property<Guid?>("PropertyId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("StoragePath")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AdvertismentId");
 
                     b.HasIndex("MediaTypeId");
 
@@ -720,6 +679,9 @@ namespace Abwaab.Infrastructure.presistence.migrations
 
                     b.Property<double?>("Longitude")
                         .HasColumnType("float");
+
+                    b.Property<int>("NumberOfView")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(18, 2)
@@ -1394,10 +1356,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
 
             modelBuilder.Entity("Abwaab.Domain.Entities.MediaEntities.Media", b =>
                 {
-                    b.HasOne("Abwaab.Domain.Entities.MediaEntities.Advertisment", "Advertisment")
-                        .WithMany()
-                        .HasForeignKey("AdvertismentId");
-
                     b.HasOne("Abwaab.Domain.Entities.MediaEntities.MediaType", "MediaType")
                         .WithMany("MediaList")
                         .HasForeignKey("MediaTypeId")
@@ -1408,8 +1366,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                         .WithMany("MediaList")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Advertisment");
 
                     b.Navigation("MediaType");
 
@@ -1463,11 +1419,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
 
             modelBuilder.Entity("Abwaab.Domain.Entities.PaymentEntities.Payment", b =>
                 {
-                    b.HasOne("Abwaab.Domain.Entities.MediaEntities.Advertisment", "Advertisment")
-                        .WithMany("Payments")
-                        .HasForeignKey("AdvertismentId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("Abwaab.Domain.Entities.PaymentEntities.PaymentState", "PaymentState")
                         .WithMany("Payments")
                         .HasForeignKey("PaymentStateId")
@@ -1484,8 +1435,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                         .WithMany("Payments")
                         .HasForeignKey("UserPlandId")
                         .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Advertisment");
 
                     b.Navigation("PaymentState");
 
@@ -1682,11 +1631,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
             modelBuilder.Entity("Abwaab.Domain.Entities.AppointmentEntities.AppointmentState", b =>
                 {
                     b.Navigation("Appointments");
-                });
-
-            modelBuilder.Entity("Abwaab.Domain.Entities.MediaEntities.Advertisment", b =>
-                {
-                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("Abwaab.Domain.Entities.MediaEntities.MediaType", b =>

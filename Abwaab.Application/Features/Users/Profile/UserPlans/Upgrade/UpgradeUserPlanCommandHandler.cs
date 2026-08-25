@@ -39,7 +39,7 @@ namespace Abwaab.Application.Features.Users.Profile.UserPlans.Upgrade
             await _transactionManager.BeginTransactionAsync(cancellationToken);
             try
             {
-                string? username = _userService.FindUserNameByContext();
+                string? username = _userService.FindUserNameByContext(errorTitle);
                 if (username == null)
                     throw new NotFoundException(
                         entity: "user context",

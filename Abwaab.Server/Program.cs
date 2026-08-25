@@ -92,7 +92,20 @@ namespace Abwaab.Server
             app.UseExceptionHandler();
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            //app.UseMiddleware<GlobalExceptionMiddleware>();
+            // If you want to protect uploads (only authenticated users), you can use:
+            // app.UseStaticFiles(new StaticFileOptions
+            // {
+            //     OnPrepareResponse = ctx =>
+            //     {
+            //         if (!ctx.Context.User.Identity.IsAuthenticated)
+            //         {
+            //             ctx.Context.Response.StatusCode = 401;
+            //             ctx.Context.Response.ContentLength = 0;
+            //             ctx.Context.Response.Body = Stream.Null;
+            //         }
+            //     }
+            // });
+
             if (app.Environment.IsDevelopment())
             {
                 await app.InitialiseDatabaseAsync();

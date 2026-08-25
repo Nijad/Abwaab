@@ -7,6 +7,7 @@ using Abwaab.Infrastructure.Presistence.Seeding;
 using Abwaab.Infrastructure.Services.Common;
 using Abwaab.Infrastructure.Services.EmailServices;
 using Abwaab.Infrastructure.Services.SmsServices;
+using Abwaab.Infrastructure.Services.StorageServices;
 using Abwaab.Infrastructure.Services.UserServices;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -130,7 +131,7 @@ namespace Abwaab.Infrastructure
 
             services.AddHttpContextAccessor();
             services.AddScoped<IUrlBuilder, UrlBuilder>();
-
+            services.AddScoped<IStorageService, LocalStorageService>();
             services.AddScoped<ITransactionManager, EfCoreTransactionManager>();
 
             return services;

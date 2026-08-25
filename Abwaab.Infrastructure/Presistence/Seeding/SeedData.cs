@@ -205,6 +205,30 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
                     Id = new Guid("158bfbe6-46c7-4f0c-adc0-f2059b0c64b1"),
                     AttributeName = "Has Swimming Pool",
                     AttributeDataTypeId = new Guid("883a9f1e-e227-4079-a929-f0aa0ff40990")
+                },
+
+                new Attribute {
+                    Id = new Guid("b6c2c609-8240-4a8e-a57a-01b2e2c22f89"),
+                    AttributeName = "شرقي",
+                    AttributeDataTypeId = new Guid("883a9f1e-e227-4079-a929-f0aa0ff40990")
+                },
+
+                new Attribute {
+                    Id = new Guid("28e3819e-cfd1-404b-9fed-09264b61a9ed"),
+                    AttributeName = "جنوبي",
+                    AttributeDataTypeId = new Guid("883a9f1e-e227-4079-a929-f0aa0ff40990")
+                },
+
+                new Attribute {
+                    Id = new Guid("4d3568ee-436b-4a53-9601-261312622055"),
+                    AttributeName = "شمالي",
+                    AttributeDataTypeId = new Guid("883a9f1e-e227-4079-a929-f0aa0ff40990")
+                },
+
+                new Attribute {
+                    Id = new Guid("539c754b-dae7-47fc-aa13-f48817ac3475"),
+                    AttributeName = "غربي",
+                    AttributeDataTypeId = new Guid("883a9f1e-e227-4079-a929-f0aa0ff40990")
                 }
             };
         }

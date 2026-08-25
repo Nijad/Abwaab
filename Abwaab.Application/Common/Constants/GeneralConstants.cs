@@ -7,7 +7,8 @@
         public const string AUTH_CONTROLLER = "Profile";
         public const string CANCEL_PHONE_CHANGE_ACTION = "CancelPhoneChange";
         public const string CANCEL_EMAIL_CHANGE_ACTION = "CancelEmailChange";
-        public const string FIRST_NAME = "الاسم";
-        public const string LAST_NAME = "الكنية";
+        public const string FIRST_NAME = "الأسم الأول";
+        public const string LAST_NAME = "الاسم الأخير";
+        public const int MAX_MEDIA_SIZE_ALLOWED_MB = 10;
     }
 }

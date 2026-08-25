@@ -37,7 +37,7 @@ namespace Abwaab.Application.Features.Properties.Add
         public async Task<AddPropertyResponse> Handle(AddPropertyCommand request, CancellationToken cancellationToken)
         {
             // get signed in user
-            string username = _userService.FindUserNameByContext();
+            string username = _userService.FindUserNameByContext(errorTitle);
 
             ApplicationUser? user = await _userService.FindUserByNameAsync(username);
             if (user == null)
