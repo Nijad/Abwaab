@@ -25,7 +25,7 @@ namespace Abwaab.Application.Features.Users.Profile.NotificationWaySubscription.
         public async Task<NotificationWayUnsubscriptionResponse> Handle(NotificationWayUnsubsciptionCommand request, CancellationToken cancellationToken)
         {
             //check if user exist
-            string username = _userService.FindUserNameByContext();
+            string username = _userService.FindUserNameByContext(errorTitle);
             ApplicationUser? user = await _userManager.FindByNameAsync(username);
             if (user == null)
                 throw new UserNotFoundException(username, errorTitle);

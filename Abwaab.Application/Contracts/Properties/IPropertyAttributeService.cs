@@ -1,7 +1,7 @@
 ﻿using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Domain.Entities.PropertyEntities;
 
-namespace Abwaab.Application.Contracts
+namespace Abwaab.Application.Contracts.Properties
 {
     public interface IPropertyAttributeService
     {

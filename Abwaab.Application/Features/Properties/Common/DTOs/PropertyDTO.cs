@@ -14,6 +14,7 @@
         public Guid? PropertyFinishingId { get; set; }
         public List<TimeSlotDTO>? TimeSlots { get; set; } = new();
         public List<PropertyAttributeDTO>? PropertyAttributesList { get; set; }
+        public List<MediaDTO>? PropertyMediaList { get; set; }
         public bool IsStar { get; set; }
     }
 }

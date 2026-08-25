@@ -43,11 +43,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
                    .HasForeignKey(p => p.UserPlandId)
                    .OnDelete(DeleteBehavior.SetNull);
 
-            builder.HasOne(p => p.Advertisment)
-                   .WithMany(a => a.Payments)
-                   .HasForeignKey(p => p.AdvertismentId)
-                   .OnDelete(DeleteBehavior.SetNull);
-
             // Indexes
             builder.HasIndex(p => p.PaymentStateId);
             builder.HasIndex(p => p.ServiceTypeId);

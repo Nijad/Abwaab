@@ -28,5 +28,7 @@
         public const string UpdateUser = "تعديل بيانات المستخدم";
         public const string UpdateProperty = "تعديل بيانات العقار";
         public const string PropertyQuery = "استعلام عن عقار";
+        public const string UploadMedia = "تحميل ملف وسائط";
+        public const string DeleteMedia = "حذف ملف وسائط";
     }
 }

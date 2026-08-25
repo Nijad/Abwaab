@@ -64,6 +64,9 @@
         public const string PossibleValueNotBelongToAttribute = "POSSIBLE_VALUE_NOT_BELONG_TO_ATTRIBUTE";
         public const string NoNullAllowed = "NO_NULL_ALLOWED";
         public const string NotValidFormat = "NOT_VALID_FORMAT";
-        public const string ValdiationFailed = "Valdiation_Failed";
+        public const string ValdiationFailed = "VALIDATION_FAILED";
+        public const string NotImplementedMediaType = "NOT_IMPLEMENTED_MEDIA_TYPE";
+        public const string UserNotAuthenticated = "USER_NOT_AUTHENTICATED";
+        public const string MediaNotFound = "MEDIA_NOT_FOUND";
     }
 }

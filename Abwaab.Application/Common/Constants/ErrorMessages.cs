@@ -50,5 +50,7 @@
         public const string NoNullAllowed = "القيمة المدخلة يجب ألا تكون فارغة.";
         public const string NotValidFormat = "القيم المدخلة لا تتطابق مع التنسيق الصحيح";
         public const string AttributePossibleValueNotFound = "قيمة ميزة العقار المطلوبة غير موجودة ضمن القيم المعرفة مسبقاً";
+        public const string UserNotAuthenticated = "يجب تسجيل دخول المستخدم.";
+        public const string MediaNotFound = "ملف الوسائط المطلوب غير موجود.";
     }
 }

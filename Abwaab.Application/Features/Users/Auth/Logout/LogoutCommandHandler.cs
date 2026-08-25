@@ -44,7 +44,7 @@ namespace Abwaab.Application.Features.Users.Auth.Logout
             _userService.RemoveCookie("RefreshToken");
 
             // get username from context
-            string? username = _userService.FindUserNameByContext();
+            string? username = _userService.FindUserNameByContext(errorTitle);
 
             ApplicationUser? user = await _userManager.FindByNameAsync(username);
 

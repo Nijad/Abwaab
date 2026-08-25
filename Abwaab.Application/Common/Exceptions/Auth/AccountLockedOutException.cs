@@ -11,4 +11,12 @@ namespace Abwaab.Application.Common.Exceptions.Auth
             returnToUser: true)
     {
     };
+    public class UserNotAuthenticatedException(string title) :
+        Unauthorized401Exception(
+            message: ErrorMessages.UserNotAuthenticated,
+            title: title,
+            errorCode: ErrorCodes.UserNotAuthenticated,
+            returnToUser: true)
+    {
+    };
 }
