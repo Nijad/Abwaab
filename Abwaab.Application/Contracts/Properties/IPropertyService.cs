@@ -1,4 +1,5 @@
-﻿using Abwaab.Domain.Entities.PropertyEntities;
+﻿using Abwaab.Application.Features.Properties.Queries.GetUserPropertiesSummaryList;
+using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 
 namespace Abwaab.Application.Contracts.Properties
@@ -12,5 +13,6 @@ namespace Abwaab.Application.Contracts.Properties
         Task UpdatePropertyAsync(Property property);
         Task<Property> FindPropertyByIdForUpdateAsync(Guid propertyId, string errorTitle);
         Task<int> GetStaredPropertyCountInPlanAsync(Guid userPlandId);
+        Task<List<GetUserPropertySummaryResponse>> GetUserPropertiesSummaryAsync(Guid userId);
     }
 }

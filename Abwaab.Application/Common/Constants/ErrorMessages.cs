@@ -55,5 +55,6 @@
         public const string PropertyAlreadyStared = "العقار تم تمييزه مسبقاً.";
         public const string PropertyAlreadyUnstared = "العقار تم إلغاء تمييزه مسبقاً.";
         public const string HasNoCoverImage = "صورة غلاف العقار مطلوبة.";
+        public const string AppointmentStateNotFound = "حالة الموعد المطلوبة غير موجودة.";
     }
 }

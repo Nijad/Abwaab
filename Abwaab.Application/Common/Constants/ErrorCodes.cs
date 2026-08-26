@@ -73,5 +73,6 @@
         public const string PropertyAlreadyStared = "PROPERTY_ALREADY_STARED";
         public const string HasNoCoverImage = "HAS_NO_COVER_IMAGE";
         public const string NotAllowedToSetPropertyAsPending = "NOT_ALLOWED_TO_SET_PROPERTY_AS_PENDING";
+        public const string AppointmentStateNotFound = "APPOINTMENT_STATE_NOT_FOUND";
     }
 }

@@ -78,7 +78,7 @@ namespace Abwaab.Application.Features.Properties.Save
 
                 await _notificationService.InitiateNotifications("هناك عقاراً جديداً بانتظار الموافقة", admins, errorTitle);
 
-                //run email sender
+                //todo: run email sender
 
                 //run sms sender
 
