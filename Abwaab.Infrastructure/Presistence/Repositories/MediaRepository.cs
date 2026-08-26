@@ -2,6 +2,7 @@
 using Abwaab.Domain.Entities.MediaEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
+using static Twilio.Rest.Intelligence.V3.ConfigurationResource;
 
 namespace Abwaab.Infrastructure.Presistence.Repositories
 {
@@ -57,6 +58,14 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         {
             _context.Media.Remove(media);
             await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task UncoverImagesAsync(Guid propertyId)
+        {
+            await _context.Media
+                .Where(c => c.IsCover)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(c => c.IsCover, false));
+            await _context.SaveChangesAsync();
         }
     }
 }

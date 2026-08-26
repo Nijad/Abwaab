@@ -12,5 +12,6 @@ namespace Abwaab.Application.Repositories
         Task<List<MediaType>> GetMediaTypesListAsync();
         Task<bool> HasPropertyCoverAsync(Guid propertyId);
         Task RemoveMediaAsync(Media media, CancellationToken cancellationToken);
+        Task UncoverImagesAsync(Guid propertyId);
     }
 }

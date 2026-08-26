@@ -37,7 +37,8 @@ namespace Abwaab.Server.Controllers
                 Content = stream,
                 PropertyId = request.PropertyId,
                 MediaTypeId = request.MediaTypeId,
-                MediaTypeName = request.MediaTypeName
+                MediaTypeName = request.MediaTypeName,
+                IsCover = request.IsCover
             };
 
             var result = await _mediator.Send(command);
