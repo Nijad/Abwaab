@@ -120,8 +120,8 @@ namespace Abwaab.Infrastructure
             // Register HttpClient for TextBee
             services.AddHttpClient<ISmsSender, TextBeeSmsSender>();
 
-            //services.AddTransient<IVerificationCodeService, VerificationCodeDemoService>();
-            services.AddTransient<IVerificationCodeService, VerificationCodeService>();
+            services.AddTransient<IVerificationCodeService, VerificationCodeDemoService>();
+            //services.AddTransient<IVerificationCodeService, VerificationCodeService>();
 
             // Memory Cache (for storing verification codes in-memory)
             services.AddMemoryCache();

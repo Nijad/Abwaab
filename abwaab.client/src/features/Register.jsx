@@ -33,8 +33,8 @@ const Register = ({ onSuccess }) => {
         setErrors(err.errors);
         enqueueSnackbar(err.detail, { variant: "error" });
         return;
-      } else if (err.errorCode === "") {
-        enqueueSnackbar(err.response.data.message, { variant: "error" });
+      } else {
+        enqueueSnackbar(err.detail, { variant: "error" });
       }
     } finally {
       setLoading(false);

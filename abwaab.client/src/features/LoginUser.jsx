@@ -4,6 +4,7 @@ import ShowErrors from "../components/ShowErrors";
 import { useSnackbar } from "notistack";
 import { authApi } from "../api";
 import { useNavigate } from "react-router";
+import useAuth from "../hooks/useAuth";
 
 const LoginUser = ({ onSuccess }) => {
   const [errors, setErrors] = useState({});
@@ -11,6 +12,7 @@ const LoginUser = ({ onSuccess }) => {
   const signalRef = useRef();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const { setIdentifier } = useAuth();
 
   const login = async (e) => {
     e.preventDefault();
@@ -29,6 +31,8 @@ const LoginUser = ({ onSuccess }) => {
       enqueueSnackbar(resp.data.message, { variant: "success" });
       if (onSuccess) onSuccess(data, resp.data);
     } catch (err) {
+      setIdentifier(data.identifier);
+      console.log(data.identifier);
       //list related error codes
       if (err.errorCode === "VALIDATION_FAILED") {
         setErrors(err.errors);

@@ -64,13 +64,14 @@ const ConfirmRegisteration = () => {
                     تأكيد الحساب
                   </h4>
                   <p>
-                    أرسلنا رمز تحقق مكوناً من 6 أرقام الى $
+                    أرسلنا رمز تحقق مكوناً من 6 أرقام الى
                     {user?.identifierType == "email"
-                      ? "البريد الإلكتروني"
+                      ? " البريد الإلكتروني"
                       : user?.identifierType == "phone"
-                      ? "رقم الموبايل"
+                      ? " رقم الموبايل"
                       : ""}
                   </p>
+                  <p className="py-3">{user?.identifier}</p>
                 </div>
 
                 <div className="flex items-center">

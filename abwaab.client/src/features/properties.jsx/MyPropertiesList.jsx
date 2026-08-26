@@ -1,15 +1,14 @@
-import { Button } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
 import { propertyApi } from "../../api";
 import UserProperty from "../../components/UserProperty";
 import { useNavigate } from "react-router";
 import HomeIcon from "../../components/HomeIcon";
-import PreviewPropertyVisits from "./PreviewPropertyVisits";
+import AddNewProperty from "./AddNewProperty";
 
 const dataTest = [
   {
-    propertyId: "8baa7af8-4c2d-4cfc-afbc-e34ba2371c96",
+    propertyId: "d6a58b8b-2fba-49d4-8bac-4e738c781a64",
     coverImage:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiBv7lL1ce0REGvvOPJsrBALnXqqjgD7svLzpZmlf0gg&s=10",
     title: "شقة سكنية بمشروع دمر",
@@ -46,7 +45,13 @@ const dataTest = [
   },
 ];
 
-const MyPropertiesList = ({ onPromote, onEdit, onVisitPreview, onSuccess }) => {
+const MyPropertiesList = ({
+  onAddProperty,
+  onPromote,
+  // onEdit,
+  onVisitPreview,
+  onSuccess,
+}) => {
   const [data, setData] = useState({});
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -78,6 +83,7 @@ const MyPropertiesList = ({ onPromote, onEdit, onVisitPreview, onSuccess }) => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     setTimeout(() => {
       fetchMyProperties();
@@ -91,7 +97,7 @@ const MyPropertiesList = ({ onPromote, onEdit, onVisitPreview, onSuccess }) => {
   }, []);
   return (
     <>
-      {dataTest.length === 0 && (
+      {data.length === 0 && (
         <div
           id="prop-area"
           className="flex items-center justify-center w-full flex-1"
@@ -105,22 +111,23 @@ const MyPropertiesList = ({ onPromote, onEdit, onVisitPreview, onSuccess }) => {
               ابدأ بإضافة أول عقار ليظهر هنا وتتمكن من تعديله أو الترويح له
               لاحقا
             </p>
-            <Button
+            <AddNewProperty />
+            {/* <Button
               size="small"
               color="navy"
               variant="contained"
-              onClick={() => navigate("add")}
+              onClick={() => onAddProperty()}
               sx={{ marginY: "8px" }}
             >
               إضافة عقار
-            </Button>
+            </Button> */}
           </div>
         </div>
       )}
       {dataTest.map((itm) => (
         <UserProperty
           data={itm}
-          onEdit={onEdit}
+          onEdit={() => navigate(`edit/${itm.propertyId}`)}
           onPromote={onPromote}
           onVisitPreview={onVisitPreview}
         />

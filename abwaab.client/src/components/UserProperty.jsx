@@ -3,6 +3,8 @@ import LabelTag from "./LabelTag";
 import { Button } from "@mui/material";
 import { EditOutlined } from "@mui/icons-material";
 import PromoteIcon from "./PromoteIcon";
+import PromoteProperty from "../features/properties.jsx/PromoteProperty";
+import PreviewPropertyVisits from "../features/properties.jsx/PreviewPropertyVisits";
 
 const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
   return (
@@ -37,7 +39,8 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
           </div>
         </div>
         <div className="">
-          <Button
+          <PromoteProperty propertyId={data.propertyId} />
+          {/* <Button
             sx={{ marginX: "4px" }}
             size="medium"
             variant="contained"
@@ -46,14 +49,14 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
             onClick={() => onPromote(data.propertyId)}
           >
             ترويج العقار
-          </Button>
+          </Button> */}
           <Button
             sx={{ marginX: "4px" }}
             size="medium"
             variant="outlined"
             color="navy"
             startIcon={<EditOutlined />}
-            onClick={() => onEdit(data.propertyId)}
+            onClick={() => onEdit()}
           >
             تعديل
           </Button>
@@ -65,14 +68,7 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
             <p className="text-neutral-900 text-base">
               لديك {data.visitRequests} طلبات لمعاينة هذا العقار
             </p>
-            <Button
-              size="medium"
-              variant="outlined"
-              color="navy"
-              onClick={() => onVisitPreview(data.propertyId)}
-            >
-              عرض طلبات المعاينة
-            </Button>
+            <PreviewPropertyVisits />
           </React.Fragment>
         )}
         {data.visitRequests === 0 && (

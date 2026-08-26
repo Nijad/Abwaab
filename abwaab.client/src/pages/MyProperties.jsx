@@ -5,9 +5,11 @@ import MyPropertiesList from "../features/properties.jsx/MyPropertiesList";
 import { propertyApi } from "../api";
 import { useSnackbar } from "notistack";
 import PreviewPropertyVisits from "../features/properties.jsx/PreviewPropertyVisits";
+import AddNewProperty from "../features/properties.jsx/AddNewProperty";
 
 const MyProperties = () => {
   const [showVisits, setShowVisits] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const signalRef = useRef();
   const { enqueueSnackbar } = useSnackbar();
@@ -39,6 +41,30 @@ const MyProperties = () => {
     }
   };
 
+  const addNewProperty = async () => {
+    setLoading(true);
+    if (signalRef.current) {
+      signalRef.current.abort();
+    }
+    try {
+      signalRef.current = new AbortController();
+      const resp = await propertyApi.addProperty(signalRef.current.signal);
+      enqueueSnackbar(resp.data.message, { variant: "success" });
+      if (onSuccess) onSuccess(resp.data);
+    } catch (err) {
+      //list related error codes
+      enqueueSnackbar(err.detail, { variant: "error" });
+      // if (err.errorCode === "VALIDATION_FAILED") {
+      //   setErrors(err.errors);
+      //   return;
+      // } else if (err.errorCode === "") {
+      //   enqueueSnackbar(err.response.data.message, { variant: "error" });
+      // }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center py-8 px-28 flex-grow">
       <div className="flex justify-between items-center w-full">
@@ -51,28 +77,16 @@ const MyProperties = () => {
           </p>
         </div>
         <div className="">
-          <Button
-            size="small"
-            color="navy"
-            variant="contained"
-            onClick={() => navigate("add")}
-          >
-            إضافة عقار
-          </Button>
+          <AddNewProperty />
         </div>
       </div>
       <MyPropertiesList
+        onAddProperty={addNewProperty}
         onEdit={(id) => navigate(`/portal/my-properties/edit/${id}`)}
         onPromote={promoteProperty}
         onSuccess={null}
         onVisitPreview={() => setShowVisits(true)}
       />
-      {showVisits && (
-        <PreviewPropertyVisits
-          onClose={() => setShowVisits(false)}
-          onReject={rejectVisit}
-        />
-      )}
     </div>
   );
 };

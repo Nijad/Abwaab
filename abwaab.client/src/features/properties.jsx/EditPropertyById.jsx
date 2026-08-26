@@ -10,6 +10,10 @@ import {
   Paper,
   IconButton,
   ToggleButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import MapIcon from "@mui/icons-material/Map";
@@ -65,25 +69,18 @@ const EditPropertyById = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   // console.log(propData);
-  console.log(timeSlots("14:00:00"));
-  console.log(timeSlots(null, "14:30:00"));
-  console.log(
-    generateTimeSlots(
-      { dayIndex: 1, dayName: "Monday" },
-      "10:30:00",
-      "15:30:00"
-    )
-  );
+  const ts = timeSlots();
+  console.log(ts);
 
   // 0Available Viewing Schedule State
   const [schedules, setSchedules] = useState({
-    الأحد: { checked: false, from: "", to: "" },
-    الاثنين: { checked: false, from: "", to: "" },
-    الثلاثاء: { checked: false, from: "", to: "" },
-    الأربعاء: { checked: false, from: "", to: "" },
-    الخميس: { checked: false, from: "", to: "" },
-    الجمعة: { checked: false, from: "", to: "" },
-    السبت: { checked: false, from: "", to: "" },
+    0: { checked: false, from: "", to: "" },
+    1: { checked: false, from: "", to: "" },
+    2: { checked: false, from: "", to: "" },
+    3: { checked: false, from: "", to: "" },
+    4: { checked: false, from: "", to: "" },
+    5: { checked: false, from: "", to: "" },
+    6: { checked: false, from: "", to: "" },
   });
 
   const handleScheduleChange = (day, field, value) => {
@@ -585,7 +582,7 @@ const EditPropertyById = () => {
             </Typography>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-              {Object.keys(schedules).map((day) => (
+              {propData.weekDaysList.map((day) => (
                 <div
                   key={day.dayIndex}
                   className="flex items-center justify-between gap-2 border-b border-neutral-100 pb-2"
@@ -593,18 +590,60 @@ const EditPropertyById = () => {
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={schedules[day].checked}
+                        checked={schedules[day.dayIndex].checked}
                         onChange={(e) =>
                           handleScheduleChange(day, "checked", e.target.checked)
                         }
                         size="small"
                       />
                     }
-                    label={day}
+                    label={day.dayName}
                     className="min-w-[90px] text-neutral-700"
                   />
                   <div className="flex items-center gap-2">
-                    <TextField
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                      <InputLabel id="demo-simple-select-autowidth-label">
+                        من
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-autowidth-label"
+                        id="demo-simple-select-autowidth"
+                        // value={}
+                        onChange={(e) => console.log(e.target.value)}
+                        autoWidth
+                        label="Age"
+                        size="small"
+                      >
+                        <MenuItem value="">
+                          <span>اختر فترة</span>
+                        </MenuItem>
+                        {ts.map((t) => (
+                          <MenuItem value={`${t}`}>{t}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                      <InputLabel id="demo-simple-select-autowidth-label">
+                        إلى
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-autowidth-label"
+                        id="demo-simple-select-autowidth"
+                        // value={}
+                        // onChange={handleChange}
+                        autoWidth
+                        label="Age"
+                        size="small"
+                      >
+                        <MenuItem value="">
+                          <span>اختر فترة</span>
+                        </MenuItem>
+                        {ts.map((t) => (
+                          <MenuItem value={t}>{t}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    {/* <TextField
                       placeholder="--:--"
                       variant="filled"
                       size="small"
@@ -633,7 +672,7 @@ const EditPropertyById = () => {
                       onChange={(e) =>
                         handleScheduleChange(day, "to", e.target.value)
                       }
-                    />
+                    /> */}
                   </div>
                 </div>
               ))}

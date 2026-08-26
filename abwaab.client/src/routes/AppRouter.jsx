@@ -102,7 +102,8 @@ const router = createBrowserRouter([
         element: <MyProperties />,
       },
       { path: "my-properties/edit/:id", element: <EditProperty /> },
-      { path: "my-properties/:id", element: <PropertyDetails /> },
+      { path: "my-properties/add/:id", element: <EditProperty /> },
+      // { path: "my-properties/:id", element: <PropertyDetails /> },
     ],
   },
   // ----------------------------------------------------------------------
