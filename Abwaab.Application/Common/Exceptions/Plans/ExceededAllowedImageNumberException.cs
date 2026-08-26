@@ -11,7 +11,7 @@ namespace Abwaab.Application.Common.Exceptions.Plans
             returnToUser: true)
     {
         string msg = plan.MaxPropertiesCountAtSameTime > 0 ?
-            $"لا يمكنك إضافة المزيد من الصور، لقد قمت بالفعل بإضافة {plan.MaxImagesCount} صورة. قم بترقية اشتراكك" :
+            $"لا يمكنك إضافة المزيد من الصور، لقد قمت بالفعل بإضافة {plan.MaxStardPropertiesCountAtSameTime} صورة. قم بترقية اشتراكك" :
             $"الخطة الحالية {plan.Name} لا تسمح لك بإضافة الصور. قم بترقية اشتراكك";
         public override string Message => msg;
     }

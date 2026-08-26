@@ -52,5 +52,7 @@
         public const string AttributePossibleValueNotFound = "قيمة ميزة العقار المطلوبة غير موجودة ضمن القيم المعرفة مسبقاً";
         public const string UserNotAuthenticated = "يجب تسجيل دخول المستخدم.";
         public const string MediaNotFound = "ملف الوسائط المطلوب غير موجود.";
+        public const string PropertyAlreadyStared = "العقار تم تمييزه مسبقاً.";
+        public const string PropertyAlreadyUnstared = "العقار تم إلغاء تمييزه مسبقاً.";
     }
 }

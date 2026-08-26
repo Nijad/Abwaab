@@ -68,5 +68,10 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
 
             return property;
         }
+
+        public async Task<int> GetStaredPropertyCountInPlanAsync(Guid userPlandId)
+        {
+            return await _propertyRepository.GetStaredPropertyCountInPlanAsync(userPlandId);
+        }
     }
 }

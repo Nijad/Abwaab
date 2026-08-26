@@ -7,10 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Properties\DeleteMedia\**" />
+    <Compile Remove="Features\Properties\UploadMedia\**" />
+    <EmbeddedResource Remove="Features\Properties\DeleteMedia\**" />
+    <EmbeddedResource Remove="Features\Properties\UploadMedia\**" />
+    <None Remove="Features\Properties\DeleteMedia\**" />
+    <None Remove="Features\Properties\UploadMedia\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Features\Payments\Remove\" />
-    <Folder Include="Features\Properties\DeleteMedia\" />
     <Folder Include="Features\Properties\Queries\GetPropertyDetails\" />
-    <Folder Include="Features\Properties\UploadMedia\" />
   </ItemGroup>
 
   <ItemGroup>

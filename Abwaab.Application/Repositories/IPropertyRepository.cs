@@ -14,6 +14,7 @@ namespace Abwaab.Application.Repositories
         Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId);
         Task<List<Finishing>> GetPropertyFinishingListAsync();
         Task<List<PropertyType>> GetProperyTypesList();
+        Task<int> GetStaredPropertyCountInPlanAsync(Guid userPlandId);
         Task<bool> PropertyBelongToUser(Guid userId, Guid propertyId);
         Task UpdatePropertyAsync(Property property);
     }
