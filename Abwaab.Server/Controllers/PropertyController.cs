@@ -1,6 +1,8 @@
 ﻿using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList;
+using Abwaab.Application.Features.Properties.Star;
+using Abwaab.Application.Features.Properties.Unstar;
 using Abwaab.Application.Features.Properties.Update;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -64,6 +66,20 @@ namespace Abwaab.Server.Controllers
         public async Task<IActionResult> GetPropertyTypesList()
         {
             var result = await _mediator.Send(new PropertyTypeQuery());
+            return Ok(result);
+        }
+
+        [HttpPost("star-property")]
+        public async Task<IActionResult> StarProperty(StarPropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPost("unstar-property")]
+        public async Task<IActionResult> UnstarProperty(UnstarPropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
     }
