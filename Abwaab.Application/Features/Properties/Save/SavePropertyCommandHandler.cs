@@ -8,6 +8,7 @@ using Abwaab.Application.Contracts.Properties;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 
 namespace Abwaab.Application.Features.Properties.Save
 {
@@ -17,18 +18,24 @@ namespace Abwaab.Application.Features.Properties.Save
         private readonly IPropertyStatesService _propertyStatesService;
         private readonly IPropertyService _propertyService;
         private readonly IMediaService _mediaService;
+        private readonly INotificationService _notificationService;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly string errorTitle = ErrorTitle.SaveProperty;
 
         public SavePropertyCommandHandler(
             IUserService userService,
             IPropertyStatesService propertyStatesService,
             IPropertyService propertyService,
-            IMediaService mediaService)
+            IMediaService mediaService,
+            INotificationService notificationService,
+            UserManager<ApplicationUser> userManager)
         {
             _userService = userService;
             _propertyStatesService = propertyStatesService;
             _propertyService = propertyService;
             _mediaService = mediaService;
+            _notificationService = notificationService;
+            _userManager = userManager;
         }
 
         public async Task<SavePropertyResponse> Handle(SavePropertyCommand request, CancellationToken cancellationToken)
@@ -56,16 +63,31 @@ namespace Abwaab.Application.Features.Properties.Save
             //check property state if is preparing
             PropertyState preparingState = await _propertyStatesService.GetPreparingPropertyStateAsync(errorTitle);
 
-            if(property.PropertyStateId !=  preparingState.Id)
+            if (property.PropertyStateId != preparingState.Id)
                 throw new NotAllowedToSetPropertyAsPendingException(property.PropertyState.StateName, errorTitle);
 
             //save property (change state to pending)
             PropertyState pendingState = await _propertyStatesService.GetPendingPropertyStateAsync(errorTitle);
-            property.PropertyState= pendingState;
+            property.PropertyState = pendingState;
             await _propertyService.UpdatePropertyAsync(property);
 
-            //push notification
-            //todo: notificaiton admin
+            try
+            {
+                //push notification
+                IList<ApplicationUser> admins = await _userManager.GetUsersInRoleAsync(RoleConstants.ROLE_ADMIN);
+
+                await _notificationService.InitiateNotifications("هناك عقاراً جديداً بانتظار الموافقة", admins, errorTitle);
+
+                //run email sender
+
+                //run sms sender
+
+            }
+            catch
+            {
+                //log error here
+            }
+
 
             return new SavePropertyResponse() { Success = true, Message = "تم حفظ العقار بنجاح وهو الآن قيد انتظار موافقة الإدارة، سيتم إعلامكم بذلك في غضون 48 ساعة كحد أقصى." };
         }

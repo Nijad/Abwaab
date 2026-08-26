@@ -26,9 +26,15 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<List<UserNotificationSubscription>> GetNotificationWaysByUserAsync(Guid userId)
+        public async Task<List<UserNotificationSubscription>> GetNotificationWaysByUserAsync(Guid userId, bool activeOnly = false)
         {
-            return await _context.UserNotificationSubscriptions.Where(nw => nw.UserId == userId).ToListAsync();
+            IQueryable<UserNotificationSubscription> list = _context.UserNotificationSubscriptions
+                .Where(nw => nw.UserId == userId);
+
+            if (activeOnly)
+                list = list.Where(x => x.IsInactive == false);
+            
+            return await list.ToListAsync();
         }
 
         public async Task<NotificationWay?> GetNotificationWayByIdAsync(Guid id)
@@ -63,6 +69,17 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             UserNotificationSubscription? subscription = await _context.UserNotificationSubscriptions.Where(x => x.UserId == userId && x.NotificationWayId == notifiacationWayId).FirstOrDefaultAsync();
 
             return !(subscription == null || subscription.IsInactive);
+        }
+
+        public async Task<NotificationState?> FindNotificationStateByStateNameAsync(string notificationStateName)
+        {
+            return await _context.NotificationStates.Where(x=>x.StateName== notificationStateName).FirstOrDefaultAsync();
+        }
+
+        public async Task AddNotificationsRangeAsync(List<Notification> notifications)
+        {
+            await _context.Notifications.AddRangeAsync(notifications);
+            await _context.SaveChangesAsync();
         }
     }
 }
