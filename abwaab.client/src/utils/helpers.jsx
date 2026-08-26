@@ -108,7 +108,7 @@ export const timeSlots = (before = null, after = null) => {
   } else if (after) {
     var indx = slots.findIndex((s) => s === after);
     if (indx !== -1) {
-      for (indx; indx < slots.length; indx++) {
+      for (indx++; indx < slots.length; indx++) {
         result.push(slots[indx]);
       }
     }
@@ -166,6 +166,96 @@ export function generateTimeSlots(day, startTime, endTime) {
 
     startMins += SLOT_DURATION;
   }
+
+  return slots;
+}
+
+/**
+ * Generate list of week days with from | to times.
+ * @param {string} startTime - Format "HH:MM" (e.g., "10:30")
+ * @param {string} endTime - Format "HH:MM" (e.g., "15:00" or "03:00")
+ * @returns {Array<{startTime: string, endTime: string}>}
+ */
+export function collapseTimeSlots(timeSlots = [], weekDaysList, endTime) {
+  // debugger;
+  const slots = {};
+  if (timeSlots.length == 0) {
+    for (const day of weekDaysList) {
+      // slots.push({ [day.dayIndex]: { name: day.dayName, from: "", to: "" } });
+      slots[day.dayIndex] = {
+        name: day.dayName,
+        checked: false,
+        startTime: "",
+        endTime: "",
+      };
+    }
+    return slots;
+  }
+
+  // Helper to convert "HH:MM" string to total minutes from midnight
+  const parseMinutes = (timeStr) => {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  // Helper to convert total minutes back to double-digit "HH:MM" format
+  const formatTime = (totalMinutes) => {
+    const hours = Math.floor(totalMinutes / 60) % 24;
+    const minutes = totalMinutes % 60;
+    const formattedHours = String(hours).padStart(2, "0");
+    const formattedMinutes = String(minutes).padStart(2, "0");
+    return `${formattedHours}:${formattedMinutes}:00`;
+  };
+
+  for (const day of weekDaysList) {
+    const daySlots = timeSlots.filter((ts) => ts.day === day.dayIndex);
+    const temp = [];
+    if (daySlots.length > 0) {
+      for (const ds of daySlots) {
+        temp.push(parseMinutes(ds.startTime));
+        temp.push(parseMinutes(ds.endTime));
+      }
+      slots[day.dayIndex] = {
+        name: day.dayName,
+        checked: true,
+        startTime: formatTime(Math.min(...temp)),
+        endTime: formatTime(Math.max(...temp)),
+      };
+    } else {
+      slots[day.dayIndex] = {
+        name: day.dayName,
+        checked: false,
+        startTime: "",
+        endTime: "",
+      };
+    }
+  }
+  // let startMins = parseMinutes(startTime);
+  // let endMins = parseMinutes(endTime);
+
+  // // Handle overnight/over-midnight periods (e.g., 22:00 to 02:00)
+  // if (endMins < startMins) {
+  //   endMins += 24 * 60;
+  // }
+
+  // const SLOT_DURATION = 30; // in minutes
+
+  // // Generate slots in 30-minute increments
+  // while (startMins + SLOT_DURATION <= endMins) {
+  //   const slotStart = formatTime(startMins);
+  //   const slotEnd = formatTime(startMins + SLOT_DURATION);
+
+  //   slots.push({
+  //     timeSlotId: null,
+  //     day: day.dayIndex,
+  //     dayName: day.dayName,
+  //     startTime: slotStart,
+  //     endTime: slotEnd,
+  //     notes: "",
+  //   });
+
+  //   startMins += SLOT_DURATION;
+  // }
 
   return slots;
 }

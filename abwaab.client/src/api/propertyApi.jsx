@@ -5,6 +5,10 @@ export const propertyApi = {
     axiosPrivate.get(`/api/Property/GetPropertyForUpdate?propertyId=${id}`, {
       signal: signal,
     }),
+  updateProperty: (properyData, signal) =>
+    axiosPrivate.put(`/api/Property/update-property`, properyData, {
+      signal: signal,
+    }),
   addProperty: (signal) =>
     axiosPrivate.post("/api/Property/add-property", null, { signal: signal }),
   getMyProperties: (signal) =>

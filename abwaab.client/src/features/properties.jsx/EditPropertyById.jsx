@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Box,
   Typography,
@@ -20,7 +20,11 @@ import MapIcon from "@mui/icons-material/Map";
 import { useParams } from "react-router";
 import { useSnackbar } from "notistack";
 import { propertyApi } from "../../api";
-import { generateTimeSlots, timeSlots } from "../../utils/helpers";
+import {
+  collapseTimeSlots,
+  generateTimeSlots,
+  timeSlots,
+} from "../../utils/helpers";
 
 const orientations = [
   {
@@ -69,21 +73,71 @@ const EditPropertyById = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   // console.log(propData);
-  const ts = timeSlots();
-  console.log(ts);
+  // const ts = collapseTimeSlots(
+  //   [
+  //     {
+  //       timeSlotId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  //       day: 0,
+  //       dayName: "string",
+  //       startTime: "10:00:00",
+  //       endTime: "10:30:00",
+  //       notes: "string",
+  //     },
+  //   ],
+  //   [
+  //     {
+  //       dayIndex: 0,
+  //       dayName: "Sunday",
+  //     },
+  //     {
+  //       dayIndex: 1,
+  //       dayName: "Monday",
+  //     },
+  //     {
+  //       dayIndex: 2,
+  //       dayName: "Tuesday",
+  //     },
+  //     {
+  //       dayIndex: 3,
+  //       dayName: "Wednesday",
+  //     },
+  //     {
+  //       dayIndex: 4,
+  //       dayName: "Thursday",
+  //     },
+  //     {
+  //       dayIndex: 5,
+  //       dayName: "Friday",
+  //     },
+  //     {
+  //       dayIndex: 6,
+  //       dayName: "Saturday",
+  //     },
+  //   ]
+  // );
+  // console.log(ts);
 
   // 0Available Viewing Schedule State
-  const [schedules, setSchedules] = useState({
-    0: { checked: false, from: "", to: "" },
-    1: { checked: false, from: "", to: "" },
-    2: { checked: false, from: "", to: "" },
-    3: { checked: false, from: "", to: "" },
-    4: { checked: false, from: "", to: "" },
-    5: { checked: false, from: "", to: "" },
-    6: { checked: false, from: "", to: "" },
-  });
+  const [schedules, setSchedules] = useState(
+    null
+    // {
+    // 0: { checked: false, startTime: "", to: "" },
+    // 1: { checked: false, from: "", to: "" },
+    // 2: { checked: false, from: "", to: "" },
+    // 3: { checked: false, from: "", to: "" },
+    // 4: { checked: false, from: "", to: "" },
+    // 5: { checked: false, from: "", to: "" },
+    // 6: { checked: false, from: "", to: "" },
+    // }
+  );
+  // console.log(schedules);
+  const getScheules = useCallback(() => {
+    return Object.keys(schedules);
+  }, []);
 
   const handleScheduleChange = (day, field, value) => {
+    //handle uncheck day
+    //handle change from if to is selected
     setSchedules((prev) => ({
       ...prev,
       [day]: { ...prev[day], [field]: value },
@@ -103,14 +157,68 @@ const EditPropertyById = () => {
         getId.id,
         signalRef.current.signal
       );
-
       setPropData(resp.data);
       // setSchedules(resp.data.weekDaysList.map(day=>({[day.dayIndex]:{checked:da}})))
-      console.log(resp.data);
+      const schedule = collapseTimeSlots(
+        resp.data.timeSlots,
+        resp.data.weekDaysList
+      );
+      setSchedules(schedule);
       // enqueueSnackbar(resp.data.message, { variant: "success" });
       //   if (onSuccess) onSuccess(data.newEmail, resp.data);
     } catch (err) {
       //list related error codes
+      setPropData(null);
+      if (err.errorCode === "VALIDATION_FAILED") {
+        setErrors(err.errors);
+        enqueueSnackbar(err.detail, { variant: "error" });
+        return;
+      } else if (err.errorCode === "") {
+        enqueueSnackbar(err, { variant: "error" });
+      } else {
+        enqueueSnackbar(err.message, { variant: "error" });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveProperty = async () => {
+    setLoading(true);
+
+    if (signalRef.current) {
+      signalRef.current.abort();
+    }
+    try {
+      // debugger;
+      signalRef.current = new AbortController();
+      const timeSlotsArr = [];
+      for (const day of propData.weekDaysList) {
+        const dayData = { ...schedules[day.dayIndex] };
+        const tempArr = generateTimeSlots(
+          day,
+          dayData.startTime,
+          dayData.endTime
+        );
+        timeSlotsArr.push(...tempArr);
+      }
+      const propNewData = { ...propData, timeSlots: timeSlotsArr };
+      const resp = await propertyApi.updateProperty(
+        propNewData,
+        signalRef.current.signal
+      );
+      // setPropData(resp.data);
+      // setSchedules(resp.data.weekDaysList.map(day=>({[day.dayIndex]:{checked:da}})))
+      // const schedule = collapseTimeSlots(
+      //   resp.data.timeSlots,
+      //   resp.data.weekDaysList
+      // );
+      // setSchedules(schedule);
+      // enqueueSnackbar(resp.data.message, { variant: "success" });
+      //   if (onSuccess) onSuccess(data.newEmail, resp.data);
+    } catch (err) {
+      //list related error codes
+      // setPropData(null);
       if (err.errorCode === "VALIDATION_FAILED") {
         setErrors(err.errors);
         enqueueSnackbar(err.detail, { variant: "error" });
@@ -205,6 +313,10 @@ const EditPropertyById = () => {
       fetchProperty();
     }, 0);
   }, []);
+
+  // if (!propData) {
+  //   return <></>;
+  // }
 
   return (
     <div className="min-h-screen  mt-5 flex justify-center  w-full">
@@ -443,6 +555,7 @@ const EditPropertyById = () => {
                 variant="outlined"
                 fullWidth
                 value={propData.description}
+                label="تفاصيل العقار"
                 name="description"
                 onChange={(e) =>
                   setPropData({ ...propData, [e.target.name]: e.target.value })
@@ -582,100 +695,95 @@ const EditPropertyById = () => {
             </Typography>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-              {propData.weekDaysList.map((day) => (
-                <div
-                  key={day.dayIndex}
-                  className="flex items-center justify-between gap-2 border-b border-neutral-100 pb-2"
-                >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={schedules[day.dayIndex].checked}
-                        onChange={(e) =>
-                          handleScheduleChange(day, "checked", e.target.checked)
-                        }
-                        size="small"
-                      />
-                    }
-                    label={day.dayName}
-                    className="min-w-[90px] text-neutral-700"
-                  />
-                  <div className="flex items-center gap-2">
-                    <FormControl sx={{ m: 1, minWidth: 120 }}>
-                      <InputLabel id="demo-simple-select-autowidth-label">
-                        من
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-autowidth-label"
-                        id="demo-simple-select-autowidth"
-                        // value={}
-                        onChange={(e) => console.log(e.target.value)}
-                        autoWidth
-                        label="Age"
-                        size="small"
-                      >
-                        <MenuItem value="">
-                          <span>اختر فترة</span>
-                        </MenuItem>
-                        {ts.map((t) => (
-                          <MenuItem value={`${t}`}>{t}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    <FormControl sx={{ m: 1, minWidth: 120 }}>
-                      <InputLabel id="demo-simple-select-autowidth-label">
-                        إلى
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-autowidth-label"
-                        id="demo-simple-select-autowidth"
-                        // value={}
-                        // onChange={handleChange}
-                        autoWidth
-                        label="Age"
-                        size="small"
-                      >
-                        <MenuItem value="">
-                          <span>اختر فترة</span>
-                        </MenuItem>
-                        {ts.map((t) => (
-                          <MenuItem value={t}>{t}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    {/* <TextField
-                      placeholder="--:--"
-                      variant="filled"
-                      size="small"
-                      type="time"
-                      className="w-24 text-center"
-                      InputProps={{
-                        disableUnderline: true,
-                        className: "rounded bg-neutral-100 text-xs",
-                      }}
-                      value={schedules[day].from}
-                      onChange={(e) =>
-                        handleScheduleChange(day, "from", e.target.value)
+              {schedules &&
+                propData.weekDaysList.map((day) => (
+                  <div
+                    key={day.dayIndex}
+                    className="flex items-center justify-between gap-2 border-b border-neutral-100 pb-2"
+                  >
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={schedules[day.dayIndex].checked}
+                          onChange={(e) =>
+                            handleScheduleChange(
+                              day.dayIndex,
+                              "checked",
+                              e.target.checked
+                            )
+                          }
+                          size="small"
+                        />
                       }
+                      label={schedules[day.dayIndex].name}
+                      className="min-w-[90px] text-neutral-700"
                     />
-                    <span className="text-neutral-400 text-xs">إلى</span>
-                    <TextField
-                      placeholder="--:--"
-                      variant="filled"
-                      size="small"
-                      className="w-24 text-center"
-                      InputProps={{
-                        disableUnderline: true,
-                        className: "rounded bg-neutral-100 text-xs",
-                      }}
-                      value={schedules[day].to}
-                      onChange={(e) =>
-                        handleScheduleChange(day, "to", e.target.value)
-                      }
-                    /> */}
+                    <div className="flex items-center gap-2">
+                      <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id="demo-simple-select-autowidth-label">
+                          من
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-autowidth-label"
+                          id="demo-simple-select-autowidth"
+                          value={schedules[day.dayIndex].startTime}
+                          onChange={(e) =>
+                            handleScheduleChange(
+                              day.dayIndex,
+                              "startTime",
+                              e.target.value
+                            )
+                          }
+                          autoWidth
+                          disabled={!schedules[day.dayIndex].checked}
+                          label="من"
+                          size="small"
+                        >
+                          <MenuItem value="">
+                            <span>اختر فترة</span>
+                          </MenuItem>
+                          {timeSlots().map((t) => (
+                            <MenuItem value={t}>{t}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id="demo-simple-select-autowidth-label">
+                          إلى
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-autowidth-label"
+                          id="demo-simple-select-autowidth"
+                          value={schedules[day.dayIndex].endTime}
+                          onChange={(e) =>
+                            handleScheduleChange(
+                              day.dayIndex,
+                              "endTime",
+                              e.target.value
+                            )
+                          }
+                          disabled={
+                            !schedules[day.dayIndex].startTime ||
+                            !schedules[day.dayIndex].checked
+                          }
+                          autoWidth
+                          label="Age"
+                          size="small"
+                        >
+                          <MenuItem value="">
+                            <span>اختر فترة</span>
+                          </MenuItem>
+                          {timeSlots(
+                            null,
+                            schedules[day.dayIndex].startTime
+                          ).map((t) => (
+                            <MenuItem value={t}>{t}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </Box>
 
@@ -703,7 +811,7 @@ const EditPropertyById = () => {
             <Button
               variant="contained"
               className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-lg px-6"
-              //   onClick={onSubmit}
+              onClick={() => saveProperty()}
             >
               إضافة عقار
             </Button>

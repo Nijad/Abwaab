@@ -20,7 +20,7 @@ const dataTest = [
     visitRequests: 3,
   },
   {
-    propertyId: "1231-fsdf342-32vx",
+    propertyId: "8baa7af8-4c2d-4cfc-afbc-e34ba2371c96",
     coverImage:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiBv7lL1ce0REGvvOPJsrBALnXqqjgD7svLzpZmlf0gg&s=10",
     title: "شقة سكنية بمشروع دمر",
