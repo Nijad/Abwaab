@@ -1,7 +1,7 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Common.Exceptions.Custom;
 
-namespace Abwaab.Application.Common.Exceptions.Properties
+namespace Abwaab.Application.Common.Exceptions.Properties.TimeSlots
 {
     public class TimeSlotNotBelongToPropertyException(string title) :
         Forbidden403Exception(
@@ -12,6 +12,5 @@ namespace Abwaab.Application.Common.Exceptions.Properties
     {
         string msg = $"الفترة الزمنية التي تطلبها لا تنتمي إلى هذا العقار";
         public override string Message => msg;
-        public string Title { get; set; } = title;
     }
 }

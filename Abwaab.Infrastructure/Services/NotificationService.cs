@@ -1,6 +1,6 @@
 ﻿using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
-using Abwaab.Application.Features.Notifications.AllNotificationWays;
+using Abwaab.Application.Features.Notifications.Queries.GetAllNotificationWays;
 using Abwaab.Application.Repositories;
 
 namespace Abwaab.Infrastructure.Services

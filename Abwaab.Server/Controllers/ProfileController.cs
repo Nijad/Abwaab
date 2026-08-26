@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Features.Notifications.AllNotificationWays;
+﻿using Abwaab.Application.Features.Notifications.Queries.GetAllNotificationWays;
 using Abwaab.Application.Features.Users.Profile.Email.Cancel;
 using Abwaab.Application.Features.Users.Profile.Email.Confirm;
 using Abwaab.Application.Features.Users.Profile.Email.InitiateChange;

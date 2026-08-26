@@ -71,5 +71,7 @@
         public const string ExceededAllowedStarNumber = "EXCEEDED_ALLOWED_STAR_NUMBER";
         public const string PropertyAlreadyUnstared = "PROPERTY_ALREADY_UNSTARED";
         public const string PropertyAlreadyStared = "PROPERTY_ALREADY_STARED";
+        public const string HasNoCoverImage = "HAS_NO_COVER_IMAGE";
+        public const string NotAllowedToSetPropertyAsPending = "NOT_ALLOWED_TO_SET_PROPERTY_AS_PENDING";
     }
 }

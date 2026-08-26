@@ -28,24 +28,29 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         public async Task<Media?> FindMediaByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Media
-                .Include(m=>m.Property)
+                .Include(m => m.Property)
                 .Where(m => m.Id == id)
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
         public async Task<MediaType?> FindMediaTypeByTypeAsync(string mediaName)
         {
-            return await _context.MediaTypes.Where(x=>x.Name == mediaName).FirstOrDefaultAsync();
+            return await _context.MediaTypes.Where(x => x.Name == mediaName).FirstOrDefaultAsync();
         }
 
         public async Task<int> GetMediaCountByPropertyOfDataTypeAsync(Guid propertyId, Guid mediaTypeId)
         {
-            return await _context.Media.Where(m=>m.PropertyId==propertyId && m.MediaTypeId==mediaTypeId).CountAsync();
+            return await _context.Media.Where(m => m.PropertyId == propertyId && m.MediaTypeId == mediaTypeId).CountAsync();
         }
 
         public async Task<List<MediaType>> GetMediaTypesListAsync()
         {
             return await _context.MediaTypes.ToListAsync();
+        }
+
+        public Task<bool> HasPropertyCoverAsync(Guid propertyId)
+        {
+            return _context.Media.Where(x => x.PropertyId == propertyId && x.IsCover).AnyAsync();
         }
 
         public async Task RemoveMediaAsync(Media media, CancellationToken cancellationToken)

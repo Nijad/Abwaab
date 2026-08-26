@@ -2,7 +2,9 @@
 using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
-using Abwaab.Application.Common.Exceptions.Properties;
+using Abwaab.Application.Common.Exceptions.Properties.Attributes;
+using Abwaab.Application.Common.Exceptions.Properties.DataTypes;
+using Abwaab.Application.Common.Exceptions.Properties.TimeSlots;
 using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
@@ -77,7 +79,7 @@ namespace Abwaab.Application.Features.Properties.Update
                 finishing = await _propertyFinishingService.FindPropertyFinishingByIdAsycn((Guid)request.PropertyFinishingId, errorTitle);
 
             //check current state and if need to change
-            PropertyState propertyState = await _propertyStatesService.GetNewState(property.PropertyState, errorTitle);
+            PropertyState propertyState = await _propertyStatesService.GetNewStateForUpdate(property.PropertyState, errorTitle);
 
             //check time slot
             if (request.TimeSlots != null && request.TimeSlots.Count > 0)

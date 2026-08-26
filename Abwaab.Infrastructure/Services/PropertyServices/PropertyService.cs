@@ -1,7 +1,6 @@
-﻿using Abwaab.Application.Common.Exceptions.Properties;
+﻿using Abwaab.Application.Common.Exceptions.Properties.Attributes;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Repositories;
-using Abwaab.Domain.Entities.MediaEntities;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 

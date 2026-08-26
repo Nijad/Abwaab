@@ -1,11 +1,10 @@
-﻿using Abwaab.Application.Common.Exceptions.Properties;
+﻿using Abwaab.Application.Common.Exceptions.Properties.Attributes;
+using Abwaab.Application.Common.Exceptions.Properties.DataTypes;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Infrastructure.Services.Common;
-using Org.BouncyCastle.Asn1.Cms;
-using System.Reflection;
 using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
 
 namespace Abwaab.Infrastructure.Services.PropertyServices

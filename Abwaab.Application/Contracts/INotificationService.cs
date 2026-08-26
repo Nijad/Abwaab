@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Features.Notifications.AllNotificationWays;
+﻿using Abwaab.Application.Features.Notifications.Queries.GetAllNotificationWays;
 
 namespace Abwaab.Application.Contracts
 {

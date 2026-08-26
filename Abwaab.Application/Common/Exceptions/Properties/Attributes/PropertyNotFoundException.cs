@@ -1,7 +1,7 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Common.Exceptions.Custom;
 
-namespace Abwaab.Application.Common.Exceptions.Properties
+namespace Abwaab.Application.Common.Exceptions.Properties.Attributes
 {
     public class PropertyNotFoundException : NotFound404Exception
     {

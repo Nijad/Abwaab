@@ -74,5 +74,10 @@ namespace Abwaab.Infrastructure.Services
         {
             return await _mediaRepository.GetMediaCountByPropertyOfDataTypeAsync(propertyId, mediaTypeId);
         }
+
+        public async Task<bool> HasPropertyCoverAsync(Guid propertyId)
+        {
+            return await _mediaRepository.HasPropertyCoverAsync(propertyId);
+        }
     }
 }

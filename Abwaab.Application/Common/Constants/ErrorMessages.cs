@@ -54,5 +54,6 @@
         public const string MediaNotFound = "ملف الوسائط المطلوب غير موجود.";
         public const string PropertyAlreadyStared = "العقار تم تمييزه مسبقاً.";
         public const string PropertyAlreadyUnstared = "العقار تم إلغاء تمييزه مسبقاً.";
+        public const string HasNoCoverImage = "صورة غلاف العقار مطلوبة.";
     }
 }

@@ -32,5 +32,6 @@
         public const string DeleteMedia = "حذف ملف وسائط";
         public const string StarProperty = "تمييز عقار";
         public const string UnstarProperty = "إلغاء تمييز عقار";
+        public const string SaveProperty = "حفظ العقار للنشر";
     }
 }
