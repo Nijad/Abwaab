@@ -84,6 +84,13 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await _context.PropertyTypes.ToListAsync();
         }
 
+        public async Task<int> GetStaredPropertyCountInPlanAsync(Guid userPlandId)
+        {
+            return await _context.Properties
+                .Where(x => x.UserPlandId == userPlandId && x.IsStard)
+                .CountAsync();
+        }
+
         public async Task<bool> PropertyBelongToUser(Guid userId, Guid propertyId)
         {
             Property property = await _context.Properties.Include(x => x.UserPlan).Where(x => x.Id == propertyId).FirstAsync();

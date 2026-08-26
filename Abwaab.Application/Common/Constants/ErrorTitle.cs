@@ -30,5 +30,7 @@
         public const string PropertyQuery = "استعلام عن عقار";
         public const string UploadMedia = "تحميل ملف وسائط";
         public const string DeleteMedia = "حذف ملف وسائط";
+        public const string StarProperty = "تمييز عقار";
+        public const string UnstarProperty = "إلغاء تمييز عقار";
     }
 }

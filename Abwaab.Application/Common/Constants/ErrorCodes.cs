@@ -68,5 +68,8 @@
         public const string NotImplementedMediaType = "NOT_IMPLEMENTED_MEDIA_TYPE";
         public const string UserNotAuthenticated = "USER_NOT_AUTHENTICATED";
         public const string MediaNotFound = "MEDIA_NOT_FOUND";
+        public const string ExceededAllowedStarNumber = "EXCEEDED_ALLOWED_STAR_NUMBER";
+        public const string PropertyAlreadyUnstared = "PROPERTY_ALREADY_UNSTARED";
+        public const string PropertyAlreadyStared = "PROPERTY_ALREADY_STARED";
     }
 }
