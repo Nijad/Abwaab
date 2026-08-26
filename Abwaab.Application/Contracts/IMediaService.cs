@@ -13,5 +13,7 @@ namespace Abwaab.Application.Contracts
         Task<List<MediaTypeDTO>> GetAllMediaTypesListAsync();
         Task<MediaType> FindMediaTypeByTypeAsync(MediaTypesEnum typeName, string errorTitle);
         Task<int> GetMediaCountByPropertyOfDataTypeAsync(Guid propertyId, Guid mediaTypeId);
+        Task<bool> HasPropertyCoverAsync(Guid propertyId);
+        Task UncoverImagesAsync(Guid propertyId);
     }
 }

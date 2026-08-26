@@ -31,6 +31,7 @@ namespace Abwaab.Infrastructure.Services
                 CreatedAt = DateTime.UtcNow,
                 MediaTypeId = mediaDto.MediaTypeId
             };
+
             await _mediaRepository.AddMedia(media, cancellationToken);
 
             return media;
@@ -73,6 +74,16 @@ namespace Abwaab.Infrastructure.Services
         public async Task<int> GetMediaCountByPropertyOfDataTypeAsync(Guid propertyId, Guid mediaTypeId)
         {
             return await _mediaRepository.GetMediaCountByPropertyOfDataTypeAsync(propertyId, mediaTypeId);
+        }
+
+        public async Task<bool> HasPropertyCoverAsync(Guid propertyId)
+        {
+            return await _mediaRepository.HasPropertyCoverAsync(propertyId);
+        }
+
+        public async Task UncoverImagesAsync(Guid propertyId)
+        {
+            await _mediaRepository.UncoverImagesAsync(propertyId);
         }
     }
 }

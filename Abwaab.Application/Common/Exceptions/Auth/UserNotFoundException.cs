@@ -12,5 +12,5 @@ namespace Abwaab.Application.Common.Exceptions.Auth
     {
         string msg = $"المستخدم '{identifier} غير موجود'";
         public override string Message => msg;
-    };
+    }
 }

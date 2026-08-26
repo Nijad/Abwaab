@@ -2,7 +2,7 @@
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Plans;
-using Abwaab.Application.Common.Exceptions.Properties;
+using Abwaab.Application.Common.Exceptions.Properties.Stars;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Domain.Entities.PropertyEntities;
