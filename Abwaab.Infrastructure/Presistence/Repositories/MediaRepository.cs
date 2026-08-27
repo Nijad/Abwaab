@@ -2,6 +2,7 @@
 using Abwaab.Domain.Entities.MediaEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
+using static Twilio.Rest.Intelligence.V3.ConfigurationResource;
 
 namespace Abwaab.Infrastructure.Presistence.Repositories
 {
@@ -28,19 +29,19 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         public async Task<Media?> FindMediaByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Media
-                .Include(m=>m.Property)
+                .Include(m => m.Property)
                 .Where(m => m.Id == id)
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
         public async Task<MediaType?> FindMediaTypeByTypeAsync(string mediaName)
         {
-            return await _context.MediaTypes.Where(x=>x.Name == mediaName).FirstOrDefaultAsync();
+            return await _context.MediaTypes.Where(x => x.Name == mediaName).FirstOrDefaultAsync();
         }
 
         public async Task<int> GetMediaCountByPropertyOfDataTypeAsync(Guid propertyId, Guid mediaTypeId)
         {
-            return await _context.Media.Where(m=>m.PropertyId==propertyId && m.MediaTypeId==mediaTypeId).CountAsync();
+            return await _context.Media.Where(m => m.PropertyId == propertyId && m.MediaTypeId == mediaTypeId).CountAsync();
         }
 
         public async Task<List<MediaType>> GetMediaTypesListAsync()
@@ -48,10 +49,23 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await _context.MediaTypes.ToListAsync();
         }
 
+        public Task<bool> HasPropertyCoverAsync(Guid propertyId)
+        {
+            return _context.Media.Where(x => x.PropertyId == propertyId && x.IsCover).AnyAsync();
+        }
+
         public async Task RemoveMediaAsync(Media media, CancellationToken cancellationToken)
         {
             _context.Media.Remove(media);
             await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task UncoverImagesAsync(Guid propertyId)
+        {
+            await _context.Media
+                .Where(c => c.IsCover)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(c => c.IsCover, false));
+            await _context.SaveChangesAsync();
         }
     }
 }

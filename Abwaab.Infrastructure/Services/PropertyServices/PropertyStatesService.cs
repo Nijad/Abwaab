@@ -39,7 +39,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             return propertyState;
         }
 
-        public async Task<PropertyState> GetNewState(PropertyState propertyState, string errorTitle)
+        public async Task<PropertyState> GetNewStateForUpdate(PropertyState propertyState, string errorTitle)
         {
             PropertyState rejected = await GetRejectedPropertyStateAsync(errorTitle);
             PropertyState pending = await GetPendingPropertyStateAsync(errorTitle);

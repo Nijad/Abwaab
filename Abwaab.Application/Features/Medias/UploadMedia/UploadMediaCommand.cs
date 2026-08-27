@@ -12,5 +12,6 @@ namespace Abwaab.Application.Features.Medias.UploadMedia
         public Guid PropertyId { get; set; }
         public Guid MediaTypeId { get; set; }
         public string MediaTypeName { get; set; } = string.Empty;
+        public bool IsCover { get; set; }
     }
 }

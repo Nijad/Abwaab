@@ -2,7 +2,6 @@
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
-using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
 
 namespace Abwaab.Infrastructure.Presistence.Repositories
 {
@@ -26,7 +25,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await _context.Properties
                 .Include(x => x.PropertyState)
                 .Include(x => x.UserPlan)
-                .ThenInclude(x=>x.Plan)
+                .ThenInclude(x => x.Plan)
                 .Include(p => p.TimeSlots)
                 .Include(p => p.PropertyAttributes)
                 //.ThenInclude(x=>x.Attribute)
@@ -39,17 +38,17 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         {
             return await _context.Properties
                 .Include(p => p.UserPlan)
-                .ThenInclude(x=>x.Properties)
+                .ThenInclude(x => x.Properties)
                 .Include(p => p.UserPlan)
                 .ThenInclude(x => x.Plan)
                 .Include(p => p.PropertyType)
                 .Include(p => p.Finishing)
                 .Include(p => p.TimeSlots)
                 .Include(p => p.PropertyAttributes)
-                .ThenInclude(x=>x.Attribute)
-                .ThenInclude(x=>x.AttributeDataType)
-                .Include(x=>x.MediaList)
-                .ThenInclude(x=>x.MediaType)
+                .ThenInclude(x => x.Attribute)
+                .ThenInclude(x => x.AttributeDataType)
+                .Include(x => x.MediaList)
+                .ThenInclude(x => x.MediaType)
                 .Where(p => p.Id == propertyId)
                 .FirstOrDefaultAsync();
         }
@@ -89,6 +88,16 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await _context.Properties
                 .Where(x => x.UserPlandId == userPlandId && x.IsStard)
                 .CountAsync();
+        }
+
+        public async Task<List<Property>> GetUserPropertiesList(Guid userId)
+        {
+            return await _context.Properties
+                .Include(x => x.PropertyType)
+                .Include(x => x.Finishing)
+                .Include(x => x.MediaList.Where(y=>y.IsCover))
+                .Where(x => x.UserPlan.UserId == userId)
+                .ToListAsync();
         }
 
         public async Task<bool> PropertyBelongToUser(Guid userId, Guid propertyId)

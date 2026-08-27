@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Common.Exceptions.Properties;
+﻿using Abwaab.Application.Common.Exceptions.Properties.TimeSlots;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Application.Repositories;

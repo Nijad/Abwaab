@@ -1,7 +1,7 @@
-﻿using Abwaab.Application.Common.Exceptions.Properties;
+﻿using Abwaab.Application.Common.Exceptions.Properties.Attributes;
 using Abwaab.Application.Contracts.Properties;
+using Abwaab.Application.Features.Properties.Queries.GetUserPropertiesSummaryList;
 using Abwaab.Application.Repositories;
-using Abwaab.Domain.Entities.MediaEntities;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 
@@ -20,7 +20,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
         public async Task<Guid> CreatePropertyAsync(UserPlan userPlan, PropertyState propertyState, string errorTitle)
         {
             Guid id = Guid.NewGuid();
-            
+
             Property property = new()
             {
                 Id = id,
@@ -31,7 +31,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             await _propertyRepository.CreateProperty(property);
             return id;
         }
-        
+
         public async Task<bool> HasBalanceToAddPropertyAsync(UserPlan userPlan)
         {
             int propertyCount = await _propertyRepository.GetPropertiesCountBelongToPlanAsync(userPlan.Id);
@@ -53,7 +53,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
         {
             return await _propertyRepository.PropertyBelongToUser(userId, propertyId);
         }
-                
+
         public async Task UpdatePropertyAsync(Property property)
         {
             await _propertyRepository.UpdatePropertyAsync(property);
@@ -63,7 +63,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
         {
             Property? property = await _propertyRepository.FindPropertyByIdForUpdateAsync(propertyId);
 
-            if(property==null)
+            if (property == null)
                 throw new PropertyNotFoundException(errorTitle);
 
             return property;
@@ -72,6 +72,26 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
         public async Task<int> GetStaredPropertyCountInPlanAsync(Guid userPlandId)
         {
             return await _propertyRepository.GetStaredPropertyCountInPlanAsync(userPlandId);
+        }
+
+        public async Task<List<GetUserPropertySummaryResponse>> GetUserPropertiesSummaryAsync(Guid userId)
+        {
+            List<Property> propertyList = await _propertyRepository.GetUserPropertiesList(userId);
+
+            List<GetUserPropertySummaryResponse> response = new();
+            foreach (var property in propertyList)
+                response.Add(new()
+                {
+                    propertyId = property.Id,
+                    AreaInSquareMeter = (decimal)property.AreaInSquareMeter!,
+                    CoverImage = property.MediaList?.FirstOrDefault()?.FilePath!,
+                    Price = (decimal)property.Price!,
+                    PropertyFinishing = property.Finishing?.FinishingName!,
+                    PropertyType = property.PropertyType?.TypeName!,
+                    Title = property.Title!
+                });
+
+            return response;
         }
     }
 }

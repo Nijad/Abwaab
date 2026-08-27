@@ -1,9 +1,8 @@
-﻿using Abwaab.Application.Common.Exceptions.Properties;
+﻿using Abwaab.Application.Common.Exceptions.Properties.Attributes;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
-using System.ComponentModel;
 
 namespace Abwaab.Infrastructure.Services.PropertyServices
 {
