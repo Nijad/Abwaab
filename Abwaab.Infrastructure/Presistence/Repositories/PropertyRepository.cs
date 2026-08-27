@@ -49,6 +49,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 .ThenInclude(x => x.AttributeDataType)
                 .Include(x => x.MediaList)
                 .ThenInclude(x => x.MediaType)
+                .Include(x=>x.PropertyState)
                 .Where(p => p.Id == propertyId)
                 .FirstOrDefaultAsync();
         }
@@ -96,6 +97,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 .Include(x => x.PropertyType)
                 .Include(x => x.Finishing)
                 .Include(x => x.MediaList.Where(y=>y.IsCover))
+                .Include(x=>x.PropertyState)
                 .Where(x => x.UserPlan.UserId == userId)
                 .ToListAsync();
         }

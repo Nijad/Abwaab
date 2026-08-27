@@ -16,5 +16,6 @@
         public List<PropertyAttributeDTO>? PropertyAttributesList { get; set; }
         public List<MediaDTO>? PropertyMediaList { get; set; }
         public bool IsStar { get; set; }
+        public string PropertyState { get; set; } = string.Empty;
     }
 }

@@ -88,6 +88,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
                     Price = (decimal)property.Price!,
                     PropertyFinishing = property.Finishing?.FinishingName!,
                     PropertyType = property.PropertyType?.TypeName!,
+                    PropertyState = property.PropertyState.StateName,
                     Title = property.Title!
                 });
 

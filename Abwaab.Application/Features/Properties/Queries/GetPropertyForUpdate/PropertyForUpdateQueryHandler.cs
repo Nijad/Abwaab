@@ -145,6 +145,7 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                 RemainingStarsAllowed = remainingStars,
                 RemainingImagesAllowed = remainingImages,
                 RemainingVideosAllowed = remainingVedios,
+                PropertyState = property.PropertyState.StateName,
                 IsStar = property.IsStard,
             };
             return response;

@@ -10,5 +10,6 @@
         public decimal Price { get; set; }
         public decimal AreaInSquareMeter { get; set; }
         public int VisitRequest { get; set; }
+        public string PropertyState { get; set; } = string.Empty;
     }
 }
