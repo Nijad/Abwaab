@@ -19,7 +19,7 @@ namespace Abwaab.Infrastructure.Services.EmailServices
             _logger = logger;
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body, string errorTitle)
+        public async Task<(bool, string)> SendEmailAsync(string toEmail, string subject, string body, string errorTitle)
         {
             try
             {
@@ -32,16 +32,16 @@ namespace Abwaab.Infrastructure.Services.EmailServices
                 var msg = MailHelper.CreateSingleEmail(from, to, subject, body, body);
 
                 var response = await client.SendEmailAsync(msg);
-
+                
                 if (response.IsSuccessStatusCode)
                 {
                     _logger.LogInformation("Email sent successfully to {ToEmail}.", toEmail);
-                    //return true;
+                    return (true, "Sent");
                 }
 
                 var errorBody = await response.Body.ReadAsStringAsync();
                 _logger.LogError("SendGrid failed: {StatusCode} - {Error}", response.StatusCode, errorBody);
-                //return false;
+                return (false, "Failed");
             }
             catch (Exception ex)
             {

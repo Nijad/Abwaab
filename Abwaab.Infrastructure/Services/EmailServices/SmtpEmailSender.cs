@@ -20,7 +20,7 @@ namespace Abwaab.Infrastructure.Services.EmailServices
             _logger = logger;
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body, string errorTitle)
+        public async Task<(bool, string)> SendEmailAsync(string toEmail, string subject, string body, string errorTitle)
         {
             try
             {
@@ -63,10 +63,12 @@ namespace Abwaab.Infrastructure.Services.EmailServices
                 if (!string.IsNullOrEmpty(_settings.SmtpUsername) && !string.IsNullOrEmpty(_settings.SmtpPassword))
                     await client.AuthenticateAsync(_settings.SmtpUsername, _settings.SmtpPassword);
 
-                await client.SendAsync(message);
+                string response = await client.SendAsync(message);
                 await client.DisconnectAsync(true);
 
                 _logger.LogInformation("Email sent successfully to {ToEmail} via SMTP.", toEmail);
+
+                return (true, response);
             }
             catch (Exception ex)
             {
