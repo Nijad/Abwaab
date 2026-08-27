@@ -10,9 +10,9 @@ using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace Abwaab.Application.Features.Properties.Save
+namespace Abwaab.Application.Features.Properties.Submit
 {
-    public class SavePropertyCommandHandler : IRequestHandler<SavePropertyCommand, SavePropertyResponse>
+    public class SubmitPropertyCommandHandler : IRequestHandler<SubmitPropertyCommand, SubmitPropertyResponse>
     {
         private readonly IUserService _userService;
         private readonly IPropertyStatesService _propertyStatesService;
@@ -22,7 +22,7 @@ namespace Abwaab.Application.Features.Properties.Save
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly string errorTitle = ErrorTitle.SaveProperty;
 
-        public SavePropertyCommandHandler(
+        public SubmitPropertyCommandHandler(
             IUserService userService,
             IPropertyStatesService propertyStatesService,
             IPropertyService propertyService,
@@ -38,7 +38,7 @@ namespace Abwaab.Application.Features.Properties.Save
             _userManager = userManager;
         }
 
-        public async Task<SavePropertyResponse> Handle(SavePropertyCommand request, CancellationToken cancellationToken)
+        public async Task<SubmitPropertyResponse> Handle(SubmitPropertyCommand request, CancellationToken cancellationToken)
         {
             //check if property exist
             Property property = await _propertyService.FindPropertyByIdAsync(request.PropertyId, errorTitle);
@@ -89,7 +89,7 @@ namespace Abwaab.Application.Features.Properties.Save
             }
 
 
-            return new SavePropertyResponse() { Success = true, Message = "تم حفظ العقار بنجاح وهو الآن قيد انتظار موافقة الإدارة، سيتم إعلامكم بذلك في غضون 48 ساعة كحد أقصى." };
+            return new SubmitPropertyResponse() { Success = true, Message = "تم حفظ العقار بنجاح وهو الآن قيد انتظار موافقة الإدارة، سيتم إعلامكم بذلك في غضون 48 ساعة كحد أقصى." };
         }
     }
 }

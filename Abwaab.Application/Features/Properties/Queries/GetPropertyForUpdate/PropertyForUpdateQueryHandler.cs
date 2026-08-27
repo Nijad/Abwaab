@@ -120,7 +120,8 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                     MediaId = media.Id,
                     FilePath = media.FilePath,
                     MediaTypeId = media.MediaTypeId,
-                    MediaTypeName = media.MediaType.Name
+                    MediaTypeName = media.MediaType.Name,
+                    IsCover = media.IsCover,
                 });
 
             PropertyForUpdateResponse response = new()
@@ -145,6 +146,7 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                 RemainingStarsAllowed = remainingStars,
                 RemainingImagesAllowed = remainingImages,
                 RemainingVideosAllowed = remainingVedios,
+                PropertyState = property.PropertyState.StateName,
                 IsStar = property.IsStard,
             };
             return response;
