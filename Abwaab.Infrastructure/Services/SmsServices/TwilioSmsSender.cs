@@ -20,7 +20,7 @@ namespace Abwaab.Infrastructure.Services.SmsServices
             _logger = logger;
         }
 
-        public async Task SendSmsAsync(string phoneNumber, string message,string errorTitle)
+        public async Task<(bool, string)> SendSmsAsync(string phoneNumber, string message,string errorTitle)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace Abwaab.Infrastructure.Services.SmsServices
 
                 TwilioClient.Init(_settings.AccountSid, _settings.AuthToken);
 
-                var result = await MessageResource.CreateAsync(
+                MessageResource result = await MessageResource.CreateAsync(
                     body: message,
                     from: new Twilio.Types.PhoneNumber(_settings.FromPhone),
                     to: new Twilio.Types.PhoneNumber(phoneNumber)
@@ -38,9 +38,11 @@ namespace Abwaab.Infrastructure.Services.SmsServices
                 if (!string.IsNullOrEmpty(result.Sid))
                 {
                     _logger.LogInformation($"SMS sent successfully to {phoneNumber}. SID: {result.Sid}");
+                    return (true, result.Sid);
                 }
 
                 _logger.LogWarning($"SMS sent but no SID returned for {phoneNumber}.");
+                return (false, result.ErrorMessage);
             }
             catch (ApiException ex)
             {

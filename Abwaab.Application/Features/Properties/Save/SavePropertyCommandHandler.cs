@@ -5,8 +5,12 @@ using Abwaab.Application.Common.Exceptions.Media;
 using Abwaab.Application.Common.Exceptions.Properties.States;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
+using Abwaab.Application.Features.Notifications.DTOs;
+using Abwaab.Application.Interfaces;
+using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
+using Abwaab.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -20,6 +24,7 @@ namespace Abwaab.Application.Features.Properties.Save
         private readonly IMediaService _mediaService;
         private readonly INotificationService _notificationService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEnumerable<INotificationChannel> _channels;
         private readonly string errorTitle = ErrorTitle.SaveProperty;
 
         public SavePropertyCommandHandler(
@@ -28,7 +33,8 @@ namespace Abwaab.Application.Features.Properties.Save
             IPropertyService propertyService,
             IMediaService mediaService,
             INotificationService notificationService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IEnumerable<INotificationChannel> channels)
         {
             _userService = userService;
             _propertyStatesService = propertyStatesService;
@@ -36,6 +42,7 @@ namespace Abwaab.Application.Features.Properties.Save
             _mediaService = mediaService;
             _notificationService = notificationService;
             _userManager = userManager;
+            _channels = channels;
         }
 
         public async Task<SavePropertyResponse> Handle(SavePropertyCommand request, CancellationToken cancellationToken)
@@ -76,12 +83,41 @@ namespace Abwaab.Application.Features.Properties.Save
                 //push notification
                 IList<ApplicationUser> admins = await _userManager.GetUsersInRoleAsync(RoleConstants.ROLE_ADMIN);
 
-                await _notificationService.InitiateNotifications("هناك عقاراً جديداً بانتظار الموافقة", admins, errorTitle);
+                List<Notification> notifications = await _notificationService.InitiateNotifications("هناك عقاراً جديداً بانتظار الموافقة", admins, errorTitle);
 
-                //todo: run email sender
+                foreach (var notification in notifications)
+                {
+                    NotificationDTO notificationDTO = new()
+                    {
+                        NotificationId = notification.Id,
+                        Identifier = notification.Identifier,
+                        Message = notification.Message,
+                        Title = notification.Title,
+                        ResponseNote = notification.ResponseNote,
+                        NotificationWayName = notification.NotificationSubscription.NotificationWay.WayName
+                    };
 
-                //run sms sender
+                    INotificationChannel? channel = _channels.FirstOrDefault(c => c.CanHandle(notificationDTO));
 
+                    if (channel == null)
+                        notification.NotificationState = await _notificationService.GetPUnreadNotficationStateAsync(errorTitle);
+                    try
+                    {
+                        await channel.SendAsync(notificationDTO, cancellationToken);
+                        if (notificationDTO.Success)
+                            notification.NotificationState = await _notificationService.GetSentNotficationStateAsync(errorTitle);
+                        else
+                            notification.NotificationState = await _notificationService.GetFailedNotficationStateAsync(errorTitle);
+                    }
+                    catch(Exception ex)
+                    {
+                        notification.NotificationState = await _notificationService.GetFailedNotficationStateAsync(errorTitle);
+                        //todo : log exception here
+                    }
+                    notification.ResponseNote = notificationDTO.ResponseNote;
+
+                    await _notificationService.UpdateNotificationAsync(notification, cancellationToken);
+                }
             }
             catch
             {

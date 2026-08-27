@@ -13,7 +13,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             _context = context;
         }
 
-        public async Task<NotificationWay?> GetNotificationWayByNameAsync(string wayName)
+        public async Task<NotificationWay?> FindNotificationWayByNameAsync(string wayName)
         {
             return await _context.NotificationWays.Where(nw => nw.WayName == wayName).FirstOrDefaultAsync();
         }
@@ -29,6 +29,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         public async Task<List<UserNotificationSubscription>> GetNotificationWaysByUserAsync(Guid userId, bool activeOnly = false)
         {
             IQueryable<UserNotificationSubscription> list = _context.UserNotificationSubscriptions
+                .Include(x=>x.NotificationWay)
                 .Where(nw => nw.UserId == userId);
 
             if (activeOnly)
@@ -80,6 +81,12 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         {
             await _context.Notifications.AddRangeAsync(notifications);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateNotification(Notification notification, CancellationToken cancellationToken)
+        {
+            _context.Notifications.Update(notification);
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }
