@@ -2,11 +2,11 @@
 using Abwaab.Application.Features.Properties.Common.Validations;
 using FluentValidation;
 
-namespace Abwaab.Application.Features.Properties.Save
+namespace Abwaab.Application.Features.Properties.Submit
 {
-    public class SavePropertyCommandValidation : AbstractValidator<SavePropertyCommand>
+    public class SubmitPropertyCommandValidation : AbstractValidator<SubmitPropertyCommand>
     {
-        public SavePropertyCommandValidation()
+        public SubmitPropertyCommandValidation()
         {
             // ----- Basic Property Validations -----
             RuleFor(x => x.Title)

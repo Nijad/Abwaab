@@ -46,6 +46,13 @@ namespace Abwaab.Server.Controllers
             return Ok(result);
         }
 
+        [HttpPut("submit-property")]
+        public async Task<IActionResult> SubmitProperty([FromBody] UpdatePropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
         //3. reject property/temp will be rejected for month then will be deleted automatically
         //      if owner modify property/temp will turn pending again
 

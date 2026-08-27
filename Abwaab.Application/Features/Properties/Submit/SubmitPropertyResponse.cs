@@ -1,6 +1,6 @@
-﻿namespace Abwaab.Application.Features.Properties.Save
+﻿namespace Abwaab.Application.Features.Properties.Submit
 {
-    public class SavePropertyResponse
+    public class SubmitPropertyResponse
     {
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
