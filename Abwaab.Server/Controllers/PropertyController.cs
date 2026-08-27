@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList;
+using Abwaab.Application.Features.Properties.Queries.UserProperties;
 using Abwaab.Application.Features.Properties.Star;
 using Abwaab.Application.Features.Properties.Unstar;
 using Abwaab.Application.Features.Properties.Update;
@@ -87,6 +88,13 @@ namespace Abwaab.Server.Controllers
         public async Task<IActionResult> UnstarProperty(UnstarPropertyCommand command)
         {
             var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpGet("UserProperties")]
+        public async Task<IActionResult> UserProperties()
+        {
+            List<UserPropertiesResponse> result = await _mediator.Send(new UserPropertiesQuery());
             return Ok(result);
         }
     }

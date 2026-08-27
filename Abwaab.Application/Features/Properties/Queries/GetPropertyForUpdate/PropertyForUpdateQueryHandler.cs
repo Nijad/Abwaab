@@ -120,7 +120,8 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                     MediaId = media.Id,
                     FilePath = media.FilePath,
                     MediaTypeId = media.MediaTypeId,
-                    MediaTypeName = media.MediaType.Name
+                    MediaTypeName = media.MediaType.Name,
+                    IsCover = media.IsCover,
                 });
 
             PropertyForUpdateResponse response = new()

@@ -29,7 +29,8 @@ namespace Abwaab.Infrastructure.Services
                 PropertyId = mediaDto.PropertyId,
                 CreatedBy = "System", // Or pass from IUserContext
                 CreatedAt = DateTime.UtcNow,
-                MediaTypeId = mediaDto.MediaTypeId
+                MediaTypeId = mediaDto.MediaTypeId,
+                IsCover = mediaDto.IsCover
             };
 
             await _mediaRepository.AddMedia(media, cancellationToken);

@@ -6,16 +6,16 @@ using Abwaab.Domain.Entities.AppointmentEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
 
-namespace Abwaab.Application.Features.Properties.Queries.GetUserPropertiesSummaryList
+namespace Abwaab.Application.Features.Properties.Queries.UserProperties
 {
-    public class GetUserPropertySummaryHandler : IRequestHandler<GetUserPropertySummaryQuery, List<GetUserPropertySummaryResponse>>
+    public class UserPropertiesQueryHandler : IRequestHandler<UserPropertiesQuery, List<UserPropertiesResponse>>
     {
         private readonly IUserService _userService;
         private readonly IPropertyService _propertyService;
         private readonly IAppointmentService _appointmentService;
         private readonly string errorTitle = ErrorTitle.PropertiesQuery;
 
-        public GetUserPropertySummaryHandler(
+        public UserPropertiesQueryHandler(
             IUserService userService,
             IPropertyService propertyService,
             IAppointmentService appointmentService)
@@ -25,14 +25,14 @@ namespace Abwaab.Application.Features.Properties.Queries.GetUserPropertiesSummar
             _appointmentService = appointmentService;
         }
 
-        public async Task<List<GetUserPropertySummaryResponse>> Handle(GetUserPropertySummaryQuery request, CancellationToken cancellationToken)
+        public async Task<List<UserPropertiesResponse>> Handle(UserPropertiesQuery request, CancellationToken cancellationToken)
         {
             string username = _userService.FindUserNameByContext(errorTitle);
             ApplicationUser? user = await _userService.FindUserByNameAsync(username);
             if (user == null)
                 throw new UserNotFoundException(username, errorTitle);
 
-            List<GetUserPropertySummaryResponse> properties = await _propertyService.GetUserPropertiesSummaryAsync(user.Id);
+            List<UserPropertiesResponse> properties = await _propertyService.GetUserPropertiesSummaryAsync(user.Id);
 
             //get pending appointment for each property
             AppointmentState pendingAppointmentState = await _appointmentService.GetPendingAppointmentStateAsync(errorTitle);

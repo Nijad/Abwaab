@@ -4,5 +4,6 @@
     {
         public Guid MediaTypeId { get; set; }
         public string MediaTypeName { get; set; } = string.Empty;
+        public bool IsCover { get; set; }
     }
 }
