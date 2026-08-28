@@ -1,4 +1,6 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Features.Properties.Accept;
+using Abwaab.Application.Features.Properties.Enable;
 using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList;
@@ -60,7 +62,31 @@ namespace Abwaab.Server.Controllers
 
         [HttpPut("reject-property")]
         [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
-        public async Task<IActionResult> RejectProperty([FromBody] RejectPropertyCommand command)
+        public async Task<IActionResult> RejectProperty([FromBody] AcceptPropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPut("accept-property")]
+        [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
+        public async Task<IActionResult> AcceptProperty([FromBody] AcceptPropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPut("disable-property")]
+        [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
+        public async Task<IActionResult> DisableProperty([FromBody] DisablePropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPut("enable-property")]
+        [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
+        public async Task<IActionResult> EnableProperty([FromBody] EnablePropertyCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

@@ -35,5 +35,8 @@
         public const string SaveProperty = "حفظ العقار للنشر";
         public const string PropertiesQuery = "الاستعلام عن العقارات";
         public const string RejectProperty = "رفض عقار";
+        public const string AcceptProperty = "الموافقة على عقار";
+        public const string DisableProperty = "إلغاء تفعيل عرض عقار";
+        public const string EnableProperty = "إعادة تفعيل عرض عقار";
     }
 }

@@ -1,10 +1,9 @@
-﻿namespace Abwaab.Application.Features.Properties.Reject;
-
-using Abwaab.Application.Common.Constants;
+﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Properties.States;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
+using Abwaab.Application.Features.Properties.Reject;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.PropertyEntities;
@@ -12,16 +11,24 @@ using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-public class RejectPropertyCommandHandler : IRequestHandler<AcceptPropertyCommand, RejectPropertyResponse>
+
+namespace Abwaab.Application.Features.Properties.Accept;
+
+public class DesablePropertyCommandHandler : IRequestHandler<DisablePropertyCommand, DisablePropertyResponse>
 {
     private readonly IPropertyStatesService _propertyStatesService;
     private readonly IPropertyService _propertyService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly INotificationService _notificationService;
     private readonly INotifyHandler _notifyHandler;
-    private readonly string errorTitle = ErrorTitle.RejectProperty;
+    private readonly string errorTitle = ErrorTitle.AcceptProperty;
 
-    public RejectPropertyCommandHandler(IPropertyStatesService propertyStatesService, IPropertyService propertyService, UserManager<ApplicationUser> userManager, INotificationService notificationService, INotifyHandler notifyHandler)
+    public DesablePropertyCommandHandler(
+        IPropertyStatesService propertyStatesService,
+        IPropertyService propertyService,
+        UserManager<ApplicationUser> userManager,
+        INotificationService notificationService,
+        INotifyHandler notifyHandler)
     {
         _propertyStatesService = propertyStatesService;
         _propertyService = propertyService;
@@ -30,7 +37,7 @@ public class RejectPropertyCommandHandler : IRequestHandler<AcceptPropertyComman
         _notifyHandler = notifyHandler;
     }
 
-    public async Task<RejectPropertyResponse> Handle(AcceptPropertyCommand request, CancellationToken cancellationToken)
+    public async Task<DisablePropertyResponse> Handle(DisablePropertyCommand request, CancellationToken cancellationToken)
     {
         //get property
         Property property = await _propertyService.FindPropertyWithUserAndStateByIdAsync(request.PropertyId, errorTitle);
@@ -39,13 +46,13 @@ public class RejectPropertyCommandHandler : IRequestHandler<AcceptPropertyComman
         PropertyState pendingPropertyState = await _propertyStatesService.GetPendingPropertyStateAsync(errorTitle);
 
         if (property.PropertyState != pendingPropertyState)
-            throw new NotAllowedToSetPropertyAsRejectedException(property.PropertyState.StateName, errorTitle);
+            throw new NotAllowedToSetPropertyAsPublishedException(property.PropertyState.StateName, errorTitle);
 
         //update property state
-        PropertyState rejectedPropertyState = await _propertyStatesService.GetRejectedPropertyStateAsync(errorTitle);
+        PropertyState publishedPropertyState = await _propertyStatesService.GetPublishedPropertyStateAsync(errorTitle);
 
-        property.PropertyState = rejectedPropertyState;
-        property.Note = request.Note;
+        property.PropertyState = publishedPropertyState;
+        property.Note = "";
         await _propertyService.UpdatePropertyAsync(property);
 
         //preparing send notification to the owner
@@ -53,13 +60,13 @@ public class RejectPropertyCommandHandler : IRequestHandler<AcceptPropertyComman
         ApplicationUser? user = await _userManager.FindByIdAsync(userId);
 
         if (user == null)
-            throw new UserNotFoundException(userId ,errorTitle);
+            throw new UserNotFoundException(userId, errorTitle);
 
-        List<ApplicationUser> users = new(){ user };
+        List<ApplicationUser> users = new() { user };
 
-        List<Notification> notifications = await _notificationService.InitiateNotifications("تم رفض العقار الخاص بك من قبل إدارة الموقع. يمكنك الاطلاع على التفاصيل من خلال الموقع الالكتروني", users, errorTitle);
+        List<Notification> notifications = await _notificationService.InitiateNotifications("تم نشر العقار الخاص بك، وأصبح متاحاً للاستعراض على الموقع الالكتروني.", users, errorTitle);
 
         await _notifyHandler.NotifyAsync(errorTitle);
-        return new RejectPropertyResponse() { Success = true , Message = "تم رفض العقار بنجاح."};
+        return new DisablePropertyResponse() { Success = true, Message = "تم رفض العقار بنجاح." };
     }
 }

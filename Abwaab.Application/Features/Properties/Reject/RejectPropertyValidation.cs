@@ -2,7 +2,7 @@
 
 namespace Abwaab.Application.Features.Properties.Reject
 {
-    public class RejectPropertyValidation : AbstractValidator<RejectPropertyCommand>
+    public class RejectPropertyValidation : AbstractValidator<AcceptPropertyCommand>
     {
         public RejectPropertyValidation()
         {
