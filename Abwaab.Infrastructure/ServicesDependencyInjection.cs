@@ -2,6 +2,7 @@
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Interfaces;
 using Abwaab.Infrastructure.Services;
+using Abwaab.Infrastructure.Services.Notifications;
 using Abwaab.Infrastructure.Services.PropertyServices;
 using Abwaab.Infrastructure.Services.UserServices;
 using Microsoft.Extensions.DependencyInjection;

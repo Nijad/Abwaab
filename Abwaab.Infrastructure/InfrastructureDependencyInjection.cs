@@ -6,6 +6,7 @@ using Abwaab.Infrastructure.Presistence.Context;
 using Abwaab.Infrastructure.Presistence.Seeding;
 using Abwaab.Infrastructure.Services.Common;
 using Abwaab.Infrastructure.Services.EmailServices;
+using Abwaab.Infrastructure.Services.Notifications;
 using Abwaab.Infrastructure.Services.SmsServices;
 using Abwaab.Infrastructure.Services.StorageServices;
 using Abwaab.Infrastructure.Services.UserServices;
@@ -133,6 +134,8 @@ namespace Abwaab.Infrastructure
             services.AddScoped<IUrlBuilder, UrlBuilder>();
             services.AddScoped<IStorageService, LocalStorageService>();
             services.AddScoped<ITransactionManager, EfCoreTransactionManager>();
+            services.AddScoped<INotificationChannel, EmailChannel>();
+            services.AddScoped<INotificationChannel, SmsChannel>();
 
             return services;
         }

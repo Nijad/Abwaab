@@ -10,7 +10,7 @@ namespace Abwaab.Application.Repositories
         
         Task<NotificationWay?> GetNotificationWayByIdAsync(Guid id);
         
-        Task<NotificationWay?> GetNotificationWayByNameAsync(string wayName);
+        Task<NotificationWay?> FindNotificationWayByNameAsync(string wayName);
         
         Task<List<UserNotificationSubscription>> GetNotificationWaysByUserAsync(Guid userId, bool activeOnly = false);
         
@@ -19,5 +19,6 @@ namespace Abwaab.Application.Repositories
         Task UpdateSubscriptionAsync(UserNotificationSubscription userSubscription);
         Task<NotificationState?> FindNotificationStateByStateNameAsync(string notificationStateName);
         Task AddNotificationsRangeAsync(List<Notification> notifications);
+        Task UpdateNotification(Notification notification, CancellationToken cancellationToken);
     }
 }

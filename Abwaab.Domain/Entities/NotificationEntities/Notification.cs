@@ -2,6 +2,7 @@
 {
     public class Notification : BaseEntity
     {
+        public string Identifier { get; set; } = null!;
         public string? Title { get; set; }
         public string Message { get; set; } = null!;
         public bool IsRead { get; set; }
@@ -10,6 +11,5 @@
         public NotificationState NotificationState { get; set; } = null!;
         public Guid NotificationStateId { get; set; }
         public string? ResponseNote { get; set; }
-        public List<NotificationWay>? NotificationWays { get; set; }
     }
 }
