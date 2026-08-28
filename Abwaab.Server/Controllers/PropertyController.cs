@@ -2,6 +2,7 @@
 using Abwaab.Application.Features.Properties.Accept;
 using Abwaab.Application.Features.Properties.Enable;
 using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
+using Abwaab.Application.Features.Properties.Queries.GetPropertyDetails;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList;
 using Abwaab.Application.Features.Properties.Queries.UserProperties;
@@ -41,6 +42,15 @@ namespace Abwaab.Server.Controllers
         {
             PropertyForUpdateQuery query = new() { PropertyId = propertyId};
             PropertyForUpdateResponse result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("PropertyDetails")]
+        public async Task<IActionResult> PropertyDetails(Guid propertyId)
+        {
+            PropertyDetailsQuery query = new() { PropertyId = propertyId};
+            PropertyDetailsResponse result = await _mediator.Send(query);
             return Ok(result);
         }
 

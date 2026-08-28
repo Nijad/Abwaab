@@ -38,5 +38,6 @@
         public const string AcceptProperty = "الموافقة على عقار";
         public const string DisableProperty = "إلغاء تفعيل عرض عقار";
         public const string EnableProperty = "إعادة تفعيل عرض عقار";
+        public const string PropertyDetails = "تفاصيل العقار";
     }
 }

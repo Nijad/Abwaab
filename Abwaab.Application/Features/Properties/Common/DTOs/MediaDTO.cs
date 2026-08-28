@@ -1,11 +1,5 @@
-﻿namespace Abwaab.Application.Features.Properties.Common.DTOs
+﻿namespace Abwaab.Application.Features.Properties.Common.DTOs;
+public class MediaDTO : MediaBaseDTO
 {
-    public class MediaDTO
-    {
-        public Guid MediaId { get; set; }
-        public string FilePath { get; set; } = string.Empty;
-        public Guid MediaTypeId { get; set; }
-        public string MediaTypeName { get; set; } = string.Empty;
-        public bool IsCover { get; set; }
-    }
+    public Guid MediaTypeId { get; set; }
 }
