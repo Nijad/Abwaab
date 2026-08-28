@@ -4,6 +4,7 @@ using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Properties.Attributes;
 using Abwaab.Application.Common.Exceptions.Properties.DataTypes;
+using Abwaab.Application.Common.Exceptions.Properties.States;
 using Abwaab.Application.Common.Exceptions.Properties.TimeSlots;
 using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
@@ -78,8 +79,10 @@ namespace Abwaab.Application.Features.Properties.Update
             if (request.PropertyFinishingId != null && request.PropertyFinishingId != Guid.Empty)
                 finishing = await _propertyFinishingService.FindPropertyFinishingByIdAsycn((Guid)request.PropertyFinishingId, errorTitle);
 
-            //check current state and if need to change
-            PropertyState propertyState = await _propertyStatesService.GetNewStateForUpdate(property.PropertyState, errorTitle);
+            PropertyState preparingState = await _propertyStatesService.GetPreparingPropertyStateAsync(errorTitle);
+
+            if (property.PropertyState != preparingState)
+                throw new NotAllowedToSetPropertyAsPreparingException(property.PropertyState.StateName, errorTitle);
 
             //check time slot
             if (request.TimeSlots != null && request.TimeSlots.Count > 0)
@@ -128,10 +131,10 @@ namespace Abwaab.Application.Features.Properties.Update
                             //check if value belong to the list
                             PossibleValueDTO? pvDto;
                             pvDto = JsonSerializer.Deserialize<PossibleValueDTO>(item.Value);
-                            
+
                             if (pvDto.UnmatchedProperties != null)
                                 throw new NotValidFormatException(errorTitle);
-                            
+
                             AttributePossibleValue apv = await _attributeService.FindAttributePossibleValueByIdAsync(pvDto.possibleValueId, errorTitle);
 
                             if (apv.AttributeId != attribute.Id)
@@ -149,7 +152,6 @@ namespace Abwaab.Application.Features.Properties.Update
             property.AreaInSquareMeter = request.AreaInSquareMeter;
             property.FinishingId = request.PropertyFinishingId;
             property.PropertyTypeId = request.PropertyTypeId;
-            property.PropertyStateId = propertyState.Id;
 
             await _transactionManager.BeginTransactionAsync(cancellationToken);
             try
@@ -173,7 +175,7 @@ namespace Abwaab.Application.Features.Properties.Update
                 await _transactionManager.RollbackTransactionAsync(cancellationToken);
                 throw;
             }
-            return new UpdatePropertyResponse() { Success = true, Message = $"تم تعديل العقار بنجاح. حالة العقار الآن هي '{PropertySTatesMapping.Map(propertyState.StateName)}'" };
+            return new UpdatePropertyResponse() { Success = true, Message = $"تم حفظ تعديلات العقار بنجاح" };
         }
     }
 }

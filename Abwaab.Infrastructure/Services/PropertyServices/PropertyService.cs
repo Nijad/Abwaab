@@ -94,5 +94,13 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
 
             return response;
         }
+
+        public async Task<Property> FindPropertyWithUserAndStateByIdAsync(Guid propertyId, string errorTitle)
+        {
+            Property? property = await _propertyRepository.FindPropertyWithUserAndStateByIdAsync(propertyId);
+            if (property == null)
+                throw new PropertyNotFoundException(errorTitle);
+            return property;
+        }
     }
 }

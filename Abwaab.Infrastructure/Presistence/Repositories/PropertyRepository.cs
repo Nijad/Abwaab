@@ -69,6 +69,15 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             return await _context.PropertyTypes.Where(x => x.Id == propertyTypeId).FirstOrDefaultAsync();
         }
 
+        public async Task<Property?> FindPropertyWithUserAndStateByIdAsync(Guid propertyId)
+        {
+            return await _context.Properties
+                .Include(x=>x.UserPlan)
+                .Include(x=>x.PropertyState)
+                .Where(x => x.Id == propertyId)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId)
         {
             return _context.Properties.Where(x => x.UserPlandId == planId).Count();

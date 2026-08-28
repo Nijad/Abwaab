@@ -34,5 +34,6 @@
         public const string UnstarProperty = "إلغاء تمييز عقار";
         public const string SaveProperty = "حفظ العقار للنشر";
         public const string PropertiesQuery = "الاستعلام عن العقارات";
+        public const string RejectProperty = "رفض عقار";
     }
 }
