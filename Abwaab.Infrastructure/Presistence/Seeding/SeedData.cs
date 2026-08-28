@@ -74,19 +74,19 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
             {
                 new NotificationWay
                 {
-                    Id = new Guid(),
+                    Id = new Guid("aa3e3203-b836-45e3-a426-08def51dd8da"),
                     WayName = NotificationWaysEnum.Email.ToString(),
                     CanDisable = true,
                 },
                 new NotificationWay
                 {
-                    Id = new Guid(),
+                    Id = new Guid("bcfcb5ee-ff34-4a7f-a427-08def51dd8da"),
                     WayName = NotificationWaysEnum.SMS.ToString(),
                     CanDisable = true
                 },
                 new NotificationWay
                 {
-                    Id = new Guid(),
+                    Id = new Guid("a283fe32-a907-4b50-a428-08def51dd8da"),
                     WayName = NotificationWaysEnum.Web_Application.ToString(),
                     CanDisable = false
                 }

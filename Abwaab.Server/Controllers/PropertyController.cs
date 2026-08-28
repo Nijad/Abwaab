@@ -3,6 +3,7 @@ using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList;
 using Abwaab.Application.Features.Properties.Queries.UserProperties;
 using Abwaab.Application.Features.Properties.Star;
+using Abwaab.Application.Features.Properties.Submit;
 using Abwaab.Application.Features.Properties.Unstar;
 using Abwaab.Application.Features.Properties.Update;
 using MediatR;
@@ -48,7 +49,7 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPut("submit-property")]
-        public async Task<IActionResult> SubmitProperty([FromBody] UpdatePropertyCommand command)
+        public async Task<IActionResult> SubmitProperty([FromBody] SubmitPropertyCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

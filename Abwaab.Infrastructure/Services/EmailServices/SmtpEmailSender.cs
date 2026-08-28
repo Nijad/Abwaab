@@ -37,7 +37,7 @@ namespace Abwaab.Infrastructure.Services.EmailServices
 
                 var bodyBuilder = new BodyBuilder();
                 bodyBuilder.HtmlBody=body;
-                message.Body = bodyBuilder.ToMessageBody(); ;
+                message.Body = bodyBuilder.ToMessageBody();
 
                 using var client = new SmtpClient();
 

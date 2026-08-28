@@ -19,11 +19,16 @@ namespace Abwaab.Application.Features.Properties.Submit
                 .MaximumLength(2000)
                 .WithMessage("وصف العقار يجب ألا يتجاوز 2000 حرف.");
 
+            RuleFor(x => x.Address)
+                .NotEmpty().WithMessage("عنوان العقار مطلوب");
+
             RuleFor(x => x.AreaInSquareMeter)
+                .NotEmpty().WithMessage("مساحة العقار مطلوبة")
                 .GreaterThan(0)
                 .WithMessage("مساحة العقار يجب أن تكون أكبر تماماً من الصفر.");
 
             RuleFor(x => x.Price)
+                .NotEmpty().WithMessage("سعر العقار مطلوب")
                 .GreaterThan(0)
                 .WithMessage("سعر العقار يجب أن يكون أكبر تماماً من الصفر.");
 
@@ -36,8 +41,7 @@ namespace Abwaab.Application.Features.Properties.Submit
                 .WithMessage("قيمة خط الطول يجب أن تكون بين -180 و 180.");
 
             RuleFor(x => x.PropertyTypeId)
-                .NotEmpty()
-                .WithMessage("رقم نوع العقار مطلوب.");
+                .NotEmpty().WithMessage("رقم نوع العقار مطلوب.");
 
             // ----- Nested List Validations -----
             // 1. Validate each TimeSlot in the list
@@ -78,9 +82,7 @@ namespace Abwaab.Application.Features.Properties.Submit
 
                 // If same day, check if current.EndTime > next.StartTime
                 if (current.Day == next.Day && current.EndTime > next.StartTime)
-                {
                     return false; // Overlap detected
-                }
             }
             return true;
         }

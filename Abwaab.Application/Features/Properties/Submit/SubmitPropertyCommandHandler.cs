@@ -10,9 +10,9 @@ using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
-using Abwaab.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace Abwaab.Application.Features.Properties.Submit
 {
@@ -25,6 +25,7 @@ namespace Abwaab.Application.Features.Properties.Submit
         private readonly INotificationService _notificationService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEnumerable<INotificationChannel> _channels;
+        private readonly ILogger<SubmitPropertyCommandHandler> _logger;
         private readonly string errorTitle = ErrorTitle.SaveProperty;
 
         public SubmitPropertyCommandHandler(
@@ -34,7 +35,8 @@ namespace Abwaab.Application.Features.Properties.Submit
             IMediaService mediaService,
             INotificationService notificationService,
             UserManager<ApplicationUser> userManager,
-            IEnumerable<INotificationChannel> channels)
+            IEnumerable<INotificationChannel> channels,
+            ILogger<SubmitPropertyCommandHandler> logger)
         {
             _userService = userService;
             _propertyStatesService = propertyStatesService;
@@ -43,6 +45,7 @@ namespace Abwaab.Application.Features.Properties.Submit
             _notificationService = notificationService;
             _userManager = userManager;
             _channels = channels;
+            _logger = logger;
         }
 
         public async Task<SubmitPropertyResponse> Handle(SubmitPropertyCommand request, CancellationToken cancellationToken)
@@ -112,16 +115,17 @@ namespace Abwaab.Application.Features.Properties.Submit
                     catch(Exception ex)
                     {
                         notification.NotificationState = await _notificationService.GetFailedNotficationStateAsync(errorTitle);
-                        //todo : log exception here
+
+                        _logger.LogError(ex, "error while sending notification");
                     }
                     notification.ResponseNote = notificationDTO.ResponseNote;
 
                     await _notificationService.UpdateNotificationAsync(notification, cancellationToken);
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                //log error here
+                _logger.LogError(ex, "cannot initiate notification");
             }
 
 
