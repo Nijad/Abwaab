@@ -6,15 +6,15 @@ import { authApi } from "../api";
 import { useNavigate } from "react-router";
 import useAuth from "../hooks/useAuth";
 
-const LoginUser = ({ onSuccess }) => {
+const LoginUser = ({ btnLabel = "دخول", onSuccess }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const signalRef = useRef();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
-  const { setIdentifier } = useAuth();
+  const { login, setIdentifier } = useAuth();
 
-  const login = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     if (signalRef.current) {
@@ -28,6 +28,8 @@ const LoginUser = ({ onSuccess }) => {
         ...Object.values(data),
         signalRef.current.signal
       );
+      login(resp.data);
+      setIdentifier(data.identifier);
       enqueueSnackbar(resp.data.message, { variant: "success" });
       if (onSuccess) onSuccess(data, resp.data);
     } catch (err) {
@@ -52,7 +54,7 @@ const LoginUser = ({ onSuccess }) => {
     }
   };
   return (
-    <form method="post" onSubmit={(e) => login(e)} id="subscription-form">
+    <form method="post" onSubmit={(e) => handleLogin(e)} id="subscription-form">
       <div className="mb-2">
         <TextField
           autoFocus
@@ -92,7 +94,7 @@ const LoginUser = ({ onSuccess }) => {
           color="navy"
           loading={loading}
         >
-          دخول
+          {btnLabel}
         </Button>
       </div>
     </form>

@@ -1,7 +1,11 @@
-import React from "react";
+import ViewPropertyDetails from "../features/properties.jsx/ViewPropertyDetails";
 
 const PropertyDetails = () => {
-  return <div>PropertyDetails</div>;
+  return (
+    <div>
+      <ViewPropertyDetails />
+    </div>
+  );
 };
 
 export default PropertyDetails;
