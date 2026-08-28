@@ -43,6 +43,9 @@ namespace Abwaab.Application.Features.Properties.Submit
             RuleFor(x => x.PropertyTypeId)
                 .NotEmpty().WithMessage("رقم نوع العقار مطلوب.");
 
+            RuleFor(x => x.PropertyFinishingId)
+                .NotEmpty().WithMessage("حالة الإكساء مطلوبة");
+
             // ----- Nested List Validations -----
             // 1. Validate each TimeSlot in the list
             RuleForEach(x => x.TimeSlots)

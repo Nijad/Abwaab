@@ -14,5 +14,6 @@ namespace Abwaab.Application.Contracts.Properties
         Task<Property> FindPropertyByIdForUpdateAsync(Guid propertyId, string errorTitle);
         Task<int> GetStaredPropertyCountInPlanAsync(Guid userPlandId);
         Task<List<UserPropertiesResponse>> GetUserPropertiesSummaryAsync(Guid userId);
+        Task<Property> FindPropertyWithUserAndStateByIdAsync(Guid propertyId, string errorTitle);
     }
 }

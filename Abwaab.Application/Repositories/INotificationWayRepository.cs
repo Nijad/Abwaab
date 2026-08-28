@@ -1,4 +1,5 @@
-﻿using Abwaab.Domain.Entities.NotificationEntities;
+﻿using Abwaab.Application.Features.Notifications.DTOs;
+using Abwaab.Domain.Entities.NotificationEntities;
 
 namespace Abwaab.Application.Repositories
 {
@@ -20,5 +21,6 @@ namespace Abwaab.Application.Repositories
         Task<NotificationState?> FindNotificationStateByStateNameAsync(string notificationStateName);
         Task AddNotificationsRangeAsync(List<Notification> notifications);
         Task UpdateNotification(Notification notification, CancellationToken cancellationToken);
+        Task<List<Notification>> GetPendingNotificationToSend(NotificationState state);
     }
 }

@@ -2,6 +2,7 @@
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
+using Abwaab.Application.Features.Notifications.DTOs;
 using Abwaab.Application.Features.Notifications.Queries.GetAllNotificationWays;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.NotificationEntities;
@@ -44,7 +45,7 @@ namespace Abwaab.Infrastructure.Services.Notifications
             return notificationWay;
         }
 
-        public async Task<List<Notification>> InitiateNotifications(string message, IList<ApplicationUser> users, string errorTitle)
+        public async Task<List<Notification>> InitiateNotifications(string message, List<ApplicationUser> users, string errorTitle)
         {
             // and get thier notification-way subscriptions
             List<UserNotificationSubscription> subscriptions = new();
@@ -122,9 +123,14 @@ namespace Abwaab.Infrastructure.Services.Notifications
             return await FindNotificationStateByStateNameAsync(NotificationStatesEnum.Unread.ToString(), errorTitle);
         }
 
-        public async Task UpdateNotificationAsync(Notification notification, CancellationToken cancellationToken)
+        public async Task UpdateNotificationAsync(Notification notification, CancellationToken cancellationToken = default)
         {
             await _notificationWayRepository.UpdateNotification(notification, cancellationToken);
+        }
+
+        public async Task<List<Notification>> GetPendingNotificationToSend(string errorTitle)
+        {
+            return await _notificationWayRepository.GetPendingNotificationToSend(await GetPendingNotficationStateAsync(errorTitle));
         }
     }
 }
