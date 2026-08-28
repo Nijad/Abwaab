@@ -228,6 +228,10 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
@@ -321,17 +325,12 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("NotificationId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("WayName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NotificationId");
 
                     b.HasIndex("WayName")
                         .IsUnique();
@@ -679,6 +678,10 @@ namespace Abwaab.Infrastructure.presistence.migrations
 
                     b.Property<double?>("Longitude")
                         .HasColumnType("float");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("NumberOfView")
                         .HasColumnType("int");
@@ -1391,13 +1394,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Navigation("NotificationSubscription");
                 });
 
-            modelBuilder.Entity("Abwaab.Domain.Entities.NotificationEntities.NotificationWay", b =>
-                {
-                    b.HasOne("Abwaab.Domain.Entities.NotificationEntities.Notification", null)
-                        .WithMany("NotificationWays")
-                        .HasForeignKey("NotificationId");
-                });
-
             modelBuilder.Entity("Abwaab.Domain.Entities.NotificationEntities.UserNotificationSubscription", b =>
                 {
                     b.HasOne("Abwaab.Domain.Entities.NotificationEntities.NotificationWay", "NotificationWay")
@@ -1636,11 +1632,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
             modelBuilder.Entity("Abwaab.Domain.Entities.MediaEntities.MediaType", b =>
                 {
                     b.Navigation("MediaList");
-                });
-
-            modelBuilder.Entity("Abwaab.Domain.Entities.NotificationEntities.Notification", b =>
-                {
-                    b.Navigation("NotificationWays");
                 });
 
             modelBuilder.Entity("Abwaab.Domain.Entities.NotificationEntities.NotificationState", b =>

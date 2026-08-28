@@ -16,6 +16,7 @@ namespace Abwaab.Infrastructure
             services.AddScoped<ITimeSlotRepository, TimeSlotRepository>();
             services.AddScoped<IAttributeRepository, AttributeRepository>();
             services.AddScoped<IMediaRepository, MediaRepository>();
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             return services;
         }
     }

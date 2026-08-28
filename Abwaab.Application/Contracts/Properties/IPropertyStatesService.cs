@@ -12,6 +12,6 @@ namespace Abwaab.Application.Contracts.Properties
         Task<PropertyState> GetDisabledPropertyStateAsync(string errorTitle);
         Task<PropertyState> GetDeletedPropertyStateAsync(string errorTitle);
         Task<PropertyState> FindPropertyStateByStateNameAsync(string propertyStateName, string errorTitle);
-        Task<PropertyState> GetNewState(PropertyState propertyState, string errorTitle);
+        Task<PropertyState> GetNewStateForUpdate(PropertyState propertyState, string errorTitle);
     }
 }

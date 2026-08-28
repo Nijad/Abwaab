@@ -29,7 +29,7 @@ namespace Abwaab.Infrastructure.Services.SmsServices
             _httpClient.DefaultRequestHeaders.Add("x-api-key", _settings.ApiKey);
         }
 
-        public async Task SendSmsAsync(string phoneNumber, string message, string errorTitle)
+        public async Task<(bool, string)> SendSmsAsync(string phoneNumber, string message, string errorTitle)
         {
             // Build the request payload
             var payload = new
@@ -39,13 +39,13 @@ namespace Abwaab.Infrastructure.Services.SmsServices
                 from = _settings.SenderPhoneNumber
             };
 
-            var json = JsonSerializer.Serialize(payload);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            string json = JsonSerializer.Serialize(payload);
+            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
             // Send the SMS via TextBee API
-            var endpoint = $"api/v1/gateway/devices/{_settings.DeviceId}/send-sms";
-            var response = await _httpClient.PostAsync(endpoint, content);
-
+            string endpoint = $"api/v1/gateway/devices/{_settings.DeviceId}/send-sms";
+            HttpResponseMessage response = await _httpClient.PostAsync(endpoint, content);
+            
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
@@ -53,6 +53,8 @@ namespace Abwaab.Infrastructure.Services.SmsServices
 
                 throw new FailedSendignSMSException(errorTitle);
             }
+            string? result = response.ReasonPhrase;
+            return (true, result);
         }
     }
 }

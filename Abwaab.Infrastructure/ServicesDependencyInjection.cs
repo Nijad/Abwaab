@@ -2,6 +2,7 @@
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Interfaces;
 using Abwaab.Infrastructure.Services;
+using Abwaab.Infrastructure.Services.Notifications;
 using Abwaab.Infrastructure.Services.PropertyServices;
 using Abwaab.Infrastructure.Services.UserServices;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ namespace Abwaab.Infrastructure
             services.AddScoped<IPropertyFinishingService, PropertyFinishingService>();
             services.AddScoped<IPropertyTimeSlotService, PropertyTimeSlotService>();
             services.AddScoped<IPropertyAttributeService, PropertyAttributeService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IMediaService, MediaService>();
             services.AddScoped<IJwtService, JwtService>();

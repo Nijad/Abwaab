@@ -71,5 +71,8 @@
         public const string ExceededAllowedStarNumber = "EXCEEDED_ALLOWED_STAR_NUMBER";
         public const string PropertyAlreadyUnstared = "PROPERTY_ALREADY_UNSTARED";
         public const string PropertyAlreadyStared = "PROPERTY_ALREADY_STARED";
+        public const string HasNoCoverImage = "HAS_NO_COVER_IMAGE";
+        public const string NotAllowedToChangePropertyState = "NOT_ALLOWED_TO_CHANGE_PROPERTY_STATE";
+        public const string AppointmentStateNotFound = "APPOINTMENT_STATE_NOT_FOUND";
     }
 }

@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <Folder Include="Features\Payments\Remove\" />
-    <Folder Include="Features\Properties\Queries\GetPropertyDetails\" />
   </ItemGroup>
 
   <ItemGroup>

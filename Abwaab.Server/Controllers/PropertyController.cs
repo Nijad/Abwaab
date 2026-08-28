@@ -1,7 +1,14 @@
-﻿using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
+﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Features.Properties.Accept;
+using Abwaab.Application.Features.Properties.Enable;
+using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
+using Abwaab.Application.Features.Properties.Queries.GetPropertyDetails;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList;
+using Abwaab.Application.Features.Properties.Queries.UserProperties;
+using Abwaab.Application.Features.Properties.Reject;
 using Abwaab.Application.Features.Properties.Star;
+using Abwaab.Application.Features.Properties.Submit;
 using Abwaab.Application.Features.Properties.Unstar;
 using Abwaab.Application.Features.Properties.Update;
 using MediatR;
@@ -22,8 +29,8 @@ namespace Abwaab.Server.Controllers
             _mediator = mediator;
         }
 
-        // 1. add property (Prepare to start)
         [HttpPost("add-property")]
+        [Authorize(Roles = RoleConstants.ROLE_USER)]
         public async Task<IActionResult> AddProperty()
         {
             var result = await _mediator.Send(new AddPropertyCommand());
@@ -38,22 +45,62 @@ namespace Abwaab.Server.Controllers
             return Ok(result);
         }
 
-        //2.1.  update basic information
+        [AllowAnonymous]
+        [HttpGet("PropertyDetails")]
+        public async Task<IActionResult> PropertyDetails(Guid propertyId)
+        {
+            PropertyDetailsQuery query = new() { PropertyId = propertyId};
+            PropertyDetailsResponse result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
         [HttpPut("update-property")]
+        [Authorize(Roles = RoleConstants.ROLE_USER)]
         public async Task<IActionResult> UpdateProperty([FromBody] UpdatePropertyCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
-        //3. reject property/temp will be rejected for month then will be deleted automatically
-        //      if owner modify property/temp will turn pending again
+        [HttpPut("submit-property")]
+        [Authorize(Roles = RoleConstants.ROLE_USER)]
+        public async Task<IActionResult> SubmitProperty([FromBody] SubmitPropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
 
-        //4. approve property will turn it to published
-        //      if it was temp original one will be deleted and detach from user plan 
-        //          and temp turns to published
+        [HttpPut("reject-property")]
+        [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
+        public async Task<IActionResult> RejectProperty([FromBody] AcceptPropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
 
-        //  another scenario: reflect modification to original and delete temp (which is easier)
+        [HttpPut("accept-property")]
+        [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
+        public async Task<IActionResult> AcceptProperty([FromBody] AcceptPropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPut("disable-property")]
+        [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
+        public async Task<IActionResult> DisableProperty([FromBody] DisablePropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPut("enable-property")]
+        [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
+        public async Task<IActionResult> EnableProperty([FromBody] EnablePropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
 
         [HttpGet("finishing-list")]
         public async Task<IActionResult> GetFinishingList()
@@ -80,6 +127,13 @@ namespace Abwaab.Server.Controllers
         public async Task<IActionResult> UnstarProperty(UnstarPropertyCommand command)
         {
             var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpGet("UserProperties")]
+        public async Task<IActionResult> UserProperties()
+        {
+            List<UserPropertiesResponse> result = await _mediator.Send(new UserPropertiesQuery());
             return Ok(result);
         }
     }

@@ -92,6 +92,9 @@ namespace Abwaab.Application.Features.Medias.UploadMedia
 
                 string filePath = await _storageService.SaveFileAsync(physicalPath, fileName, command.Content, errorTitle, cancellationToken);
 
+                //check if media is cover remove other covers
+                if (command.IsCover)
+                    await _mediaService.UncoverImagesAsync(property.Id);
 
                 //save media database
                 media = await _mediaService.SaveMediaAsync(command, folderPath, fileName, errorTitle, cancellationToken);
