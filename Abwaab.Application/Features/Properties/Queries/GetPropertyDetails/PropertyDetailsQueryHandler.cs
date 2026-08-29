@@ -1,4 +1,5 @@
 ﻿using Abwaab.Application.Common.Constants;
+using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Domain.Entities.PropertyEntities;
@@ -33,7 +34,7 @@ public class PropertyDetailsQueryHandler : IRequestHandler<PropertyDetailsQuery,
                 });
         }
 
-        List<MediaBaseDTO> mediaDTOs = new ();
+        List<MediaBaseDTO> mediaDTOs = new();
         foreach (var media in property.MediaList)
             mediaDTOs.Add(new()
             {
@@ -55,12 +56,17 @@ public class PropertyDetailsQueryHandler : IRequestHandler<PropertyDetailsQuery,
             Longitude = property.Longitude,
             PropertyAttributesList = propertyAttributes,
             PropertyMediaList = mediaDTOs,
-            PropertyState = property.PropertyState.StateName,
+            PropertyState = PropertySTatesMapping.Map(property.PropertyState.StateName),
             IsStar = property.IsStard,
-            PropertyFinishing = property.Finishing.FinishingName,
+            PropertyFinishing = property.Finishing?.FinishingName,
             PropertyType = property.PropertyType.TypeName,
-            ViewsNumber =  property.NumberOfView
+            ViewsNumber = property.NumberOfView,
+            PublishedAt = property.PublishedAt
         };
+
+        property.NumberOfView++;
+        await _propertyService.UpdatePropertyAsync(property);
+
         return response;
     }
 }

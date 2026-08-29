@@ -53,6 +53,7 @@ public class DesablePropertyCommandHandler : IRequestHandler<DisablePropertyComm
 
         property.PropertyState = publishedPropertyState;
         property.Note = "";
+        property.PublishedAt = DateTime.Now;
         await _propertyService.UpdatePropertyAsync(property);
 
         //preparing send notification to the owner
