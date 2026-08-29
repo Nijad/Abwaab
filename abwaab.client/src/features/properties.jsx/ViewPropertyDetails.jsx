@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
 import { propertyApi } from "../../api";
 import { NavLink, useNavigate, useParams } from "react-router";
@@ -11,6 +11,50 @@ import { propertis } from "../../dataTypes/propertis";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import DateRangeOutlinedIcon from "@mui/icons-material/DateRangeOutlined";
 import { PropertyMediaGalleryModal } from "../../components/PropertyMediaGalleryModal";
+
+const CustomAttribute = memo(({ attributes }) => {
+  return (
+    <React.Fragment>
+      {attributes.length > 0 &&
+        attributes.map((attribute) => {
+          const exist = propertis.orientations.find(
+            (o) => o.attributeId === attribute.attributeId
+          );
+          if (exist) {
+            return (
+              <div className="bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">
+                <p className="text-navy-700 text-sm my-2">
+                  {attribute.attributeName}
+                </p>
+                <p className="text-navy-700 text-xl font-semibold my-2">
+                  {attribute.value}
+                </p>
+              </div>
+            );
+          }
+        })}
+    </React.Fragment>
+  );
+});
+const Orientations = memo(({ attributes }) => {
+  return (
+    <React.Fragment>
+      {propertis.orientations.map((oreint) => {
+        const exist = attributes.find(
+          (att) => att.attributeId === oreint.attributeId
+        );
+        if (exist) {
+          return (
+            <LabelTag
+              label={oreint.attributeName}
+              classes="px-3 rounded-full bg-teal-50 border border-teal-500 inline-block me-3"
+            />
+          );
+        }
+      })}
+    </React.Fragment>
+  );
+});
 
 const ViewPropertyDetails = ({ title, description, onClose, onSuccess }) => {
   const [errors, setErrors] = useState({});
@@ -89,45 +133,6 @@ const ViewPropertyDetails = ({ title, description, onClose, onSuccess }) => {
         <section className="flex flex-1 gap-6">
           <main className="rounded-xl w-4/6">
             <PropertyMediaGalleryModal />
-            {/* Cover Image Section */}
-            {/* <div className="w-full object-fill">
-              <img
-                src="https://media.rightmove.co.uk/property-photo/7a7a38e41/172696301/7a7a38e41f373b665c85fa12b1c0064f.jpeg"
-                alt="sd"
-                className="w-full rounded-xl"
-              />
-            </div> */}
-            {/* Images Section */}
-            {/* <div className="my-3 flex flex-nowrap gap-3 w-full">
-              <div className=" max-w-1/4 object-fill">
-                <img
-                  src="https://media.rightmove.co.uk/property-photo/7a7a38e41/172696301/7a7a38e41f373b665c85fa12b1c0064f.jpeg"
-                  alt="sd"
-                  className="w-full rounded-xl"
-                />
-              </div>{" "}
-              <div className=" max-w-1/4 object-fill">
-                <img
-                  src="https://media.rightmove.co.uk/property-photo/7a7a38e41/172696301/7a7a38e41f373b665c85fa12b1c0064f.jpeg"
-                  alt="sd"
-                  className="w-full rounded-xl"
-                />
-              </div>{" "}
-              <div className=" max-w-1/4 object-fill">
-                <img
-                  src="https://media.rightmove.co.uk/property-photo/7a7a38e41/172696301/7a7a38e41f373b665c85fa12b1c0064f.jpeg"
-                  alt="sd"
-                  className="w-full rounded-xl"
-                />
-              </div>{" "}
-              <div className=" max-w-1/4 object-fill">
-                <img
-                  src="https://media.rightmove.co.uk/property-photo/7a7a38e41/172696301/7a7a38e41f373b665c85fa12b1c0064f.jpeg"
-                  alt="sd"
-                  className="w-full rounded-xl"
-                />
-              </div>
-            </div> */}
             {/* Info Section */}
             <div className="my-6 flex flex-wrap p-4 bg-white gap-3  justify-between rounded-xl border border-neutral-200">
               <div className="bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">
@@ -149,42 +154,28 @@ const ViewPropertyDetails = ({ title, description, onClose, onSuccess }) => {
                 </p>
               </div>
               {/* Loop through remaining attributes */}
-              {data.propertyAttributesList
-                .filter((a) =>
-                  Array.prototype.includes.call(
-                    propertis.orientations,
-                    a.attributeId
-                  )
-                )
-                .map((i) => (
-                  <div className="bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">
-                    <p className="text-navy-700 text-sm my-2">المساحة</p>
-                    <p className="text-navy-700 text-xl font-semibold my-2">
-                      {data.areaInSquareMeter} م<sup>2</sup>
-                    </p>
-                  </div>
-                ))}
+              <CustomAttribute attributes={data.propertyAttributesList} />
             </div>
             {/* Description Section */}
             <div className="my-6 rounded-xl bg-white p-5 min-h-32">
-              {data.description}
+              <h6 className="text-navy-700 text-xl font-semibold my-2">وصف</h6>
+              <p className="text-neutral-700 text-base my-2">
+                {data.description}
+              </p>
             </div>
           </main>
           <aside className="border border-neutral-200 rounded-xl w-2/6 h-fit py-3 px-6 bg-white">
             <div className="border-b border-b-neutral-200">
               <p className="text-neutral-600 text-lg my-4">السعر</p>
               <p className="text-navy-700 text-2xl font-semibold my-4">
-                {data.price.toLocaleString()} ليرة سورية
+                {data.price?.toLocaleString()} ليرة سورية
               </p>
             </div>
             <div className="border-b border-b-neutral-200">
               <p className="text-navy-700 text-2xl font-semibold my-4">
                 اتجاهات العقار
               </p>
-              <LabelTag
-                label={"asldfjalsk"}
-                classes="px-3 rounded-full bg-teal-50 border border-teal-500"
-              />
+              <Orientations attributes={data.propertyAttributesList} />
               <p className="text-neutral-600 text-lg my-4"></p>
             </div>
             <div className="mb-3">
@@ -192,7 +183,15 @@ const ViewPropertyDetails = ({ title, description, onClose, onSuccess }) => {
                 موقع العقار
               </p>
               <p className="text-neutral-600 text-lg my-4">{data.address}</p>
-              <LocationPicker lat={data.latitude} lng={data.longitude} />
+              <div className="mb-3">
+                {data.latitude && data.latitude && (
+                  <LocationPicker
+                    lat={data.latitude}
+                    lng={data.longitude}
+                    readOnly
+                  />
+                )}
+              </div>
               <VisitReservationButton />
             </div>
           </aside>

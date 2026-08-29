@@ -52,7 +52,7 @@ const MyPropertiesList = ({
   onVisitPreview,
   onSuccess,
 }) => {
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const signalRef = useRef();
@@ -66,7 +66,7 @@ const MyPropertiesList = ({
     }
     try {
       signalRef.current = new AbortController();
-      const resp = await propertyApi.getMyProperties(signalRef.current.signal);
+      const resp = await propertyApi.userProperties(signalRef.current.signal);
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
       setData(resp.data);
       if (onSuccess) onSuccess(resp.data);
@@ -124,7 +124,7 @@ const MyPropertiesList = ({
           </div>
         </div>
       )}
-      {dataTest.map((itm) => (
+      {data.map((itm) => (
         <UserProperty
           data={itm}
           onEdit={() => navigate(`edit/${itm.propertyId}`)}

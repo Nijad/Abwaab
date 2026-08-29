@@ -47,25 +47,25 @@ export const PropertyMediaGalleryModal = ({
       alt: "Balcony View",
     },
     {
-      id: 5,
+      id: 6,
       type: "image",
       url: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
       alt: "Balcony View",
     },
     {
-      id: 5,
+      id: 7,
       type: "image",
       url: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
       alt: "Balcony View",
     },
     {
-      id: 5,
+      id: 8,
       type: "image",
       url: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
       alt: "Balcony View",
     },
     {
-      id: 5,
+      id: 9,
       type: "image",
       url: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
       alt: "Balcony View",
@@ -118,7 +118,7 @@ export const PropertyMediaGalleryModal = ({
       {/* Main Content Area */}
       {/* <DialogContent className="px-2 py-0 flex flex-col justify-between"> */}
       {/* Main Preview */}
-      <Box className="relative my-3 flex-1 flex items-center justify-center min-h-[350px] md:min-h-[480px] bg-slate-100 rounded-2xl overflow-hidden">
+      <Box className="relative my-0 flex-1 flex items-center justify-center min-h-[350px] md:min-h-[480px] bg-slate-100 rounded-2xl overflow-hidden">
         {currentMedia?.type === "video" ? (
           <video
             src={currentMedia.videoUrl}

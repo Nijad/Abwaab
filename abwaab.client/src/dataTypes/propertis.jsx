@@ -34,4 +34,17 @@ export const propertis = {
       attributeName: "غربي",
     },
   ],
+  propertyAvailableDateTime: [
+    {
+      dayNumber: -1,
+      dayName: "",
+      dayDate: "",
+      dayTimes: [
+        {
+          startTime: "",
+          endTime: "",
+        },
+      ],
+    },
+  ],
 };

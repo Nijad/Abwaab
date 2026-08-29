@@ -11,8 +11,8 @@ export const propertyApi = {
     }),
   addProperty: (signal) =>
     axiosPrivate.post("/api/Property/add-property", null, { signal: signal }),
-  getMyProperties: (signal) =>
-    axiosPrivate.get("/api/property", { signal: signal }),
+  userProperties: (signal) =>
+    axiosPrivate.get("/api/Property/UserProperties", { signal: signal }),
   propertyDetails: (id, signal) =>
     axiosPrivate.get(`/api/Property/propertydetails?propertyId=${id}`, {
       signal: signal,
@@ -21,6 +21,10 @@ export const propertyApi = {
     axiosPrivate.post("/api/property/star", { id: id }, { signal: signal }),
   getPropertyVisitRequests: (signal) =>
     axiosPrivate.get("/api/Property/get-visits", {
+      signal: signal,
+    }),
+  propertyTimeSlots: (id, signal) =>
+    axiosPrivate.get(`/api/Property/PropertyTimeSlots?propertyId=${id}`, {
       signal: signal,
     }),
   rejectVisit: (id, signal) =>

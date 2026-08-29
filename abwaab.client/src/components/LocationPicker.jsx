@@ -15,7 +15,7 @@ L.Icon.Default.mergeOptions({
 });
 
 // Listener component to capture click events on the map
-function LocationMarker({ position, setPosition }) {
+function LocationMarker({ position, setPosition, readOnly = false }) {
   useMapEvents({
     click(e) {
       setPosition(e.latlng); // Updates state with { lat, lng }
@@ -25,7 +25,7 @@ function LocationMarker({ position, setPosition }) {
   return position === null ? null : (
     <Marker
       position={position}
-      draggable={true}
+      draggable={!readOnly}
       eventHandlers={{
         dragend: (e) => {
           setPosition(e.target.getLatLng());
@@ -39,18 +39,21 @@ export const LocationPicker = ({
   lat = 33.5138,
   lng = 36.2765,
   onLocationSelect,
+  readOnly = false,
 }) => {
   // Default coordinates (e.g., Damascus: 33.5138, 36.2765)
   const defaultCenter = [lat, lng];
   const [position, setPosition] = useState(null);
 
   const handleSetPosition = (latlng) => {
-    setPosition(latlng);
-    if (onLocationSelect) {
-      onLocationSelect({
-        lat: latlng.lat,
-        lng: latlng.lng,
-      });
+    if (!readOnly) {
+      setPosition(latlng);
+      if (onLocationSelect) {
+        onLocationSelect({
+          lat: latlng.lat,
+          lng: latlng.lng,
+        });
+      }
     }
   };
   useEffect(() => {
@@ -70,11 +73,15 @@ export const LocationPicker = ({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <LocationMarker position={position} setPosition={handleSetPosition} />
+          <LocationMarker
+            position={position}
+            setPosition={handleSetPosition}
+            readOnly={readOnly}
+          />
         </MapContainer>
       </div>
 
-      {position && (
+      {position && !readOnly && (
         <p className="text-xs text-slate-600 font-mono text-center">
           Selected: {position.lat.toFixed(6)}, {position.lng.toFixed(6)}
         </p>
