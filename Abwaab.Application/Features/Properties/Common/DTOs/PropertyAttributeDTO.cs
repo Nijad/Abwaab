@@ -2,6 +2,5 @@
 public class PropertyAttributeDTO: PropertyAttributeBaseDTO
 {
     public Guid? PropertyAttributeId { get; set; }
-    public Guid? AttributeId { get; set; }
     public Guid? DataTypeId { get; set; }
 }

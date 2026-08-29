@@ -9,5 +9,6 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyDetails
         public List<MediaBaseDTO> PropertyMediaList { get; set; }
         public List<PropertyAttributeBaseDTO>? PropertyAttributesList { get; set; }
         public int ViewsNumber { get; set; }
+        public DateTime PublishedAt { get; set; }
     }
 }

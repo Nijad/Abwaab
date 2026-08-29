@@ -34,7 +34,7 @@ public class PropertyDetailsQueryHandler : IRequestHandler<PropertyDetailsQuery,
                 });
         }
 
-        List<MediaBaseDTO> mediaDTOs = new ();
+        List<MediaBaseDTO> mediaDTOs = new();
         foreach (var media in property.MediaList)
             mediaDTOs.Add(new()
             {
@@ -60,8 +60,13 @@ public class PropertyDetailsQueryHandler : IRequestHandler<PropertyDetailsQuery,
             IsStar = property.IsStard,
             PropertyFinishing = property.Finishing?.FinishingName,
             PropertyType = property.PropertyType.TypeName,
-            ViewsNumber =  property.NumberOfView
+            ViewsNumber = property.NumberOfView,
+            PublishedAt = property.PublishedAt
         };
+
+        property.NumberOfView++;
+        await _propertyService.UpdatePropertyAsync(property);
+
         return response;
     }
 }
