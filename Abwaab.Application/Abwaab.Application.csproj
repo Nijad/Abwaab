@@ -16,6 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Appointments\Cancel\" />
+    <Folder Include="Features\Appointments\Confirm\" />
+    <Folder Include="Features\Appointments\Complete\" />
+    <Folder Include="Features\Appointments\Report\" />
+    <Folder Include="Features\Appointments\Refuse\" />
     <Folder Include="Features\Payments\Remove\" />
   </ItemGroup>
 

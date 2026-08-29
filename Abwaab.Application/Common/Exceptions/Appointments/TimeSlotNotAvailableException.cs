@@ -3,11 +3,11 @@ using Abwaab.Application.Common.Exceptions.Custom;
 
 namespace Abwaab.Application.Common.Exceptions.Appointments;
 
-public class AppointmentStateNotFoundException(string title) :
-    NotFound404Exception(
-        message: ErrorMessages.AppointmentStateNotFound,
+public class TimeSlotNotAvailableException(string title) :
+    Precondition412Exception(
+        message: ErrorMessages.TimeSlotNotAvailable,
         title: title,
-        errorCode: ErrorCodes.AppointmentStateNotFound,
+        errorCode: ErrorCodes.TimeSlotNotAvailable,
         returnToUser: true)
 {
 }

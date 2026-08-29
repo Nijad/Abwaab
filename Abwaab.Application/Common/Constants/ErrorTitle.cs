@@ -40,5 +40,6 @@
         public const string EnableProperty = "إعادة تفعيل عرض عقار";
         public const string PropertyDetails = "تفاصيل العقار";
         public const string TimeSlotsQuery = "الاستعلام عن الأوقات المتاحة للزيارة";
+        public const string BookAppointment = "حجز موعد زيارة عقار";
     }
 }

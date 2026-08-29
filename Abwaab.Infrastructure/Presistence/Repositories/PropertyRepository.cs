@@ -73,6 +73,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         {
             return await _context.Properties
                 .Include(x=>x.UserPlan)
+                .ThenInclude(x=>x.User)
                 .Include(x=>x.PropertyState)
                 .Where(x => x.Id == propertyId)
                 .FirstOrDefaultAsync();

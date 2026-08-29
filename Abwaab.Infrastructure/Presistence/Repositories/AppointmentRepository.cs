@@ -14,6 +14,12 @@ public class AppointmentRepository : IAppointmentRepository
         _context = context;
     }
 
+    public async Task AddAsync(Appointment appointment)
+    {
+        await _context.AddAsync(appointment);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<AppointmentState?> FindAppointmentByStateNameAsync(string stateName)
     {
         return await _context.AppointmentStates.Where(x => x.StateName == stateName).FirstOrDefaultAsync();
@@ -31,14 +37,17 @@ public class AppointmentRepository : IAppointmentRepository
             .ToListAsync(cancellationToken);
     }
 
-    public Task<List<Appointment>> GetCommingAppointments(Guid propertyId, DateOnly startDate, DateOnly endDate, AppointmentState[] states, CancellationToken cancellationToken)
+    public async Task<List<Appointment>> GetBookedAppointments(Guid propertyId, DateOnly startDate, DateOnly endDate, AppointmentState[] states, CancellationToken cancellationToken)
     {
         IQueryable<Appointment> appointments = _context.Appointments
-            .Where(x => x.Date >= new DateTime(startDate, new TimeOnly()) && x.Date <= new DateTime(endDate, new TimeOnly()));
-        if(states != null && states.Count() > 0)
-            foreach (AppointmentState state in states)
-                appointments = appointments.Where(x => x.AppointmentState == state);
+            .Where(
+            x => x.PropertyId == propertyId &&
+            x.Date >= new DateTime(startDate, new TimeOnly(00,00)) &&
+            x.Date <= new DateTime(endDate, new TimeOnly(23,59)));
 
-        return appointments.ToListAsync(cancellationToken);
+        if(states != null && states.Count() > 0)
+            appointments = appointments.Where(x => states.Contains(x.AppointmentState));
+
+        return await appointments.ToListAsync(cancellationToken);
     }
 }
