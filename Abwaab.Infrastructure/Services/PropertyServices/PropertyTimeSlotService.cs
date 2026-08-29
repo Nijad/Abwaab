@@ -25,7 +25,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
                 ptsl.Add(new()
                 {
                     TimeSlotId = timeSlot.Id,
-                    Day = (int)timeSlot.Day,
+                    DayNumber = (int)timeSlot.Day,
                     StartTime = timeSlot.StartTime,
                     EndTime = timeSlot.EndTime,
                     Notes = timeSlot.Notes
@@ -52,7 +52,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
 
         private async Task UpdateTimeSlotAsync(TimeSlot existing, TimeSlotDTO comming)
         {
-            existing.Day = comming.Day;
+            existing.Day = comming.DayNumber;
             existing.StartTime = comming.StartTime;
             existing.EndTime = comming.EndTime;
             existing.Notes = comming.Notes;
@@ -66,7 +66,7 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             {
                 Id = Guid.NewGuid(),
                 PropertyId = propetyId,
-                Day = comming.Day,
+                Day = comming.DayNumber,
                 StartTime = comming.StartTime,
                 EndTime = comming.EndTime,
                 Notes = comming.Notes

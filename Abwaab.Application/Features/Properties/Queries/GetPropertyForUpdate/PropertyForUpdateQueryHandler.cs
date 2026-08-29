@@ -66,7 +66,7 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                     timeSlotsList.Add(new()
                     {
                         TimeSlotId = timeSlot.Id,
-                        Day = timeSlot.Day,
+                        DayNumber = timeSlot.Day,
                         DayName = WeekDay.GetDayName(timeSlot.Day),
                         StartTime = timeSlot.StartTime,
                         EndTime = timeSlot.EndTime,

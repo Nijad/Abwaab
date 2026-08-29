@@ -74,5 +74,6 @@
         public const string HasNoCoverImage = "HAS_NO_COVER_IMAGE";
         public const string NotAllowedToChangePropertyState = "NOT_ALLOWED_TO_CHANGE_PROPERTY_STATE";
         public const string AppointmentStateNotFound = "APPOINTMENT_STATE_NOT_FOUND";
+        public const string NoTimeSlotsConfigured = "NO_TIME_SLOTS_CONFIGURED";
     }
 }

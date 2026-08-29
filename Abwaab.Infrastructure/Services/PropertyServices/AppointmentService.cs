@@ -40,6 +40,18 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             return await FindAppointmentByStateNameAsync(AppointmentStatesEnum.Canceled.ToString(), errorTitle);
         }
 
+        public async Task<List<Appointment>> GetCommingAppointments(Guid propertyId, DateOnly startDate, DateOnly endDate, string errorTitle, CancellationToken cancellationToken)
+        {
+            AppointmentState[] states =
+            {
+                await GetPendingAppointmentStateAsync(errorTitle),
+                await GetAcceptedAppointmentStateAsync(errorTitle)
+            };
+            List<Appointment> commingAppointment = await _appointmentRepository.GetCommingAppointments(propertyId, startDate, endDate, states, cancellationToken);
+
+            return commingAppointment;
+        }
+
         public async Task<AppointmentState> GetCompletedAppointmentStateAsync(string errorTitle)
         {
             return await FindAppointmentByStateNameAsync(AppointmentStatesEnum.Completed.ToString(), errorTitle);

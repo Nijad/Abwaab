@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Features.Properties.Accept;
 using Abwaab.Application.Features.Properties.Enable;
+using Abwaab.Application.Features.Properties.Queries.AvailableTimeSlots;
 using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyDetails;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
@@ -51,6 +52,15 @@ namespace Abwaab.Server.Controllers
         {
             PropertyDetailsQuery query = new() { PropertyId = propertyId};
             PropertyDetailsResponse result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        
+        [HttpGet("PropertyTimeSlots")]
+        public async Task<IActionResult> PropertyTimeSlots(Guid propertyId)
+        {
+            AvailableTimeSlotsQuery query = new() { PropertyId = propertyId};
+            List<AvailableTimeSlotsResponse> result = await _mediator.Send(query);
             return Ok(result);
         }
 

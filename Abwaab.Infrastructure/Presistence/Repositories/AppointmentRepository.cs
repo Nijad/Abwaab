@@ -1,28 +1,44 @@
 ﻿using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.AppointmentEntities;
 using Abwaab.Infrastructure.Presistence.Context;
-using Abwaab.Infrastructure.Presistence.Migrations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Abwaab.Infrastructure.Presistence.Repositories
+namespace Abwaab.Infrastructure.Presistence.Repositories;
+
+public class AppointmentRepository : IAppointmentRepository
 {
-    public class AppointmentRepository : IAppointmentRepository
+    private readonly AppDbContext _context;
+
+    public AppointmentRepository(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+    }
 
-        public AppointmentRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+    public async Task<AppointmentState?> FindAppointmentByStateNameAsync(string stateName)
+    {
+        return await _context.AppointmentStates.Where(x => x.StateName == stateName).FirstOrDefaultAsync();
+    }
 
-        public async Task<AppointmentState?> FindAppointmentByStateNameAsync(string stateName)
-        {
-            return await _context.AppointmentStates.Where(x => x.StateName == stateName).FirstOrDefaultAsync();
-        }
+    public async Task<int> GetAppointmentsCountByPropertyAndStateAsync(Guid propertyId, Guid stateId)
+    {
+        return await _context.Appointments.Where(x => x.PropertyId == propertyId && x.AppointmentStateId == stateId).CountAsync();
+    }
 
-        public async Task<int> GetAppointmentsCountByPropertyAndStateAsync(Guid propertyId, Guid stateId)
-        {
-            return await _context.Appointments.Where(x => x.PropertyId == propertyId && x.AppointmentStateId == stateId).CountAsync();
-        }
+    public async Task<List<Appointment>> GetCommingAppointments(Guid propertyId, CancellationToken cancellationToken)
+    {
+        return await _context.Appointments
+            .Where(x => x.Date > DateTime.Now)
+            .ToListAsync(cancellationToken);
+    }
+
+    public Task<List<Appointment>> GetCommingAppointments(Guid propertyId, DateOnly startDate, DateOnly endDate, AppointmentState[] states, CancellationToken cancellationToken)
+    {
+        IQueryable<Appointment> appointments = _context.Appointments
+            .Where(x => x.Date >= new DateTime(startDate, new TimeOnly()) && x.Date <= new DateTime(endDate, new TimeOnly()));
+        if(states != null && states.Count() > 0)
+            foreach (AppointmentState state in states)
+                appointments = appointments.Where(x => x.AppointmentState == state);
+
+        return appointments.ToListAsync(cancellationToken);
     }
 }

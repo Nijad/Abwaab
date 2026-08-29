@@ -74,7 +74,7 @@ namespace Abwaab.Application.Features.Properties.Submit
 
             // Sort by day, then by start time, and check for overlaps
             var sorted = timeSlots
-                .OrderBy(t => t.Day)
+                .OrderBy(t => t.DayNumber)
                 .ThenBy(t => t.StartTime)
                 .ToList();
 
@@ -84,7 +84,7 @@ namespace Abwaab.Application.Features.Properties.Submit
                 var next = sorted[i + 1];
 
                 // If same day, check if current.EndTime > next.StartTime
-                if (current.Day == next.Day && current.EndTime > next.StartTime)
+                if (current.DayNumber == next.DayNumber && current.EndTime > next.StartTime)
                     return false; // Overlap detected
             }
             return true;
