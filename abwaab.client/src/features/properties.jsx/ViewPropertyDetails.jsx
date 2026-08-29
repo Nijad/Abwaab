@@ -11,8 +11,13 @@ import { propertis } from "../../dataTypes/propertis";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import DateRangeOutlinedIcon from "@mui/icons-material/DateRangeOutlined";
 import { PropertyMediaGalleryModal } from "../../components/PropertyMediaGalleryModal";
+import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
+import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
+import ImagesearchRollerRoundedIcon from "@mui/icons-material/ImagesearchRollerRounded";
+import StraightenRoundedIcon from "@mui/icons-material/StraightenRounded";
+import ImagesearchRollerOutlinedIcon from "@mui/icons-material/ImagesearchRollerOutlined";
 
-const CustomAttribute = memo(({ attributes }) => {
+const CustomAttributes = memo(({ attributes }) => {
   return (
     <React.Fragment>
       {attributes.length > 0 &&
@@ -20,15 +25,22 @@ const CustomAttribute = memo(({ attributes }) => {
           const exist = propertis.orientations.find(
             (o) => o.attributeId === attribute.attributeId
           );
-          if (exist) {
+          if (!exist) {
             return (
-              <div className="bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">
-                <p className="text-navy-700 text-sm my-2">
-                  {attribute.attributeName}
-                </p>
-                <p className="text-navy-700 text-xl font-semibold my-2">
-                  {attribute.value}
-                </p>
+              <div className="flex items-center justify-start bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">
+                <StarBorderOutlinedIcon
+                  sx={{ marginInlineStart: "8px", marginInlineEnd: "15px" }}
+                />
+                <div className="">
+                  <p className="text-navy-700 text-sm my-2">
+                    {attribute.attributeName}
+                  </p>
+                  <p className="text-navy-700 text-xl font-semibold my-2">
+                    {attribute.dataTypeDescription === "boolean"
+                      ? "متوفر"
+                      : attribute.value}
+                  </p>
+                </div>
               </div>
             );
           }
@@ -56,12 +68,11 @@ const Orientations = memo(({ attributes }) => {
   );
 });
 
-const ViewPropertyDetails = ({ title, description, onClose, onSuccess }) => {
+const ViewPropertyDetails = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({ ...propertis.propertyDetails });
   const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
   const signalRef = useRef();
   const getId = useParams("id");
 
@@ -134,27 +145,42 @@ const ViewPropertyDetails = ({ title, description, onClose, onSuccess }) => {
           <main className="rounded-xl w-4/6">
             <PropertyMediaGalleryModal />
             {/* Info Section */}
-            <div className="my-6 flex flex-wrap p-4 bg-white gap-3  justify-between rounded-xl border border-neutral-200">
-              <div className="bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">
-                <p className="text-navy-700 text-sm my-2">نوع العقار</p>
-                <p className="text-navy-700 text-xl font-semibold my-2">
-                  {data.propertyType}
-                </p>
+            <div className="my-6 flex flex-wrap p-4 bg-white gap-3  justify-start rounded-xl border border-neutral-200">
+              <div className="flex items-center justify-start bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">
+                <ApartmentRoundedIcon
+                  sx={{ marginInlineStart: "8px", marginInlineEnd: "15px" }}
+                />
+                <div className="">
+                  <p className="text-navy-700 text-sm my-2">نوع العقار</p>
+                  <p className="text-navy-700 text-xl font-semibold my-2">
+                    {data.propertyType}
+                  </p>
+                </div>
               </div>
-              <div className="bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">
-                <p className="text-navy-700 text-sm my-2">حالة الإكساء</p>
-                <p className="text-navy-700 text-xl font-semibold my-2">
-                  {data.propertyFinishing}
-                </p>
+              <div className="flex items-center justify-start bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">
+                <ImagesearchRollerOutlinedIcon
+                  sx={{ marginInlineStart: "8px", marginInlineEnd: "15px" }}
+                />
+                <div className="">
+                  <p className="text-navy-700 text-sm my-2">حالة الإكساء</p>
+                  <p className="text-navy-700 text-xl font-semibold my-2">
+                    {data.propertyFinishing}
+                  </p>
+                </div>
               </div>
-              <div className="bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">
-                <p className="text-navy-700 text-sm my-2">المساحة</p>
-                <p className="text-navy-700 text-xl font-semibold my-2">
-                  {data.areaInSquareMeter} م<sup>2</sup>
-                </p>
+              <div className="flex items-center justify-start bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">
+                <StraightenRoundedIcon
+                  sx={{ marginInlineStart: "8px", marginInlineEnd: "15px" }}
+                />
+                <div className="">
+                  <p className="text-navy-700 text-sm my-2">المساحة</p>
+                  <p className="text-navy-700 text-xl font-semibold my-2">
+                    {data.areaInSquareMeter} م<sup>2</sup>
+                  </p>
+                </div>
               </div>
               {/* Loop through remaining attributes */}
-              <CustomAttribute attributes={data.propertyAttributesList} />
+              <CustomAttributes attributes={data.propertyAttributesList} />
             </div>
             {/* Description Section */}
             <div className="my-6 rounded-xl bg-white p-5 min-h-32">
