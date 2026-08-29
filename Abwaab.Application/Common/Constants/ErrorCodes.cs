@@ -75,5 +75,7 @@
         public const string NotAllowedToChangePropertyState = "NOT_ALLOWED_TO_CHANGE_PROPERTY_STATE";
         public const string AppointmentStateNotFound = "APPOINTMENT_STATE_NOT_FOUND";
         public const string NoTimeSlotsConfigured = "NO_TIME_SLOTS_CONFIGURED";
+        public const string SameOwner = "SAME_OWNER";
+        public const string NotPublishedProperty = "NOT_PUBLISHED_PROPERTY";
     }
 }

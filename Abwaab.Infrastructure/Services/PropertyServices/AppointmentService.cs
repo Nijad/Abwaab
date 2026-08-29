@@ -15,6 +15,11 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             _appointmentRepository = appointmentRepository;
         }
 
+        public async Task AddAppointmentAsync(Appointment appointment)
+        {
+            await _appointmentRepository.AddAsync(appointment);
+        }
+
         public async Task<AppointmentState> FindAppointmentByStateNameAsync(string stateName, string errorTitle)
         {
             AppointmentState? appointmentState = await _appointmentRepository.FindAppointmentByStateNameAsync(stateName);

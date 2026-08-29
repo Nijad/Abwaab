@@ -3,11 +3,11 @@ using Abwaab.Application.Common.Exceptions.Custom;
 
 namespace Abwaab.Application.Common.Exceptions.Appointments;
 
-public class AppointmentStateNotFoundException(string title) :
+public class SameOwnerException(string title) :
     NotFound404Exception(
-        message: ErrorMessages.AppointmentStateNotFound,
+        message: ErrorMessages.SameOwner,
         title: title,
-        errorCode: ErrorCodes.AppointmentStateNotFound,
+        errorCode: ErrorCodes.SameOwner,
         returnToUser: true)
 {
 }

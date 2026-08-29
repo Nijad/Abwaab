@@ -14,6 +14,12 @@ public class AppointmentRepository : IAppointmentRepository
         _context = context;
     }
 
+    public async Task AddAsync(Appointment appointment)
+    {
+        await _context.AddAsync(appointment);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<AppointmentState?> FindAppointmentByStateNameAsync(string stateName)
     {
         return await _context.AppointmentStates.Where(x => x.StateName == stateName).FirstOrDefaultAsync();

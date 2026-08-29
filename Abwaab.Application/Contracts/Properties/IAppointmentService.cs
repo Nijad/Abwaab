@@ -13,5 +13,6 @@ namespace Abwaab.Application.Contracts.Properties
         Task<AppointmentState> FindAppointmentByStateNameAsync(string stateName, string errorTitle);
         Task<int> GetAppointmentsCountByPropertyAndStateAsync(Guid propertyId, Guid stateId);
         Task<List<Appointment>> GetCommingAppointments(Guid propertyId, DateOnly startDate, DateOnly endDate, string errorTitle, CancellationToken cancellationToken);
+        Task AddAppointmentAsync(Appointment appointment);
     }
 }
