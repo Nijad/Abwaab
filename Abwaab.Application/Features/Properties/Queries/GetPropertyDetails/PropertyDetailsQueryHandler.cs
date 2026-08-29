@@ -28,6 +28,7 @@ public class PropertyDetailsQueryHandler : IRequestHandler<PropertyDetailsQuery,
             foreach (var propertyAttribute in property.PropertyAttributes)
                 propertyAttributes.Add(new()
                 {
+                    AttributeId = propertyAttribute.AttributeId,
                     Value = propertyAttribute.AttributeValue,
                     AttributeName = propertyAttribute.Attribute.AttributeName,
                     DataTypeDescription = propertyAttribute.Attribute.AttributeDataType?.Name
