@@ -33,4 +33,8 @@ export const propertyApi = {
       { id: id },
       { signal: signal }
     ),
+  bookAppointment: (dateInfo, signal) =>
+    axiosPrivate.post("/api/Appointment/BookAppointment", dateInfo, {
+      signal: signal,
+    }),
 };

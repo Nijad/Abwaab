@@ -10,13 +10,16 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { propertyApi } from "../../api";
 import { useParams } from "react-router";
-import { propertis } from "../../dataTypes/propertis";
+import {
+  PROPERTY_AVAILABLE_DATETIME,
+  BOOK_APPOINTMENT,
+} from "../../dataTypes/propertis";
 import { formatDateWithDayAr } from "../../utils/helpers";
 import { useSnackbar } from "notistack";
 
 const AddVisitRequest = ({ open, close }) => {
-  const [data, setData] = useState([...propertis.propertyAvailableDateTime]);
-  const [selectedDay, setSelectedDay] = useState();
+  const [data, setData] = useState(PROPERTY_AVAILABLE_DATETIME);
+  const [selectedDay, setSelectedDay] = useState(null);
   const [dataLoading, setDataLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const getId = useParams("id");
@@ -52,15 +55,27 @@ const AddVisitRequest = ({ open, close }) => {
     }
     try {
       signalRef.current = new AbortController();
-      const resp = await propertyApi.propertyTimeSlots(
-        getId.id,
+      var selectedTime = selectedDay.dayTimes.find((t) => t.selected === true);
+      if (!selectedTime || !selectedDay)
+        enqueueSnackbar("يجب اختيار اليوم و الوقت", { variant: "error" });
+      var date = `${selectedDay.dayDate}T${selectedTime.startTime}`;
+      const body = BOOK_APPOINTMENT;
+      body.propertyId = getId.id;
+      body.appointmentDate = date;
+      body.endTime = selectedTime.endTime;
+      const resp = await propertyApi.bookAppointment(
+        body,
         signalRef.current.signal
       );
       close(false);
       enqueueSnackbar(resp.data.message, { variant: "success" });
       console.log(resp.data);
     } catch (error) {
-      enqueueSnackbar(error.detail, { variant: "error" });
+      if (error?.detail) {
+        enqueueSnackbar(error.detail, { variant: "error" });
+      } else {
+        enqueueSnackbar(error, { variant: "error" });
+      }
       console.log(error);
     } finally {
       setSaveLoading(false);
@@ -83,6 +98,9 @@ const AddVisitRequest = ({ open, close }) => {
     setTimeout(() => {
       if (open) fetchVisits();
     }, 0);
+    return () => {
+      setSelectedDay();
+    };
   }, [open]);
   return (
     <Dialog
@@ -205,6 +223,11 @@ const AddVisitRequest = ({ open, close }) => {
           color="navy"
           onClick={() => addVisitRequest()}
           loading={saveLoading}
+          disabled={
+            !selectedDay
+              ? true
+              : !selectedDay.dayTimes.find((t) => t.selected === true)
+          }
         >
           إرسال طلب المعاينة
         </Button>

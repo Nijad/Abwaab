@@ -1,19 +1,18 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
 import { propertyApi } from "../../api";
-import { NavLink, useNavigate, useParams } from "react-router";
+import { NavLink, useParams } from "react-router";
 import { LocationPicker } from "../../components/LocationPicker";
 import LabelTag from "../../components/LabelTag";
 import VisitReservationButton from "./VisitReservationButton";
 import PropertyDetailsLoading from "../../components/properties/PropertyDetailsLoading";
 import PropertyNotFound from "../../components/properties/PropertyNotFound";
-import { propertis } from "../../dataTypes/propertis";
+import { ORIENTATIONS, PROPERTY_DETAILS } from "../../dataTypes/propertis";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import DateRangeOutlinedIcon from "@mui/icons-material/DateRangeOutlined";
 import { PropertyMediaGalleryModal } from "../../components/PropertyMediaGalleryModal";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
-import ImagesearchRollerRoundedIcon from "@mui/icons-material/ImagesearchRollerRounded";
 import StraightenRoundedIcon from "@mui/icons-material/StraightenRounded";
 import ImagesearchRollerOutlinedIcon from "@mui/icons-material/ImagesearchRollerOutlined";
 
@@ -22,7 +21,7 @@ const CustomAttributes = memo(({ attributes }) => {
     <React.Fragment>
       {attributes.length > 0 &&
         attributes.map((attribute) => {
-          const exist = propertis.orientations.find(
+          const exist = ORIENTATIONS.find(
             (o) => o.attributeId === attribute.attributeId
           );
           if (!exist) {
@@ -51,7 +50,7 @@ const CustomAttributes = memo(({ attributes }) => {
 const Orientations = memo(({ attributes }) => {
   return (
     <React.Fragment>
-      {propertis.orientations.map((oreint) => {
+      {ORIENTATIONS.map((oreint) => {
         const exist = attributes.find(
           (att) => att.attributeId === oreint.attributeId
         );
@@ -71,7 +70,7 @@ const Orientations = memo(({ attributes }) => {
 const ViewPropertyDetails = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState({ ...propertis.propertyDetails });
+  const [data, setData] = useState(PROPERTY_DETAILS);
   const { enqueueSnackbar } = useSnackbar();
   const signalRef = useRef();
   const getId = useParams("id");
