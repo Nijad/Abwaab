@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Common.Exceptions.Properties.TimeSlots;
+using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Properties.Common.DTOs;
 using Abwaab.Domain.Entities.AppointmentEntities;
@@ -72,16 +73,16 @@ public class AvailableTimeSlotsQueryHandler : IRequestHandler<AvailableTimeSlots
                     });
                 }
             }
-
-            response.Add(new AvailableTimeSlotsResponse
-            {
-                DayNumber = dayOfWeek,
-                DayName = date.DayOfWeek.ToString(),
-                DayDate = date,
-                DayTimes = dayTimes.Any() ? dayTimes : null
-            });
+            if (dayTimes != null && dayTimes.Count > 0)
+                response.Add(new AvailableTimeSlotsResponse
+                {
+                    DayNumber = dayOfWeek,
+                    DayName = DayOfWeekMapping.Map(dayOfWeek),
+                    DayDate = date,
+                    DayTimes = dayTimes.OrderBy(x => x.StartTime).ToList()
+                });
         }
 
-        return response;
+        return response.OrderBy(x => x.DayDate).ToList();
     }
 }
