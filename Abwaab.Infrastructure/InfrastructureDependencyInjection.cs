@@ -32,7 +32,8 @@ namespace Abwaab.Infrastructure
         {
             services.AddMemoryCache();
             services.AddScoped<ITokenCacheService, TokenCacheService>();
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AppDbContext>(options => 
+            options.UseSqlServer(config.GetConnectionString("DefaultConnection")).LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information));
 
             services.Configure<JwtSettings>(config.GetSection("JwtSettings"));
             var jwtSettings = config.GetSection(nameof(JwtSettings)).Get<JwtSettings>() ?? throw new Exception("JwtSettings are missing in appsettings.json");

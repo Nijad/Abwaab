@@ -36,7 +36,7 @@ public class AvailableTimeSlotsQueryHandler : IRequestHandler<AvailableTimeSlots
             .Select(offset => startDate.AddDays(offset))
             .ToList();
 
-        List<Appointment> appointments = await _appointmentService.GetCommingAppointments(request.PropertyId, startDate, endDate, errorTitle, cancellationToken);
+        List<Appointment> bookedAppointments = await _appointmentService.GetBookedAppointments(request.PropertyId, startDate, endDate, errorTitle, cancellationToken);
 
         // Build the response for each day
         List<AvailableTimeSlotsResponse> response = new();
@@ -52,7 +52,7 @@ public class AvailableTimeSlotsQueryHandler : IRequestHandler<AvailableTimeSlots
             foreach (var slot in slotsForDay)
             {
                 // Check if this slot is blocked by ANY appointment
-                bool isBlocked = appointments.Any(app =>
+                bool isBlocked = bookedAppointments.Any(app =>
                 {
                     // Appointment must be on the same day
                     if (DateOnly.FromDateTime(app.Date) != date)
@@ -73,6 +73,7 @@ public class AvailableTimeSlotsQueryHandler : IRequestHandler<AvailableTimeSlots
                     });
                 }
             }
+
             if (dayTimes != null && dayTimes.Count > 0)
                 response.Add(new AvailableTimeSlotsResponse
                 {

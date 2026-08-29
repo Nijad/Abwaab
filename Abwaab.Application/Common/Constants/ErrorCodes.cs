@@ -77,5 +77,6 @@
         public const string NoTimeSlotsConfigured = "NO_TIME_SLOTS_CONFIGURED";
         public const string SameOwner = "SAME_OWNER";
         public const string NotPublishedProperty = "NOT_PUBLISHED_PROPERTY";
+        public const string TimeSlotNotAvailable = "TIME_SLOT_NOT_AVAILABLE";
     }
 }

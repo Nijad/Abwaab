@@ -3,11 +3,11 @@ using Abwaab.Application.Common.Exceptions.Custom;
 
 namespace Abwaab.Application.Common.Exceptions.Appointments;
 
-public class SameOwnerException(string title) :
+public class TimeSlotNotAvailableException(string title) :
     Precondition412Exception(
-        message: ErrorMessages.SameOwner,
+        message: ErrorMessages.TimeSlotNotAvailable,
         title: title,
-        errorCode: ErrorCodes.SameOwner,
+        errorCode: ErrorCodes.TimeSlotNotAvailable,
         returnToUser: true)
 {
 }

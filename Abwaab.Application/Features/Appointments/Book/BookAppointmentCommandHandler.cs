@@ -53,7 +53,21 @@ public class BookAppointmentCommandHandler : IRequestHandler<BookAppointmentComm
             throw new NotPublishedPropertyException(errorTitle);
 
         //check if appointment still available
-        //todo: check if appointment still available
+        DateOnly requestedDate = DateOnly.FromDateTime(request.AppointmentDate);
+        List<Appointment> bookedAppointments = await _appointmentService.GetBookedAppointments(request.PropertyId, requestedDate, requestedDate, errorTitle, cancellationToken);
+
+        if(bookedAppointments!=null && bookedAppointments.Count > 0)
+        {
+            bool isBlocked = bookedAppointments.Any(app =>
+            {
+                TimeOnly appStart = TimeOnly.FromDateTime(app.Date);
+                TimeOnly appEnd = app.EndTime;
+
+                return TimeOnly.FromDateTime(request.AppointmentDate) < appEnd && appStart < request.EndTime;
+            });
+            if(isBlocked)
+                throw new TimeSlotNotAvailableException(errorTitle);
+        }
 
         //get pending status
         AppointmentState pendingAppointmentSate = await _appointmentService.GetPendingAppointmentStateAsync(errorTitle);
@@ -81,6 +95,6 @@ public class BookAppointmentCommandHandler : IRequestHandler<BookAppointmentComm
         await _notifyHandler.NotifyAsync(errorTitle);
 
 
-        throw new NotImplementedException();
+        return new BookAppointmentResponse() { Success = true, Message = "تم طلب حجز الموعد بنجاح، انتظر موافقة صاحب العقار."};
     }
 }
