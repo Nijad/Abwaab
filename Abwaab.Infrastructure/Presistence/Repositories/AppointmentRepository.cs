@@ -45,9 +45,25 @@ public class AppointmentRepository : IAppointmentRepository
             x.Date >= new DateTime(startDate, new TimeOnly(00,00)) &&
             x.Date <= new DateTime(endDate, new TimeOnly(23,59)));
 
-        if(states != null && states.Count() > 0)
+        if(states != null && states.Length > 0)
             appointments = appointments.Where(x => states.Contains(x.AppointmentState));
 
         return await appointments.ToListAsync(cancellationToken);
+    }
+
+    public async Task<Appointment?> FindAppointmentByIdAsync(Guid appointmentId, CancellationToken cancellationToken)
+    {
+        return await _context.Appointments
+            .Include(x=>x.User)
+            .Include(x=>x.Property)
+            .ThenInclude(x=>x.UserPlan)
+            .Where(x=>x.Id== appointmentId)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task UpdateAppointment(Appointment appointment, CancellationToken cancellationToken)
+    {
+        _context.Appointments.Update(appointment);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

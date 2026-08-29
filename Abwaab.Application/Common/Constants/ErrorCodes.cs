@@ -78,5 +78,7 @@
         public const string SameOwner = "SAME_OWNER";
         public const string NotPublishedProperty = "NOT_PUBLISHED_PROPERTY";
         public const string TimeSlotNotAvailable = "TIME_SLOT_NOT_AVAILABLE";
+        public const string AppointmentNotFound = "APPOINTMENT_NOT_FOUND";
+        public const string ConfirmationAppointmentNotAllowed = "CONFIRMATION_APPOINTMENT_NOT_ALLOWED";
     }
 }

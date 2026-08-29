@@ -1,4 +1,5 @@
 ﻿using Abwaab.Application.Features.Appointments.Book;
+using Abwaab.Application.Features.Appointments.Confirm;
 using Abwaab.Application.Features.Users.Auth.Register;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,18 @@ public class AppointmentController : ControllerBase
 
 
         BookAppointmentResponse response = await _mediator.Send(command);
+
+        return Ok(response);
+    }
+
+    [HttpPost("ConfirmAppointment")]
+    public async Task<IActionResult> ConfirmAppointment([FromBody] ConfirmAppointmentCommand command)
+    {
+        if (command == null)
+            return BadRequest();
+
+
+        ConfirmAppointmentResponse response = await _mediator.Send(command);
 
         return Ok(response);
     }
