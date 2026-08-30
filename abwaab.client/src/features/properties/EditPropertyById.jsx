@@ -414,6 +414,13 @@ const EditPropertyById = () => {
     });
   }, []);
 
+  const getCoverImage = useCallback(() => {
+    var img = formData.propertyMediaList.find((m) => m.isCover === true);
+    if (img) {
+      return `${import.meta.env.VITE_API_BASE_URL}${img.filePath}`;
+    }
+  }, [formData]);
+
   const getMediaTypeInfo = useCallback(
     (type = "") => {
       if (staticData.mediaTypes.length > 0) {
@@ -465,9 +472,19 @@ const EditPropertyById = () => {
                   مطلوبة
                 </Typography>
               </div> */}
+              {/* {
+                formData.propertyMediaList.map(m=>{
+                  if(m.isCover){
+                    return(
+
+                    )
+                  }
+                })
+              } */}
               <MediaUploader
                 propertyId={formData.propertyId}
                 mediaInfo={getMediaTypeInfo("image")}
+                imageUrl={getCoverImage()}
               />
 
               <div className="md:col-span-2 space-y-5 text-right">

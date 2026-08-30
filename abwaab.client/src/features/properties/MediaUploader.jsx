@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Typography, CircularProgress } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -95,6 +95,14 @@ const MediaUploader = ({
   const handleClick = () => {
     fileInputRef.current?.click();
   };
+
+  useEffect(() => {
+    if (imageUrl) {
+      setTimeout(() => {
+        setUploadedImage(imageUrl);
+      }, 0);
+    }
+  }, [imageUrl]);
 
   return (
     <div
