@@ -77,7 +77,7 @@ namespace Abwaab.Application.Features.Users.Auth.VerificationCode
             }
 
             // Add the user to the "User" role
-            if (await _userManager.IsInRoleAsync(user, RoleConstants.ROLE_USER))
+            if (! await _userManager.IsInRoleAsync(user, RoleConstants.ROLE_USER))
             {
                 var roleResult = await _userManager.AddToRoleAsync(user, RoleConstants.ROLE_USER);
                 if (!roleResult.Succeeded)
