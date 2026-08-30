@@ -10,7 +10,7 @@ using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
 
-namespace Abwaab.Application.Features.Appointments.Book;
+namespace Abwaab.Application.Features.Appointments.Commands.Book;
 
 public class BookAppointmentCommandHandler : IRequestHandler<BookAppointmentCommand, BookAppointmentResponse>
 {

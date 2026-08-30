@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Abwaab.Application.Features.Appointments.Confirm;
+namespace Abwaab.Application.Features.Appointments.Commands.Confirm;
 
 public class ConfirmAppointmentValidation : AbstractValidator<ConfirmAppointmentCommand>
 {

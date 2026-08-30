@@ -86,7 +86,7 @@ public class AppointmentService : IAppointmentService
         return appointment;
     }
 
-    public async Task UpdateAppointment(Appointment appointment, CancellationToken cancellationToken)
+    public async Task UpdateAppointmentAsync(Appointment appointment, CancellationToken cancellationToken)
     {
         await _appointmentRepository.UpdateAppointment(appointment, cancellationToken);
     }

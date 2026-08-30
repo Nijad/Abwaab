@@ -2,6 +2,7 @@
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Exceptions.Appointments;
 using Abwaab.Application.Common.Exceptions.Auth;
+using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Interfaces;
@@ -10,7 +11,7 @@ using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
 
-namespace Abwaab.Application.Features.Appointments.Confirm;
+namespace Abwaab.Application.Features.Appointments.Commands.Confirm;
 
 public class ConfirmAppointmentCommandHandler : IRequestHandler<ConfirmAppointmentCommand, ConfirmAppointmentResponse>
 {
@@ -52,18 +53,18 @@ public class ConfirmAppointmentCommandHandler : IRequestHandler<ConfirmAppointme
         AppointmentState pendingAppointmentState = await _appointmentService.GetPendingAppointmentStateAsync(errorTitle);
 
         if(appointment.AppointmentStateId != pendingAppointmentState.Id)
-            throw new ConfirmationAppointmentNotAllowedException(errorTitle);
+            throw new ChanginAppointmentStateNotAllowedException($"لا يمكنك تأكيد موعد وهو في حالة '{AppointmentStatesMapping.Map(appointment.AppointmentState.StateName)}'", errorTitle);
 
         //check if appointment date in future
         if (appointment.Date < DateTime.Now)
-            throw new ConfirmationAppointmentNotAllowedException(errorTitle);
+            throw new ChanginAppointmentStateNotAllowedException($"لا يمكنك تأكيد موعد بعد فواته", errorTitle);
 
         //get confirmed state
         AppointmentState ConfirmedAppointmentState = await _appointmentService.GetConfirmedAppointmentStateAsync(errorTitle);
 
         //update appointment
         appointment.AppointmentState = ConfirmedAppointmentState;
-        await _appointmentService.UpdateAppointment(appointment, cancellationToken);
+        await _appointmentService.UpdateAppointmentAsync(appointment, cancellationToken);
 
         //notify visitor and send owner contact to him
         List<ApplicationUser> users = new() { appointment.User };
