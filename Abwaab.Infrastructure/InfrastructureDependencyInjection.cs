@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
@@ -33,7 +34,7 @@ namespace Abwaab.Infrastructure
             services.AddMemoryCache();
             services.AddScoped<ITokenCacheService, TokenCacheService>();
             services.AddDbContext<AppDbContext>(options => 
-            options.UseSqlServer(config.GetConnectionString("DefaultConnection")).LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information));
+            options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
             services.Configure<JwtSettings>(config.GetSection("JwtSettings"));
             var jwtSettings = config.GetSection(nameof(JwtSettings)).Get<JwtSettings>() ?? throw new Exception("JwtSettings are missing in appsettings.json");
