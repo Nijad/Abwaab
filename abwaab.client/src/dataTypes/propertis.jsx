@@ -51,3 +51,131 @@ export const BOOK_APPOINTMENT = {
   appointmentDate: "",
   endTime: "",
 };
+
+export const PROPERTY_UPDATE_DATA = {
+  propertyId: "",
+  title: "",
+  description: "",
+  address: "",
+  areaInSquareMeter: 0,
+  price: 0,
+  latitude: 0,
+  longitude: 0,
+  isStar: false,
+  propertyState: "",
+  propertyTypeId: "",
+  propertyFinishingId: "",
+  timeSlots: [
+    {
+      timeSlotId: "",
+      dayNumber: -1,
+      dayName: "",
+      startTime: "",
+      endTime: "",
+      notes: "",
+    },
+  ],
+  propertyAttributesList: [
+    {
+      attributeId: "",
+      attributeName: "",
+      value: "",
+      dataTypeDescription: "",
+      propertyAttributeId: "",
+      dataTypeId: "",
+    },
+  ],
+  propertyMediaList: [
+    {
+      mediaId: "",
+      filePath: "",
+      mediaTypeName: "",
+      isCover: true,
+      mediaTypeId: "",
+    },
+  ],
+};
+
+export const PROPERTY_GET_DATA = {
+  remainingStarsAllowed: 0,
+  remainingImagesAllowed: 0,
+  remainingVideosAllowed: 0,
+  propertyTypeId: "",
+  propertyFinishingId: "",
+  timeSlots: [
+    {
+      timeSlotId: "",
+      dayNumber: -1,
+      dayName: "",
+      startTime: "",
+      endTime: "",
+      notes: "",
+    },
+  ],
+  propertyAttributesList: [
+    {
+      propertyAttributeId: "",
+      dataTypeId: "",
+      attributeId: "",
+      attributeName: "",
+      value: "",
+      dataTypeDescription: "",
+    },
+  ],
+  propertyMediaList: [
+    {
+      mediaTypeId: "",
+      mediaId: "",
+      filePath: "",
+      mediaTypeName: "",
+      isCover: false,
+    },
+  ],
+  propertyId: "",
+  title: "",
+  description: "",
+  address: "",
+  areaInSquareMeter: null,
+  price: 0,
+  latitude: null,
+  longitude: null,
+  isStar: false,
+  propertyState: "",
+};
+
+export const PROPERTY_GET_LISTS = {
+  propertyTypesList: [
+    {
+      typeId: "",
+      typeName: "",
+    },
+  ],
+  propertyFinishingsList: [
+    {
+      finishingId: "",
+      finishingName: "",
+    },
+  ],
+  weekDaysList: [
+    {
+      dayIndex: -1,
+      dayName: "",
+    },
+  ],
+  attributes: [
+    {
+      attributeId: "",
+      attributeName: "",
+      dataTypeId: "",
+      datayTypeDescription: "",
+      possibleValues: [],
+    },
+  ],
+  mediaTypes: [
+    {
+      mediaTypeId: "",
+      mediaTypeName: "",
+      isCover: false,
+    },
+  ],
+};

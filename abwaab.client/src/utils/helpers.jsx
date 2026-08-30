@@ -157,7 +157,7 @@ export function generateTimeSlots(day, startTime, endTime) {
 
     slots.push({
       timeSlotId: null,
-      day: day.dayIndex,
+      dayNumber: day.dayIndex,
       dayName: day.dayName,
       startTime: slotStart,
       endTime: slotEnd,
@@ -208,7 +208,7 @@ export function collapseTimeSlots(timeSlots = [], weekDaysList, endTime) {
   };
 
   for (const day of weekDaysList) {
-    const daySlots = timeSlots.filter((ts) => ts.day === day.dayIndex);
+    const daySlots = timeSlots.filter((ts) => ts.dayNumber === day.dayIndex);
     const temp = [];
     if (daySlots.length > 0) {
       for (const ds of daySlots) {

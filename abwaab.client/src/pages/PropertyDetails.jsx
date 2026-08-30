@@ -1,4 +1,4 @@
-import ViewPropertyDetails from "../features/properties.jsx/ViewPropertyDetails";
+import ViewPropertyDetails from "../features/properties/ViewPropertyDetails";
 
 const PropertyDetails = () => {
   return (

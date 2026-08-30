@@ -31,6 +31,12 @@ import {
   timeSlots,
 } from "../../utils/helpers";
 import MediaUploader from "./MediaUploader";
+import { LocationPicker } from "../../components/LocationPicker";
+import {
+  PROPERTY_GET_DATA,
+  PROPERTY_GET_LISTS,
+  PROPERTY_UPDATE_DATA,
+} from "../../dataTypes/propertis";
 
 const orientations = [
   {
@@ -199,27 +205,9 @@ const EditPropertyById = () => {
   const { id } = useParams();
 
   // SPLIT STATE: Static reference data vs Dynamic form data
-  const [staticData, setStaticData] = useState({
-    propertyTypesList: [],
-    propertyFinishingsList: [],
-    weekDaysList: [],
-    attributes: [],
-    mediaTypes: [],
-  });
+  const [staticData, setStaticData] = useState(PROPERTY_GET_LISTS);
 
-  const [formData, setFormData] = useState({
-    propertyId: "",
-    title: null,
-    description: null,
-    address: null,
-    areaInSquareMeter: null,
-    price: null,
-    latitude: null,
-    longitude: null,
-    propertyTypeId: null,
-    propertyFinishingId: null,
-    propertyAttributesList: [],
-  });
+  const [formData, setFormData] = useState(PROPERTY_GET_DATA);
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -266,29 +254,44 @@ const EditPropertyById = () => {
         id,
         signalRef.current.signal
       );
+      const listState = PROPERTY_GET_LISTS;
+      const formState = PROPERTY_GET_DATA;
+      for (const [key, value] of Object.entries(resp.data)) {
+        if (key in listState) {
+          listState[key] = value || [];
+          continue;
+        }
+        if (key in formState) formState[key] = value;
+      }
 
       // Populate split states
-      setStaticData({
-        propertyTypesList: resp.data.propertyTypesList || [],
-        propertyFinishingsList: resp.data.propertyFinishingsList || [],
-        weekDaysList: resp.data.weekDaysList || [],
-        attributes: resp.data.attributes || [],
-        mediaTypes: resp.data.mediaTypes || [],
-      });
+      setStaticData(
+        listState
+        //   {
+        //   propertyTypesList: resp.data.propertyTypesList || [],
+        //   propertyFinishingsList: resp.data.propertyFinishingsList || [],
+        //   weekDaysList: resp.data.weekDaysList || [],
+        //   attributes: resp.data.attributes || [],
+        //   mediaTypes: resp.data.mediaTypes || [],
+        // }
+      );
 
-      setFormData({
-        propertyId: resp.data.propertyId || "",
-        title: resp.data.title,
-        description: resp.data.description,
-        address: resp.data.address,
-        areaInSquareMeter: resp.data.areaInSquareMeter,
-        price: resp.data.price,
-        latitude: resp.data.latitude,
-        longitude: resp.data.longitude,
-        propertyTypeId: resp.data.propertyTypeId,
-        propertyFinishingId: resp.data.propertyFinishingId,
-        propertyAttributesList: resp.data.propertyAttributesList || [],
-      });
+      setFormData(
+        formState
+        //   {
+        //   propertyId: resp.data.propertyId || "",
+        //   title: resp.data.title,
+        //   description: resp.data.description,
+        //   address: resp.data.address,
+        //   areaInSquareMeter: resp.data.areaInSquareMeter,
+        //   price: resp.data.price,
+        //   latitude: resp.data.latitude,
+        //   longitude: resp.data.longitude,
+        //   propertyTypeId: resp.data.propertyTypeId,
+        //   propertyFinishingId: resp.data.propertyFinishingId,
+        //   propertyAttributesList: resp.data.propertyAttributesList || [],
+        // }
+      );
 
       setSchedules(
         collapseTimeSlots(resp.data.timeSlots, resp.data.weekDaysList)
@@ -323,12 +326,14 @@ const EditPropertyById = () => {
         }
       }
       // Merge for API payload
-      const propNewData = {
-        ...staticData,
-        ...formData,
-        timeSlots: timeSlotsArr,
-      };
-      await propertyApi.updateProperty(propNewData, signalRef.current.signal);
+      const updateData = PROPERTY_UPDATE_DATA;
+      for (const [key, value] of Object.entries(formData)) {
+        if (key in updateData) {
+          updateData[key] = value;
+        }
+      }
+      updateData.timeSlots = timeSlotsArr;
+      await propertyApi.updateProperty(updateData, signalRef.current.signal);
       enqueueSnackbar("تم حفظ التعديلات بنجاح", { variant: "success" });
     } catch (err) {
       if (err.errorCode === "VALIDATION_FAILED") {
@@ -426,6 +431,11 @@ const EditPropertyById = () => {
     },
     [staticData]
   );
+
+  const handleSelectLocation = (data) => {
+    console.log(data);
+    setFormData({ ...formData, longitude: data.lng, latitude: data.lat });
+  };
 
   useEffect(() => {
     setTimeout(() => fetchProperty(), 0);
@@ -544,7 +554,7 @@ const EditPropertyById = () => {
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    [e.target.name]: e.target.value,
+                    [e.target.name]: parseFloat(e.target.value),
                   }))
                 }
                 InputProps={{
@@ -620,7 +630,18 @@ const EditPropertyById = () => {
               </Typography>
             </div>
             <div className="space-y-4">
-              <div className="bg-neutral-100 rounded-lg h-full border border-neutral-200 relative flex items-center justify-center">
+              {formData.latitude && formData.longitude && (
+                <LocationPicker
+                  onLocationSelect={handleSelectLocation}
+                  lat={formData.latitude}
+                  lng={formData.longitude}
+                />
+              )}
+              {!formData.latitude && !formData.longitude && (
+                <LocationPicker onLocationSelect={handleSelectLocation} />
+              )}
+
+              {/* <div className="bg-neutral-100 rounded-lg h-full border border-neutral-200 relative flex items-center justify-center">
                 <span className="absolute top-2 left-2 bg-white/80 px-2 py-0.5 rounded text-[10px] font-sans text-neutral-500">
                   Google Maps
                 </span>
@@ -633,7 +654,7 @@ const EditPropertyById = () => {
                     لم يتم تحديد الموقع
                   </Typography>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 

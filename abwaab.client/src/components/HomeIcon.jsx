@@ -17,14 +17,14 @@ const HomeIcon = () => {
         <path
           d="M22.5 33.75L36 22.5L49.5 33.75V48H39V39H33V48H22.5V33.75Z"
           stroke="#3598C9"
-          stroke-width="2.4"
-          stroke-linejoin="round"
+          strokeWidth="2.4"
+          strokeLinejoin="round"
         />
         <path
           d="M45 25.5V30"
           stroke="#3598C9"
-          stroke-width="2.4"
-          stroke-linecap="round"
+          strokeWidth="2.4"
+          strokeLinecap="round"
         />
       </svg>
     </SvgIcon>
