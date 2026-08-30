@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Abwaab.Application.Features.Appointments.Confirm;
+namespace Abwaab.Application.Features.Appointments.Commands.Confirm;
 
 public class ConfirmAppointmentCommand : IRequest<ConfirmAppointmentResponse>
 {

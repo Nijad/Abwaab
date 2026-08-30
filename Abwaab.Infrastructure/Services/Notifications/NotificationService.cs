@@ -2,7 +2,6 @@
 using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
-using Abwaab.Application.Features.Notifications.DTOs;
 using Abwaab.Application.Features.Notifications.Queries.GetAllNotificationWays;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.NotificationEntities;
@@ -49,8 +48,8 @@ namespace Abwaab.Infrastructure.Services.Notifications
         {
             // and get thier notification-way subscriptions
             List<UserNotificationSubscription> subscriptions = new();
-            foreach (var admin in users)
-                subscriptions.AddRange(await _notificationWayRepository.GetNotificationWaysByUserAsync(admin.Id, true));
+            foreach (var user in users)
+                subscriptions.AddRange(await _notificationWayRepository.GetNotificationWaysByUserAsync(user.Id, true));
 
             NotificationState pendingNotificationState = await FindNotificationStateByStateNameAsync(NotificationStatesEnum.Pending.ToString(), errorTitle);
 
