@@ -1,11 +1,11 @@
 import { Button } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import MyPropertiesList from "../features/properties.jsx/MyPropertiesList";
+import MyPropertiesList from "../features/properties/MyPropertiesList";
 import { propertyApi } from "../api";
 import { useSnackbar } from "notistack";
-import PreviewPropertyVisits from "../features/properties.jsx/PreviewPropertyVisits";
-import AddNewProperty from "../features/properties.jsx/AddNewProperty";
+import PreviewPropertyVisits from "../features/properties/PreviewPropertyVisits";
+import AddNewProperty from "../features/properties/AddNewProperty";
 
 const MyProperties = () => {
   const [showVisits, setShowVisits] = useState(false);

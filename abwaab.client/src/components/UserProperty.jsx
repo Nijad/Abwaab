@@ -3,8 +3,8 @@ import LabelTag from "./LabelTag";
 import { Button } from "@mui/material";
 import { EditOutlined } from "@mui/icons-material";
 import PromoteIcon from "./PromoteIcon";
-import PromoteProperty from "../features/properties.jsx/PromoteProperty";
-import PreviewPropertyVisits from "../features/properties.jsx/PreviewPropertyVisits";
+import PromoteProperty from "../features/properties/PromoteProperty";
+import PreviewPropertyVisits from "../features/properties/PreviewPropertyVisits";
 
 const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
   return (

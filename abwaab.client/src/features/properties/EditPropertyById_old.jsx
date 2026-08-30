@@ -25,6 +25,7 @@ import {
   generateTimeSlots,
   timeSlots,
 } from "../../utils/helpers";
+import MediaUploader from "./MediaUploader";
 
 const orientations = [
   {

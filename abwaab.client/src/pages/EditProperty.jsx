@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router";
-import EditPropertyById from "../features/properties.jsx/EditPropertyById";
+import EditPropertyById from "../features/properties/EditPropertyById";
 
 const EditProperty = () => {
   // console.log(id);

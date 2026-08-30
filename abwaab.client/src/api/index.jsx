@@ -3,3 +3,4 @@ export { profileApi } from "./profileApi";
 export { planApi } from "./planApi";
 export { rolesApi } from "./rolesApi";
 export { propertyApi } from "./propertyApi";
+export { mediaApi } from "./mediaApi";

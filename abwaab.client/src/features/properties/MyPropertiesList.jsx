@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
-import { propertyApi } from "../../api";
+import { profileApi, propertyApi } from "../../api";
 import UserProperty from "../../components/UserProperty";
 import { useNavigate } from "react-router";
 import HomeIcon from "../../components/HomeIcon";
@@ -66,7 +66,7 @@ const MyPropertiesList = ({
     }
     try {
       signalRef.current = new AbortController();
-      const resp = await propertyApi.getMyProperties(signalRef.current.signal);
+      const resp = await propertyApi.userProperties(signalRef.current.signal);
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
       setData(resp.data);
       if (onSuccess) onSuccess(resp.data);
