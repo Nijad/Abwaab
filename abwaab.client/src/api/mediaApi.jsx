@@ -7,4 +7,8 @@ export const mediaApi = {
         "Content-Type": "multipart/form-data",
       },
     }),
+  delete: (id, signal) =>
+    axiosPrivate.delete(`/api/Media/${id}`, {
+      signal: signal,
+    }),
 };

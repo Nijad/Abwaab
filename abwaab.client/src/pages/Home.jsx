@@ -4,7 +4,7 @@ import { PropertyCard } from "../components/PropertyCard";
 
 const Home = () => {
   return (
-    <div>
+    <div className="w-full">
       <HeroSlider />
       <div className="flex gap-7 justify-center m-5">
         <PropertyCard />

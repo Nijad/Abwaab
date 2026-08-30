@@ -19,6 +19,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Skeleton,
+  IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import MapIcon from "@mui/icons-material/Map";
@@ -36,26 +38,10 @@ import {
   PROPERTY_GET_DATA,
   PROPERTY_GET_LISTS,
   PROPERTY_UPDATE_DATA,
+  ORIENTATIONS,
 } from "../../dataTypes/propertis";
-
-const orientations = [
-  {
-    attributeId: "b6c2c609-8240-4a8e-a57a-01b2e2c22f89",
-    attributeName: "شرقي",
-  },
-  {
-    attributeId: "28e3819e-cfd1-404b-9fed-09264b61a9ed",
-    attributeName: "جنوبي",
-  },
-  {
-    attributeId: "4d3568ee-436b-4a53-9601-261312622055",
-    attributeName: "شمالي",
-  },
-  {
-    attributeId: "539c754b-dae7-47fc-aa13-f48817ac3475",
-    attributeName: "غربي",
-  },
-];
+import { Close } from "@mui/icons-material";
+import MediaDelete from "./MediaDelete";
 
 // ==========================================
 // 1. MEMOIZED COMPONENTS (Prevents Re-renders)
@@ -233,7 +219,7 @@ const EditPropertyById = () => {
       staticData.attributes.filter(
         (a) =>
           a.datayTypeDescription === "boolean" &&
-          !orientations.find((b) => a.attributeId === b.attributeId)
+          !ORIENTATIONS.find((b) => a.attributeId === b.attributeId)
       ),
     [staticData.attributes]
   );
@@ -417,8 +403,12 @@ const EditPropertyById = () => {
   const getCoverImage = useCallback(() => {
     var img = formData.propertyMediaList.find((m) => m.isCover === true);
     if (img) {
-      return `${import.meta.env.VITE_API_BASE_URL}${img.filePath}`;
+      return {
+        id: img.mediaId,
+        filePath: `${import.meta.env.VITE_API_BASE_URL}${img.filePath}`,
+      };
     }
+    return null;
   }, [formData]);
 
   const getMediaTypeInfo = useCallback(
@@ -444,9 +434,34 @@ const EditPropertyById = () => {
     setFormData({ ...formData, longitude: data.lng, latitude: data.lat });
   };
 
+  const handleUploadImage = (data) => {
+    const newMedia = [...formData.propertyMediaList];
+    newMedia.push(data);
+    setFormData({ ...formData, propertyMediaList: newMedia });
+  };
+  const handleDeleteImage = (id) => {
+    const newMedia = formData.propertyMediaList.filter((m) => m.mediaId !== id);
+    setFormData({ ...formData, propertyMediaList: newMedia });
+  };
+
   useEffect(() => {
     setTimeout(() => fetchProperty(), 0);
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-nowrap w-full gap-3">
+        <div className="w-full">
+          <Skeleton
+            variant="rounded"
+            width={"100%"}
+            height={"80vh"}
+            sx={{ borderRadius: "18px", marginX: "5px" }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen mt-5 flex justify-center w-full">
@@ -461,30 +476,15 @@ const EditPropertyById = () => {
               المعلومات الأساسية
             </Typography>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-              {/* <div className="md:col-span-1 border-2 border-dashed border-sky-300 rounded-2xl p-6 bg-neutral-50 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-neutral-100 transition-colors h-full min-h-[300px] w-full">
-                <div className="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center mb-3">
-                  <AddIcon className="text-neutral-600" />
-                </div>
-                <Typography className="font-bold text-neutral-800 mb-1">
-                  إضافة صورة الغلاف
-                </Typography>
-                <Typography variant="caption" className="text-neutral-400">
-                  مطلوبة
-                </Typography>
-              </div> */}
-              {/* {
-                formData.propertyMediaList.map(m=>{
-                  if(m.isCover){
-                    return(
-
-                    )
-                  }
-                })
-              } */}
               <MediaUploader
+                key={getCoverImage()?.id}
                 propertyId={formData.propertyId}
                 mediaInfo={getMediaTypeInfo("image")}
-                imageUrl={getCoverImage()}
+                image={getCoverImage()}
+                required={true}
+                isCover={true}
+                onUploaded={handleUploadImage}
+                onDeleted={handleDeleteImage}
               />
 
               <div className="md:col-span-2 space-y-5 text-right">
@@ -533,7 +533,7 @@ const EditPropertyById = () => {
                     اتجاهات العقار (اختياري)
                   </Typography>
                   <BoolToggleButtonGroup
-                    items={orientations}
+                    items={ORIENTATIONS}
                     selectedIds={formData.propertyAttributesList}
                     onToggle={handleBoolAttributes}
                   />
@@ -756,12 +756,67 @@ const EditPropertyById = () => {
                 يمكنك إضافة حتى 10 صور للعقار، ويمكن إرفاق فيديو من نافذة الرفع.
               </Typography>
             </div>
-            <Button
+            <div className="flex flex-nowrap items-center justify-start max- overflow-x-scroll gap-2">
+              {formData.propertyMediaList.map((m) => {
+                if (m.mediaTypeName.toLowerCase() === "image") {
+                  return (
+                    <div
+                      key={m.mediaId}
+                      className="relative min-w-24 max-w-32 h-32 rounded-2xl overflow-hidden"
+                    >
+                      <img
+                        src={`${import.meta.env.VITE_API_BASE_URL}${
+                          m.filePath
+                        }`}
+                        alt={m.mediaTypeName}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-0 left-0 p-1 -translate-x-ful">
+                        {/* <IconButton
+                          color="error"
+                          sx={{
+                            backgroundColor: "#ffffff83",
+                            // position: "absolute",
+                            // right: "3%",
+                            // top: "3%",
+                            // alignContent: "end",
+                          }}
+                          title="حذف الصورة"
+                          className="hover:!bg-white "
+                          onClick={(e) => handleDeleteImage(e)}
+                          size="small"
+                        >
+                          <Close />
+                        </IconButton> */}
+                        <MediaDelete
+                          id={m.mediaId}
+                          onDeleted={handleDeleteImage}
+                          key={m.mediaId}
+                        />
+                      </div>
+                    </div>
+                  );
+                }
+              })}
+              <div className="min-w-28">
+                <MediaUploader
+                  // key={getCoverImage()?.id}
+                  propertyId={formData.propertyId}
+                  mediaInfo={getMediaTypeInfo("image")}
+                  // image={getCoverImage()}
+                  required={false}
+                  isCover={false}
+                  onUploaded={handleUploadImage}
+                  onDeleted={handleDeleteImage}
+                />
+              </div>
+            </div>
+            {/* <Button
               variant="contained"
               className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium capitalize rounded-lg px-6 py-2"
             >
               إضافة صور للعقار
-            </Button>
+            </Button> */}
           </Box>
 
           {/* Actions Footer */}

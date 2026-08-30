@@ -179,3 +179,10 @@ export const PROPERTY_GET_LISTS = {
     },
   ],
 };
+export const PROPERTY_MEDIA = {
+  mediaTypeId: "",
+  mediaId: "",
+  filePath: "",
+  mediaTypeName: "",
+  isCover: true,
+};
