@@ -11,6 +11,7 @@ namespace Abwaab.Application.Repositories
         Task<Finishing?> FindPropertyFinishingByIdAsync(Guid finishingId);
         Task<PropertyState?> FindPropertyStateByStateNameAsync(string propertyStateName);
         Task<PropertyType?> FindPropertyTypeByIdAsync(Guid propertyTypeId);
+        Task<Property?> FindPropertyWithUserAndStateByIdAsync(Guid propertyId);
         Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId);
         Task<List<Finishing>> GetPropertyFinishingListAsync();
         Task<List<PropertyType>> GetProperyTypesList();

@@ -30,6 +30,9 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
             builder.Property(p => p.IsStard)
                    .HasDefaultValue(false);
 
+            builder.Property(p => p.Note)
+                .HasMaxLength(500);
+
             // Relationships
             builder.HasOne(p => p.UserPlan)
                    .WithMany(u => u.Properties)

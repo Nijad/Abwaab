@@ -8,7 +8,6 @@ import logo from "../assets/imgs/logo.svg";
 import LoginUser from "../features/LoginUser";
 
 const Login = () => {
-  const { login, setIdentifier } = useAuth();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -16,8 +15,7 @@ const Login = () => {
     var isAdmin;
     try {
       isAdmin = response.isAdmin;
-      login(response);
-      setIdentifier(data.identifier);
+
       if (isAdmin) navigate("/admin", { replace: true });
       else navigate("/portal", { replace: true });
     } catch (error) {

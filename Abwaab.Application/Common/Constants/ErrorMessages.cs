@@ -56,5 +56,9 @@
         public const string PropertyAlreadyUnstared = "العقار تم إلغاء تمييزه مسبقاً.";
         public const string HasNoCoverImage = "صورة غلاف العقار مطلوبة.";
         public const string AppointmentStateNotFound = "حالة الموعد المطلوبة غير موجودة.";
+        public const string NoTimeSlotsConfigured = "لم يتم تحديد فترات زمنية للعقار.";
+        public const string SameOwner = "لا يمكنك حجز موعد لهذا العقار، حيث أنه يعود إليك.";
+        public const string NotPublishedProperty = "لا يمكنك حجز موعد لهذا العقار، حيث أن العقار غير متاح حالياً.";
+        public const string TimeSlotNotAvailable = "الوقت الذي اخترته لحجز موعد زيارة للعقار لم يعد متاحاً، يرجى اختيار وقت آخر.";
     }
 }

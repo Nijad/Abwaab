@@ -7,7 +7,7 @@ namespace Abwaab.Application.Features.Properties.Common.Validations
     {
         public TimeSlotDTOValidator()
         {
-            RuleFor(x => x.Day)
+            RuleFor(x => x.DayNumber)
                 .InclusiveBetween(0, 6) 
                 .WithMessage("اليوم يجب أن يكون رقم بين 0 و 6.");
 

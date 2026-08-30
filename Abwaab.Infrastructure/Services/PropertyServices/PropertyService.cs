@@ -1,6 +1,6 @@
 ﻿using Abwaab.Application.Common.Exceptions.Properties.Attributes;
 using Abwaab.Application.Contracts.Properties;
-using Abwaab.Application.Features.Properties.Queries.GetUserPropertiesSummaryList;
+using Abwaab.Application.Features.Properties.Queries.UserProperties;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
@@ -74,24 +74,33 @@ namespace Abwaab.Infrastructure.Services.PropertyServices
             return await _propertyRepository.GetStaredPropertyCountInPlanAsync(userPlandId);
         }
 
-        public async Task<List<GetUserPropertySummaryResponse>> GetUserPropertiesSummaryAsync(Guid userId)
+        public async Task<List<UserPropertiesResponse>> GetUserPropertiesSummaryAsync(Guid userId)
         {
             List<Property> propertyList = await _propertyRepository.GetUserPropertiesList(userId);
 
-            List<GetUserPropertySummaryResponse> response = new();
+            List<UserPropertiesResponse> response = new();
             foreach (var property in propertyList)
                 response.Add(new()
                 {
                     propertyId = property.Id,
-                    AreaInSquareMeter = (decimal)property.AreaInSquareMeter!,
-                    CoverImage = property.MediaList?.FirstOrDefault()?.FilePath!,
-                    Price = (decimal)property.Price!,
-                    PropertyFinishing = property.Finishing?.FinishingName!,
-                    PropertyType = property.PropertyType?.TypeName!,
+                    AreaInSquareMeter = property.AreaInSquareMeter,
+                    CoverImage = property.MediaList?.FirstOrDefault()?.FilePath,
+                    Price = property.Price,
+                    PropertyFinishing = property.Finishing?.FinishingName,
+                    PropertyType = property.PropertyType?.TypeName,
+                    PropertyState = property.PropertyState.StateName,
                     Title = property.Title!
                 });
 
             return response;
+        }
+
+        public async Task<Property> FindPropertyWithUserAndStateByIdAsync(Guid propertyId, string errorTitle)
+        {
+            Property? property = await _propertyRepository.FindPropertyWithUserAndStateByIdAsync(propertyId);
+            if (property == null)
+                throw new PropertyNotFoundException(errorTitle);
+            return property;
         }
     }
 }

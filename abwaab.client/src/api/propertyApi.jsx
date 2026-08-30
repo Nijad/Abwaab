@@ -12,11 +12,19 @@ export const propertyApi = {
   addProperty: (signal) =>
     axiosPrivate.post("/api/Property/add-property", null, { signal: signal }),
   userProperties: (signal) =>
-    axiosPrivate.get("/api/property/user-properties", { signal: signal }),
+    axiosPrivate.get("/api/Property/UserProperties", { signal: signal }),
+  propertyDetails: (id, signal) =>
+    axiosPrivate.get(`/api/Property/propertydetails?propertyId=${id}`, {
+      signal: signal,
+    }),
   starProperty: (id, signal) =>
     axiosPrivate.post("/api/property/star", { id: id }, { signal: signal }),
   getPropertyVisitRequests: (signal) =>
     axiosPrivate.get("/api/Property/get-visits", {
+      signal: signal,
+    }),
+  propertyTimeSlots: (id, signal) =>
+    axiosPrivate.get(`/api/Property/PropertyTimeSlots?propertyId=${id}`, {
       signal: signal,
     }),
   rejectVisit: (id, signal) =>
@@ -25,4 +33,8 @@ export const propertyApi = {
       { id: id },
       { signal: signal }
     ),
+  bookAppointment: (dateInfo, signal) =>
+    axiosPrivate.post("/api/Appointment/BookAppointment", dateInfo, {
+      signal: signal,
+    }),
 };

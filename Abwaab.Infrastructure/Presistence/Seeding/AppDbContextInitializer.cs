@@ -1,11 +1,13 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Interfaces;
+using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Whipstaff.Core.Entities;
 
 namespace Abwaab.Infrastructure.Presistence.Seeding
 {
@@ -75,6 +77,9 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
                 LockoutEnabled = false
             };
 
+            if (!await _context.NotificationWays.AnyAsync())
+                await _context.NotificationWays.AddRangeAsync(SeedData.LoadNotificationWays());
+
             if (await _userManager.Users.AllAsync(u => u.UserName != adminUser.UserName))
             {
                 // Password hashing happens safely at runtime here
@@ -83,6 +88,18 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(adminUser, adminRole.Name);
+                    _context.UserNotificationSubscriptions.AddRange(
+                    new(){
+                        UserId = adminUser.Id,
+                        NotificationWayId = new Guid("aa3e3203-b836-45e3-a426-08def51dd8da"),
+                        IsInactive = false
+                    },
+                    new(){
+                        UserId = adminUser.Id,
+                        NotificationWayId = new Guid("a283fe32-a907-4b50-a428-08def51dd8da"),
+                        IsInactive = false
+                    });
+                    await _context.SaveChangesAsync();
                 }
             }
 
@@ -100,9 +117,6 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
 
             if (!await _context.NotificationStates.AnyAsync())
                 await _context.NotificationStates.AddRangeAsync(SeedData.LoadNotificationStates());
-
-            if (!await _context.NotificationWays.AnyAsync())
-                await _context.NotificationWays.AddRangeAsync(SeedData.LoadNotificationWays());
 
             if (!await _context.AppointmentActions.AnyAsync())
                 await _context.AppointmentActions.AddRangeAsync(SeedData.LoadAppointmentActions());

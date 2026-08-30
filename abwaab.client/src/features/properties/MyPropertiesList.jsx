@@ -52,7 +52,7 @@ const MyPropertiesList = ({
   onVisitPreview,
   onSuccess,
 }) => {
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const signalRef = useRef();
@@ -124,7 +124,7 @@ const MyPropertiesList = ({
           </div>
         </div>
       )}
-      {dataTest.map((itm) => (
+      {data.map((itm) => (
         <UserProperty
           data={itm}
           onEdit={() => navigate(`edit/${itm.propertyId}`)}

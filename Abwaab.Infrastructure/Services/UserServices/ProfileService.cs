@@ -37,7 +37,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
 
         public async Task<NotificationWay> FindNotificationWayByNameAsync(NotificationWaysEnum wayName, string errorTitle)
         {
-            NotificationWay? notificationWay = await _notificationWayRepository.GetNotificationWayByNameAsync(wayName.ToString());
+            NotificationWay? notificationWay = await _notificationWayRepository.FindNotificationWayByNameAsync(wayName.ToString());
             if (notificationWay == null)
                 throw new NotFoundException(
                     nameof(NotificationWay),
@@ -88,7 +88,7 @@ namespace Abwaab.Infrastructure.Services.UserServices
               
         public async Task SubscribeNotificationWayCommandAsync(ApplicationUser user, NotificationWaysEnum notificationWayType)
         {
-            NotificationWay? notificationWay = await _notificationWayRepository.GetNotificationWayByNameAsync(notificationWayType.ToString());
+            NotificationWay? notificationWay = await _notificationWayRepository.FindNotificationWayByNameAsync(notificationWayType.ToString());
 
             if (notificationWay != null)
             {

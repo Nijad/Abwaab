@@ -230,6 +230,7 @@ export function collapseTimeSlots(timeSlots = [], weekDaysList, endTime) {
       };
     }
   }
+
   // let startMins = parseMinutes(startTime);
   // let endMins = parseMinutes(endTime);
 
@@ -258,4 +259,50 @@ export function collapseTimeSlots(timeSlots = [], weekDaysList, endTime) {
   // }
 
   return slots;
+}
+export function formatDateWithDayAr(timestamp) {
+  const date = new Date(timestamp);
+
+  // Arrays for day and month names
+  const days = [
+    "الأحد",
+    "الإثنين",
+    "الثلاثاء",
+    "الأربعاء",
+    "الخميس",
+    "الجمعة",
+    "السبت",
+  ];
+  const months = [
+    "كانون الثاني",
+    "شباط",
+    "آذار",
+    "نيسان",
+    "ايار",
+    "حزيران",
+    "تموز",
+    "آب",
+    "ايلول",
+    "تشرين الأول",
+    "تشرين الثاني",
+    "كانون الأول",
+  ];
+
+  // Get date components
+  const dayName = days[date.getDay()]; // Get day name (0-6)
+  const day = date.getDate(); // Get day of month (1-31)
+  const month = months[date.getMonth()]; // Get month name
+  const year = date.getFullYear(); // Get full year
+
+  // Format time components
+  let hours = date.getHours();
+  const ampm = hours >= 12 ? "م" : "ص";
+  hours = hours % 12;
+  hours = hours ? hours : 12; // Convert 0 to 12
+
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
+
+  // Combine all components
+  return `${dayName}, ${day} ${month}`;
 }

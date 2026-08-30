@@ -6,6 +6,7 @@ using Abwaab.Infrastructure.Presistence.Context;
 using Abwaab.Infrastructure.Presistence.Seeding;
 using Abwaab.Infrastructure.Services.Common;
 using Abwaab.Infrastructure.Services.EmailServices;
+using Abwaab.Infrastructure.Services.Notifications;
 using Abwaab.Infrastructure.Services.SmsServices;
 using Abwaab.Infrastructure.Services.StorageServices;
 using Abwaab.Infrastructure.Services.UserServices;
@@ -31,7 +32,8 @@ namespace Abwaab.Infrastructure
         {
             services.AddMemoryCache();
             services.AddScoped<ITokenCacheService, TokenCacheService>();
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AppDbContext>(options => 
+            options.UseSqlServer(config.GetConnectionString("DefaultConnection")).LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information));
 
             services.Configure<JwtSettings>(config.GetSection("JwtSettings"));
             var jwtSettings = config.GetSection(nameof(JwtSettings)).Get<JwtSettings>() ?? throw new Exception("JwtSettings are missing in appsettings.json");
@@ -133,6 +135,8 @@ namespace Abwaab.Infrastructure
             services.AddScoped<IUrlBuilder, UrlBuilder>();
             services.AddScoped<IStorageService, LocalStorageService>();
             services.AddScoped<ITransactionManager, EfCoreTransactionManager>();
+            services.AddScoped<INotificationChannel, EmailChannel>();
+            services.AddScoped<INotificationChannel, SmsChannel>();
 
             return services;
         }

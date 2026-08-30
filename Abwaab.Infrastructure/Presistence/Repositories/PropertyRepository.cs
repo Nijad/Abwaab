@@ -49,6 +49,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 .ThenInclude(x => x.AttributeDataType)
                 .Include(x => x.MediaList)
                 .ThenInclude(x => x.MediaType)
+                .Include(x=>x.PropertyState)
                 .Where(p => p.Id == propertyId)
                 .FirstOrDefaultAsync();
         }
@@ -66,6 +67,16 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         public async Task<PropertyType?> FindPropertyTypeByIdAsync(Guid propertyTypeId)
         {
             return await _context.PropertyTypes.Where(x => x.Id == propertyTypeId).FirstOrDefaultAsync();
+        }
+
+        public async Task<Property?> FindPropertyWithUserAndStateByIdAsync(Guid propertyId)
+        {
+            return await _context.Properties
+                .Include(x=>x.UserPlan)
+                .ThenInclude(x=>x.User)
+                .Include(x=>x.PropertyState)
+                .Where(x => x.Id == propertyId)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId)
@@ -96,6 +107,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 .Include(x => x.PropertyType)
                 .Include(x => x.Finishing)
                 .Include(x => x.MediaList.Where(y=>y.IsCover))
+                .Include(x=>x.PropertyState)
                 .Where(x => x.UserPlan.UserId == userId)
                 .ToListAsync();
         }

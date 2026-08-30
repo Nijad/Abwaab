@@ -34,5 +34,12 @@
         public const string UnstarProperty = "إلغاء تمييز عقار";
         public const string SaveProperty = "حفظ العقار للنشر";
         public const string PropertiesQuery = "الاستعلام عن العقارات";
+        public const string RejectProperty = "رفض عقار";
+        public const string AcceptProperty = "الموافقة على عقار";
+        public const string DisableProperty = "إلغاء تفعيل عرض عقار";
+        public const string EnableProperty = "إعادة تفعيل عرض عقار";
+        public const string PropertyDetails = "تفاصيل العقار";
+        public const string TimeSlotsQuery = "الاستعلام عن الأوقات المتاحة للزيارة";
+        public const string BookAppointment = "حجز موعد زيارة عقار";
     }
 }
