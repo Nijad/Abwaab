@@ -1,4 +1,4 @@
-﻿namespace Abwaab.Application.Features.Appointments.Book;
+﻿namespace Abwaab.Application.Features.Appointments.Commands.Book;
 
 public class BookAppointmentResponse
 {

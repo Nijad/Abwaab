@@ -42,5 +42,6 @@
         public const string TimeSlotsQuery = "الاستعلام عن الأوقات المتاحة للزيارة";
         public const string BookAppointment = "حجز موعد زيارة عقار";
         public const string ConfirmAppointment = "تأكيد موعد زيارة عقار";
+        public const string UserAppointments = "الاستعلام عن المواعيد";
     }
 }

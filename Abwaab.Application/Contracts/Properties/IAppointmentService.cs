@@ -15,5 +15,5 @@ public interface IAppointmentService
     Task<List<Appointment>> GetBookedAppointments(Guid propertyId, DateOnly startDate, DateOnly endDate, string errorTitle, CancellationToken cancellationToken);
     Task AddAppointmentAsync(Appointment appointment);
     Task<Appointment> FindAppointmentByIdAsync(Guid appointmentId, string errorTitle, CancellationToken cancellationToken);
-    Task UpdateAppointment(Appointment appointment, CancellationToken cancellationToken);
+    Task UpdateAppointmentAsync(Appointment appointment, CancellationToken cancellationToken);
 }

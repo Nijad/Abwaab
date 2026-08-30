@@ -57,6 +57,7 @@ public class AppointmentRepository : IAppointmentRepository
             .Include(x=>x.User)
             .Include(x=>x.Property)
             .ThenInclude(x=>x.UserPlan)
+            .ThenInclude(x=>x.User)
             .Where(x=>x.Id== appointmentId)
             .FirstOrDefaultAsync(cancellationToken);
     }
