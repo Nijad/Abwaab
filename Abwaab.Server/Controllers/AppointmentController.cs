@@ -4,7 +4,7 @@ using Abwaab.Application.Features.Appointments.Commands.Complete;
 using Abwaab.Application.Features.Appointments.Commands.Confirm;
 using Abwaab.Application.Features.Appointments.Commands.Refuse;
 using Abwaab.Application.Features.Appointments.Commands.Report;
-using Abwaab.Application.Features.Users.Auth.Register;
+using Abwaab.Application.Features.Appointments.Queries.GetUserAppointments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +29,6 @@ public class AppointmentController : ControllerBase
         if (command == null)
             return BadRequest();
 
-
         BookAppointmentResponse response = await _mediator.Send(command);
 
         return Ok(response);
@@ -40,7 +39,6 @@ public class AppointmentController : ControllerBase
     {
         if (command == null)
             return BadRequest();
-
 
         ConfirmAppointmentResponse response = await _mediator.Send(command);
 
@@ -53,7 +51,6 @@ public class AppointmentController : ControllerBase
         if (command == null)
             return BadRequest();
 
-
         CancelAppointmentResponse response = await _mediator.Send(command);
 
         return Ok(response);
@@ -64,7 +61,6 @@ public class AppointmentController : ControllerBase
     {
         if (command == null)
             return BadRequest();
-
 
         CompleteAppointmentResponse response = await _mediator.Send(command);
 
@@ -77,7 +73,6 @@ public class AppointmentController : ControllerBase
         if (command == null)
             return BadRequest();
 
-
         RefuseAppointmentResponse response = await _mediator.Send(command);
 
         return Ok(response);
@@ -89,8 +84,15 @@ public class AppointmentController : ControllerBase
         if (command == null)
             return BadRequest();
 
-
         ReportAppointmentResponse response = await _mediator.Send(command);
+
+        return Ok(response);
+    }
+
+    [HttpGet("UserAppointments")]
+    public async Task<IActionResult> UserAppointments()
+    {
+        List<GetUserAppointmentsResponse> response = await _mediator.Send(new GetUserAppointmentsQuery());
 
         return Ok(response);
     }

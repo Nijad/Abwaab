@@ -28,7 +28,8 @@ public class GetUserAppointmentsQueryHandler : IRequestHandler<GetUserAppointmen
         if (user == null)
             throw new UserNotFoundException(username, errorTitle);
 
-        List<GetUserAppointmentsResponse> responses = new();
+        List<GetUserAppointmentsResponse> responses = await _appointmentService.GetUserAppointmentsByUserIdAsync(user.Id, errorTitle);
+        
         return responses;
     }
 }
