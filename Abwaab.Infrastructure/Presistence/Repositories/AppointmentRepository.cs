@@ -67,4 +67,18 @@ public class AppointmentRepository : IAppointmentRepository
         _context.Appointments.Update(appointment);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<List<Appointment>> GetUserAppointmentsByUserIdAsync(Guid userId)
+    {
+        return await _context.Appointments
+            .Include(x=>x.AppointmentState)
+            .Include(x=>x.User)
+            .Include(x=>x.Property)
+            .ThenInclude(x=>x.UserPlan)
+            .ThenInclude(x=>x.User)
+            .Include(x=>x.Property)
+            .ThenInclude(x=>x.MediaList)
+            .Where(x=>x.UserId== userId || x.Property.UserPlan.UserId==userId)
+            .ToListAsync();
+    }
 }
