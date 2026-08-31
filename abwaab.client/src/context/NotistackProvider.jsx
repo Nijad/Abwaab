@@ -15,6 +15,7 @@ const NotistackProvider = ({ children }) => {
         success: StyledMaterialDesignContent,
         error: StyledMaterialDesignContent,
       }}
+      autoHideDuration={3000}
     >
       {children}
     </SnackbarProvider>

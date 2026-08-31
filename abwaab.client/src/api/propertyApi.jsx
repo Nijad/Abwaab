@@ -9,6 +9,10 @@ export const propertyApi = {
     axiosPrivate.put(`/api/Property/update-property`, properyData, {
       signal: signal,
     }),
+  submitProperty: (properyData, signal) =>
+    axiosPrivate.put(`/api/Property/submit-property`, properyData, {
+      signal: signal,
+    }),
   addProperty: (signal) =>
     axiosPrivate.post("/api/Property/add-property", null, { signal: signal }),
   userProperties: (signal) =>

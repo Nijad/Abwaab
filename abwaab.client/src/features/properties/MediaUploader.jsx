@@ -64,7 +64,7 @@ const MediaUploader = ({
       formData.append("PropertyId", propertyId);
       formData.append("MediaTypeId", mediaInfo.mediaTypeId);
       formData.append("MediaTypeName", mediaInfo.mediaTypeName);
-      formData.append("IsCover", true);
+      formData.append("IsCover", isCover);
 
       const response = await mediaApi.upload(formData);
 
@@ -75,7 +75,7 @@ const MediaUploader = ({
       //   }`,
       // });
       enqueueSnackbar(response.data.message, { variant: "success" });
-      const obj = PROPERTY_MEDIA;
+      const obj = { ...PROPERTY_MEDIA };
       obj.filePath = response.data.filePath;
       obj.isCover = isCover;
       obj.mediaId = response.data.id;
@@ -84,26 +84,7 @@ const MediaUploader = ({
       onUploaded?.(obj);
     } catch (error) {
       console.error("Upload error:", error);
-      enqueueSnackbar(error.title, { variant: "error" });
-      //   onUploadError?.(error.message || "حدث خطأ أثناء رفع الصورة");
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const deleteImage = async () => {
-    if (!image?.id) {
-      return;
-    }
-    try {
-      const response = await mediaApi.delete(image.id);
-
-      // setUploadedImage(null);
-      enqueueSnackbar(response.data.message, { variant: "success" });
-      onDeleted?.(image.id);
-    } catch (error) {
-      console.error("Upload error:", error);
-      enqueueSnackbar(error.title, { variant: "error" });
+      enqueueSnackbar(error.detail, { variant: "error" });
       //   onUploadError?.(error.message || "حدث خطأ أثناء رفع الصورة");
     } finally {
       setIsUploading(false);
@@ -133,11 +114,6 @@ const MediaUploader = ({
     fileInputRef.current?.click();
   };
 
-  const handleDeleteImage = (e) => {
-    e.stopPropagation();
-    deleteImage();
-  };
-
   useEffect(() => {
     if (image) {
       setTimeout(() => {
@@ -152,10 +128,10 @@ const MediaUploader = ({
   return (
     <React.Fragment>
       <div
-        onClick={handleClick}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
+        onClick={(e) => handleClick(e)}
+        onDragOver={(e) => handleDragOver(e)}
+        onDragLeave={(e) => handleDragLeave(e)}
+        onDrop={(e) => handleDrop(e)}
         className={`md:col-span-1 ${
           !image ? "border-2 border-dashed" : ""
         } rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all h-full  w-full relative overflow-hidden ${
