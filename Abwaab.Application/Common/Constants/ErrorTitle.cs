@@ -40,5 +40,7 @@
         public const string EnableProperty = "إعادة تفعيل عرض عقار";
         public const string PropertyDetails = "تفاصيل العقار";
         public const string TimeSlotsQuery = "الاستعلام عن الأوقات المتاحة للزيارة";
+        public const string SellProperty = "تأكيد بيع العقار";
+        public const string DeleteProperty = "حذف العقار";
     }
 }
