@@ -92,7 +92,7 @@ public class AppointmentController : ControllerBase
     [HttpGet("UserAppointments")]
     public async Task<IActionResult> UserAppointments()
     {
-        List<GetUserAppointmentsResponse> response = await _mediator.Send(new GetUserAppointmentsQuery());
+        GetUserAppointmentsResponse response = await _mediator.Send(new GetUserAppointmentsQuery());
 
         return Ok(response);
     }

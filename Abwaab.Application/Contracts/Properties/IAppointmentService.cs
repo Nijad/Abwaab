@@ -17,5 +17,5 @@ public interface IAppointmentService
     Task AddAppointmentAsync(Appointment appointment);
     Task<Appointment> FindAppointmentByIdAsync(Guid appointmentId, string errorTitle, CancellationToken cancellationToken);
     Task UpdateAppointmentAsync(Appointment appointment, CancellationToken cancellationToken);
-    Task<List<GetUserAppointmentsResponse>> GetUserAppointmentsByUserIdAsync(Guid userId, string errorTitle);
+    Task<GetUserAppointmentsResponse> GetUserAppointmentsByUserIdAsync(Guid userId, string errorTitle);
 }
