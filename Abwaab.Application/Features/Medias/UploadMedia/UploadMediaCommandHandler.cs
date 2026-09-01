@@ -74,7 +74,7 @@ namespace Abwaab.Application.Features.Medias.UploadMedia
                         canUpload = property.UserPlan.Plan.MaxVideosCount > mediaCount;
 
                     if (!canUpload)
-                        throw new ExceededAllowedImageNumberException(property.UserPlan.Plan, errorTitle);
+                        throw new ExceededAllowedVideoNumberException(property.UserPlan.Plan, errorTitle);
                 }
                 else
                 {

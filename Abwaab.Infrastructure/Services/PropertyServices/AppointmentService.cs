@@ -1,8 +1,11 @@
 ﻿using Abwaab.Application.Common.Enums;
 using Abwaab.Application.Common.Exceptions.Appointments;
+using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts.Properties;
+using Abwaab.Application.Features.Appointments.Queries.GetUserAppointments;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.AppointmentEntities;
+using Azure;
 
 namespace Abwaab.Infrastructure.Services.PropertyServices;
 
@@ -89,5 +92,58 @@ public class AppointmentService : IAppointmentService
     public async Task UpdateAppointmentAsync(Appointment appointment, CancellationToken cancellationToken)
     {
         await _appointmentRepository.UpdateAppointment(appointment, cancellationToken);
+    }
+
+    public async Task<List<GetUserAppointmentsResponse>> GetUserAppointmentsByUserIdAsync(Guid userId, string errorTitle)
+    {
+        AppointmentState pending = await GetPendingAppointmentStateAsync(errorTitle);
+        AppointmentState confirmed = await GetConfirmedAppointmentStateAsync(errorTitle);
+
+        List<Appointment> appointments = await _appointmentRepository.GetUserAppointmentsByUserIdAsync(userId);
+
+        IEnumerable<IGrouping<DateTime, Appointment>> groupedByDay = appointments.GroupBy(x => x.Date.Date);
+
+        List<GetUserAppointmentsResponse> response = new();
+
+        foreach (IGrouping<DateTime, Appointment> date in groupedByDay)
+        {
+            GetUserAppointmentsResponse day = new();
+            day.AppointmentDate = DateOnly.FromDateTime(date.Key);
+            day.DayName = DayOfWeekMapping.Map(date.Key.DayOfWeek);
+            day.Appointments = new();
+
+            foreach (Appointment appointment in date)
+            {
+                AppointmentDetailsDTO details = new();
+
+                details.AppointmentId = appointment.Id;
+                details.FromTime = TimeOnly.FromDateTime(appointment.Date);
+                details.EndTime = appointment.EndTime;
+                details.AppointmentState = AppointmentStatesMapping.Map(appointment.AppointmentState.StateName);
+                details.AppointmentDirection = appointment.UserId == userId ? "requested" : "received";
+                details.Cancelable =
+                    appointment.AppointmentState == pending ||
+                    appointment.AppointmentState == confirmed ||
+                    appointment.Date.AddHours(6) > DateTime.Now;
+                details.Comments = appointment.UserComments ?? "";
+
+                details.Firstname = appointment.UserId == userId ? appointment.User.FirstName ?? "" : appointment.Property.UserPlan.User.FirstName ?? "";
+                details.Lastname = appointment.UserId == userId ? appointment.User.LastName ?? "" : appointment.Property.UserPlan.User.LastName ?? "";
+                details.Email = appointment.UserId == userId ? appointment.User.Email ?? "" : appointment.Property.UserPlan.User.Email ?? "";
+                details.PhoneNo = appointment.UserId == userId ? appointment.User.PhoneNumber ?? "" : appointment.Property.UserPlan.User.PhoneNumber ?? "";
+
+                details.PropertyId = appointment.PropertyId;
+                details.PropertyTitle = appointment.Property.Title ?? "";
+                details.CoverPath = appointment.Property.MediaList?.Where(x => x.IsCover).FirstOrDefault()?.FilePath ?? "";
+                details.Address = appointment.Property.Address ?? "";
+                details.Area = appointment.Property.AreaInSquareMeter ?? 0;
+                details.Price = appointment.Property.Price ?? 0;
+                day.Appointments.Add(details);
+            }
+
+            response.Add(day);
+        }
+
+        return response;
     }
 }

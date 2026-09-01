@@ -10,8 +10,8 @@ namespace Abwaab.Application.Common.Exceptions.Plans
             errorCode: ErrorCodes.ExceededAllowedNumber,
             returnToUser: true)
     {
-        string msg = plan.MaxPropertiesCountAtSameTime > 0 ?
-            $"لا يمكنك إضافة المزيد من الفيديو، لقد قمت بالفعل بإضافة {plan.MaxImagesCount} فيديو. قم بترقية اشتراكك" :
+        string msg = plan.MaxVideosCount > 0 ?
+            $"لا يمكنك إضافة المزيد من الفيديو، لقد قمت بالفعل بإضافة {plan.MaxVideosCount} فيديو. قم بترقية اشتراكك" :
             $"الخطة الحالية {plan.Name} لا تسمح لك بإضافة الفيديو. قم بترقية اشتراكك";
         public override string Message => msg;
     }
