@@ -2,6 +2,6 @@
 
 namespace Abwaab.Application.Features.Appointments.Queries.GetUserAppointments;
 
-public class GetUserAppointmentsQuery : IRequest<List<GetUserAppointmentsResponse>>
+public class GetUserAppointmentsQuery : IRequest<GetUserAppointmentsResponse>
 {
 }

@@ -1,4 +1,4 @@
-﻿namespace Abwaab.Application.Features.Appointments.Queries.GetUserAppointments;
+﻿namespace Abwaab.Application.Features.Appointments.Queries.GetUserAppointments.DTOs;
 
 public class AppointmentDetailsDTO
 {
