@@ -9,13 +9,13 @@ namespace Abwaab.Application.Features.Properties.Common.Validations
         {
             RuleFor(x => x.AttributeId)
                 .NotEmpty()
-                .WithMessage("رقم الميزة مطلوب.");
+                .WithMessage(x=>$"رقم الميزة '{x.AttributeName}' مطلوب.");
 
             RuleFor(x => x.Value)
                 .NotEmpty()
-                .WithMessage("قيمة الميزة مطلوبة.")
+                .WithMessage(x=>$"قيمة الميزة '{x.AttributeName}' مطلوبة.")
                 .MaximumLength(1000)
-                .WithMessage("قيمة الميزة يجب ألا تتجاوز 1000 محرف.");
+                .WithMessage(x=>$"قيمة الميزة '{x.AttributeName}' يجب ألا تتجاوز 1000 محرف.");
         }
     }
 }

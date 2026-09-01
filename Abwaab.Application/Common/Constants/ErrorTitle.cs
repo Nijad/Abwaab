@@ -43,5 +43,7 @@
         public const string BookAppointment = "حجز موعد زيارة عقار";
         public const string ConfirmAppointment = "تأكيد موعد زيارة عقار";
         public const string UserAppointments = "الاستعلام عن المواعيد";
+        public const string SellProperty = "تأكيد بيع العقار";
+        public const string DeleteProperty = "حذف العقار";
     }
 }

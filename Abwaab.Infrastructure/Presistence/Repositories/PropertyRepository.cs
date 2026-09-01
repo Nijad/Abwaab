@@ -28,6 +28,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 .ThenInclude(x => x.Plan)
                 .Include(p => p.TimeSlots)
                 .Include(p => p.PropertyAttributes)
+                .Include(p=>p.MediaList)
                 //.ThenInclude(x=>x.Attribute)
                 //.ThenInclude(x=>x.AttributeDataType)
                 .Where(x => x.Id == propertyId)
