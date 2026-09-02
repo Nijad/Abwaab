@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Abwaab.Application.Features.Appointments.Queries.GetUserAppointments;
 
-public class GetUserAppointmentsQueryHandler : IRequestHandler<GetUserAppointmentsQuery, List<GetUserAppointmentsResponse>>
+public class GetUserAppointmentsQueryHandler : IRequestHandler<GetUserAppointmentsQuery, GetUserAppointmentsResponse>
 {
     private readonly IUserService _userService;
     private readonly IAppointmentService _appointmentService;
@@ -20,7 +20,7 @@ public class GetUserAppointmentsQueryHandler : IRequestHandler<GetUserAppointmen
         _appointmentService = appointmentService;
     }
 
-    public async Task<List<GetUserAppointmentsResponse>> Handle(GetUserAppointmentsQuery request, CancellationToken cancellationToken)
+    public async Task<GetUserAppointmentsResponse> Handle(GetUserAppointmentsQuery request, CancellationToken cancellationToken)
     {
         //get user from context
         string username = _userService.FindUserNameByContext(errorTitle);
@@ -28,7 +28,7 @@ public class GetUserAppointmentsQueryHandler : IRequestHandler<GetUserAppointmen
         if (user == null)
             throw new UserNotFoundException(username, errorTitle);
 
-        List<GetUserAppointmentsResponse> responses = await _appointmentService.GetUserAppointmentsByUserIdAsync(user.Id, errorTitle);
+        GetUserAppointmentsResponse responses = await _appointmentService.GetUserAppointmentsByUserIdAsync(user.Id, errorTitle);
         
         return responses;
     }

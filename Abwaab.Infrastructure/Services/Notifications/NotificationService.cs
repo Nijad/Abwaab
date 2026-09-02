@@ -3,6 +3,7 @@ using Abwaab.Application.Common.Exceptions;
 using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Features.Notifications.Queries.GetAllNotificationWays;
+using Abwaab.Application.Features.Notifications.Queries.GetWebAppNotifications;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.UserEntities;
@@ -130,6 +131,24 @@ namespace Abwaab.Infrastructure.Services.Notifications
         public async Task<List<Notification>> GetPendingNotificationToSend(string errorTitle)
         {
             return await _notificationWayRepository.GetPendingNotificationToSend(await GetPendingNotficationStateAsync(errorTitle));
+        }
+
+        public async Task<List<GetUserWebAppNotificationsRespnse>> GetUserNotificationsByUserIdAsync(bool unreadOnly, Guid userId)
+        {
+            List<Notification> notificationList = await _notificationWayRepository.GetUserNotificationsByUserIdAsync(unreadOnly, userId);
+
+            List<GetUserWebAppNotificationsRespnse> respnses = new();
+
+            foreach (Notification notification in notificationList)
+                respnses.Add(new()
+                {
+                    Title = notification.Title ?? "",
+                    Message = notification.Message,
+                    NotificationId = notification.Id,
+                    IsRead = notification.IsRead,
+                });
+
+            return respnses;
         }
     }
 }

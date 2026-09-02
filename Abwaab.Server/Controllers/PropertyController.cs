@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Features.Properties.Accept;
+using Abwaab.Application.Features.Properties.Delete;
 using Abwaab.Application.Features.Properties.Enable;
 using Abwaab.Application.Features.Properties.Queries.AvailableTimeSlots;
 using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
@@ -8,6 +9,7 @@ using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList;
 using Abwaab.Application.Features.Properties.Queries.UserProperties;
 using Abwaab.Application.Features.Properties.Reject;
+using Abwaab.Application.Features.Properties.Sell;
 using Abwaab.Application.Features.Properties.Star;
 using Abwaab.Application.Features.Properties.Submit;
 using Abwaab.Application.Features.Properties.Unstar;
@@ -31,7 +33,6 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPost("add-property")]
-        [Authorize(Roles = RoleConstants.ROLE_USER)]
         public async Task<IActionResult> AddProperty()
         {
             var result = await _mediator.Send(new AddPropertyCommand());
@@ -65,7 +66,6 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPut("update-property")]
-        [Authorize(Roles = RoleConstants.ROLE_USER)]
         public async Task<IActionResult> UpdateProperty([FromBody] UpdatePropertyCommand command)
         {
             var result = await _mediator.Send(command);
@@ -73,7 +73,6 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPut("submit-property")]
-        [Authorize(Roles = RoleConstants.ROLE_USER)]
         public async Task<IActionResult> SubmitProperty([FromBody] SubmitPropertyCommand command)
         {
             var result = await _mediator.Send(command);
@@ -97,7 +96,6 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPut("disable-property")]
-        [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
         public async Task<IActionResult> DisableProperty([FromBody] DisablePropertyCommand command)
         {
             var result = await _mediator.Send(command);
@@ -105,8 +103,21 @@ namespace Abwaab.Server.Controllers
         }
 
         [HttpPut("enable-property")]
-        [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
         public async Task<IActionResult> EnableProperty([FromBody] EnablePropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPut("sell-property")]
+        public async Task<IActionResult> SellProperty([FromBody] SellPropertyCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpDelete("delete-property")]
+        public async Task<IActionResult> DeleteProperty([FromBody] DeletePropertyCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

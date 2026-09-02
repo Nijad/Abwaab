@@ -3,8 +3,10 @@ using Abwaab.Application.Common.Exceptions.Appointments;
 using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Appointments.Queries.GetUserAppointments;
+using Abwaab.Application.Features.Appointments.Queries.GetUserAppointments.DTOs;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.AppointmentEntities;
+using Abwaab.Domain.Entities.UserEntities;
 using Azure;
 
 namespace Abwaab.Infrastructure.Services.PropertyServices;
@@ -94,7 +96,7 @@ public class AppointmentService : IAppointmentService
         await _appointmentRepository.UpdateAppointment(appointment, cancellationToken);
     }
 
-    public async Task<List<GetUserAppointmentsResponse>> GetUserAppointmentsByUserIdAsync(Guid userId, string errorTitle)
+    public async Task<GetUserAppointmentsResponse> GetUserAppointmentsByUserIdAsync(Guid userId, string errorTitle)
     {
         AppointmentState pending = await GetPendingAppointmentStateAsync(errorTitle);
         AppointmentState confirmed = await GetConfirmedAppointmentStateAsync(errorTitle);
@@ -103,11 +105,11 @@ public class AppointmentService : IAppointmentService
 
         IEnumerable<IGrouping<DateTime, Appointment>> groupedByDay = appointments.GroupBy(x => x.Date.Date);
 
-        List<GetUserAppointmentsResponse> response = new();
+        List<AppointmentsGroupDTO> appointmentsGroup = new();
 
         foreach (IGrouping<DateTime, Appointment> date in groupedByDay)
         {
-            GetUserAppointmentsResponse day = new();
+            AppointmentsGroupDTO day = new();
             day.AppointmentDate = DateOnly.FromDateTime(date.Key);
             day.DayName = DayOfWeekMapping.Map(date.Key.DayOfWeek);
             day.Appointments = new();
@@ -115,6 +117,10 @@ public class AppointmentService : IAppointmentService
             foreach (Appointment appointment in date)
             {
                 AppointmentDetailsDTO details = new();
+                ApplicationUser user = 
+                    appointment.UserId == userId ? 
+                    appointment.User : 
+                    appointment.Property.UserPlan.User;
 
                 details.AppointmentId = appointment.Id;
                 details.FromTime = TimeOnly.FromDateTime(appointment.Date);
@@ -127,10 +133,10 @@ public class AppointmentService : IAppointmentService
                     appointment.Date.AddHours(6) > DateTime.Now;
                 details.Comments = appointment.UserComments ?? "";
 
-                details.Firstname = appointment.UserId == userId ? appointment.User.FirstName ?? "" : appointment.Property.UserPlan.User.FirstName ?? "";
-                details.Lastname = appointment.UserId == userId ? appointment.User.LastName ?? "" : appointment.Property.UserPlan.User.LastName ?? "";
-                details.Email = appointment.UserId == userId ? appointment.User.Email ?? "" : appointment.Property.UserPlan.User.Email ?? "";
-                details.PhoneNo = appointment.UserId == userId ? appointment.User.PhoneNumber ?? "" : appointment.Property.UserPlan.User.PhoneNumber ?? "";
+                details.Firstname = user.FirstName ?? "";
+                details.Lastname = user.LastName ?? "";
+                details.Email = user.Email ?? "";
+                details.PhoneNo = user.PhoneNumber ?? "";
 
                 details.PropertyId = appointment.PropertyId;
                 details.PropertyTitle = appointment.Property.Title ?? "";
@@ -141,9 +147,13 @@ public class AppointmentService : IAppointmentService
                 day.Appointments.Add(details);
             }
 
-            response.Add(day);
+            appointmentsGroup.Add(day);
         }
 
-        return response;
+        return new()
+        {
+            ReceivedAppointments = appointmentsGroup.Where(x => x.Appointments.Any(y => y.AppointmentDirection == "received")).OrderBy(x => x.AppointmentDate).ToList(),
+            RequestedAppointments = appointmentsGroup.Where(x => x.Appointments.Any(y => y.AppointmentDirection == "requested")).OrderBy(x => x.AppointmentDate).ToList()
+        };
     }
 }
