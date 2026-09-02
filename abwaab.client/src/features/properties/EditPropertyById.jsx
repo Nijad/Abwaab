@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import MapIcon from "@mui/icons-material/Map";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useSnackbar } from "notistack";
 import { propertyApi } from "../../api";
 import {
@@ -39,9 +39,12 @@ import {
   PROPERTY_GET_LISTS,
   PROPERTY_UPDATE_DATA,
   ORIENTATIONS,
+  PROPERTY_MEDIA,
 } from "../../dataTypes/propertis";
 import { Close } from "@mui/icons-material";
 import MediaDelete from "./MediaDelete";
+import LabelTag from "../../components/LabelTag";
+import ShowErrors from "../../components/ShowErrors";
 
 // ==========================================
 // 1. MEMOIZED COMPONENTS (Prevents Re-renders)
@@ -189,17 +192,19 @@ const ScheduleGrid = memo(({ weekDaysList, schedules, onScheduleChange }) => {
 
 const EditPropertyById = () => {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   // SPLIT STATE: Static reference data vs Dynamic form data
   const [staticData, setStaticData] = useState(PROPERTY_GET_LISTS);
-
   const [formData, setFormData] = useState(PROPERTY_GET_DATA);
+  const [media, setMedia] = useState([PROPERTY_MEDIA]);
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const signalRef = useRef();
   const { enqueueSnackbar } = useSnackbar();
   const [schedules, setSchedules] = useState(null);
+
+  console.log(media);
 
   // MEMOIZE EXPENSIVE COMPUTATIONS
   const numberAttributes = useMemo(
@@ -251,34 +256,9 @@ const EditPropertyById = () => {
       }
 
       // Populate split states
-      setStaticData(
-        listState
-        //   {
-        //   propertyTypesList: resp.data.propertyTypesList || [],
-        //   propertyFinishingsList: resp.data.propertyFinishingsList || [],
-        //   weekDaysList: resp.data.weekDaysList || [],
-        //   attributes: resp.data.attributes || [],
-        //   mediaTypes: resp.data.mediaTypes || [],
-        // }
-      );
-
-      setFormData(
-        formState
-        //   {
-        //   propertyId: resp.data.propertyId || "",
-        //   title: resp.data.title,
-        //   description: resp.data.description,
-        //   address: resp.data.address,
-        //   areaInSquareMeter: resp.data.areaInSquareMeter,
-        //   price: resp.data.price,
-        //   latitude: resp.data.latitude,
-        //   longitude: resp.data.longitude,
-        //   propertyTypeId: resp.data.propertyTypeId,
-        //   propertyFinishingId: resp.data.propertyFinishingId,
-        //   propertyAttributesList: resp.data.propertyAttributesList || [],
-        // }
-      );
-
+      setStaticData(listState);
+      setFormData(formState);
+      setMedia(resp.data.propertyMediaList);
       setSchedules(
         collapseTimeSlots(resp.data.timeSlots, resp.data.weekDaysList)
       );
@@ -294,7 +274,7 @@ const EditPropertyById = () => {
     }
   };
 
-  const saveProperty = async () => {
+  const updateProperty = async () => {
     setLoading(true);
     if (signalRef.current) signalRef.current.abort();
     try {
@@ -312,14 +292,55 @@ const EditPropertyById = () => {
         }
       }
       // Merge for API payload
-      const updateData = PROPERTY_UPDATE_DATA;
+      const updateData = { ...PROPERTY_UPDATE_DATA };
       for (const [key, value] of Object.entries(formData)) {
         if (key in updateData) {
           updateData[key] = value;
         }
       }
       updateData.timeSlots = timeSlotsArr;
+      updateData.propertyMediaList = [...media];
       await propertyApi.updateProperty(updateData, signalRef.current.signal);
+      enqueueSnackbar("تم حفظ التعديلات بنجاح", { variant: "success" });
+    } catch (err) {
+      if (err.errorCode === "VALIDATION_FAILED") {
+        setErrors(err.errors);
+        enqueueSnackbar(err.detail, { variant: "error" });
+      } else {
+        enqueueSnackbar(err.message || err, { variant: "error" });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitProperty = async () => {
+    setLoading(true);
+    if (signalRef.current) signalRef.current.abort();
+    try {
+      signalRef.current = new AbortController();
+      const timeSlotsArr = [];
+      for (const day of staticData.weekDaysList) {
+        const dayData = { ...schedules[day.dayIndex] };
+        if (dayData?.checked) {
+          const tempArr = generateTimeSlots(
+            day,
+            dayData.startTime,
+            dayData.endTime
+          );
+          timeSlotsArr.push(...tempArr);
+        }
+      }
+      // Merge for API payload
+      const updateData = { ...PROPERTY_UPDATE_DATA };
+      for (const [key, value] of Object.entries(formData)) {
+        if (key in updateData) {
+          updateData[key] = value;
+        }
+      }
+      updateData.timeSlots = timeSlotsArr;
+      updateData.propertyMediaList = [...media];
+      await propertyApi.submitProperty(updateData, signalRef.current.signal);
       enqueueSnackbar("تم حفظ التعديلات بنجاح", { variant: "success" });
     } catch (err) {
       if (err.errorCode === "VALIDATION_FAILED") {
@@ -400,16 +421,28 @@ const EditPropertyById = () => {
     });
   }, []);
 
-  const getCoverImage = useCallback(() => {
-    var img = formData.propertyMediaList.find((m) => m.isCover === true);
-    if (img) {
-      return {
-        id: img.mediaId,
-        filePath: `${import.meta.env.VITE_API_BASE_URL}${img.filePath}`,
-      };
-    }
-    return null;
-  }, [formData]);
+  // const getCoverImage = useCallback(() => {
+  //   var img = formData.propertyMediaList.find((m) => m.isCover === true);
+  //   if (img) {
+  //     return {
+  //       id: img.mediaId,
+  //       filePath: `${import.meta.env.VITE_API_BASE_URL}${img.filePath}`,
+  //     };
+  //   }
+  //   return null;
+  // }, [formData]);
+  const findCoverImage = media.find((i) => i.isCover === true) || null;
+  const getCoverImage = findCoverImage && {
+    id: findCoverImage.mediaId,
+    filePath: `${import.meta.env.VITE_API_BASE_URL}${findCoverImage.filePath}`,
+  };
+  const imagesWithoutCover = media.filter(
+    (m) =>
+      m.isCover === false && m.mediaTypeName.toLocaleLowerCase() === "image"
+  );
+  const videosWithoutCover = media.filter(
+    (m) => m.mediaTypeName.toLocaleLowerCase() === "video"
+  );
 
   const getMediaTypeInfo = useCallback(
     (type = "") => {
@@ -435,13 +468,24 @@ const EditPropertyById = () => {
   };
 
   const handleUploadImage = (data) => {
-    const newMedia = [...formData.propertyMediaList];
+    console.log("data:", data);
+
+    const newMedia = [...media];
     newMedia.push(data);
-    setFormData({ ...formData, propertyMediaList: newMedia });
+    setMedia(newMedia);
+    setFormData((f) => ({
+      ...f,
+      remainingImagesAllowed: f.remainingImagesAllowed - 1,
+    }));
   };
+
   const handleDeleteImage = (id) => {
-    const newMedia = formData.propertyMediaList.filter((m) => m.mediaId !== id);
-    setFormData({ ...formData, propertyMediaList: newMedia });
+    const newMedia = media.filter((m) => m.mediaId !== id);
+    setMedia(newMedia);
+    setFormData((f) => ({
+      ...f,
+      remainingImagesAllowed: f.remainingImagesAllowed + 1,
+    }));
   };
 
   useEffect(() => {
@@ -477,10 +521,10 @@ const EditPropertyById = () => {
             </Typography>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
               <MediaUploader
-                key={getCoverImage()?.id}
+                key={"cover-uploade"}
                 propertyId={formData.propertyId}
                 mediaInfo={getMediaTypeInfo("image")}
-                image={getCoverImage()}
+                image={getCoverImage}
                 required={true}
                 isCover={true}
                 onUploaded={handleUploadImage}
@@ -489,6 +533,16 @@ const EditPropertyById = () => {
 
               <div className="md:col-span-2 space-y-5 text-right">
                 <div>
+                  <Typography
+                    variant="body2"
+                    className="text-neutral-600 font-medium mb-2"
+                  >
+                    حالة العقار
+                  </Typography>
+                  <LabelTag
+                    label={formData.propertyState}
+                    classes="my-2 px-3 bg-teal-500 text-white max-h-8 mb-3"
+                  />
                   <Typography
                     variant="body2"
                     className="text-neutral-600 font-medium mb-2"
@@ -543,6 +597,8 @@ const EditPropertyById = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
               <TextField
+                error={errors == null ? false : errors["Title"] ? true : false}
+                helperText={ShowErrors({ object: errors, key: "Title" })}
                 placeholder="وصف مختصر"
                 label="وصف مختصر"
                 variant="filled"
@@ -555,12 +611,19 @@ const EditPropertyById = () => {
                     [e.target.name]: e.target.value,
                   }))
                 }
-                InputProps={{
-                  disableUnderline: true,
-                  className: "rounded-lg bg-neutral-100/70",
-                }}
               />
               <TextField
+                error={
+                  errors == null
+                    ? false
+                    : errors["AreaInSquareMeter"]
+                    ? true
+                    : false
+                }
+                helperText={ShowErrors({
+                  object: errors,
+                  key: "AreaInSquareMeter",
+                })}
                 placeholder="المساحة بالمتر المربع"
                 label="المساحة بالمتر المربع"
                 variant="filled"
@@ -574,12 +637,13 @@ const EditPropertyById = () => {
                     [e.target.name]: parseFloat(e.target.value),
                   }))
                 }
-                InputProps={{
-                  disableUnderline: true,
-                  className: "rounded-lg bg-neutral-100/70",
-                }}
               />
               <TextField
+                error={errors == null ? false : errors["Price"] ? true : false}
+                helperText={ShowErrors({
+                  object: errors,
+                  key: "Price",
+                })}
                 placeholder="السعر"
                 label="السعر"
                 variant="filled"
@@ -590,15 +654,18 @@ const EditPropertyById = () => {
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    [e.target.name]: e.target.value,
+                    [e.target.name]: parseFloat(e.target.value),
                   }))
                 }
-                InputProps={{
-                  disableUnderline: true,
-                  className: "rounded-lg bg-neutral-100/70",
-                }}
               />
               <TextField
+                error={
+                  errors == null ? false : errors["Address"] ? true : false
+                }
+                helperText={ShowErrors({
+                  object: errors,
+                  key: "Address",
+                })}
                 placeholder="العنوان"
                 label="العنوان"
                 variant="filled"
@@ -611,10 +678,6 @@ const EditPropertyById = () => {
                     [e.target.name]: e.target.value,
                   }))
                 }
-                InputProps={{
-                  disableUnderline: true,
-                  className: "rounded-lg bg-neutral-100/70",
-                }}
               />
             </div>
           </Box>
@@ -623,6 +686,13 @@ const EditPropertyById = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex flex-col justify-between">
               <TextField
+                error={
+                  errors == null ? false : errors["Description"] ? true : false
+                }
+                helperText={ShowErrors({
+                  object: errors,
+                  key: "Description",
+                })}
                 placeholder="تفاصيل العقار"
                 multiline
                 rows={7}
@@ -657,24 +727,8 @@ const EditPropertyById = () => {
               {!formData.latitude && !formData.longitude && (
                 <LocationPicker onLocationSelect={handleSelectLocation} />
               )}
-
-              {/* <div className="bg-neutral-100 rounded-lg h-full border border-neutral-200 relative flex items-center justify-center">
-                <span className="absolute top-2 left-2 bg-white/80 px-2 py-0.5 rounded text-[10px] font-sans text-neutral-500">
-                  Google Maps
-                </span>
-                <div className="text-center text-neutral-500 flex flex-col items-center gap-1">
-                  <MapIcon className="text-neutral-400" />
-                  <Typography
-                    variant="body2"
-                    className="text-neutral-500 text-xs"
-                  >
-                    لم يتم تحديد الموقع
-                  </Typography>
-                </div>
-              </div> */}
             </div>
           </div>
-
           {/* Section 3: Extra Attributes */}
           <Box className="space-y-3">
             <Typography
@@ -691,12 +745,9 @@ const EditPropertyById = () => {
                   type="number"
                   variant="filled"
                   fullWidth
+                  name={att.attributeId}
                   value={getAttributeValue(att.attributeId)}
                   onChange={(e) => handleInputsAttributes(e.target.value, att)}
-                  InputProps={{
-                    disableUnderline: true,
-                    className: "rounded-lg bg-neutral-100/70",
-                  }}
                 />
               ))}
             </div>
@@ -708,12 +759,9 @@ const EditPropertyById = () => {
                   type="text"
                   variant="filled"
                   fullWidth
+                  name={att.attributeId}
                   value={getAttributeValue(att.attributeId)}
                   onChange={(e) => handleInputsAttributes(e.target.value, att)}
-                  InputProps={{
-                    disableUnderline: true,
-                    className: "rounded-lg bg-neutral-100/70",
-                  }}
                 />
               ))}
             </div>
@@ -753,54 +801,33 @@ const EditPropertyById = () => {
                 صور وفيديو العقار
               </Typography>
               <Typography variant="body2" className="text-neutral-400 text-xs">
-                يمكنك إضافة حتى 10 صور للعقار، ويمكن إرفاق فيديو من نافذة الرفع.
+                لديك عدد {formData.remainingImagesAllowed} صور متاحة للعقار بحسب
+                الخطة المفعلة على حسابك.
               </Typography>
             </div>
             <div className="flex flex-nowrap items-center justify-start max- overflow-x-scroll gap-2">
-              {formData.propertyMediaList.map((m) => {
-                if (m.mediaTypeName.toLowerCase() === "image") {
-                  return (
-                    <div
+              {imagesWithoutCover.map((m) => (
+                <div
+                  key={m.mediaId}
+                  className="relative min-w-24 max-w-32 h-32 rounded-2xl overflow-hidden"
+                >
+                  <img
+                    src={`${import.meta.env.VITE_API_BASE_URL}${m.filePath}`}
+                    alt={m.mediaTypeName}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-0 left-0 p-1 -translate-x-ful">
+                    <MediaDelete
+                      id={m.mediaId}
+                      onDeleted={handleDeleteImage}
                       key={m.mediaId}
-                      className="relative min-w-24 max-w-32 h-32 rounded-2xl overflow-hidden"
-                    >
-                      <img
-                        src={`${import.meta.env.VITE_API_BASE_URL}${
-                          m.filePath
-                        }`}
-                        alt={m.mediaTypeName}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-0 left-0 p-1 -translate-x-ful">
-                        {/* <IconButton
-                          color="error"
-                          sx={{
-                            backgroundColor: "#ffffff83",
-                            // position: "absolute",
-                            // right: "3%",
-                            // top: "3%",
-                            // alignContent: "end",
-                          }}
-                          title="حذف الصورة"
-                          className="hover:!bg-white "
-                          onClick={(e) => handleDeleteImage(e)}
-                          size="small"
-                        >
-                          <Close />
-                        </IconButton> */}
-                        <MediaDelete
-                          id={m.mediaId}
-                          onDeleted={handleDeleteImage}
-                          key={m.mediaId}
-                        />
-                      </div>
-                    </div>
-                  );
-                }
-              })}
+                    />
+                  </div>
+                </div>
+              ))}
               <div className="min-w-28">
                 <MediaUploader
-                  // key={getCoverImage()?.id}
+                  key={"add-images"}
                   propertyId={formData.propertyId}
                   mediaInfo={getMediaTypeInfo("image")}
                   // image={getCoverImage()}
@@ -811,31 +838,43 @@ const EditPropertyById = () => {
                 />
               </div>
             </div>
-            {/* <Button
-              variant="contained"
-              className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium capitalize rounded-lg px-6 py-2"
-            >
-              إضافة صور للعقار
-            </Button> */}
           </Box>
 
           {/* Actions Footer */}
-          <div className="flex justify-start gap-3 pt-4 border-t border-neutral-100">
-            <Button
-              variant="contained"
-              className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-lg px-6"
-              onClick={saveProperty}
-              disabled={loading}
-              loading={loading}
-            >
-              {loading ? "جاري الحفظ..." : "حفظ التعديلات"}
-            </Button>
-            <Button
-              variant="outlined"
-              className="border-neutral-300 text-neutral-600 hover:bg-neutral-50 font-medium rounded-lg px-6"
-            >
-              إلغاء
-            </Button>
+          <div className="flex justify-between gap-3 pt-4 border-t border-neutral-100">
+            <div className="">
+              <Button
+                variant="contained"
+                className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-lg px-6 !me-3"
+                onClick={updateProperty}
+                disabled={loading}
+                loading={loading}
+                color="navy"
+              >
+                {loading ? "جاري الحفظ..." : "حفظ التعديلات"}
+              </Button>
+              <Button
+                variant="outlined"
+                className="border-neutral-300 text-neutral-600 hover:bg-neutral-50 font-medium rounded-lg px-6"
+                color="navy"
+                onClick={() => navigate("/portal/my-properties")}
+              >
+                إلغاء
+              </Button>
+            </div>
+            <div className="">
+              <span className="mx-3">جاهز للنشر؟</span>
+              <Button
+                variant="contained"
+                className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-lg px-6"
+                onClick={submitProperty}
+                disabled={loading}
+                loading={loading}
+                color="navy"
+              >
+                انشر الآن
+              </Button>
+            </div>
           </div>
         </Paper>
       </div>

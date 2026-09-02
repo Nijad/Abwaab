@@ -122,15 +122,15 @@ export const PROPERTY_GET_DATA = {
       dataTypeDescription: "",
     },
   ],
-  propertyMediaList: [
-    {
-      mediaTypeId: "",
-      mediaId: "",
-      filePath: "",
-      mediaTypeName: "",
-      isCover: false,
-    },
-  ],
+  // propertyMediaList: [
+  //   {
+  //     mediaTypeId: "",
+  //     mediaId: "",
+  //     filePath: "",
+  //     mediaTypeName: "",
+  //     isCover: false,
+  //   },
+  // ],
   propertyId: "",
   title: "",
   description: "",
