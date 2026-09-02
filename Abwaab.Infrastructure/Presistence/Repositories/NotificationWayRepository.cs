@@ -1,8 +1,9 @@
-﻿using Abwaab.Application.Features.Notifications.DTOs;
-using Abwaab.Application.Repositories;
+﻿using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using System.Threading.Tasks;
 
 namespace Abwaab.Infrastructure.Presistence.Repositories
 {
@@ -99,6 +100,18 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 x => x.NotificationState == state &&
                 !string.IsNullOrEmpty(x.Identifier))
                 .ToListAsync();
+        }
+
+        public async Task<List<Notification>> GetUserNotificationsByUserIdAsync(bool unreadOnly, Guid userId)
+        {
+            IQueryable<Notification> query = _context.Notifications
+                .Include(x => x.NotificationSubscription)
+                .ThenInclude(x => x.NotificationWay);
+            
+            if (unreadOnly)
+                query = query.Where(x => x.IsRead == false);
+
+            return await query.ToListAsync();
         }
     }
 }

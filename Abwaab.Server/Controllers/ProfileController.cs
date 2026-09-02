@@ -1,4 +1,5 @@
 ﻿using Abwaab.Application.Features.Notifications.Queries.GetAllNotificationWays;
+using Abwaab.Application.Features.Notifications.Queries.GetWebAppNotifications;
 using Abwaab.Application.Features.Users.Profile.Email.Cancel;
 using Abwaab.Application.Features.Users.Profile.Email.Confirm;
 using Abwaab.Application.Features.Users.Profile.Email.InitiateChange;
@@ -38,7 +39,7 @@ namespace Abwaab.Server.Controllers
 
         [AllowAnonymous]
         [HttpGet("cancel-email-change")]
-        public async Task<IActionResult> CancelEmailChange([FromQuery]string changingCode)
+        public async Task<IActionResult> CancelEmailChange([FromQuery] string changingCode)
         {
             var result = await _mediator.Send(new CancelEmailChangeCommand() { ChangingCode = changingCode });
             return result.Success ? Ok(result) : BadRequest(result);
@@ -48,7 +49,7 @@ namespace Abwaab.Server.Controllers
         [HttpGet("cancel-phone-change")]
         public async Task<IActionResult> CancelPhoneChange([FromQuery] string changingCode)
         {
-            var result = await _mediator.Send(new CancelPhoneChangeCommand() { ChangingCode = changingCode});
+            var result = await _mediator.Send(new CancelPhoneChangeCommand() { ChangingCode = changingCode });
             return result.Success ? Ok(result) : BadRequest(result);
         }
 
@@ -139,7 +140,15 @@ namespace Abwaab.Server.Controllers
             List<GetAllWaysResponse> result = await _mediator.Send(new GetAllWaysQuery());
             return Ok(result);
         }
-        
+
+
+        [HttpGet("Notifications")]
+        public async Task<IActionResult> Notifications(bool unreadOnly = false)
+        {
+            List<GetUserWebAppNotificationsRespnse> result = await _mediator.Send(new GetUserWebAppNotificationsQuety() { UnreadOnly = unreadOnly });
+            return Ok(result);
+        }
+
         [HttpPost("UpdateUser")]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateInfoCommand command)
         {

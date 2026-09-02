@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Features.Notifications.DTOs;
 using Abwaab.Application.Features.Notifications.Queries.GetAllNotificationWays;
+using Abwaab.Application.Features.Notifications.Queries.GetWebAppNotifications;
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.UserEntities;
 
@@ -18,5 +19,6 @@ namespace Abwaab.Application.Contracts
         Task<NotificationState> GetPUnreadNotficationStateAsync(string errorTitle);
         Task UpdateNotificationAsync(Notification notification, CancellationToken cancellationToken = default);
         Task<List<Notification>> GetPendingNotificationToSend(string errorTitle);
+        Task<List<GetUserWebAppNotificationsRespnse>> GetUserNotificationsByUserIdAsync(bool unreadOnly,Guid iserId);
     }
 }

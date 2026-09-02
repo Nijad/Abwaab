@@ -45,5 +45,6 @@
         public const string UserAppointments = "الاستعلام عن المواعيد";
         public const string SellProperty = "تأكيد بيع العقار";
         public const string DeleteProperty = "حذف العقار";
+        public const string GetUserNotifications = "الاستعلام عن إشعارات المستخدم";
     }
 }
