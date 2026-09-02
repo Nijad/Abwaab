@@ -1,0 +1,56 @@
+export const appointments = {
+  receivedAppointments: [
+    {
+      appointmentDate: "",
+      dayName: "",
+      appointments: [
+        {
+          appointmentId: "",
+          fromTime: "",
+          endTime: "",
+          appointmentState: "",
+          appointmentDirection: "",
+          cancelable: true,
+          comments: "",
+          firstname: "",
+          lastname: "",
+          email: "",
+          phoneNo: "",
+          propertyId: "",
+          propertyTitle: "",
+          coverPath: "",
+          address: "",
+          area: 0,
+          price: 0,
+        },
+      ],
+    },
+  ],
+  requestedAppointments: [
+    {
+      appointmentDate: "",
+      dayName: "",
+      appointments: [
+        {
+          appointmentId: "",
+          fromTime: "",
+          endTime: "",
+          appointmentState: "",
+          appointmentDirection: "",
+          cancelable: true,
+          comments: "",
+          firstname: "",
+          lastname: "",
+          email: "",
+          phoneNo: "",
+          propertyId: "",
+          propertyTitle: "",
+          coverPath: "",
+          address: "",
+          area: 0,
+          price: 0,
+        },
+      ],
+    },
+  ],
+};

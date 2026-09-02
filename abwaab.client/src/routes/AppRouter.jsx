@@ -27,6 +27,7 @@ import PresistLogin from "./PresistLogin";
 import Registeration from "../pages/Registeration";
 import NotFound from "../pages/NotFound";
 import EditProperty from "../pages/EditProperty";
+import Appointments from "../pages/Appointments";
 
 // Dashboard Pages
 // import { OverviewPage } from "../pages/dashboard/OverviewPage";
@@ -103,7 +104,7 @@ const router = createBrowserRouter([
       },
       { path: "my-properties/edit/:id", element: <EditProperty /> },
       { path: "my-properties/add/:id", element: <EditProperty /> },
-      // { path: "my-properties/:id", element: <PropertyDetails /> },
+      { path: "my-appointments", element: <Appointments /> },
     ],
   },
   // ----------------------------------------------------------------------

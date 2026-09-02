@@ -1,33 +1,37 @@
 import { useEffect, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
-import { profileApi, propertyApi } from "../../api";
+import { propertyApi } from "../../api";
 import UserProperty from "../../components/UserProperty";
 import { useNavigate } from "react-router";
 import HomeIcon from "../../components/HomeIcon";
 import AddNewProperty from "./AddNewProperty";
+import { appointmentsApi } from "../api";
+import { appointments } from "../dataTypes/appointments";
 
-const MyPropertiesList = ({
+const MyAppointmnets = ({
   onAddProperty,
   onPromote,
   // onEdit,
   onVisitPreview,
   onSuccess,
 }) => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({ ...appointments });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const signalRef = useRef();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
-  const fetchMyProperties = async () => {
+  const fetchMyAppointments = async () => {
     setLoading(true);
     if (signalRef.current) {
       signalRef.current.abort();
     }
     try {
       signalRef.current = new AbortController();
-      const resp = await propertyApi.userProperties(signalRef.current.signal);
+      const resp = await appointmentsApi.userAppointments(
+        signalRef.current.signal
+      );
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
       setData(resp.data);
       if (onSuccess) onSuccess(resp.data);
@@ -47,7 +51,7 @@ const MyPropertiesList = ({
 
   useEffect(() => {
     setTimeout(() => {
-      fetchMyProperties();
+      fetchMyAppointments();
     }, 0);
 
     return () => {
@@ -97,4 +101,4 @@ const MyPropertiesList = ({
   );
 };
 
-export default MyPropertiesList;
+export default MyAppointmnets;
