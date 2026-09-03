@@ -1,12 +1,40 @@
 import { useEffect, useRef, useState } from "react";
+import PropTypes from "prop-types";
 import { useSnackbar } from "notistack";
-import { propertyApi } from "../../api";
-import UserProperty from "../../components/UserProperty";
 import { useNavigate } from "react-router";
-import HomeIcon from "../../components/HomeIcon";
-import AddNewProperty from "./AddNewProperty";
 import { appointmentsApi } from "../api";
 import { appointments } from "../dataTypes/appointments";
+import { Box, Tab, Tabs } from "@mui/material";
+import AppointmentCard from "../components/AppintmentCard";
+
+function CustomTabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
+CustomTabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
 
 const MyAppointmnets = ({
   onAddProperty,
@@ -22,6 +50,12 @@ const MyAppointmnets = ({
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   const fetchMyAppointments = async () => {
     setLoading(true);
     if (signalRef.current) {
@@ -33,7 +67,7 @@ const MyAppointmnets = ({
         signalRef.current.signal
       );
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
-      setData(resp.data);
+      // setData(resp.data);
       if (onSuccess) onSuccess(resp.data);
     } catch (err) {
       //list related error codes
@@ -61,43 +95,31 @@ const MyAppointmnets = ({
     };
   }, []);
   return (
-    <>
-      {data.length === 0 && (
-        <div
-          id="prop-area"
-          className="flex items-center justify-center w-full flex-1"
-        >
-          <div className="rounded-2xl border-neutral-400 bg-white text-center p-10">
-            <HomeIcon />
-            <h5 className="text-xl font-semibold text-navy-700 p-4 my-2">
-              لاتوجد عقارات مضافة بعد
-            </h5>
-            <p className="text-base text-neutral-700 p-3">
-              ابدأ بإضافة أول عقار ليظهر هنا وتتمكن من تعديله أو الترويح له
-              لاحقا
-            </p>
-            <AddNewProperty />
-            {/* <Button
-              size="small"
-              color="navy"
-              variant="contained"
-              onClick={() => onAddProperty()}
-              sx={{ marginY: "8px" }}
-            >
-              إضافة عقار
-            </Button> */}
-          </div>
-        </div>
-      )}
-      {data.map((itm) => (
-        <UserProperty
-          data={itm}
-          onEdit={() => navigate(`edit/${itm.propertyId}`)}
-          onPromote={onPromote}
-          onVisitPreview={onVisitPreview}
-        />
-      ))}
-    </>
+    <div className="">
+      <Box sx={{ width: "100%" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="appointmentTypes"
+          >
+            <Tab label="مواعيدي" {...a11yProps(0)} />
+            <Tab label="طلبات معاينة" {...a11yProps(1)} />
+          </Tabs>
+        </Box>
+
+        <CustomTabPanel value={value} index={0}>
+          {data.requestedAppointments.map((day) => (
+            <AppointmentCard key={day.dayName} day={day} />
+          ))}
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={1}>
+          {data.requestedAppointments.map((day) => (
+            <AppointmentCard key={day.dayName} day={day} />
+          ))}
+        </CustomTabPanel>
+      </Box>
+    </div>
   );
 };
 
