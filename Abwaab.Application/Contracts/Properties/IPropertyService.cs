@@ -1,6 +1,7 @@
 ﻿using Abwaab.Application.Features.Properties.Queries.GetPendingProperties;
 using Abwaab.Application.Features.Properties.Queries.UserProperties;
 using Abwaab.Application.Features.Visitors.DTOs.MainPage;
+using Abwaab.Application.Features.Visitors.Search;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
@@ -28,4 +29,5 @@ public interface IPropertyService
     Task<decimal> GetMaxAreaAsync();
     Task<decimal> GetMinAreaAsync();
     Task<List<PendingPropertiesResponse>> GetPropertiesByStateAsync(PropertyState pendingProperties);
+    Task<List<SearchResponse>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides);
 }

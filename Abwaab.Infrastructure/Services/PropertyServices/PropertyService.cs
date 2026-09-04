@@ -3,6 +3,7 @@ using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Properties.Queries.GetPendingProperties;
 using Abwaab.Application.Features.Properties.Queries.UserProperties;
 using Abwaab.Application.Features.Visitors.DTOs.MainPage;
+using Abwaab.Application.Features.Visitors.Search;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
@@ -213,5 +214,23 @@ public class PropertyService : IPropertyService
         }).ToList();
 
         return pendingPropertiesList;
+    }
+
+    public async Task<List<SearchResponse>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides)
+    {
+        List<Property> properties = await _propertyRepository.SearchPropertiesAsync(request, viewSides);
+        return properties.Select(p => new SearchResponse
+        {
+            PropertyId = p.Id,
+            Area = p.AreaInSquareMeter.ToString()!,
+            CoverImage = p.MediaList?.FirstOrDefault()?.FilePath!,
+            Price = p.Price.ToString()!,
+            PropertyFinishing = p.Finishing?.FinishingName!,
+            PropertyType = p.PropertyType?.TypeName!,
+            Title = p.Title!,
+            Address = p.Address!,
+            Description = p.Description!,
+            ViewSidesList = viewSides.Where(s => p.PropertyAttributes.Select(x => x.AttributeId).Contains(s.Id)).Select(x => x.AttributeName).ToList()
+        }).ToList();
     }
 }

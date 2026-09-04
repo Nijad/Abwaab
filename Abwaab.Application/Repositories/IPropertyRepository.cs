@@ -1,4 +1,6 @@
-﻿using Abwaab.Domain.Entities.PropertyEntities;
+﻿using Abwaab.Application.Features.Visitors.Search;
+using Abwaab.Domain.Entities.PropertyEntities;
+using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
 
 namespace Abwaab.Application.Repositories;
 
@@ -27,5 +29,6 @@ public interface IPropertyRepository
     Task<int> GetTotalPropertiesCountAsync(PropertyState publishedProperties);
     Task<List<Property>> GetUserPropertiesList(Guid userId);
     Task<bool> PropertyBelongToUser(Guid userId, Guid propertyId);
+    Task<List<Property>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides);
     Task UpdatePropertyAsync(Property property);
 }

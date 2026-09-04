@@ -1,8 +1,9 @@
-﻿using Abwaab.Application.Common.Constants;
+﻿using Abwaab.Application.Features.Visitors.Search;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
 
 namespace Abwaab.Infrastructure.Presistence.Repositories;
 
@@ -205,6 +206,29 @@ public class PropertyRepository : IPropertyRepository
     {
         Property property = await _context.Properties.Include(x => x.UserPlan).Where(x => x.Id == propertyId).FirstAsync();
         return property.UserPlan.UserId == userId;
+    }
+
+    public async Task<List<Property>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides)
+    {
+        return await _context.Properties
+            .Include(x => x.PropertyType)
+            .Include(x => x.Finishing)
+            .Include(x => x.PropertyAttributes)
+            .ThenInclude(x => x.Attribute)
+            .ThenInclude(x => x.AttributeDataType)
+            .Include(x => x.MediaList!.Where(y => y.IsCover))
+            .Where(x =>
+                (string.IsNullOrEmpty(request.TextSearch) || (x.Title != null && x.Title.Contains(request.TextSearch))) &&
+                (string.IsNullOrEmpty(request.TextSearch) || (x.Description != null && x.Description.Contains(request.TextSearch))) &&
+                (!request.MinPrice.HasValue || (x.Price.HasValue && x.Price.Value >= request.MinPrice.Value)) &&
+                (!request.MaxPrice.HasValue || (x.Price.HasValue && x.Price.Value <= request.MaxPrice.Value)) &&
+                (!request.MinArea.HasValue || (x.AreaInSquareMeter.HasValue && x.AreaInSquareMeter.Value >= request.MinArea.Value)) &&
+                (!request.MaxArea.HasValue || (x.AreaInSquareMeter.HasValue && x.AreaInSquareMeter.Value <= request.MaxArea.Value)) &&
+                (!request.PropertyType.HasValue || (x.PropertyTypeId.HasValue && x.PropertyTypeId.Value == request.PropertyType.Value)) &&
+                (!request.PropertyFinishing.HasValue || (x.FinishingId.HasValue && x.FinishingId.Value == request.PropertyFinishing.Value)) &&
+                (viewSides == null || viewSides.Count == 0 || x.PropertyAttributes.Any(pa => pa.AttributeId == viewSides.First().Id))
+            )
+            .ToListAsync();
     }
 
     public async Task UpdatePropertyAsync(Property property)
