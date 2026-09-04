@@ -3,14 +3,13 @@ using Abwaab.Application.Common.Exceptions.Custom;
 
 namespace Abwaab.Application.Common.Exceptions;
 
-public class ObjectNotBelongToUserException(string objectType, string title) :
+public class NoPermissionException(string message, string title) :
     Forbidden403Exception(
         message: "",
         title: title,
-        errorCode: ErrorCodes.ObjectNotBelongToUser,
+        errorCode: ErrorCodes.NoPermission,
         returnToUser: true)
 {
-    string msg = $"'{objectType}' الذي تحاول تعديله لا ينتمي إليك";
+    string msg = message;
     public override string Message => msg;
-    public string Title { get; set; } = title;
 }

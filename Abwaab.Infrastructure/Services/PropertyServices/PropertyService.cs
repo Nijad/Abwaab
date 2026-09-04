@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Exceptions.Properties.Attributes;
 using Abwaab.Application.Contracts.Properties;
+using Abwaab.Application.Features.Properties.Queries.GetPendingProperties;
 using Abwaab.Application.Features.Properties.Queries.UserProperties;
 using Abwaab.Application.Features.Visitors.DTOs.MainPage;
 using Abwaab.Application.Repositories;
@@ -122,7 +123,7 @@ public class PropertyService : IPropertyService
             Description = p.Description!,
             ViewSidesList = viewSides.Where(s => p.PropertyAttributes.Select(x => x.AttributeId).Contains(s.Id)).Select(x => x.AttributeName).ToList()
         }).ToList();
-        
+
         return recentlyAdded;
     }
 
@@ -196,5 +197,21 @@ public class PropertyService : IPropertyService
     public async Task<decimal> GetMinAreaAsync()
     {
         return await _propertyRepository.GetMinAreaAsync();
+    }
+
+    public async Task<List<PendingPropertiesResponse>> GetPropertiesByStateAsync(PropertyState pendingProperties)
+    {
+        List<Property> properties = await _propertyRepository.GetPropertiesByStateAsync(pendingProperties);
+        var pendingPropertiesList = properties.Select(p => new PendingPropertiesResponse
+        {
+            PropertyId = p.Id,
+            PropertyTitle = p.Title!,
+            CoverPath = p.MediaList?.FirstOrDefault()?.FilePath!,
+            Address = p.Address!,
+            Area = p.AreaInSquareMeter ?? 0,
+            Price = p.Price ?? 0
+        }).ToList();
+
+        return pendingPropertiesList;
     }
 }

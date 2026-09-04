@@ -47,4 +47,5 @@ public static class ErrorTitle
     public const string DeleteProperty = "حذف العقار";
     public const string GetUserNotifications = "الاستعلام عن إشعارات المستخدم";
     public const string MainPage = "الصفحة الرئيسية";
+    public const string PendingProperties = "العقارات المعلقة";
 }

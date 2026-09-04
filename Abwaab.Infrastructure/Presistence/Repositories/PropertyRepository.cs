@@ -131,6 +131,17 @@ public class PropertyRepository : IPropertyRepository
             .ToListAsync();
     }
 
+    public async Task<List<Property>> GetPropertiesByStateAsync(PropertyState pendingProperties)
+    {
+        return await _context.Properties
+            .Include(x => x.PropertyType)
+            .Include(x => x.Finishing)
+            .Include(x => x.PropertyAttributes)
+            .Include(x => x.MediaList!.Where(y => y.IsCover))
+            .Where(x => x.PropertyState == pendingProperties)
+            .ToListAsync();
+    }
+
     public async Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId)
     {
         return _context.Properties.Where(x => x.UserPlandId == planId).Count();

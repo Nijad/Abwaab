@@ -4,6 +4,7 @@ using Abwaab.Application.Features.Properties.Delete;
 using Abwaab.Application.Features.Properties.Enable;
 using Abwaab.Application.Features.Properties.Queries.AvailableTimeSlots;
 using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
+using Abwaab.Application.Features.Properties.Queries.GetPendingProperties;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyDetails;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate;
 using Abwaab.Application.Features.Properties.Queries.GetPropertyTypesList;
@@ -155,6 +156,14 @@ namespace Abwaab.Server.Controllers
         public async Task<IActionResult> UserProperties()
         {
             List<UserPropertiesResponse> result = await _mediator.Send(new UserPropertiesQuery());
+            return Ok(result);
+        }
+
+        [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
+        [HttpGet("PendingProperties")]
+        public async Task<IActionResult> PendingProperties()
+        {
+            List<PendingPropertiesResponse> result = await _mediator.Send(new PendingPropertiesQuery());
             return Ok(result);
         }
     }

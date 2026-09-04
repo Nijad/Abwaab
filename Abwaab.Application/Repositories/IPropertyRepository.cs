@@ -17,6 +17,7 @@ public interface IPropertyRepository
     Task<decimal> GetMinPriceAsync();
     Task<List<Property>> GetMostViewedPropertiesAsync(PropertyState publishedProperties, int skip, int take);
     Task<List<Property>> GetPremiumPropertiesAsync(PropertyState publishedProperties, int skip, int take);
+    Task<List<Property>> GetPropertiesByStateAsync(PropertyState pendingProperties);
     Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId);
     Task<List<Finishing>> GetPropertyFinishingListAsync();
     Task<List<PropertyType>> GetProperyTypesList();
