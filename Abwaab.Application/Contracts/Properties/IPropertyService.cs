@@ -1,5 +1,5 @@
 ﻿using Abwaab.Application.Features.Properties.Queries.UserProperties;
-using Abwaab.Application.Features.Visitors.DTOs;
+using Abwaab.Application.Features.Visitors.DTOs.MainPage;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
@@ -22,4 +22,8 @@ public interface IPropertyService
     Task<List<MostViewed>> GetMostViewedPropertiesAsync(PropertyState publishedProperties, List<Attribute> viewSides, int skip, int take);
     Task<int> GetTotalPropertiesCountAsync(PropertyState publishedProperties);
     Task<int> GetTotalPremiumPropertiesCountAsync(PropertyState publishedProperties);
+    Task<decimal> GetMaxPriceAsync();
+    Task<decimal> GetMinPriceAsync();
+    Task<decimal> GetMaxAreaAsync();
+    Task<decimal> GetMinAreaAsync();
 }

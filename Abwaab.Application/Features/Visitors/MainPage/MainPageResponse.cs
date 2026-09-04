@@ -1,4 +1,4 @@
-﻿using Abwaab.Application.Features.Visitors.DTOs;
+﻿using Abwaab.Application.Features.Visitors.DTOs.MainPage;
 
 namespace Abwaab.Application.Features.Visitors.MainPage;
 

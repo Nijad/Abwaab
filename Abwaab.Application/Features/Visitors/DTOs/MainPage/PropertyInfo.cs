@@ -1,4 +1,4 @@
-﻿namespace Abwaab.Application.Features.Visitors.DTOs;
+﻿namespace Abwaab.Application.Features.Visitors.DTOs.MainPage;
 
 public class PropertyInfo
 {

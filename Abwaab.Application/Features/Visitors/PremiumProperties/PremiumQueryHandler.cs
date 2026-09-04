@@ -1,6 +1,6 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Contracts.Properties;
-using Abwaab.Application.Features.Visitors.DTOs;
+using Abwaab.Application.Features.Visitors.DTOs.MainPage;
 using Abwaab.Domain.Entities.PropertyEntities;
 using MediatR;
 using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;

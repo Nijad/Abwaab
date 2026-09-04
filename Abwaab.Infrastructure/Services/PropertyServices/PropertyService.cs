@@ -1,7 +1,7 @@
 ﻿using Abwaab.Application.Common.Exceptions.Properties.Attributes;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Properties.Queries.UserProperties;
-using Abwaab.Application.Features.Visitors.DTOs;
+using Abwaab.Application.Features.Visitors.DTOs.MainPage;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
@@ -176,5 +176,25 @@ public class PropertyService : IPropertyService
     public async Task<int> GetTotalPremiumPropertiesCountAsync(PropertyState publishedProperties)
     {
         return await _propertyRepository.GetTotalPremiumPropertiesCountAsync(publishedProperties);
+    }
+
+    public async Task<decimal> GetMaxPriceAsync()
+    {
+        return await _propertyRepository.GetMaxPriceAsync();
+    }
+
+    public async Task<decimal> GetMinPriceAsync()
+    {
+        return await _propertyRepository.GetMinPriceAsync();
+    }
+
+    public async Task<decimal> GetMaxAreaAsync()
+    {
+        return await _propertyRepository.GetMaxAreaAsync();
+    }
+
+    public async Task<decimal> GetMinAreaAsync()
+    {
+        return await _propertyRepository.GetMinAreaAsync();
     }
 }

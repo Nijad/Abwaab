@@ -2,6 +2,7 @@
 using Abwaab.Application.Features.Visitors.MostViewedPropertis;
 using Abwaab.Application.Features.Visitors.PremiumProperties;
 using Abwaab.Application.Features.Visitors.RecentlyAddedProperties;
+using Abwaab.Application.Features.Visitors.SearchForm;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,6 +47,14 @@ public class VisitorController : ControllerBase
     {
         RecentlyAddedQuery query = new() { PageNo = pageNo };
         RecentlyAddedResponse response = await _mediator.Send(query);
+        return Ok(response);
+    }
+
+    [HttpGet("GetSearchForm")]
+    public async Task<IActionResult> GetSearchForm()
+    {
+        SearchFormQuery query = new();
+        SearchFormResponse response = await _mediator.Send(query);
         return Ok(response);
     }
 }

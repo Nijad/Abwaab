@@ -1,5 +1,4 @@
 ﻿using Abwaab.Domain.Entities.PropertyEntities;
-using Attribute = Abwaab.Domain.Entities.PropertyEntities.Attribute;
 
 namespace Abwaab.Application.Repositories;
 
@@ -12,6 +11,10 @@ public interface IPropertyRepository
     Task<PropertyState?> FindPropertyStateByStateNameAsync(string propertyStateName);
     Task<PropertyType?> FindPropertyTypeByIdAsync(Guid propertyTypeId);
     Task<Property?> FindPropertyWithUserAndStateByIdAsync(Guid propertyId);
+    Task<decimal> GetMaxAreaAsync();
+    Task<decimal> GetMaxPriceAsync();
+    Task<decimal> GetMinAreaAsync();
+    Task<decimal> GetMinPriceAsync();
     Task<List<Property>> GetMostViewedPropertiesAsync(PropertyState publishedProperties, int skip, int take);
     Task<List<Property>> GetPremiumPropertiesAsync(PropertyState publishedProperties, int skip, int take);
     Task<int> GetPropertiesCountBelongToPlanAsync(Guid planId);

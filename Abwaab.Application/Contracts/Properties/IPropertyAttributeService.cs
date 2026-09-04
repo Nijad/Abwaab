@@ -11,6 +11,7 @@ public interface IPropertyAttributeService
     Task<AttributePossibleValue> FindAttributePossibleValueByIdAsync(Guid? possibleValueId, string errorTitle);
     Task<PropertyAttribute> FindPropertyAttributeByIdAsync(Guid? propertyAttributeId, string errorTitle);
     Task<List<AttributeDTO>> GetAttributesListAsync();
+    Task<List<PropertyViewSideDTO>> GetPropertyViewSidesListAsync();
     Task<List<Attribute>> GetViewSidesAsync();
     Task SyncronizePropertyAttributesAsync(
         List<PropertyAttribute>? existingPropertyAttributes,

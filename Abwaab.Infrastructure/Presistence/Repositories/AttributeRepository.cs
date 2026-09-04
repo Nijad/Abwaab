@@ -44,10 +44,6 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         public async Task<PropertyAttribute?> FindPropertyAttributeByIdAsync(Guid? propertyAttributeId)
         {
             return await _context.PropertyAttributes
-                //.Include(x=>x.Attribute)
-                //.ThenInclude(x=>x.AttributeDataType)
-                //.Include(x => x.Attribute)
-                //.ThenInclude(x=> x.PossibleValues)
                 .Where(x => x.Id == propertyAttributeId)
                 .FirstOrDefaultAsync();
         }

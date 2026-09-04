@@ -81,6 +81,27 @@ public class PropertyRepository : IPropertyRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<decimal> GetMaxAreaAsync()
+    {
+        return await _context.Properties.MaxAsync(x => x.AreaInSquareMeter) ?? 0;
+    }
+
+    public async Task<decimal> GetMaxPriceAsync()
+    {
+        return await _context.Properties.MaxAsync(x => x.Price) ?? 0;
+    }
+
+    public async Task<decimal> GetMinAreaAsync()
+    {
+        return await _context.Properties.MinAsync(x => x.AreaInSquareMeter) ?? 0;
+    }
+
+    public async Task<decimal> GetMinPriceAsync()
+    {
+        return await _context.Properties.MinAsync(x => x.Price) ?? 0;
+    }
+    
+
     public async Task<List<Property>> GetMostViewedPropertiesAsync(PropertyState publishedProperties, int skip, int take)
     {
         return await _context.Properties
@@ -97,7 +118,7 @@ public class PropertyRepository : IPropertyRepository
 
     public async Task<List<Property>> GetPremiumPropertiesAsync(PropertyState publishedProperties, int skip, int take)
     {
-        
+
         return await _context.Properties
             .Include(x => x.PropertyType)
             .Include(x => x.Finishing)

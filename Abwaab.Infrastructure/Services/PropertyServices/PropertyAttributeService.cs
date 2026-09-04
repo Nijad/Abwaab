@@ -116,9 +116,9 @@ public class PropertyAttributeService : IPropertyAttributeService
     {
         AttributePossibleValue? attributePossibleValue = await _attributeRepository.FindAttributePossibleValueByIdAsync(possibleValueId);
 
-        if(attributePossibleValue == null)
+        if (attributePossibleValue == null)
             throw new AttributePossibleValueNotFoundException(errorTitle);
-        
+
         return attributePossibleValue;
     }
 
@@ -127,5 +127,16 @@ public class PropertyAttributeService : IPropertyAttributeService
         List<Attribute> attributes = await _attributeRepository.GetAttributesListAsync();
         List<Attribute> sides = attributes.Where(x => x.AttributeName == "شمالي" || x.AttributeName == "جنوبي" || x.AttributeName == "شرقي" || x.AttributeName == "غربي").ToList();
         return sides;
+    }
+
+    public async Task<List<PropertyViewSideDTO>> GetPropertyViewSidesListAsync()
+    {
+        var sides = await GetViewSidesAsync();
+        var response = sides.Select(s => new PropertyViewSideDTO()
+        {
+            AttributeId = s.Id,
+            AttributeName = s.AttributeName
+        }).ToList();
+        return response;
     }
 }
