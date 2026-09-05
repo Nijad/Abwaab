@@ -6,8 +6,11 @@ import { propertyApi } from "../api";
 import { useSnackbar } from "notistack";
 import PreviewPropertyVisits from "../features/properties/PreviewPropertyVisits";
 import AddNewProperty from "../features/properties/AddNewProperty";
+import useAuth from "../hooks/useAuth";
+import AdminPropertiesList from "../features/properties/AdminPropertiesList";
 
 const MyProperties = () => {
+  const { isAdmin } = useAuth();
   const [showVisits, setShowVisits] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -72,15 +75,24 @@ const MyProperties = () => {
           <h4 className="text-navy-700 font-semibold text-[32px]">
             إدارة العقارات
           </h4>
-          <p className="text-neutral-700 text-lg">
-            أضف عقاراتك وتحكم بها من مساحة واحدة
-          </p>
+          {!isAdmin && (
+            <p className="text-neutral-700 text-lg">
+              أضف عقاراتك وتحكم بها من مساحة واحدة
+            </p>
+          )}
+          {isAdmin && (
+            <p className="text-neutral-700 text-lg">
+              استعراض طلبات نشر العقارات
+            </p>
+          )}
         </div>
-        <div className="">
-          <AddNewProperty />
-        </div>
+        {!isAdmin && (
+          <div className="">
+            <AddNewProperty />
+          </div>
+        )}
       </div>
-      <MyPropertiesList
+      <AdminPropertiesList
         onAddProperty={addNewProperty}
         onEdit={(id) => navigate(`/portal/my-properties/edit/${id}`)}
         onPromote={promoteProperty}

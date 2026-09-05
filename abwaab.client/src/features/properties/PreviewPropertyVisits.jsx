@@ -60,7 +60,7 @@ const dataTest = {
   ],
 };
 
-const PreviewPropertyVisits = ({ onReject }) => {
+const PreviewPropertyVisits = ({ disabled = false, onReject }) => {
   const [show, setShow] = useState(false);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -102,6 +102,7 @@ const PreviewPropertyVisits = ({ onReject }) => {
         size="medium"
         variant="outlined"
         color="navy"
+        disabled={disabled}
         onClick={() => getPropVisits()}
       >
         عرض طلبات المعاينة

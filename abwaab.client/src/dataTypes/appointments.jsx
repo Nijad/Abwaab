@@ -23,13 +23,21 @@ export const appointments = {
           area: 0,
           price: 0,
         },
+      ],
+    },
+  ],
+  requestedAppointments: [
+    {
+      appointmentDate: "",
+      dayName: "",
+      appointments: [
         {
           appointmentId: "",
           fromTime: "",
           endTime: "",
           appointmentState: "",
           appointmentDirection: "",
-          cancelable: true,
+          cancelable: false,
           comments: "",
           firstname: "",
           lastname: "",
@@ -45,31 +53,30 @@ export const appointments = {
       ],
     },
   ],
-  requestedAppointments: [
+};
+
+export const dayDT = {
+  appointmentDate: "",
+  dayName: "",
+  appointments: [
     {
-      appointmentDate: "15/05/2026",
-      dayName: "",
-      appointments: [
-        {
-          appointmentId: "",
-          fromTime: "",
-          endTime: "",
-          appointmentState: "",
-          appointmentDirection: "",
-          cancelable: true,
-          comments: "",
-          firstname: "",
-          lastname: "",
-          email: "",
-          phoneNo: "",
-          propertyId: "",
-          propertyTitle: "",
-          coverPath: "",
-          address: "",
-          area: 0,
-          price: 0,
-        },
-      ],
+      appointmentId: "",
+      fromTime: "",
+      endTime: "",
+      appointmentState: "",
+      appointmentDirection: "",
+      cancelable: true,
+      comments: "",
+      firstname: "",
+      lastname: "",
+      email: "",
+      phoneNo: "",
+      propertyId: "",
+      propertyTitle: "",
+      coverPath: "",
+      address: "",
+      area: 0,
+      price: 0,
     },
   ],
 };

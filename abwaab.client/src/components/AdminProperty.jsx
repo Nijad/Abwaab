@@ -5,11 +5,13 @@ import { EditOutlined } from "@mui/icons-material";
 import PromoteIcon from "./PromoteIcon";
 import PromoteProperty from "../features/properties/PromoteProperty";
 import PreviewPropertyVisits from "../features/properties/PreviewPropertyVisits";
+import { useNavigate } from "react-router";
 
 const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
+  const navigate = useNavigate();
   return (
     <div className="p-4 my-4 border border-neutral-400 w-full rounded-lg">
-      <div className="flex items-center border-b border-b-neutral-400 gap-3 py-3">
+      <div className="flex items-center gap-3 py-3">
         <div className="rounded-lg overflow-hidden">
           <img
             src={data.coverImage}
@@ -39,39 +41,21 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
           </div>
         </div>
         <div className="">
-          <PromoteProperty propertyId={data.propertyId} />
-          {/* <Button
-            sx={{ marginX: "4px" }}
-            size="medium"
-            variant="contained"
-            color="sky"
-            startIcon={<PromoteIcon />}
-            onClick={() => onPromote(data.propertyId)}
-          >
-            ترويج العقار
-          </Button> */}
+          <LabelTag
+            label={data.propertyStat}
+            className="rounded-full bg-navy-600 text-white"
+          />
           <Button
             sx={{ marginX: "4px" }}
             size="medium"
             variant="outlined"
             color="navy"
             startIcon={<EditOutlined />}
-            onClick={() => onEdit()}
+            onClick={() => navigate(`properties/${data.propertyId}`)}
           >
             تعديل
           </Button>
         </div>
-      </div>
-      <div className="flex justify-between items-center mt-4">
-        {data.visitRequest > 0 && (
-          <p className="text-neutral-900 text-base">
-            لديك {data.visitRequests} طلبات لمعاينة هذا العقار
-          </p>
-        )}
-        {data.visitRequest == 0 && (
-          <p className="">لا توجد طلبات معاينة لهذا العقار</p>
-        )}
-        <PreviewPropertyVisits disabled />
       </div>
     </div>
   );

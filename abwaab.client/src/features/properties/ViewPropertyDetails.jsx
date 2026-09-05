@@ -15,6 +15,8 @@ import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
 import StraightenRoundedIcon from "@mui/icons-material/StraightenRounded";
 import ImagesearchRollerOutlinedIcon from "@mui/icons-material/ImagesearchRollerOutlined";
+import useAuth from "../../hooks/useAuth";
+import AcceptProperty from "./AcceptProperty";
 
 const CustomAttributes = memo(({ attributes }) => {
   return (
@@ -74,6 +76,7 @@ const ViewPropertyDetails = () => {
   const { enqueueSnackbar } = useSnackbar();
   const signalRef = useRef();
   const getId = useParams("id");
+  const { isAdmin } = useAuth();
 
   const fetchPreperty = async () => {
     setLoading(true);
@@ -217,7 +220,12 @@ const ViewPropertyDetails = () => {
                   />
                 )}
               </div>
-              <VisitReservationButton />
+              {!isAdmin && <VisitReservationButton />}
+              {isAdmin && (
+                <React.Fragment>
+                  <AcceptProperty />
+                </React.Fragment>
+              )}
             </div>
           </aside>
         </section>

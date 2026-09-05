@@ -67,9 +67,11 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: (
-      <ProtectedRoute isAdminRoute={true}>
-        <AdminLayout />
-      </ProtectedRoute>
+      <PresistLogin>
+        <ProtectedRoute isAdminRoute={true}>
+          <AdminLayout />
+        </ProtectedRoute>
+      </PresistLogin>
     ),
     children: [
       { index: true, element: <Admin /> },
@@ -77,6 +79,8 @@ const router = createBrowserRouter([
         path: "users",
         element: <ManageUsers />,
       },
+      { path: "pending-advertisements", element: <MyProperties /> },
+      { path: "properties/:id", element: <PropertyDetails /> },
     ],
   },
 

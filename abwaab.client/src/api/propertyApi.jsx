@@ -23,6 +23,18 @@ export const propertyApi = {
     }),
   starProperty: (id, signal) =>
     axiosPrivate.post("/api/property/star", { id: id }, { signal: signal }),
+  acceptProperty: (propertyId, note, signal) =>
+    axiosPrivate.post(
+      "/api/Property/accept-property",
+      { propertyId, note },
+      { signal: signal }
+    ),
+  rejectProperty: (propertyId, note, signal) =>
+    axiosPrivate.post(
+      "/api/Property/reject-property",
+      { propertyId, note },
+      { signal: signal }
+    ),
   getPropertyVisitRequests: (signal) =>
     axiosPrivate.get("/api/Property/get-visits", {
       signal: signal,

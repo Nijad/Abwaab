@@ -15,8 +15,15 @@ import AdbIcon from "@mui/icons-material/Adb";
 import { Link, NavLink, useNavigate } from "react-router";
 import logo from "../../assets/imgs/logo.svg";
 import useAuth from "../../hooks/useAuth";
-import { ChevronLeft } from "@mui/icons-material";
+import {
+  ChevronLeft,
+  Notifications,
+  DateRangeOutlined,
+  NotificationsOutlined,
+} from "@mui/icons-material";
 import { replace } from "stylis";
+import { Badge } from "@mui/material";
+import Notification from "../../features/Notification";
 
 const pages = {
   public: [
@@ -57,19 +64,19 @@ const pages = {
   ],
   admin: [
     {
-      to: "",
-      label: "",
+      to: "/admin/",
+      label: "الرئيسية",
     },
     {
-      to: "",
-      label: "",
+      to: "/admin/properties",
+      label: "العقارات",
     },
     {
-      to: "",
-      label: "",
+      to: "/admin/pending-advertisements",
+      label: "طلبات الإعلان",
     },
     {
-      to: "",
+      to: "/admin/",
       label: "",
     },
   ],
@@ -103,6 +110,19 @@ const NavBarMain = () => {
   const logoutHandler = () => {
     logout();
     // navigate("/portal/profile", { replace });
+  };
+
+  const navigateToAppointments = () => {
+    switch (isAdmin) {
+      case true:
+        navigate("/admin/my-appointments");
+        break;
+      case false:
+        navigate("/portal/my-appointments");
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -198,7 +218,22 @@ const NavBarMain = () => {
             </NavLink>
           )}
           {isAuthenticated && (
-            <Box sx={{ flexGrow: 0, position: "relative" }}>
+            <Box
+              sx={{
+                flexGrow: 0,
+                position: "relative",
+                display: "flex",
+                gap: "20px",
+              }}
+            >
+              <IconButton
+                size="large"
+                color="navy"
+                onClick={() => navigateToAppointments()}
+              >
+                <DateRangeOutlined />
+              </IconButton>
+              <Notification />
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
