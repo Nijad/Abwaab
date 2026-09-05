@@ -23,7 +23,6 @@ namespace Abwaab.Infrastructure.Presistence.Context
 
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AppointmentState> AppointmentStates { get; set; }
-        public DbSet<AppointmentAction> AppointmentActions { get; set; }
 
         public DbSet<Media> Media { get; set; }
         public DbSet<MediaType> MediaTypes { get; set; }
@@ -42,14 +41,12 @@ namespace Abwaab.Infrastructure.Presistence.Context
         public DbSet<AttributePossibleValue> AttributePossibleValues { get; set; }
         public DbSet<Finishing> Finishings { get; set; }
         public DbSet<Property> Properties { get; set; }
-        public DbSet<PropertyAction> PropertieActions { get; set; }
         public DbSet<PropertyAttribute> PropertyAttributes { get; set; }
         public DbSet<PropertyState> PropertyStates { get; set; }
         public DbSet<PropertyType> PropertyTypes { get; set; }
         public DbSet<TimeSlot> TimeSlots { get; set; }
         public DbSet<AttributeDataType> AttributeDataTypes { get; set; }
 
-        public DbSet<OTP> OTPs { get; set; }
         public DbSet<Plan> Plans { get; set; }
         public DbSet<UserPlan> UserPlans { get; set; }
         public DbSet<UserPlanStatus> UserPlansStatus { get; set; }

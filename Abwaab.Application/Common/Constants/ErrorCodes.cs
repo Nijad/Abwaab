@@ -80,5 +80,6 @@
         public const string TimeSlotNotAvailable = "TIME_SLOT_NOT_AVAILABLE";
         public const string AppointmentNotFound = "APPOINTMENT_NOT_FOUND";
         public const string ChanginAppointmentStateNotAllowed = "CONFIRMATION_APPOINTMENT_NOT_ALLOWED";
+        public const string NoPermission = "NO_PERMISSION";
     }
 }

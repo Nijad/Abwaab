@@ -47,7 +47,6 @@ namespace Abwaab.Infrastructure.Presistence.Configureations
             builder.HasIndex(p => p.PaymentStateId);
             builder.HasIndex(p => p.ServiceTypeId);
             builder.HasIndex(p => p.UserPlandId);
-            builder.HasIndex(p => p.AdvertismentId);
             builder.HasIndex(p => p.PaymentCode);
             builder.HasIndex(p => p.PayedAt);
         }

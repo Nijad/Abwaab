@@ -72,36 +72,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.ToTable("Appointments", (string)null);
                 });
 
-            modelBuilder.Entity("Abwaab.Domain.Entities.AppointmentEntities.AppointmentAction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ActionName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActionName");
-
-                    b.ToTable("AppointmentActions", (string)null);
-                });
-
             modelBuilder.Entity("Abwaab.Domain.Entities.AppointmentEntities.AppointmentState", b =>
                 {
                     b.Property<Guid>("Id")
@@ -385,9 +355,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AdvertismentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("Amount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -427,8 +394,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AdvertismentId");
 
                     b.HasIndex("PayedAt");
 
@@ -722,36 +687,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.ToTable("Properties", (string)null);
                 });
 
-            modelBuilder.Entity("Abwaab.Domain.Entities.PropertyEntities.PropertyAction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ActionName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActionName");
-
-                    b.ToTable("PropertyActions", (string)null);
-                });
-
             modelBuilder.Entity("Abwaab.Domain.Entities.PropertyEntities.PropertyAttribute", b =>
                 {
                     b.Property<Guid>("Id")
@@ -974,9 +909,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("PlanExpieryDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("PreviousEmail")
                         .HasColumnType("nvarchar(max)");
 
@@ -1018,49 +950,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.OTP", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ExpiredAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Code");
-
-                    b.HasIndex("ExpiredAt");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("OTPs", (string)null);
                 });
 
             modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.Plan", b =>
@@ -1530,17 +1419,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.OTP", b =>
-                {
-                    b.HasOne("Abwaab.Domain.Entities.UserEntities.ApplicationUser", "User")
-                        .WithMany("OTPs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Abwaab.Domain.Entities.UserEntities.RefreshToken", b =>
                 {
                     b.HasOne("Abwaab.Domain.Entities.UserEntities.ApplicationUser", "User")
@@ -1708,8 +1586,6 @@ namespace Abwaab.Infrastructure.presistence.migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("NotificationWaySubscriptions");
-
-                    b.Navigation("OTPs");
 
                     b.Navigation("UserPlans");
                 });

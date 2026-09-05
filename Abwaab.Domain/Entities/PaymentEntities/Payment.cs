@@ -1,6 +1,4 @@
-﻿using Abwaab.Domain.Entities.MediaEntities;
-using Abwaab.Domain.Entities.PropertyEntities;
-using Abwaab.Domain.Entities.UserEntities;
+﻿using Abwaab.Domain.Entities.UserEntities;
 
 namespace Abwaab.Domain.Entities.PaymentEntities
 {
@@ -14,12 +12,7 @@ namespace Abwaab.Domain.Entities.PaymentEntities
         public Guid PaymentStateId { get; set; }
         public ServiceType ServiceType { get; set; } = null!;
         public Guid ServiceTypeId { get; set; }
-        //public ApplicationUser? User { get; set; }
-        //public Guid? UserId { get; set; }
-        //public Property? Property { get; set; }
-        //public Guid? PropertyId { get; set; }
         public Guid? UserPlandId { get; set; }
         public UserPlan? UserPlan { get; set; }
-        public Guid? AdvertismentId { get; set; }
     }
 }
