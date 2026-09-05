@@ -58,19 +58,21 @@ const AppointmentCard = ({ day = { ...dayDT }, approveButton }) => {
                     قبول الموعد
                   </Button>
                 )}
-                <Button
-                  variant="outlined"
-                  color="navy"
-                  className=""
-                  disabled={!t.cancelable}
-                >
-                  إلغاء الموعد
-                </Button>
-                {!t.cancelable && (
-                  <p className="text-sm text-neutral-500">
-                    لايمكن الغاء الموعد الآن
-                  </p>
-                )}
+                <div className="">
+                  <Button
+                    variant="outlined"
+                    color="navy"
+                    className=""
+                    disabled={!t.cancelable}
+                  >
+                    إلغاء الموعد
+                  </Button>
+                  {!t.cancelable && (
+                    <p className="text-sm text-neutral-500 ">
+                      لايمكن الغاء الموعد الآن
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>

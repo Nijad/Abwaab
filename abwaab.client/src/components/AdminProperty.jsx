@@ -7,7 +7,7 @@ import PromoteProperty from "../features/properties/PromoteProperty";
 import PreviewPropertyVisits from "../features/properties/PreviewPropertyVisits";
 import { useNavigate } from "react-router";
 
-const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
+const AdminProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
   const navigate = useNavigate();
   return (
     <div className="p-4 my-4 border border-neutral-400 w-full rounded-lg">
@@ -42,7 +42,7 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
         </div>
         <div className="">
           <LabelTag
-            label={data.propertyStat}
+            label={data.propertyState}
             className="rounded-full bg-navy-600 text-white"
           />
           <Button
@@ -53,7 +53,7 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
             startIcon={<EditOutlined />}
             onClick={() => navigate(`properties/${data.propertyId}`)}
           >
-            تعديل
+            استعراض
           </Button>
         </div>
       </div>
@@ -61,4 +61,4 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
   );
 };
 
-export default UserProperty;
+export default AdminProperty;

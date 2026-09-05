@@ -341,6 +341,7 @@ const EditPropertyById = () => {
       updateData.timeSlots = timeSlotsArr;
       updateData.propertyMediaList = [...media];
       await propertyApi.submitProperty(updateData, signalRef.current.signal);
+      fetchProperty();
       enqueueSnackbar("تم حفظ التعديلات بنجاح", { variant: "success" });
     } catch (err) {
       if (err.errorCode === "VALIDATION_FAILED") {
@@ -841,41 +842,52 @@ const EditPropertyById = () => {
           </Box>
 
           {/* Actions Footer */}
-          <div className="flex justify-between gap-3 pt-4 border-t border-neutral-100">
-            <div className="">
-              <Button
-                variant="contained"
-                className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-lg px-6 !me-3"
-                onClick={updateProperty}
-                disabled={loading}
-                loading={loading}
-                color="navy"
-              >
-                {loading ? "جاري الحفظ..." : "حفظ التعديلات"}
-              </Button>
-              <Button
-                variant="outlined"
-                className="border-neutral-300 text-neutral-600 hover:bg-neutral-50 font-medium rounded-lg px-6"
-                color="navy"
-                onClick={() => navigate("/portal/my-properties")}
-              >
-                إلغاء
-              </Button>
+          {formData.propertyState === "Preparing" && (
+            <div className="flex justify-between gap-3 pt-4 border-t border-neutral-100">
+              <div className="">
+                <Button
+                  variant="contained"
+                  className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-lg px-6 !me-3"
+                  onClick={updateProperty}
+                  disabled={loading}
+                  loading={loading}
+                  color="navy"
+                >
+                  {loading ? "جاري الحفظ..." : "حفظ التعديلات"}
+                </Button>
+                <Button
+                  variant="outlined"
+                  className="border-neutral-300 text-neutral-600 hover:bg-neutral-50 font-medium rounded-lg px-6"
+                  color="navy"
+                  onClick={() => navigate("/portal/my-properties")}
+                >
+                  إلغاء
+                </Button>
+              </div>
+
+              <div className="">
+                <span className="mx-3">جاهز للنشر؟</span>
+                <Button
+                  variant="contained"
+                  className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-lg px-6"
+                  onClick={submitProperty}
+                  disabled={loading}
+                  loading={loading}
+                  color="navy"
+                >
+                  انشر الآن
+                </Button>
+              </div>
             </div>
+          )}
+
+          {formData.propertyState !== "Preparing" && (
             <div className="">
-              <span className="mx-3">جاهز للنشر؟</span>
-              <Button
-                variant="contained"
-                className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-lg px-6"
-                onClick={submitProperty}
-                disabled={loading}
-                loading={loading}
-                color="navy"
-              >
-                انشر الآن
-              </Button>
+              <p className="text-neutral-400 text-lg">
+                طلبك قيد المراجعة من قبل المسؤول
+              </p>
             </div>
-          </div>
+          )}
         </Paper>
       </div>
     </div>

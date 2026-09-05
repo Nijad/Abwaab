@@ -17,12 +17,14 @@ export const propertyApi = {
     axiosPrivate.post("/api/Property/add-property", null, { signal: signal }),
   userProperties: (signal) =>
     axiosPrivate.get("/api/Property/UserProperties", { signal: signal }),
+  pendingProperties: (signal) =>
+    axiosPrivate.get("/api/Property/PendingProperties", { signal: signal }),
   propertyDetails: (id, signal) =>
     axiosPrivate.get(`/api/Property/propertydetails?propertyId=${id}`, {
       signal: signal,
     }),
   starProperty: (id, signal) =>
-    axiosPrivate.post("/api/property/star", { id: id }, { signal: signal }),
+    axiosPrivate.post("/api/Property/star-property", id, { signal: signal }),
   acceptProperty: (propertyId, note, signal) =>
     axiosPrivate.post(
       "/api/Property/accept-property",

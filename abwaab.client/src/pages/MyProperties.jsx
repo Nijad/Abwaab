@@ -92,13 +92,24 @@ const MyProperties = () => {
           </div>
         )}
       </div>
-      <AdminPropertiesList
-        onAddProperty={addNewProperty}
-        onEdit={(id) => navigate(`/portal/my-properties/edit/${id}`)}
-        onPromote={promoteProperty}
-        onSuccess={null}
-        onVisitPreview={() => setShowVisits(true)}
-      />
+      {!isAdmin && (
+        <MyPropertiesList
+          onAddProperty={addNewProperty}
+          onEdit={(id) => navigate(`/portal/my-properties/edit/${id}`)}
+          onPromote={promoteProperty}
+          onSuccess={null}
+          onVisitPreview={() => setShowVisits(true)}
+        />
+      )}
+      {isAdmin && (
+        <AdminPropertiesList
+          onAddProperty={addNewProperty}
+          onEdit={(id) => navigate(`/portal/my-properties/edit/${id}`)}
+          onPromote={promoteProperty}
+          onSuccess={null}
+          onVisitPreview={() => setShowVisits(true)}
+        />
+      )}
     </div>
   );
 };

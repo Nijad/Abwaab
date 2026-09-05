@@ -5,6 +5,7 @@ import UserProperty from "../../components/UserProperty";
 import { useNavigate } from "react-router";
 import HomeIcon from "../../components/HomeIcon";
 import AddNewProperty from "./AddNewProperty";
+import AdminProperty from "../../components/AdminProperty";
 
 const AdminPropertiesList = ({
   onPromote,
@@ -25,7 +26,9 @@ const AdminPropertiesList = ({
     }
     try {
       signalRef.current = new AbortController();
-      const resp = await propertyApi.userProperties(signalRef.current.signal);
+      const resp = await propertyApi.pendingProperties(
+        signalRef.current.signal
+      );
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
       setData(resp.data);
     } catch (err) {
@@ -59,25 +62,11 @@ const AdminPropertiesList = ({
             <h5 className="text-xl font-semibold text-navy-700 p-4 my-2">
               لاتوجد عقارات مضافة بعد
             </h5>
-            <p className="text-base text-neutral-700 p-3">
-              ابدأ بإضافة أول عقار ليظهر هنا وتتمكن من تعديله أو الترويح له
-              لاحقا
-            </p>
-            <AddNewProperty />
-            {/* <Button
-              size="small"
-              color="navy"
-              variant="contained"
-              onClick={() => onAddProperty()}
-              sx={{ marginY: "8px" }}
-            >
-              إضافة عقار
-            </Button> */}
           </div>
         </div>
       )}
       {data.map((itm) => (
-        <UserProperty
+        <AdminProperty
           data={itm}
           onEdit={() => navigate(`edit/${itm.propertyId}`)}
           onPromote={onPromote}
