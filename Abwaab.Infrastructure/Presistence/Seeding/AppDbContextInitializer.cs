@@ -118,9 +118,6 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
             if (!await _context.NotificationStates.AnyAsync())
                 await _context.NotificationStates.AddRangeAsync(SeedData.LoadNotificationStates());
 
-            if (!await _context.AppointmentActions.AnyAsync())
-                await _context.AppointmentActions.AddRangeAsync(SeedData.LoadAppointmentActions());
-
             if (!await _context.PropertyStates.AnyAsync())
                 await _context.PropertyStates.AddRangeAsync(SeedData.LoadPropertyStates());
 
@@ -138,9 +135,6 @@ namespace Abwaab.Infrastructure.Presistence.Seeding
 
             if (!await _context.Attributes.AnyAsync())
                 await _context.AddRangeAsync(SeedData.LoadAttributes());
-
-            //if (!await _context.AttributePossibleValues.AnyAsync())
-            //    await _context.AddRangeAsync(SeedData.LoadAttributePossibleValues());
 
             if (!await _context.UserPlansStatus.AnyAsync())
                 await _context.AddRangeAsync(SeedData.LoadUserPlanStates());

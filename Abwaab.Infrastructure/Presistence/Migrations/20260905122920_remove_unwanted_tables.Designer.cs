@@ -4,16 +4,19 @@ using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Abwaab.Infrastructure.presistence.migrations
+namespace Abwaab.Infrastructure.Presistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260905122920_remove_unwanted_tables")]
+    partial class remove_unwanted_tables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -355,6 +358,9 @@ namespace Abwaab.Infrastructure.presistence.migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AdvertismentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Amount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -394,6 +400,8 @@ namespace Abwaab.Infrastructure.presistence.migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AdvertismentId");
 
                     b.HasIndex("PayedAt");
 
@@ -908,6 +916,9 @@ namespace Abwaab.Infrastructure.presistence.migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PlanExpieryDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PreviousEmail")
                         .HasColumnType("nvarchar(max)");

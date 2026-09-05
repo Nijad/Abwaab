@@ -3,9 +3,9 @@
     public class Attribute : BaseEntity
     {
         public string AttributeName { get; set; } = null!;
-        public List<PropertyAttribute>? PropertyAttributes { get; set; }
-        public List<AttributePossibleValue>? PossibleValues { get; set; }
         public Guid AttributeDataTypeId { get; set; }
         public AttributeDataType? AttributeDataType { get; set; }
+        public List<PropertyAttribute>? PropertyAttributes { get; set; }
+        public List<AttributePossibleValue>? PossibleValues { get; set; }
     }
 }

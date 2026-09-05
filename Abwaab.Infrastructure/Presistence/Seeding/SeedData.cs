@@ -93,19 +93,6 @@ public static class SeedData
         };
     }
 
-    public static List<AppointmentAction> LoadAppointmentActions()
-    {
-        return new List<AppointmentAction>
-        {
-            new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Request.ToString() },
-            new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Accept.ToString() },
-            new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Refuse.ToString() },
-            new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Cancel.ToString() },
-            new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Visit.ToString() },
-            new AppointmentAction { Id = new Guid(), ActionName = AppointmentActionsEnum.Report.ToString() },
-        };
-    }
-
     public static List<PropertyState> LoadPropertyStates()
     {
         return new List<PropertyState>
