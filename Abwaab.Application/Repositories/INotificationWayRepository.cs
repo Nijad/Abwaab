@@ -21,6 +21,6 @@ namespace Abwaab.Application.Repositories
         Task AddNotificationsRangeAsync(List<Notification> notifications);
         Task UpdateNotification(Notification notification, CancellationToken cancellationToken);
         Task<List<Notification>> GetPendingNotificationToSend(NotificationState state);
-        Task<List<Notification>> GetUserNotificationsByUserIdAsync(bool unreadOnly, Guid userId);
+        Task<List<Notification>> GetUserNotificationsByUserIdAsync(bool unreadOnly, Guid userId, NotificationWay notificationWay);
     }
 }

@@ -2,8 +2,6 @@
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Threading.Tasks;
 
 namespace Abwaab.Infrastructure.Presistence.Repositories
 {
@@ -102,10 +100,11 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Notification>> GetUserNotificationsByUserIdAsync(bool unreadOnly, Guid userId)
+        public async Task<List<Notification>> GetUserNotificationsByUserIdAsync(bool unreadOnly, Guid userId, NotificationWay notificationWay)
         {
             IQueryable<Notification> query = _context.Notifications
-                .Where(x => x.NotificationSubscription.UserId == userId)
+                .Where(x => x.NotificationSubscription.UserId == userId && 
+                x.NotificationSubscription.NotificationWay == notificationWay)
                 .Include(x => x.NotificationSubscription)
                 .ThenInclude(x => x.NotificationWay);
 

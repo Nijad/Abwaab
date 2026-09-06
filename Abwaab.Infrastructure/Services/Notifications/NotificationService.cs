@@ -133,9 +133,9 @@ namespace Abwaab.Infrastructure.Services.Notifications
             return await _notificationWayRepository.GetPendingNotificationToSend(await GetPendingNotficationStateAsync(errorTitle));
         }
 
-        public async Task<List<GetUserWebAppNotificationsRespnse>> GetUserNotificationsByUserIdAsync(bool unreadOnly, Guid userId)
+        public async Task<List<GetUserWebAppNotificationsRespnse>> GetWebUserNotificationsByUserIdAsync(bool unreadOnly, Guid userId, NotificationWay notificationWay)
         {
-            List<Notification> notificationList = await _notificationWayRepository.GetUserNotificationsByUserIdAsync(unreadOnly, userId);
+            List<Notification> notificationList = await _notificationWayRepository.GetUserNotificationsByUserIdAsync(unreadOnly, userId, notificationWay);
 
             List<GetUserWebAppNotificationsRespnse> respnses = new();
 
@@ -150,6 +150,15 @@ namespace Abwaab.Infrastructure.Services.Notifications
                 });
 
             return respnses;
+        }
+
+        public async Task<NotificationWay> GetNotificationWayByNameAsync(NotificationWaysEnum web_Application, string errorTitle)
+        {
+            NotificationWay? notificationWay = await _notificationWayRepository.FindNotificationWayByNameAsync(web_Application.ToString());
+            if (notificationWay == null)
+                throw new NotFoundException(nameof(NotificationWay), nameof(notificationWay.WayName), web_Application.ToString(), errorTitle);
+
+            return notificationWay;
         }
     }
 }
