@@ -94,8 +94,8 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         public async Task<List<Notification>> GetPendingNotificationToSend(NotificationState state)
         {
             return await _context.Notifications
-                .Include(x=>x.NotificationSubscription)
-                .ThenInclude(x=>x.NotificationWay)
+                .Include(x => x.NotificationSubscription)
+                .ThenInclude(x => x.NotificationWay)
                 .Where(
                 x => x.NotificationState == state &&
                 !string.IsNullOrEmpty(x.Identifier))
@@ -105,9 +105,10 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         public async Task<List<Notification>> GetUserNotificationsByUserIdAsync(bool unreadOnly, Guid userId)
         {
             IQueryable<Notification> query = _context.Notifications
+                .Where(x => x.NotificationSubscription.UserId == userId)
                 .Include(x => x.NotificationSubscription)
                 .ThenInclude(x => x.NotificationWay);
-            
+
             if (unreadOnly)
                 query = query.Where(x => x.IsRead == false);
 
