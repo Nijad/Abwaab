@@ -146,6 +146,7 @@ namespace Abwaab.Infrastructure.Services.Notifications
                     Message = notification.Message,
                     NotificationId = notification.Id,
                     IsRead = notification.IsRead,
+                    NotificationDate = notification.CreatedAt
                 });
 
             return respnses;
