@@ -80,8 +80,9 @@ namespace Abwaab.Application.Features.Properties.Update
                 finishing = await _propertyFinishingService.FindPropertyFinishingByIdAsycn((Guid)request.PropertyFinishingId, errorTitle);
 
             PropertyState preparingState = await _propertyStatesService.GetPreparingPropertyStateAsync(errorTitle);
+            PropertyState rejectedState = await _propertyStatesService.GetRejectedPropertyStateAsync(errorTitle);
 
-            if (property.PropertyState != preparingState)
+            if (property.PropertyState != preparingState || property.PropertyState != rejectedState)
                 throw new NotAllowedToSetPropertyAsPreparingException(property.PropertyState.StateName, errorTitle);
 
             //check time slot
