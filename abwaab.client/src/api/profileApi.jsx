@@ -100,4 +100,8 @@ export const profileApi = {
       },
       { signal: signal }
     ),
+  userNotifcations: (signal) =>
+    axiosPrivate.get("/api/Profile/Notifications", {
+      signal: signal,
+    }),
 };

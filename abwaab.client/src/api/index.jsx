@@ -5,4 +5,3 @@ export { rolesApi } from "./rolesApi";
 export { propertyApi } from "./propertyApi";
 export { mediaApi } from "./mediaApi";
 export { appointmentsApi } from "./appointmentsApi";
-export { notificationApi } from "./notificationApi";

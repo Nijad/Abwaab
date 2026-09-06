@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
 import { propertyApi } from "../../api";
-import { NavLink, useParams } from "react-router";
+import { Link, NavLink, useParams } from "react-router";
 import { LocationPicker } from "../../components/LocationPicker";
 import LabelTag from "../../components/LabelTag";
 import VisitReservationButton from "./VisitReservationButton";
@@ -18,6 +18,7 @@ import ImagesearchRollerOutlinedIcon from "@mui/icons-material/ImagesearchRoller
 import useAuth from "../../hooks/useAuth";
 import AcceptProperty from "./AcceptProperty";
 import RejectProperty from "./RejectProperty";
+import { Button } from "@mui/material";
 
 const CustomAttributes = memo(({ attributes }) => {
   return (
@@ -226,6 +227,16 @@ const ViewPropertyDetails = () => {
                 <React.Fragment>
                   <AcceptProperty propertyId={data.propertyId} />
                   <RejectProperty propertyId={data.propertyId} />
+                  {/* <Link to={"/admin/pending-advertisements"}></Link> */}
+                  <Button
+                    href="/admin/pending-advertisements"
+                    size="large"
+                    variant="text"
+                    color="navy"
+                    fullWidth
+                  >
+                    عودة
+                  </Button>
                 </React.Fragment>
               )}
             </div>

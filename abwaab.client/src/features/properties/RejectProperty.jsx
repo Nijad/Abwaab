@@ -34,6 +34,7 @@ const RejectProperty = ({ propertyId }) => {
         signalRef.current.signal
       );
       navigate("/admin/pending-advertisements");
+      setRejectDialog(false);
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
       //   if (onSuccess) onSuccess(data.newEmail, resp.data);
     } catch (err) {

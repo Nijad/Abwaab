@@ -3,10 +3,10 @@ import { Badge, IconButton, Menu, MenuItem } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import useAuth from "../hooks/useAuth";
-import { notificationApi } from "../api";
+import { profileApi } from "../api";
 import { enqueueSnackbar } from "notistack";
 
-const dataTest = [
+const data = [
   {
     id: 0,
     title: "لديك طلب زيارة احد عقاراتك",
@@ -35,7 +35,7 @@ const dataTest = [
 
 const Notification = () => {
   const [anchorElNotfication, setAnchorElNotfication] = useState(null);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const { isAdmin } = useAuth();
   const signalRef = useRef();
   const navigate = useNavigate();
@@ -46,11 +46,9 @@ const Notification = () => {
     }
     try {
       signalRef.current = new AbortController();
-      const resp = await notificationApi.userNotifcations(
-        signalRef.current.signal
-      );
+      const resp = await profileApi.userNotifcations(signalRef.current.signal);
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
-      // setData(resp.data);
+      setData(resp.data);
     } catch (err) {
       //list related error codes
       //   enqueueSnackbar(err.detail, { variant: "error" });
@@ -130,16 +128,22 @@ const Notification = () => {
     }
   };
   useEffect(() => {
-    setTimeout(() => {
+    setInterval(() => {
       fetchMyNotifications();
-    }, 0);
+    }, 2000);
 
     return () => {
       if (signalRef.current) {
         signalRef.current.abort();
       }
     };
-  });
+  }, []);
+  //   {
+  //     "notificationId": "c4be98d2-e0e7-424f-8aa9-390e014e059f",
+  //     "title": "رفض عقار",
+  //     "message": "تم رفض العقار الخاص بك من قبل إدارة الموقع. يمكنك الاطلاع على التفاصيل من خلال الموقع الالكتروني",
+  //     "isRead": false
+  // }
 
   return (
     <React.Fragment>
@@ -148,7 +152,7 @@ const Notification = () => {
         color="navy"
         onClick={handleOpenNotificationMenu}
       >
-        <Badge badgeContent={5} color="teal">
+        <Badge badgeContent={data.length} color="teal">
           <NotificationsOutlined />
         </Badge>
       </IconButton>
@@ -157,6 +161,7 @@ const Notification = () => {
           position: "absolute",
           top: "6%",
           right: "8%",
+
           ".MuiList-root": { padding: "6px" },
           ".MuiPaper-root": { borderRadius: "12px" },
         }}
@@ -175,15 +180,16 @@ const Notification = () => {
         onClose={handleCloseNotificationMenu}
       >
         <div className="overflow-y-scroll max-h-96">
-          {dataTest.map((n) => (
+          {data.map((n) => (
             <MenuItem
               sx={{
                 minWidth: "250px",
+                maxWidth: "400px",
                 padding: 1,
                 borderRadius: "8px",
                 marginY: 1,
               }}
-              key={`notif${n.id}`}
+              key={`notif${n.notificationId}`}
               className={`hover:!bg-sky-300 !border-neutral-900 !border-4 ${
                 n.isRead ? "" : "!bg-sky-200"
               }`}
@@ -198,8 +204,14 @@ const Notification = () => {
                 <p className="font-semibold text-navy-900 text-[15px]">
                   {n.title}
                 </p>
-                <p className="text-neutral-800 text-xs mb-1">{n.description}</p>
-                <p className="text-neutral-800 text-xs mb-1">{n.date}</p>
+                <p className="text-neutral-800 text-xs mb-1 text-wrap">
+                  {n.message}
+                </p>
+                {/* {n.notificationDate && ( */}
+                <p className="text-neutral-800 text-xs mb-1">
+                  {n.date || ""} &nbsp;
+                </p>
+                {/* )} */}
                 {/* </div> */}
               </div>
             </MenuItem>

@@ -84,7 +84,7 @@ export const HeroSlider = () => {
                 </span>
 
                 {/* Main Heading */}
-                <h1 className="text-3xl md:text-5xl font-extrabold leading-tight text-white drop-shadow-md">
+                <h1 className="text-3xl md:text-5xl font-extrabold !leading-normal text-white drop-shadow-md">
                   {slide.title}
                 </h1>
 
