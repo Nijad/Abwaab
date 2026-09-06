@@ -146,6 +146,7 @@ namespace Abwaab.Server.Controllers
         public async Task<IActionResult> Notifications(bool unreadOnly = false)
         {
             List<GetUserWebAppNotificationsRespnse> result = await _mediator.Send(new GetUserWebAppNotificationsQuety() { UnreadOnly = unreadOnly });
+            
             return Ok(result);
         }
 

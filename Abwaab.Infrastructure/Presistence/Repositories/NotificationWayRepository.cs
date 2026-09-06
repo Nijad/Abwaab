@@ -112,7 +112,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
             if (unreadOnly)
                 query = query.Where(x => x.IsRead == false);
 
-            return await query.ToListAsync();
+            return await query.OrderByDescending(x=>x.CreatedAt).ToListAsync();
         }
     }
 }
