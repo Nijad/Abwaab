@@ -148,6 +148,7 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
                 RemainingVideosAllowed = remainingVedios,
                 PropertyState = property.PropertyState.StateName,
                 IsStar = property.IsStard,
+                Note = property.Note ?? ""
             };
             return response;
         }

@@ -83,7 +83,6 @@ public class SubmitPropertyCommandHandler : IRequestHandler<SubmitPropertyComman
 
 
         if (property.PropertyStateId != preparingState.Id &&
-            property.PropertyStateId != pendingState.Id &&
             property.PropertyStateId != rejectedState.Id &&
             property.PropertyStateId != disabledState.Id)
             throw new NotAllowedToSetPropertyAsPendingException(property.PropertyState.StateName, errorTitle);
