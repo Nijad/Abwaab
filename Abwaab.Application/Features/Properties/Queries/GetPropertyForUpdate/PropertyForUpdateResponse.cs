@@ -12,5 +12,6 @@ namespace Abwaab.Application.Features.Properties.Queries.GetPropertyForUpdate
         public int RemainingStarsAllowed { get; set; }
         public int RemainingImagesAllowed { get; set; }
         public int RemainingVideosAllowed { get; set; }
+        public string Note { get; set; }
     }
 }
