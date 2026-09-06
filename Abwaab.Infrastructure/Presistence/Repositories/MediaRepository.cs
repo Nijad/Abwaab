@@ -63,7 +63,7 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         public async Task UncoverImagesAsync(Guid propertyId)
         {
             await _context.Media
-                .Where(c => c.IsCover)
+                .Where(c => c.IsCover && c.PropertyId == propertyId)
                 .ExecuteUpdateAsync(setters => setters.SetProperty(c => c.IsCover, false));
             await _context.SaveChangesAsync();
         }
