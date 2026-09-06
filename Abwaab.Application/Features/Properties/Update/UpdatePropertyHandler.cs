@@ -82,7 +82,7 @@ namespace Abwaab.Application.Features.Properties.Update
             PropertyState preparingState = await _propertyStatesService.GetPreparingPropertyStateAsync(errorTitle);
             PropertyState rejectedState = await _propertyStatesService.GetRejectedPropertyStateAsync(errorTitle);
 
-            if (property.PropertyState != preparingState || property.PropertyState != rejectedState)
+            if (property.PropertyState != preparingState && property.PropertyState != rejectedState)
                 throw new NotAllowedToSetPropertyAsPreparingException(property.PropertyState.StateName, errorTitle);
 
             //check time slot
