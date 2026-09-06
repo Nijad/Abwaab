@@ -2,7 +2,7 @@ import ViewPropertyDetails from "../features/properties/ViewPropertyDetails";
 
 const PropertyDetails = () => {
   return (
-    <div>
+    <div className="w-full">
       <ViewPropertyDetails />
     </div>
   );

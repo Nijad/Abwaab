@@ -217,18 +217,20 @@ const Notification = () => {
             </MenuItem>
           ))}
         </div>
-        <MenuItem
-          sx={{
-            minWidth: "250px",
-            padding: 1,
-            borderRadius: "8px",
-            marginY: 1,
-            justifyContent: "center",
-          }}
-          onClick={clearAll}
-        >
-          قراءة الكل
-        </MenuItem>
+        {data.length === 0 && (
+          <MenuItem
+            sx={{
+              minWidth: "250px",
+              padding: 1,
+              borderRadius: "8px",
+              marginY: 1,
+              justifyContent: "center",
+            }}
+            // onClick={clearAll}
+          >
+            لايوجد اشعارات حالياً
+          </MenuItem>
+        )}
       </Menu>
     </React.Fragment>
   );

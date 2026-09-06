@@ -2,7 +2,7 @@ import { Skeleton } from "@mui/material";
 
 const PropertyDetailsLoading = () => {
   return (
-    <div className="bg-neutral-50 flex flex-col max-w-7x px-28 mx-auto mt-5 pb-24">
+    <div className="bg-neutral-50 flex flex-col max-w-[85%] mx-auto mt-5 pb-24">
       <div className="flex items-center content-between w-full my-4 gap-3">
         <div className="w-2/3 flex-1">
           <Skeleton variant="rounded" width={410} height={50} />

@@ -5,6 +5,7 @@ import { EditOutlined } from "@mui/icons-material";
 import PromoteIcon from "./PromoteIcon";
 import PromoteProperty from "../features/properties/PromoteProperty";
 import PreviewPropertyVisits from "../features/properties/PreviewPropertyVisits";
+import { Link } from "react-router";
 
 const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
   return (
@@ -22,29 +23,34 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
             label={data.propertyType}
             classes="bg-sky-100 text-navy-700 px-3 min-w-10"
           />
-          <h3 className="text-3xl text-neutral-900 text-ellipsis ">
+          <Link
+            to={`/portal/properties/${data.propertyId}`}
+            className="text-3xl text-neutral-900 text-ellipsis "
+          >
             {data.title}
-          </h3>
+          </Link>
         </div>
-        <div className="min-w-[27%] flex items-center">
-          <div className="min-w-[50%]">
-            <p className="text-neutral-700 text-xs">المساحة</p>
-            <p className="text-navy-700 text-base">
-              {data.areaInSquareMeter} م<sup>2</sup>
-            </p>
-          </div>
-          <div className="min-w-[50%]">
-            <p className="text-neutral-700 text-xs">السعر</p>
-            <p className="text-navy-700 text-base">{data.price} ليرة سورية</p>
-          </div>
-        </div>
-        <div className="">
-          <div className="w-full text- text-end pb-5">
+        <div className="min-w-[30%] flex flex-wrap items-center justify-between">
+          <div className=" text- text-end pb-5">
             <LabelTag
               label={data.propertyState}
               classes="rounded-full px-3 bg-sky-100 text-navy-700 inline-block"
             />
           </div>
+          <div className="">
+            <p className="text-neutral-700 text-xs">المساحة</p>
+            <p className="text-navy-700 text-base">
+              {data.areaInSquareMeter} م<sup>2</sup>
+            </p>
+          </div>
+          <div className="">
+            <p className="text-neutral-700 text-xs">السعر</p>
+            <p className="text-navy-700 text-base">
+              {data.price.toLocaleString()} دولار امريكي
+            </p>
+          </div>
+        </div>
+        <div className="">
           <PromoteProperty propertyId={data.propertyId} />
           {/* <Button
             sx={{ marginX: "4px" }}

@@ -74,12 +74,13 @@ const router = createBrowserRouter([
       </PresistLogin>
     ),
     children: [
-      { index: true, element: <Admin /> },
+      { index: true, element: <Home /> },
       {
         path: "users",
         element: <ManageUsers />,
       },
       { path: "pending-advertisements", element: <MyProperties /> },
+      { path: "properties", element: <Properties /> },
       { path: "properties/:id", element: <PropertyDetails /> },
     ],
   },

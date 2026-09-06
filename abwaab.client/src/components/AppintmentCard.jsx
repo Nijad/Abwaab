@@ -50,7 +50,7 @@ const AppointmentCard = ({ day = { ...dayDT }, approveButton }) => {
             {/* Price & Actions - Far Left */}
             <div className="flex flex-col items-end gap-2 whitespace-nowrap">
               <div className="font-bold text-navy-800 text-lg">
-                {t.price} ليرة سورية
+                {t.price} دولار امريكي
               </div>
               <div className="flex gap-3">
                 {approveButton && (

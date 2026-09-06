@@ -56,7 +56,7 @@ export const HeroSlider = () => {
   }, [handleNext]);
 
   return (
-    <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-navy-900 font-sans">
+    <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden bg-navy-900 font-sans rounded-2xl">
       {/* Slide Track */}
       {slidesData.map((slide, index) => {
         const isActive = index === currentIndex;

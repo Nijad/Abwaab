@@ -33,7 +33,8 @@ const AcceptProperty = ({ propertyId }) => {
         data.note,
         signalRef.current.signal
       );
-      navigate("pending-advertisements");
+      navigate("/admin/pending-advertisements");
+      setAcceptDialog(false);
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
       //   if (onSuccess) onSuccess(data.newEmail, resp.data);
     } catch (err) {

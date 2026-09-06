@@ -124,7 +124,7 @@ const ViewPropertyDetails = () => {
     );
   } else {
     return (
-      <div className="bg-neutral-50 flex flex-col max-w-7x px-28 mx-auto pb-24">
+      <div className="bg-neutral-50 flex flex-col max-w-[85%] mx-auto pb-24">
         {/*Top bar*/}
         <section className="flex items-center content-between w-full my-4">
           <div className="p-5 flex-1 flex">
@@ -196,9 +196,9 @@ const ViewPropertyDetails = () => {
           </main>
           <aside className="border border-neutral-200 rounded-xl w-2/6 h-fit py-3 px-6 bg-white">
             <div className="border-b border-b-neutral-200">
-              <p className="text-neutral-600 text-lg my-4">السعر</p>
+              <p className="text-neutral-600 text-lg my-4">دولار امريكي</p>
               <p className="text-navy-700 text-2xl font-semibold my-4">
-                {data.price?.toLocaleString()} ليرة سورية
+                {data.price?.toLocaleString()} دولار امريكي
               </p>
             </div>
             <div className="border-b border-b-neutral-200">

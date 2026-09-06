@@ -668,8 +668,8 @@ const EditPropertyById = () => {
                   object: errors,
                   key: "Price",
                 })}
-                placeholder="السعر"
-                label="السعر"
+                placeholder="السعر بالدولار الامريكي"
+                label="السعر (دولار امريكي)"
                 variant="filled"
                 fullWidth
                 type="number"
@@ -766,6 +766,7 @@ const EditPropertyById = () => {
                 <TextField
                   key={att.attributeId}
                   placeholder={att.attributeName}
+                  label={att.attributeName}
                   type="number"
                   variant="filled"
                   fullWidth

@@ -60,7 +60,7 @@ const AdminPropertiesList = ({
           <div className="rounded-2xl border-neutral-400 bg-white text-center p-10">
             <HomeIcon />
             <h5 className="text-xl font-semibold text-navy-700 p-4 my-2">
-              لاتوجد عقارات مضافة بعد
+              لاتوجد عقارات بحاجة للموافقة
             </h5>
           </div>
         </div>

@@ -512,8 +512,8 @@ const EditPropertyById = () => {
                 }}
               />
               <TextField
-                placeholder="السعر"
-                label="السعر"
+                placeholder="دولار امريكي"
+                label="دولار امريكي"
                 variant="filled"
                 fullWidth
                 type="number"

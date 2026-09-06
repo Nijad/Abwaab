@@ -37,7 +37,7 @@ const AdminProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
           </div>
           <div className="min-w-[50%]">
             <p className="text-neutral-700 text-xs">السعر</p>
-            <p className="text-navy-700 text-base">{data.price} ليرة سورية</p>
+            <p className="text-navy-700 text-base">{data.price} دولار امريكي</p>
           </div>
         </div>
         <div className="">
