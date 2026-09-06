@@ -226,13 +226,15 @@ const NavBarMain = () => {
                 gap: "20px",
               }}
             >
-              <IconButton
-                size="large"
-                color="navy"
-                onClick={() => navigateToAppointments()}
-              >
-                <DateRangeOutlined />
-              </IconButton>
+              {!isAdmin && (
+                <IconButton
+                  size="large"
+                  color="navy"
+                  onClick={() => navigateToAppointments()}
+                >
+                  <DateRangeOutlined />
+                </IconButton>
+              )}
               <Notification />
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

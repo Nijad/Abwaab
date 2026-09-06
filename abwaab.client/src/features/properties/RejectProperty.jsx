@@ -33,7 +33,7 @@ const RejectProperty = ({ propertyId }) => {
         data.note,
         signalRef.current.signal
       );
-      navigate("pending-advertisements");
+      navigate("/admin/pending-advertisements");
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
       //   if (onSuccess) onSuccess(data.newEmail, resp.data);
     } catch (err) {
@@ -51,13 +51,13 @@ const RejectProperty = ({ propertyId }) => {
     <div>
       <Button
         className="!my-3"
-        size="medium"
-        variant="contained"
+        size="large"
+        variant="outlined"
         fullWidth
-        color="navy"
+        color="error"
         onClick={handleClcik}
       >
-        قبول الإعلان
+        رفض الإعلان
       </Button>
       <Dialog
         open={rejectDialog}
@@ -74,22 +74,38 @@ const RejectProperty = ({ propertyId }) => {
       >
         <form method="post" onSubmit={(e) => rejectProperty(e)}>
           <DialogTitle>
-            <h3 className="text-2xl text-navy-700">رفض نشر العقار</h3>
+            <span className="text-2xl text-navy-700">رفض نشر العقار</span>
           </DialogTitle>
           <DialogContent sx={{ maxWidth: "100%" }}>
-            <TextField name="note" size="small" multiline variant="outlined" />
+            <TextField
+              sx={{ mt: 2 }}
+              name="note"
+              size="small"
+              multiline
+              fullWidth
+              variant="outlined"
+              label="أضف تعليق (اختياري)"
+            />
             <input type="hidden" name="propertyId" value={propertyId} />
             {/* <p className="text-base text-sky-500">
               سيظهر العقار للزوار، وسيرسل اشعار بالموافقة الى المالك
             </p> */}
           </DialogContent>
           <DialogActions
-            sx={{ "&.MuiDialogActions-root": { justifyContent: "flex-start" } }}
+            sx={{
+              paddingX: 3,
+              "&.MuiDialogActions-root": { justifyContent: "flex-start" },
+            }}
           >
-            <Button type="button" onClick={() => rejectProperty}>
+            <Button type="submit" variant="contained" color="navy">
               رفض النشر
             </Button>
-            <Button type="button" onClick={() => setRejectDialog(false)}>
+            <Button
+              type="button"
+              variant="outlined"
+              color="navy"
+              onClick={() => setRejectDialog(false)}
+            >
               تراجع
             </Button>
           </DialogActions>

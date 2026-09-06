@@ -302,6 +302,7 @@ const EditPropertyById = () => {
       updateData.propertyMediaList = [...media];
       await propertyApi.updateProperty(updateData, signalRef.current.signal);
       enqueueSnackbar("تم حفظ التعديلات بنجاح", { variant: "success" });
+      setErrors({});
     } catch (err) {
       if (err.errorCode === "VALIDATION_FAILED") {
         setErrors(err.errors);
@@ -340,15 +341,19 @@ const EditPropertyById = () => {
       }
       updateData.timeSlots = timeSlotsArr;
       updateData.propertyMediaList = [...media];
+      await propertyApi.updateProperty(updateData, signalRef.current.signal);
       await propertyApi.submitProperty(updateData, signalRef.current.signal);
       fetchProperty();
       enqueueSnackbar("تم حفظ التعديلات بنجاح", { variant: "success" });
+      setErrors({});
     } catch (err) {
       if (err.errorCode === "VALIDATION_FAILED") {
         setErrors(err.errors);
         enqueueSnackbar(err.detail, { variant: "error" });
+      } else if (err.errorCode) {
+        enqueueSnackbar(err.detail, { variant: "error" });
       } else {
-        enqueueSnackbar(err.message || err, { variant: "error" });
+        enqueueSnackbar(err, { variant: "error" });
       }
     } finally {
       setLoading(false);
@@ -511,6 +516,12 @@ const EditPropertyById = () => {
   return (
     <div className="min-h-screen mt-5 flex justify-center w-full">
       <div className="w-full">
+        {formData.propertyState === "Rejected" && (
+          <div className="min-h-24 w-full mb-3 p-3 rounded-xl border border-warning-600 bg-warning-50 text-warning-600">
+            <h5 className="font-semibold">تم رفض نشر العقار الخاص بك!</h5>
+            <p className="">{formData.note}</p>
+          </div>
+        )}
         <Paper className="p-6 md:p-8 !rounded-2xl bg-white shadow-xl space-y-8">
           {/* Section 1: Basic Information */}
           <Box>
@@ -559,6 +570,13 @@ const EditPropertyById = () => {
                     valueKey="typeId"
                     labelKey="typeName"
                   />
+                  {(errors == null
+                    ? false
+                    : errors["PropertyTypeId"]
+                    ? true
+                    : false) && (
+                    <p className="text-error-700">نوع العقار مطلوب</p>
+                  )}
                 </div>
                 <div>
                   <Typography
@@ -579,6 +597,12 @@ const EditPropertyById = () => {
                     valueKey="finishingId"
                     labelKey="finishingName"
                   />
+                  {(errors == null
+                    ? false
+                    : errors["PropertyFinishingId"]
+                    ? true
+                    : false) &&
+                    ShowErrors({ object: errors, key: "PropertyFinishingId" })}
                 </div>
                 <div>
                   <Typography
@@ -595,7 +619,6 @@ const EditPropertyById = () => {
                 </div>
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
               <TextField
                 error={errors == null ? false : errors["Title"] ? true : false}
@@ -793,6 +816,8 @@ const EditPropertyById = () => {
               schedules={schedules}
               onScheduleChange={handleScheduleChange}
             />
+            {(errors == null ? false : errors["TimeSlots"] ? true : false) &&
+              ShowErrors({ object: errors, key: "TimeSlots" })}
           </Box>
 
           {/* Section 5: Property Photos & Videos */}
@@ -842,7 +867,8 @@ const EditPropertyById = () => {
           </Box>
 
           {/* Actions Footer */}
-          {formData.propertyState === "Preparing" && (
+          {(formData.propertyState === "Preparing" ||
+            formData.propertyState === "Rejected") && (
             <div className="flex justify-between gap-3 pt-4 border-t border-neutral-100">
               <div className="">
                 <Button

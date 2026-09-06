@@ -14,7 +14,7 @@ const AdminProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
       <div className="flex items-center gap-3 py-3">
         <div className="rounded-lg overflow-hidden">
           <img
-            src={data.coverImage}
+            src={`${import.meta.env.VITE_API_BASE_URL}${data.coverImage}`}
             alt="house"
             className="w-[120px] h-[120px]"
           />
@@ -51,7 +51,7 @@ const AdminProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
             variant="outlined"
             color="navy"
             startIcon={<EditOutlined />}
-            onClick={() => navigate(`properties/${data.propertyId}`)}
+            onClick={() => navigate(`/admin/properties/${data.propertyId}`)}
           >
             استعراض
           </Button>

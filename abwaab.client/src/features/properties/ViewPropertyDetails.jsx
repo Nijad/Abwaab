@@ -17,6 +17,7 @@ import StraightenRoundedIcon from "@mui/icons-material/StraightenRounded";
 import ImagesearchRollerOutlinedIcon from "@mui/icons-material/ImagesearchRollerOutlined";
 import useAuth from "../../hooks/useAuth";
 import AcceptProperty from "./AcceptProperty";
+import RejectProperty from "./RejectProperty";
 
 const CustomAttributes = memo(({ attributes }) => {
   return (
@@ -223,7 +224,8 @@ const ViewPropertyDetails = () => {
               {!isAdmin && <VisitReservationButton />}
               {isAdmin && (
                 <React.Fragment>
-                  <AcceptProperty />
+                  <AcceptProperty propertyId={data.propertyId} />
+                  <RejectProperty propertyId={data.propertyId} />
                 </React.Fragment>
               )}
             </div>

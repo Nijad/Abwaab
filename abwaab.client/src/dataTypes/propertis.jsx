@@ -141,6 +141,7 @@ export const PROPERTY_GET_DATA = {
   longitude: null,
   isStar: false,
   propertyState: "",
+  note: "",
 };
 
 export const PROPERTY_GET_LISTS = {

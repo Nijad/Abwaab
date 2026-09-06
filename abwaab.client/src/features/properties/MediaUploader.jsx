@@ -181,11 +181,11 @@ const MediaUploader = ({
                 >
                   <Close />
                 </IconButton> */}
-                <MediaDelete
+                {/* <MediaDelete
                   id={image.id}
                   onDeleted={onDeleted}
                   key={image.id}
-                />
+                /> */}
               </div>
               <div className=" w-full content-center top-0  h-full">
                 <CloudUploadIcon className="text-white text-4xl mb-2" />

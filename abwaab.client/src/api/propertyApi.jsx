@@ -26,13 +26,13 @@ export const propertyApi = {
   starProperty: (id, signal) =>
     axiosPrivate.post("/api/Property/star-property", id, { signal: signal }),
   acceptProperty: (propertyId, note, signal) =>
-    axiosPrivate.post(
+    axiosPrivate.put(
       "/api/Property/accept-property",
       { propertyId, note },
       { signal: signal }
     ),
   rejectProperty: (propertyId, note, signal) =>
-    axiosPrivate.post(
+    axiosPrivate.put(
       "/api/Property/reject-property",
       { propertyId, note },
       { signal: signal }

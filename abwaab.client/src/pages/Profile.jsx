@@ -151,12 +151,8 @@ const Profile = () => {
                   </p>
                   <VerificationStatus
                     key={"veri-1"}
-                    isVerified={profile.accountIsVerified}
-                    label={
-                      profile.accountIsVerified
-                        ? "الحساب موثّق"
-                        : "الحساب غير مكتمل"
-                    }
+                    isVerified={true}
+                    label={"الحساب موثّق"}
                   />
                 </div>
               </div>

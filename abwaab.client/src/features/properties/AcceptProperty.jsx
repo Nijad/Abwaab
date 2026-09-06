@@ -51,7 +51,7 @@ const AcceptProperty = ({ propertyId }) => {
     <div>
       <Button
         className="!my-3"
-        size="medium"
+        size="large"
         variant="contained"
         fullWidth
         color="navy"
@@ -74,22 +74,40 @@ const AcceptProperty = ({ propertyId }) => {
       >
         <form method="post" onSubmit={(e) => acceptProperty(e)}>
           <DialogTitle>
-            <h3 className="text-2xl text-navy-700">الموافقة على نشر العقار</h3>
+            <span className="text-2xl text-navy-700">
+              الموافقة على نشر العقار
+            </span>
           </DialogTitle>
-          <DialogContent sx={{ maxWidth: "100%" }}>
-            <TextField name="note" size="small" multiline variant="outlined" />
+          <DialogContent sx={{ maxWidth: "100%", paddingX: 3 }}>
+            <TextField
+              sx={{ mt: 2 }}
+              name="note"
+              size="small"
+              multiline
+              fullWidth
+              variant="outlined"
+              label="أضف تعليق (اختياري)"
+            />
             <input type="hidden" name="propertyId" value={propertyId} />
-            <p className="text-base text-sky-500">
+            <p className="text-base text-neutral-500 mt-2">
               سيظهر العقار للزوار، وسيرسل اشعار بالموافقة الى المالك
             </p>
           </DialogContent>
           <DialogActions
-            sx={{ "&.MuiDialogActions-root": { justifyContent: "flex-start" } }}
+            sx={{
+              paddingX: 3,
+              "&.MuiDialogActions-root": { justifyContent: "flex-start" },
+            }}
           >
-            <Button type="button" onClick={() => acceptProperty}>
+            <Button type="submit" variant="contained" color="navy">
               الموافقة والنشر
             </Button>
-            <Button type="button" onClick={() => setAcceptDialog(false)}>
+            <Button
+              type="button"
+              variant="outlined"
+              color="navy"
+              onClick={() => setAcceptDialog(false)}
+            >
               تراجع
             </Button>
           </DialogActions>
