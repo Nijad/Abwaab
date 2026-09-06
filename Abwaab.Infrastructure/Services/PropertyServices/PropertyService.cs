@@ -200,17 +200,20 @@ public class PropertyService : IPropertyService
         return await _propertyRepository.GetMinAreaAsync();
     }
 
-    public async Task<List<PendingPropertiesResponse>> GetPropertiesByStateAsync(PropertyState pendingProperties)
+    public async Task<List<PendingPropertiesResponse>> GetPropertiesByStateAsync(PropertyState pendingStateProperty)
     {
-        List<Property> properties = await _propertyRepository.GetPropertiesByStateAsync(pendingProperties);
+        List<Property> properties = await _propertyRepository.GetPropertiesByStateAsync(pendingStateProperty);
         var pendingPropertiesList = properties.Select(p => new PendingPropertiesResponse
         {
-            PropertyId = p.Id,
-            PropertyTitle = p.Title!,
-            CoverPath = p.MediaList?.FirstOrDefault()?.FilePath!,
-            Address = p.Address!,
-            Area = p.AreaInSquareMeter ?? 0,
-            Price = p.Price ?? 0
+            propertyId = p.Id,
+            Title = p.Title!,
+            CoverImage = p.MediaList?.FirstOrDefault()?.FilePath!,
+            AreaInSquareMeter = p.AreaInSquareMeter ?? 0,
+            Price = p.Price ?? 0,
+            VisitRequest = p.NumberOfView,
+            PropertyFinishing = p.Finishing.FinishingName,
+            PropertyType = p.PropertyType.TypeName,
+            PropertyState = pendingStateProperty.StateName
         }).ToList();
 
         return pendingPropertiesList;
