@@ -218,12 +218,12 @@ public class PropertyRepository : IPropertyRepository
             .ThenInclude(x => x.AttributeDataType)
             .Include(x => x.MediaList!.Where(y => y.IsCover))
             .Where(x =>
-                (string.IsNullOrEmpty(request.TextSearch) || (x.Title != null && x.Title.Contains(request.TextSearch))) &&
-                (string.IsNullOrEmpty(request.TextSearch) || (x.Description != null && x.Description.Contains(request.TextSearch))) &&
-                (!request.MinPrice.HasValue || (x.Price.HasValue && x.Price.Value >= request.MinPrice.Value)) &&
-                (!request.MaxPrice.HasValue || (x.Price.HasValue && x.Price.Value <= request.MaxPrice.Value)) &&
-                (!request.MinArea.HasValue || (x.AreaInSquareMeter.HasValue && x.AreaInSquareMeter.Value >= request.MinArea.Value)) &&
-                (!request.MaxArea.HasValue || (x.AreaInSquareMeter.HasValue && x.AreaInSquareMeter.Value <= request.MaxArea.Value)) &&
+                ((string.IsNullOrEmpty(request.TextSearch) || (x.Title != null && x.Title.Contains(request.TextSearch))) ||
+                (string.IsNullOrEmpty(request.TextSearch) || (x.Description != null && x.Description.Contains(request.TextSearch)))) &&
+                (!request.MinPrice.HasValue || request.MinPrice != 0 || (x.Price.HasValue && x.Price.Value >= request.MinPrice.Value)) &&
+                (!request.MaxPrice.HasValue || request.MaxPrice != 0 || (x.Price.HasValue && x.Price.Value <= request.MaxPrice.Value)) &&
+                (!request.MinArea.HasValue || request.MinArea != 0 || (x.AreaInSquareMeter.HasValue && x.AreaInSquareMeter.Value >= request.MinArea.Value)) &&
+                (!request.MaxArea.HasValue || request.MaxArea != 0 || (x.AreaInSquareMeter.HasValue && x.AreaInSquareMeter.Value <= request.MaxArea.Value)) &&
                 (!request.PropertyType.HasValue || (x.PropertyTypeId.HasValue && x.PropertyTypeId.Value == request.PropertyType.Value)) &&
                 (!request.PropertyFinishing.HasValue || (x.FinishingId.HasValue && x.FinishingId.Value == request.PropertyFinishing.Value)) &&
                 (viewSides == null || viewSides.Count == 0 || x.PropertyAttributes.Any(pa => pa.AttributeId == viewSides.First().Id))
