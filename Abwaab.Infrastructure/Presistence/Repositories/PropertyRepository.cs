@@ -218,8 +218,8 @@ public class PropertyRepository : IPropertyRepository
             .ThenInclude(x => x.AttributeDataType)
             .Include(x => x.MediaList!.Where(y => y.IsCover))
             .Where(x =>
-                (string.IsNullOrEmpty(request.TextSearch) || (x.Title != null && x.Title.Contains(request.TextSearch))) &&
-                (string.IsNullOrEmpty(request.TextSearch) || (x.Description != null && x.Description.Contains(request.TextSearch))) &&
+                ((string.IsNullOrEmpty(request.TextSearch) || (x.Title != null && x.Title.Contains(request.TextSearch))) ||
+                (string.IsNullOrEmpty(request.TextSearch) || (x.Description != null && x.Description.Contains(request.TextSearch)))) &&
                 (!request.MinPrice.HasValue || request.MinPrice != 0 || (x.Price.HasValue && x.Price.Value >= request.MinPrice.Value)) &&
                 (!request.MaxPrice.HasValue || request.MaxPrice != 0 || (x.Price.HasValue && x.Price.Value <= request.MaxPrice.Value)) &&
                 (!request.MinArea.HasValue || request.MinArea != 0 || (x.AreaInSquareMeter.HasValue && x.AreaInSquareMeter.Value >= request.MinArea.Value)) &&
