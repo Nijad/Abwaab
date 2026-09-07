@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import HomeIcon from "../../components/HomeIcon";
 import AddNewProperty from "./AddNewProperty";
 import AdminProperty from "../../components/AdminProperty";
+import { Button } from "@mui/material";
 
 const AdminPropertiesList = ({
   onPromote,
@@ -62,6 +63,14 @@ const AdminPropertiesList = ({
             <h5 className="text-xl font-semibold text-navy-700 p-4 my-2">
               لاتوجد عقارات بحاجة للموافقة
             </h5>
+            <Button
+              size="medium"
+              color="navy"
+              variant="contained"
+              onClick={() => fetchPeningProperties()}
+            >
+              تحديث القائمة
+            </Button>
           </div>
         </div>
       )}

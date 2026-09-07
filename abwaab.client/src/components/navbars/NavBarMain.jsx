@@ -75,10 +75,10 @@ const pages = {
       to: "/admin/pending-advertisements",
       label: "طلبات الإعلان",
     },
-    {
-      to: "/admin/",
-      label: "",
-    },
+    // {
+    //   to: "/admin/",
+    //   label: "",
+    // },
   ],
 };
 const settings = ["الملف الشخصي", "Account", "Dashboard", "Logout"];

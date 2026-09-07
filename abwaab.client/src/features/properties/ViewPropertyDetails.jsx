@@ -147,7 +147,9 @@ const ViewPropertyDetails = () => {
         </section>
         <section className="flex flex-1 gap-6">
           <main className="rounded-xl w-4/6">
-            <PropertyMediaGalleryModal />
+            {data.propertyMediaList.length > 0 && (
+              <PropertyMediaGalleryModal mediaItems={data.propertyMediaList} />
+            )}
             {/* Info Section */}
             <div className="my-6 flex flex-wrap p-4 bg-white gap-3  justify-start rounded-xl border border-neutral-200">
               <div className="flex items-center justify-start bg-neutral-50 text-navy-700 p-4 rounded-xl min-w-[32%]">

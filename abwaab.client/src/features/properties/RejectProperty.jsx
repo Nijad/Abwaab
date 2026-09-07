@@ -16,11 +16,13 @@ import { enqueueSnackbar } from "notistack";
 
 const RejectProperty = ({ propertyId }) => {
   const [rejectDialog, setRejectDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const signalRef = useRef();
 
   const rejectProperty = async (e) => {
     e.preventDefault();
+    setLoading(true);
     if (signalRef.current) {
       signalRef.current.abort();
     }
@@ -41,6 +43,8 @@ const RejectProperty = ({ propertyId }) => {
       //list related error codes
       if (err.detail) enqueueSnackbar(err.detail, { variant: "error" });
       if (!err.detail) enqueueSnackbar(err, { variant: "error" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,7 +102,12 @@ const RejectProperty = ({ propertyId }) => {
               "&.MuiDialogActions-root": { justifyContent: "flex-start" },
             }}
           >
-            <Button type="submit" variant="contained" color="navy">
+            <Button
+              type="submit"
+              variant="contained"
+              color="navy"
+              loading={loading}
+            >
               رفض النشر
             </Button>
             <Button

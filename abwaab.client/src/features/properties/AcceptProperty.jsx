@@ -16,11 +16,13 @@ import { enqueueSnackbar } from "notistack";
 
 const AcceptProperty = ({ propertyId }) => {
   const [acceptDialog, setAcceptDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const signalRef = useRef();
 
   const acceptProperty = async (e) => {
     e.preventDefault();
+    setLoading(true);
     if (signalRef.current) {
       signalRef.current.abort();
     }
@@ -35,12 +37,15 @@ const AcceptProperty = ({ propertyId }) => {
       );
       navigate("/admin/pending-advertisements");
       setAcceptDialog(false);
+
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
       //   if (onSuccess) onSuccess(data.newEmail, resp.data);
     } catch (err) {
       //list related error codes
       if (err.detail) enqueueSnackbar(err.detail, { variant: "error" });
       if (!err.detail) enqueueSnackbar(err, { variant: "error" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,7 +105,12 @@ const AcceptProperty = ({ propertyId }) => {
               "&.MuiDialogActions-root": { justifyContent: "flex-start" },
             }}
           >
-            <Button type="submit" variant="contained" color="navy">
+            <Button
+              type="submit"
+              variant="contained"
+              color="navy"
+              loading={loading}
+            >
               الموافقة والنشر
             </Button>
             <Button

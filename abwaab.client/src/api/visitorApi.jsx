@@ -3,8 +3,9 @@ export const visitorApi = {
   homePageProperties: (signal) =>
     axiosPrivate.get("/api/Visitor/GetMainPageData", {
       signal: signal,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    }),
+  getSearchForm: (signal) =>
+    axiosPrivate.get("/api/Visitor/GetSearchForm", {
+      signal: signal,
     }),
 };
