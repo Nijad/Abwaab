@@ -12,7 +12,7 @@ using Abwaab.Domain.Entities.UserEntities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-public class RejectPropertyCommandHandler : IRequestHandler<AcceptPropertyCommand, RejectPropertyResponse>
+public class RejectPropertyCommandHandler : IRequestHandler<RejectPropertyCommand, RejectPropertyResponse>
 {
     private readonly IPropertyStatesService _propertyStatesService;
     private readonly IPropertyService _propertyService;
@@ -30,7 +30,7 @@ public class RejectPropertyCommandHandler : IRequestHandler<AcceptPropertyComman
         _notifyHandler = notifyHandler;
     }
 
-    public async Task<RejectPropertyResponse> Handle(AcceptPropertyCommand request, CancellationToken cancellationToken)
+    public async Task<RejectPropertyResponse> Handle(RejectPropertyCommand request, CancellationToken cancellationToken)
     {
         //get property
         Property property = await _propertyService.FindPropertyWithUserAndStateByIdAsync(request.PropertyId, errorTitle);

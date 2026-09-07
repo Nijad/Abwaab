@@ -4,7 +4,6 @@ using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Plans;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
-using Abwaab.Application.Features.Properties.Update;
 using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using MediatR;

@@ -2,7 +2,7 @@
 
 namespace Abwaab.Application.Features.Properties.Accept;
 
-public class DisablePropertyCommand : IRequest<DisablePropertyResponse>
+public class AcceptPropertyCommand : IRequest<AcceptPropertyResponse>
 {
     public Guid PropertyId { get; set; }
 }

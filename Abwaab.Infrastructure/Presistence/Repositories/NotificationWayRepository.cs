@@ -2,8 +2,6 @@
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Threading.Tasks;
 
 namespace Abwaab.Infrastructure.Presistence.Repositories
 {
@@ -94,24 +92,26 @@ namespace Abwaab.Infrastructure.Presistence.Repositories
         public async Task<List<Notification>> GetPendingNotificationToSend(NotificationState state)
         {
             return await _context.Notifications
-                .Include(x=>x.NotificationSubscription)
-                .ThenInclude(x=>x.NotificationWay)
+                .Include(x => x.NotificationSubscription)
+                .ThenInclude(x => x.NotificationWay)
                 .Where(
                 x => x.NotificationState == state &&
                 !string.IsNullOrEmpty(x.Identifier))
                 .ToListAsync();
         }
 
-        public async Task<List<Notification>> GetUserNotificationsByUserIdAsync(bool unreadOnly, Guid userId)
+        public async Task<List<Notification>> GetUserNotificationsByUserIdAsync(bool unreadOnly, Guid userId, NotificationWay notificationWay)
         {
             IQueryable<Notification> query = _context.Notifications
+                .Where(x => x.NotificationSubscription.UserId == userId && 
+                x.NotificationSubscription.NotificationWay == notificationWay)
                 .Include(x => x.NotificationSubscription)
                 .ThenInclude(x => x.NotificationWay);
-            
+
             if (unreadOnly)
                 query = query.Where(x => x.IsRead == false);
 
-            return await query.ToListAsync();
+            return await query.OrderByDescending(x=>x.CreatedAt).ToListAsync();
         }
     }
 }

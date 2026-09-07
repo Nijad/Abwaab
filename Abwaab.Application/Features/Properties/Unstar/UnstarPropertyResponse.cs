@@ -1,8 +1,6 @@
-﻿namespace Abwaab.Application.Features.Properties.Unstar
+﻿namespace Abwaab.Application.Features.Properties.Unstar;
+
+public record UnstarPropertyResponse(bool Success)
 {
-    public class UnstarPropertyResponse
-    {
-        public bool Success { get; set; }
-        public string Message { get; set; } = string.Empty;
-    }
+    public string Message { get; set; } = string.Empty;
 }

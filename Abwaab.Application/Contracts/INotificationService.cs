@@ -3,6 +3,7 @@ using Abwaab.Application.Features.Notifications.Queries.GetAllNotificationWays;
 using Abwaab.Application.Features.Notifications.Queries.GetWebAppNotifications;
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.UserEntities;
+using Abwaab.Domain.Enums;
 
 namespace Abwaab.Application.Contracts
 {
@@ -19,6 +20,7 @@ namespace Abwaab.Application.Contracts
         Task<NotificationState> GetPUnreadNotficationStateAsync(string errorTitle);
         Task UpdateNotificationAsync(Notification notification, CancellationToken cancellationToken = default);
         Task<List<Notification>> GetPendingNotificationToSend(string errorTitle);
-        Task<List<GetUserWebAppNotificationsRespnse>> GetUserNotificationsByUserIdAsync(bool unreadOnly,Guid iserId);
+        Task<List<GetUserWebAppNotificationsRespnse>> GetWebUserNotificationsByUserIdAsync(bool unreadOnly,Guid iserId, NotificationWay notificationWay);
+        Task<NotificationWay> GetNotificationWayByNameAsync(NotificationWaysEnum web_Application, string errorTitle);
     }
 }
