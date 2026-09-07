@@ -3,7 +3,6 @@ using Abwaab.Application.Common.Exceptions.Auth;
 using Abwaab.Application.Common.Exceptions.Properties.States;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
-using Abwaab.Application.Features.Properties.Reject;
 using Abwaab.Application.Interfaces;
 using Abwaab.Domain.Entities.NotificationEntities;
 using Abwaab.Domain.Entities.PropertyEntities;
@@ -14,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Abwaab.Application.Features.Properties.Accept;
 
-public class DesablePropertyCommandHandler : IRequestHandler<DisablePropertyCommand, DisablePropertyResponse>
+public class AcceptPropertyCommandHandler : IRequestHandler<AcceptPropertyCommand, AcceptPropertyResponse>
 {
     private readonly IPropertyStatesService _propertyStatesService;
     private readonly IPropertyService _propertyService;
@@ -23,7 +22,7 @@ public class DesablePropertyCommandHandler : IRequestHandler<DisablePropertyComm
     private readonly INotifyHandler _notifyHandler;
     private readonly string errorTitle = ErrorTitle.AcceptProperty;
 
-    public DesablePropertyCommandHandler(
+    public AcceptPropertyCommandHandler(
         IPropertyStatesService propertyStatesService,
         IPropertyService propertyService,
         UserManager<ApplicationUser> userManager,
@@ -37,7 +36,7 @@ public class DesablePropertyCommandHandler : IRequestHandler<DisablePropertyComm
         _notifyHandler = notifyHandler;
     }
 
-    public async Task<DisablePropertyResponse> Handle(DisablePropertyCommand request, CancellationToken cancellationToken)
+    public async Task<AcceptPropertyResponse> Handle(AcceptPropertyCommand request, CancellationToken cancellationToken)
     {
         //get property
         Property property = await _propertyService.FindPropertyWithUserAndStateByIdAsync(request.PropertyId, errorTitle);
@@ -68,6 +67,6 @@ public class DesablePropertyCommandHandler : IRequestHandler<DisablePropertyComm
         List<Notification> notifications = await _notificationService.InitiateNotifications("تم نشر العقار الخاص بك، وأصبح متاحاً للاستعراض على الموقع الالكتروني.", users, errorTitle);
 
         await _notifyHandler.NotifyAsync(errorTitle);
-        return new DisablePropertyResponse() { Success = true, Message = "تم رفض العقار بنجاح." };
+        return new AcceptPropertyResponse() { Success = true, Message = "تم رفض العقار بنجاح." };
     }
 }

@@ -6,7 +6,6 @@ using Abwaab.Application.Common.Exceptions.Properties.Attributes;
 using Abwaab.Application.Common.Exceptions.Properties.DataTypes;
 using Abwaab.Application.Common.Exceptions.Properties.States;
 using Abwaab.Application.Common.Exceptions.Properties.TimeSlots;
-using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts;
 using Abwaab.Application.Contracts.Properties;
 using Abwaab.Application.Features.Properties.Common.DTOs;

@@ -1,6 +1,8 @@
 ﻿using Abwaab.Application.Common.Constants;
 using Abwaab.Application.Features.Properties.Accept;
+using Abwaab.Application.Features.Properties.Add;
 using Abwaab.Application.Features.Properties.Delete;
+using Abwaab.Application.Features.Properties.Disable;
 using Abwaab.Application.Features.Properties.Enable;
 using Abwaab.Application.Features.Properties.Queries.AvailableTimeSlots;
 using Abwaab.Application.Features.Properties.Queries.GetFinishingList;
@@ -36,7 +38,8 @@ namespace Abwaab.Server.Controllers
         [HttpPost("add-property")]
         public async Task<IActionResult> AddProperty()
         {
-            var result = await _mediator.Send(new AddPropertyCommand());
+            AddPropertyCommand command = new AddPropertyCommand();
+            AddPropertyResponse result = await _mediator.Send(command);
             return Ok(result);
         }
 
@@ -69,22 +72,22 @@ namespace Abwaab.Server.Controllers
         [HttpPut("update-property")]
         public async Task<IActionResult> UpdateProperty([FromBody] UpdatePropertyCommand command)
         {
-            var result = await _mediator.Send(command);
+            UpdatePropertyResponse result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpPut("submit-property")]
         public async Task<IActionResult> SubmitProperty([FromBody] SubmitPropertyCommand command)
         {
-            var result = await _mediator.Send(command);
+            SubmitPropertyResponse result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpPut("reject-property")]
         [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
-        public async Task<IActionResult> RejectProperty([FromBody] AcceptPropertyCommand command)
+        public async Task<IActionResult> RejectProperty([FromBody] RejectPropertyCommand command)
         {
-            var result = await _mediator.Send(command);
+            RejectPropertyResponse result = await _mediator.Send(command);
             return Ok(result);
         }
 
@@ -92,63 +95,63 @@ namespace Abwaab.Server.Controllers
         [Authorize(Roles = RoleConstants.ROLE_ADMIN)]
         public async Task<IActionResult> AcceptProperty([FromBody] AcceptPropertyCommand command)
         {
-            var result = await _mediator.Send(command);
+            AcceptPropertyResponse result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpPut("disable-property")]
         public async Task<IActionResult> DisableProperty([FromBody] DisablePropertyCommand command)
         {
-            var result = await _mediator.Send(command);
+            DisablePropertyResponse result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpPut("enable-property")]
         public async Task<IActionResult> EnableProperty([FromBody] EnablePropertyCommand command)
         {
-            var result = await _mediator.Send(command);
+            EnablePropertyResponse result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpPut("sell-property")]
         public async Task<IActionResult> SellProperty([FromBody] SellPropertyCommand command)
         {
-            var result = await _mediator.Send(command);
+            SellPropertyResponse result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpDelete("delete-property")]
         public async Task<IActionResult> DeleteProperty([FromBody] DeletePropertyCommand command)
         {
-            var result = await _mediator.Send(command);
+            DeletePropertyResponse result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpGet("finishing-list")]
         public async Task<IActionResult> GetFinishingList()
         {
-            var result = await _mediator.Send(new FinishingQuery());
+            List<FinishingRespons> result = await _mediator.Send(new FinishingQuery());
             return Ok(result);
         }
 
         [HttpGet("property-types-list")]
         public async Task<IActionResult> GetPropertyTypesList()
         {
-            var result = await _mediator.Send(new PropertyTypeQuery());
+            List<PropertyTypeResponse> result = await _mediator.Send(new PropertyTypeQuery());
             return Ok(result);
         }
 
         [HttpPost("star-property")]
         public async Task<IActionResult> StarProperty(StarPropertyCommand command)
         {
-            var result = await _mediator.Send(command);
+            StarPropertyResponse result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpPost("unstar-property")]
         public async Task<IActionResult> UnstarProperty(UnstarPropertyCommand command)
         {
-            var result = await _mediator.Send(command);
+            UnstarPropertyResponse result = await _mediator.Send(command);
             return Ok(result);
         }
 

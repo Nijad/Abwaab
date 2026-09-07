@@ -2,9 +2,9 @@
 
 namespace Abwaab.Application.Features.Properties.Accept;
 
-public class DisablePropertyValidation : AbstractValidator<DisablePropertyCommand>
+public class AcceptPropertyValidation : AbstractValidator<AcceptPropertyCommand>
 {
-    public DisablePropertyValidation()
+    public AcceptPropertyValidation()
     {
         RuleFor(x => x.PropertyId)
             .NotEmpty().WithMessage("رقم العقار مطلوب");

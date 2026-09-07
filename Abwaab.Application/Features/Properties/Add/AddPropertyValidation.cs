@@ -1,5 +1,4 @@
-﻿using Abwaab.Application.Features.Properties.Update;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Abwaab.Application.Features.Properties.Add
 {
