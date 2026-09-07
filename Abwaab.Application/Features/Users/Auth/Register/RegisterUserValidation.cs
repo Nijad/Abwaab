@@ -19,15 +19,15 @@ public class RegisterUserValidation : AbstractValidator<RegisterUserDTO>
             .Matches("[a-z]").WithMessage("كلمة المرور يجب أن تحتوي على حرف انكليزي صغير واحد على الأقل")
             .Matches("[0-9]").WithMessage("كلمة المرور يجب أن تحتوي على رقم واحد على الأقل");
 
-            RuleFor(x => x.FirstName)
-                .NotEmpty().WithMessage($"{GeneralConstants.FIRST_NAME} مطلوب")
-                .MinimumLength(2).WithMessage($"{GeneralConstants.FIRST_NAME} يجب أن يحتوي حرفين على الأقل");
-            RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage($"{GeneralConstants.LAST_NAME} مطلوبة")
-                .MinimumLength(2).WithMessage($"{GeneralConstants.LAST_NAME} يجب أن تحتوي حرفين على الأقل");
-            RuleFor(x => x.ConfirmPassword)
-                .NotEmpty().WithMessage("تأكيد كلمة المرور مطلوب")
-                .Equal(x => x.Password).WithMessage("تأكيد كلمة المرور لا تتطابق مع كلمة المرور");
-        }
+        RuleFor(x => x.FirstName)
+            .NotEmpty().WithMessage($"{GeneralConstants.FIRST_NAME} مطلوب")
+            .MinimumLength(2).WithMessage($"{GeneralConstants.FIRST_NAME} يجب أن يحتوي حرفين على الأقل");
+        RuleFor(x => x.LastName)
+            .NotEmpty().WithMessage($"{GeneralConstants.LAST_NAME} مطلوبة")
+            .MinimumLength(2).WithMessage($"{GeneralConstants.LAST_NAME} يجب أن تحتوي حرفين على الأقل");
+        RuleFor(x => x.ConfirmPassword)
+            .NotEmpty().WithMessage("تأكيد كلمة المرور مطلوب")
+            .Equal(x => x.Password).WithMessage("تأكيد كلمة المرور لا تتطابق مع كلمة المرور");
     }
 }
+
