@@ -1,4 +1,4 @@
-export const SEARCH_DATA = {
+export const SEARCH_VALUES = {
   minPrice: 0,
   maxPrice: 0,
   minArea: 0,
@@ -23,13 +23,13 @@ export const SEARCH_DATA = {
   ],
 };
 
-export const SEARCH_POST = {
+export const SEARCH_DATA = {
   textSearch: "",
   minPrice: 0,
   maxPrice: 0,
   minArea: 0,
   maxArea: 0,
-  propertyType: "",
-  propertyFinishing: "",
-  viewSides: [""],
+  propertyType: null,
+  propertyFinishing: null,
+  viewSides: [],
 };

@@ -8,4 +8,8 @@ export const visitorApi = {
     axiosPrivate.get("/api/Visitor/GetSearchForm", {
       signal: signal,
     }),
+  search: (data, signal) =>
+    axiosPrivate.post("/api/Visitor/Search", data, {
+      signal: signal,
+    }),
 };

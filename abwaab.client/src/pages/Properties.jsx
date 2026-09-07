@@ -1,11 +1,18 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import { PropertyCard } from "../components/PropertyCard";
-import { Slider, TextField, ToggleButton, Typography } from "@mui/material";
+import {
+  Button,
+  Divider,
+  Slider,
+  TextField,
+  ToggleButton,
+  Typography,
+} from "@mui/material";
 import { visitorApi } from "../api";
 import { ORIENTATIONS } from "../dataTypes/propertis";
-import { enqueueSnackbar } from "notistack";
+import { enqueueSnackbar, useSnackbar } from "notistack";
+import { SEARCH_DATA, SEARCH_VALUES } from "../dataTypes/visitor";
 
-const orientations = { ...ORIENTATIONS };
 const ToggleButtonGroup = memo(
   ({ items, selectedId, onSelect, valueKey, labelKey }) => (
     <div className="flex flex-wrap gap-2 my-4">
@@ -31,12 +38,46 @@ const ToggleButtonGroup = memo(
     </div>
   )
 );
+const BoolToggleButtonGroup = memo(({ items, selectedIds, onToggle }) => (
+  <div className="flex items-center gap-3 mt-6 flex-wrap">
+    {items.map((att) => {
+      const isSelected = selectedIds.some((a) => a === att.attributeId);
+      return (
+        <ToggleButton
+          key={att.attributeId}
+          sx={{
+            paddingX: "12px",
+            paddingY: "2px",
+            maxHeight: "32px",
+            minWidth: "70px",
+            "&.Mui-selected": { backgroundColor: "#169A94", color: "white" },
+            "&.Mui-selected:hover": { backgroundColor: "#087A78" },
+          }}
+          value={att.attributeId}
+          className="!rounded-full"
+          selected={isSelected}
+          onChange={() => onToggle(att)}
+        >
+          {att.attributeName}
+        </ToggleButton>
+      );
+    })}
+  </div>
+));
 
 const Properties = () => {
-  const [searchData, setSearchData] = useState(null);
-  const [form, setForm] = useState(null);
+  const [searchData, setSearchData] = useState({
+    price: [0, 0],
+    area: [0, 0],
+    ...SEARCH_DATA,
+  });
+  const [form, setForm] = useState({ ...SEARCH_VALUES });
   const [resutls, setResults] = useState(null);
+  const [loading, setLoading] = useState(false);
   const signalRef = useRef();
+  const { enqueueSnackbar } = useSnackbar();
+
+  console.log(searchData);
 
   const fetchSearchForm = async () => {
     // setLoading(true);
@@ -48,6 +89,11 @@ const Properties = () => {
       const resp = await visitorApi.getSearchForm(signalRef.current.signal);
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
       setForm(resp.data);
+      setSearchData({
+        ...searchData,
+        price: [resp.data.minPrice, resp.data.maxPrice],
+        area: [resp.data.minArea, resp.data.maxArea],
+      });
     } catch (err) {
       if (err.detail) enqueueSnackbar(err.detail, { variant: "error" });
       if (!err.detail) enqueueSnackbar(err, { variant: "error" });
@@ -56,8 +102,56 @@ const Properties = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleChange = (event, newValue) => {
+    console.log(event);
+
+    setSearchData({ ...searchData, [event.target.name]: newValue });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    if (signalRef.current) {
+      signalRef.current.abort();
+    }
+    const data = {
+      minArea: searchData.area[0],
+      maxArea: searchData.area[1],
+      minPrice: searchData.area[0],
+      maxPrice: searchData.area[1],
+      textSearch: searchData.textSearch,
+      propertyType: searchData.propertyType,
+      propertyFinishing: searchData.propertyFinishing,
+      viewSides: searchData.viewSides,
+    };
+    try {
+      signalRef.current = new AbortController();
+      const resp = await visitorApi.search(data, signalRef.current.signal);
+      // enqueueSnackbar(resp.data.message, { variant: "success" });
+      // if (onSuccess) onSuccess(data, resp.data);
+    } catch (err) {
+      //list related error codes
+      if (err.detail) enqueueSnackbar(err.detail, { variant: "error" });
+      if (!err.detail) enqueueSnackbar(err, { variant: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleBoolAttributes = (data) => {
+    // debugger;
+    setSearchData((prev) => {
+      const exist = prev.viewSides.includes(data.attributeId);
+      if (!exist) {
+        const result = [...prev.viewSides.filter((v) => v !== "")];
+        result.push(data.attributeId);
+        return { ...prev, viewSides: result };
+      } else {
+        const result = [
+          ...prev.viewSides.filter((v) => v !== "" && v !== data.attributeId),
+        ];
+        return { ...prev, viewSides: result };
+      }
+    });
   };
 
   useEffect(() => {
@@ -91,10 +185,21 @@ const Properties = () => {
           <PropertyCard />
         </div>
       </main>
-      <aside className="border border-neutral-200 rounded-xl w-3/12 h-fit py-3 px-6 bg-white sticky top-7">
+      <aside className="border border-neutral-200 rounded-xl w-3/12 h-fit py-3 px-6 bg-white sticky top-7 overflow-hidden">
         <h5 className="font-semibold text-lg text-navy-700">خيارات البحث</h5>
         <form method="post" onSubmit={(e) => handleSubmit(e)}>
-          <TextField name="textSearch" label="نص البحث" variant="outlined" />
+          <TextField
+            name="textSearch"
+            label="نص البحث"
+            variant="outlined"
+            size="small"
+            margin="normal"
+            value={searchData.textSearch}
+            onChange={(e) =>
+              setSearchData({ ...searchData, [e.target.name]: e.target.value })
+            }
+          />
+          <Divider className="!my-3" />
           <Typography
             variant="body2"
             className="text-neutral-600 font-medium mb-2"
@@ -103,19 +208,44 @@ const Properties = () => {
           </Typography>
           <ToggleButtonGroup
             items={form.propertyTypes}
-            // selectedId={formData.propertyTypeId}
-            // onSelect={(val) =>
-            //   setFormData((prev) => ({ ...prev, propertyTypeId: val }))
-            // }
+            selectedId={searchData.propertyType}
+            onSelect={(val) =>
+              setSearchData((prev) => ({ ...prev, propertyType: val }))
+            }
             valueKey="typeId"
             labelKey="typeName"
           />
+          <Typography
+            variant="body2"
+            className="text-neutral-600 font-medium mb-2"
+          >
+            نطاق السعر
+          </Typography>
           <Slider
-            getAriaLabel={() => "Temperature range"}
-            // value={value}
-            // onChange={handleChange}
+            getAriaLabel={() => ""}
+            name="price"
+            value={searchData.price}
+            onChange={handleChange}
             valueLabelDisplay="auto"
             // getAriaValueText={valuetext}
+            min={form.minPrice}
+            max={form.maxPrice}
+          />
+          <Typography
+            variant="body2"
+            className="text-neutral-600 font-medium mb-2"
+          >
+            نطاق المساحة
+          </Typography>
+          <Slider
+            getAriaLabel={() => ""}
+            name="area"
+            value={searchData.area}
+            onChange={handleChange}
+            valueLabelDisplay="auto"
+            // getAriaValueText={valuetext}
+            min={form.minArea}
+            max={form.maxArea}
           />
           <Typography
             variant="body2"
@@ -125,13 +255,36 @@ const Properties = () => {
           </Typography>
           <ToggleButtonGroup
             items={form.propertyFinishings}
-            // selectedId={formData.propertyTypeId}
-            // onSelect={(val) =>
-            //   setFormData((prev) => ({ ...prev, propertyTypeId: val }))
-            // }
+            selectedId={searchData.propertyFinishing}
+            onSelect={(val) =>
+              setSearchData((prev) => ({ ...prev, propertyFinishing: val }))
+            }
             valueKey="finishingId"
             labelKey="finishingName"
           />
+          <Typography
+            variant="body2"
+            className="text-neutral-600 font-medium mb-2"
+          >
+            اتجاهات العقار
+          </Typography>
+          <BoolToggleButtonGroup
+            items={ORIENTATIONS}
+            selectedIds={searchData.viewSides}
+            onToggle={handleBoolAttributes}
+          />
+          <Divider className="!my-2" />
+          <Button
+            size="medium"
+            variant="contained"
+            color="navy"
+            type="submit"
+            fullWidth
+            className="!my-2"
+            loading={loading}
+          >
+            تنفيذ البحث
+          </Button>
         </form>
       </aside>
       {/* </section> */}
