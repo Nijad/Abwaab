@@ -48,4 +48,6 @@ public static class ErrorTitle
     public const string GetUserNotifications = "الاستعلام عن إشعارات المستخدم";
     public const string MainPage = "الصفحة الرئيسية";
     public const string PendingProperties = "العقارات المعلقة";
+    public const string SearchForm = "إنشاء نموذج البحث";
+    public const string Search = "البحث";
 }

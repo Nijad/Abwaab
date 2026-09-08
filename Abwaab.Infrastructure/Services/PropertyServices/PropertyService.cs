@@ -180,24 +180,24 @@ public class PropertyService : IPropertyService
         return await _propertyRepository.GetTotalPremiumPropertiesCountAsync(publishedProperties);
     }
 
-    public async Task<decimal> GetMaxPriceAsync()
+    public async Task<decimal> GetMaxPriceAsync(PropertyState propertyState)
     {
-        return await _propertyRepository.GetMaxPriceAsync();
+        return await _propertyRepository.GetMaxPriceAsync(propertyState);
     }
 
-    public async Task<decimal> GetMinPriceAsync()
+    public async Task<decimal> GetMinPriceAsync(PropertyState propertyState)
     {
-        return await _propertyRepository.GetMinPriceAsync();
+        return await _propertyRepository.GetMinPriceAsync(propertyState);
     }
 
-    public async Task<decimal> GetMaxAreaAsync()
+    public async Task<decimal> GetMaxAreaAsync(PropertyState propertyState)
     {
-        return await _propertyRepository.GetMaxAreaAsync();
+        return await _propertyRepository.GetMaxAreaAsync(propertyState);
     }
 
-    public async Task<decimal> GetMinAreaAsync()
+    public async Task<decimal> GetMinAreaAsync(PropertyState propertyState)
     {
-        return await _propertyRepository.GetMinAreaAsync();
+        return await _propertyRepository.GetMinAreaAsync(propertyState);
     }
 
     public async Task<List<PendingPropertiesResponse>> GetPropertiesByStateAsync(PropertyState pendingStateProperty)
@@ -219,10 +219,10 @@ public class PropertyService : IPropertyService
         return pendingPropertiesList;
     }
 
-    public async Task<List<SearchResponse>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides)
+    public async Task<List<SearchDTO>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState, int skip, int take)
     {
-        List<Property> properties = await _propertyRepository.SearchPropertiesAsync(request, viewSides);
-        return properties.Select(p => new SearchResponse
+        List<Property> properties = await _propertyRepository.SearchPropertiesAsync(request, viewSides, propertyState, skip, take);
+        return properties.Select(p => new SearchDTO
         {
             PropertyId = p.Id,
             Area = p.AreaInSquareMeter.ToString()!,
@@ -235,5 +235,10 @@ public class PropertyService : IPropertyService
             Description = p.Description!,
             ViewSidesList = viewSides.Where(s => p.PropertyAttributes.Select(x => x.AttributeId).Contains(s.Id)).Select(x => x.AttributeName).ToList()
         }).ToList();
+    }
+
+    public async Task<int> SearchPropertiesCountAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState)
+    {
+        return await _propertyRepository.SearchPropertiesCountAsync(request, viewSides, propertyState);
     }
 }

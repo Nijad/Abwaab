@@ -5,5 +5,5 @@ namespace Abwaab.Application.Features.Visitors.RecentlyAddedProperties;
 public class RecentlyAddedResponse
 {
     public int PagesCount { get; set; }
-    public List<RecentlyAdded> RecentlyAddedList { get; set; } = new List<RecentlyAdded>();
+    public List<RecentlyAdded> Properties { get; set; } = new List<RecentlyAdded>();
 }

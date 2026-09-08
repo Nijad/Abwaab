@@ -40,6 +40,6 @@ public class RecentlyAddedQueryHandler : IRequestHandler<RecentlyAddedQuery, Rec
 
         List<RecentlyAdded> recentlyAddedList = await _propertyService.GetRecentlyAddedPropertiesAsync(publishedProperties, viewSides, skip, take);
 
-        return new RecentlyAddedResponse() { PagesCount = pagesCount, RecentlyAddedList = recentlyAddedList };
+        return new RecentlyAddedResponse() { PagesCount = pagesCount, Properties = recentlyAddedList };
     }
 }

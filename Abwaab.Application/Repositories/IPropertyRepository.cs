@@ -13,10 +13,10 @@ public interface IPropertyRepository
     Task<PropertyState?> FindPropertyStateByStateNameAsync(string propertyStateName);
     Task<PropertyType?> FindPropertyTypeByIdAsync(Guid propertyTypeId);
     Task<Property?> FindPropertyWithUserAndStateByIdAsync(Guid propertyId);
-    Task<decimal> GetMaxAreaAsync();
-    Task<decimal> GetMaxPriceAsync();
-    Task<decimal> GetMinAreaAsync();
-    Task<decimal> GetMinPriceAsync();
+    Task<decimal> GetMaxAreaAsync(PropertyState propertyState);
+    Task<decimal> GetMaxPriceAsync(PropertyState propertyState);
+    Task<decimal> GetMinAreaAsync(PropertyState propertyState);
+    Task<decimal> GetMinPriceAsync(PropertyState propertyState);
     Task<List<Property>> GetMostViewedPropertiesAsync(PropertyState publishedProperties, int skip, int take);
     Task<List<Property>> GetPremiumPropertiesAsync(PropertyState publishedProperties, int skip, int take);
     Task<List<Property>> GetPropertiesByStateAsync(PropertyState pendingProperties);
@@ -29,6 +29,7 @@ public interface IPropertyRepository
     Task<int> GetTotalPropertiesCountAsync(PropertyState publishedProperties);
     Task<List<Property>> GetUserPropertiesList(Guid userId);
     Task<bool> PropertyBelongToUser(Guid userId, Guid propertyId);
-    Task<List<Property>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides);
+    Task<List<Property>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState, int skip, int take);
+    Task<int> SearchPropertiesCountAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState);
     Task UpdatePropertyAsync(Property property);
 }
