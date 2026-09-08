@@ -24,10 +24,10 @@ public interface IPropertyService
     Task<List<MostViewed>> GetMostViewedPropertiesAsync(PropertyState publishedProperties, List<Attribute> viewSides, int skip, int take);
     Task<int> GetTotalPropertiesCountAsync(PropertyState publishedProperties);
     Task<int> GetTotalPremiumPropertiesCountAsync(PropertyState publishedProperties);
-    Task<decimal> GetMaxPriceAsync();
-    Task<decimal> GetMinPriceAsync();
-    Task<decimal> GetMaxAreaAsync();
-    Task<decimal> GetMinAreaAsync();
+    Task<decimal> GetMaxPriceAsync(PropertyState propertyState);
+    Task<decimal> GetMinPriceAsync(PropertyState propertyState);
+    Task<decimal> GetMaxAreaAsync(PropertyState propertyState);
+    Task<decimal> GetMinAreaAsync(PropertyState propertyState);
     Task<List<PendingPropertiesResponse>> GetPropertiesByStateAsync(PropertyState pendingProperties);
-    Task<List<SearchResponse>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides);
+    Task<List<SearchResponse>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState);
 }

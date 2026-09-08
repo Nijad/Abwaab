@@ -82,24 +82,32 @@ public class PropertyRepository : IPropertyRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<decimal> GetMaxAreaAsync()
+    public async Task<decimal> GetMaxAreaAsync(PropertyState propertyState)
     {
-        return await _context.Properties.MaxAsync(x => x.AreaInSquareMeter) ?? 0;
+        return await _context.Properties
+            .Where(x => x.PropertyState == propertyState)
+            .MaxAsync(x => x.AreaInSquareMeter) ?? 0;
     }
 
-    public async Task<decimal> GetMaxPriceAsync()
+    public async Task<decimal> GetMaxPriceAsync(PropertyState propertyState)
     {
-        return await _context.Properties.MaxAsync(x => x.Price) ?? 0;
+        return await _context.Properties
+            .Where(x => x.PropertyState == propertyState)
+            .MaxAsync(x => x.Price) ?? 0;
     }
 
-    public async Task<decimal> GetMinAreaAsync()
+    public async Task<decimal> GetMinAreaAsync(PropertyState propertyState)
     {
-        return await _context.Properties.MinAsync(x => x.AreaInSquareMeter) ?? 0;
+        return await _context.Properties
+            .Where(x => x.PropertyState == propertyState)
+            .MinAsync(x => x.AreaInSquareMeter) ?? 0;
     }
 
-    public async Task<decimal> GetMinPriceAsync()
+    public async Task<decimal> GetMinPriceAsync(PropertyState propertyState)
     {
-        return await _context.Properties.MinAsync(x => x.Price) ?? 0;
+        return await _context.Properties
+            .Where(x => x.PropertyState == propertyState)
+            .MinAsync(x => x.Price) ?? 0;
     }
     
 
@@ -208,7 +216,7 @@ public class PropertyRepository : IPropertyRepository
         return property.UserPlan.UserId == userId;
     }
 
-    public async Task<List<Property>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides)
+    public async Task<List<Property>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState)
     {
         return await _context.Properties
             .Include(x => x.PropertyType)
@@ -227,7 +235,8 @@ public class PropertyRepository : IPropertyRepository
                 (!request.MaxArea.HasValue || request.MaxArea == 0 || (x.AreaInSquareMeter.HasValue && x.AreaInSquareMeter.Value <= request.MaxArea.Value)) &&
                 (!request.PropertyType.HasValue || (x.PropertyTypeId.HasValue && x.PropertyTypeId.Value == request.PropertyType.Value)) &&
                 (!request.PropertyFinishing.HasValue || (x.FinishingId.HasValue && x.FinishingId.Value == request.PropertyFinishing.Value)) &&
-                (viewSides == null || viewSides.Count == 0 || x.PropertyAttributes.Any(pa => pa.AttributeId == viewSides.First().Id))
+                (viewSides == null || viewSides.Count == 0 || x.PropertyAttributes.Any(pa => pa.AttributeId == viewSides.First().Id)) &&
+                x.PropertyState == propertyState
             )
             .ToListAsync();
     }

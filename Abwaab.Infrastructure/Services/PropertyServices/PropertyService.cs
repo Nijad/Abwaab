@@ -180,24 +180,24 @@ public class PropertyService : IPropertyService
         return await _propertyRepository.GetTotalPremiumPropertiesCountAsync(publishedProperties);
     }
 
-    public async Task<decimal> GetMaxPriceAsync()
+    public async Task<decimal> GetMaxPriceAsync(PropertyState propertyState)
     {
-        return await _propertyRepository.GetMaxPriceAsync();
+        return await _propertyRepository.GetMaxPriceAsync(propertyState);
     }
 
-    public async Task<decimal> GetMinPriceAsync()
+    public async Task<decimal> GetMinPriceAsync(PropertyState propertyState)
     {
-        return await _propertyRepository.GetMinPriceAsync();
+        return await _propertyRepository.GetMinPriceAsync(propertyState);
     }
 
-    public async Task<decimal> GetMaxAreaAsync()
+    public async Task<decimal> GetMaxAreaAsync(PropertyState propertyState)
     {
-        return await _propertyRepository.GetMaxAreaAsync();
+        return await _propertyRepository.GetMaxAreaAsync(propertyState);
     }
 
-    public async Task<decimal> GetMinAreaAsync()
+    public async Task<decimal> GetMinAreaAsync(PropertyState propertyState)
     {
-        return await _propertyRepository.GetMinAreaAsync();
+        return await _propertyRepository.GetMinAreaAsync(propertyState);
     }
 
     public async Task<List<PendingPropertiesResponse>> GetPropertiesByStateAsync(PropertyState pendingStateProperty)
@@ -219,9 +219,9 @@ public class PropertyService : IPropertyService
         return pendingPropertiesList;
     }
 
-    public async Task<List<SearchResponse>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides)
+    public async Task<List<SearchResponse>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState)
     {
-        List<Property> properties = await _propertyRepository.SearchPropertiesAsync(request, viewSides);
+        List<Property> properties = await _propertyRepository.SearchPropertiesAsync(request, viewSides, propertyState);
         return properties.Select(p => new SearchResponse
         {
             PropertyId = p.Id,
