@@ -32,4 +32,5 @@ export const SEARCH_DATA = {
   propertyType: null,
   propertyFinishing: null,
   viewSides: [],
+  pageNo: 1,
 };

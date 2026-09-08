@@ -13,7 +13,7 @@ import { visitorApi } from "../api";
 import { ORIENTATIONS } from "../dataTypes/propertis";
 import { enqueueSnackbar, useSnackbar } from "notistack";
 import { SEARCH_DATA, SEARCH_VALUES } from "../dataTypes/visitor";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const ToggleButtonGroup = memo(
   ({ items, name, selectedId, onSelect, valueKey, labelKey }) => (
@@ -81,6 +81,7 @@ const Properties = () => {
   const dataSignalRef = useRef();
   const getType = useParams("id");
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   console.log(getType);
 
@@ -149,7 +150,7 @@ const Properties = () => {
     }
   };
 
-  const fetchMostViewed = async () => {
+  const fetchRecentlyAdded = async () => {
     // setLoading(true);
     if (dataSignalRef.current) {
       dataSignalRef.current.abort();
@@ -192,6 +193,7 @@ const Properties = () => {
       propertyType: searchData.propertyType,
       propertyFinishing: searchData.propertyFinishing,
       viewSides: searchData.viewSides,
+      pageNo: 1,
     };
     try {
       formSignalRef.current = new AbortController();
@@ -241,13 +243,13 @@ const Properties = () => {
           fetchInitialData();
           break;
         case "recent-properties":
-          fetchInitialData();
+          fetchRecentlyAdded();
           break;
         case "promoted-properties":
           fetchPromoted();
           break;
         case "most-viewed":
-          fetchMostViewed();
+          fetchInitialData();
           break;
 
         default:
@@ -257,7 +259,7 @@ const Properties = () => {
   }, []);
 
   return (
-    <div className="bg-neutral-50 flex max-w-[85%] mx-auto pb-24 mt-24 gap-3">
+    <div className="bg-neutral-50 flex w-full max-w-[85%] mx-auto pb-24 mt-24 gap-3">
       {/* <section className="flex flex-1 gap-6"> */}
       <main className="rounded-xl w-9/12 ">
         {!searching && (
@@ -288,11 +290,17 @@ const Properties = () => {
                 statusTag={prop.propertyFinishing}
                 title={prop.title}
                 typeTag={prop.propertyType}
-                onClick={null}
+                onClick={() => navigate(`/properties/${prop.propertyId}`)}
               />
             ))}
         </div>
-        <Pagination count={resutls.pagesCount} shape="rounded" />
+        {resutls && (
+          <Pagination
+            sx={{ mt: 6 }}
+            count={resutls.pagesCount}
+            shape="rounded"
+          />
+        )}
       </main>
       <aside className="border border-neutral-200 rounded-xl w-3/12 h-fit py-3 px-6 bg-white sticky top-7 overflow-hidden">
         <h5 className="font-semibold text-lg text-navy-700">خيارات البحث</h5>
