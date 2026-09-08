@@ -219,10 +219,10 @@ public class PropertyService : IPropertyService
         return pendingPropertiesList;
     }
 
-    public async Task<List<SearchResponse>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState)
+    public async Task<List<SearchDTO>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState, int skip, int take)
     {
-        List<Property> properties = await _propertyRepository.SearchPropertiesAsync(request, viewSides, propertyState);
-        return properties.Select(p => new SearchResponse
+        List<Property> properties = await _propertyRepository.SearchPropertiesAsync(request, viewSides, propertyState, skip, take);
+        return properties.Select(p => new SearchDTO
         {
             PropertyId = p.Id,
             Area = p.AreaInSquareMeter.ToString()!,
@@ -235,5 +235,10 @@ public class PropertyService : IPropertyService
             Description = p.Description!,
             ViewSidesList = viewSides.Where(s => p.PropertyAttributes.Select(x => x.AttributeId).Contains(s.Id)).Select(x => x.AttributeName).ToList()
         }).ToList();
+    }
+
+    public async Task<int> SearchPropertiesCountAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState)
+    {
+        return await _propertyRepository.SearchPropertiesCountAsync(request, viewSides, propertyState);
     }
 }

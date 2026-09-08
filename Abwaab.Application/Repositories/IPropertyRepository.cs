@@ -29,6 +29,7 @@ public interface IPropertyRepository
     Task<int> GetTotalPropertiesCountAsync(PropertyState publishedProperties);
     Task<List<Property>> GetUserPropertiesList(Guid userId);
     Task<bool> PropertyBelongToUser(Guid userId, Guid propertyId);
-    Task<List<Property>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState);
+    Task<List<Property>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState, int skip, int take);
+    Task<int> SearchPropertiesCountAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState);
     Task UpdatePropertyAsync(Property property);
 }

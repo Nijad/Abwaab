@@ -2,7 +2,7 @@
 
 namespace Abwaab.Application.Features.Visitors.Search;
 
-public class SearchQuery : IRequest<List<SearchResponse>>
+public class SearchQuery : IRequest<SearchResponse>
 {
     public string? TextSearch { get; set; }
     public decimal? MinPrice { get; set; }
@@ -12,4 +12,5 @@ public class SearchQuery : IRequest<List<SearchResponse>>
     public Guid? PropertyType { get; set; }
     public Guid? PropertyFinishing { get; set; }
     public List<Guid>? ViewSides { get; set; }
+    public int PageNo { get; set; }
 }

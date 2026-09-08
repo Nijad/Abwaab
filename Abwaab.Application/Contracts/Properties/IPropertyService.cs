@@ -29,5 +29,6 @@ public interface IPropertyService
     Task<decimal> GetMaxAreaAsync(PropertyState propertyState);
     Task<decimal> GetMinAreaAsync(PropertyState propertyState);
     Task<List<PendingPropertiesResponse>> GetPropertiesByStateAsync(PropertyState pendingProperties);
-    Task<List<SearchResponse>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState);
+    Task<List<SearchDTO>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState, int skip, int take);
+    Task<int> SearchPropertiesCountAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState);
 }

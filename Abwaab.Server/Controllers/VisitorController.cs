@@ -62,7 +62,7 @@ public class VisitorController : ControllerBase
     [HttpPost("Search")]
     public async Task<IActionResult> Search(SearchQuery query)
     {
-        List<SearchResponse> response = await _mediator.Send(query);
+        SearchResponse response = await _mediator.Send(query);
         return Ok(response);
     }
 }

@@ -216,9 +216,22 @@ public class PropertyRepository : IPropertyRepository
         return property.UserPlan.UserId == userId;
     }
 
-    public async Task<List<Property>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState)
+    public async Task<List<Property>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState, int skip, int take)
     {
-        return await _context.Properties
+        return await searchQuery(request, viewSides, propertyState)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync();
+    }
+
+    public async Task<int> SearchPropertiesCountAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState)
+    {
+        return await searchQuery(request, viewSides, propertyState).CountAsync();
+    }
+
+    private IQueryable<Property> searchQuery(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState)
+    {
+        return _context.Properties
             .Include(x => x.PropertyType)
             .Include(x => x.Finishing)
             .Include(x => x.PropertyAttributes)
@@ -226,8 +239,8 @@ public class PropertyRepository : IPropertyRepository
             .ThenInclude(x => x.AttributeDataType)
             .Include(x => x.MediaList!.Where(y => y.IsCover))
             .Where(x =>
-                (string.IsNullOrEmpty(request.TextSearch) || 
-                (x.Title != null && x.Title.Contains(request.TextSearch)) || 
+                (string.IsNullOrEmpty(request.TextSearch) ||
+                (x.Title != null && x.Title.Contains(request.TextSearch)) ||
                 (x.Description != null && x.Description.Contains(request.TextSearch))) &&
                 (!request.MinPrice.HasValue || request.MinPrice == 0 || (x.Price.HasValue && x.Price.Value >= request.MinPrice.Value)) &&
                 (!request.MaxPrice.HasValue || request.MaxPrice == 0 || (x.Price.HasValue && x.Price.Value <= request.MaxPrice.Value)) &&
@@ -237,8 +250,7 @@ public class PropertyRepository : IPropertyRepository
                 (!request.PropertyFinishing.HasValue || (x.FinishingId.HasValue && x.FinishingId.Value == request.PropertyFinishing.Value)) &&
                 (viewSides == null || viewSides.Count == 0 || x.PropertyAttributes.Any(pa => pa.AttributeId == viewSides.First().Id)) &&
                 x.PropertyState == propertyState
-            )
-            .ToListAsync();
+            );
     }
 
     public async Task UpdatePropertyAsync(Property property)
