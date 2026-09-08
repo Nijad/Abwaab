@@ -239,8 +239,8 @@ const NavBarMain = () => {
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
-                    alt={user.name}
-                    src="/static/images/avatar/2.jpg"
+                    // alt={user.name}
+                    // src="/static/images/avatar/2.jpg"
                     className="!bg-navy-600"
                   />
                 </IconButton>

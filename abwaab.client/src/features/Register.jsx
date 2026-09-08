@@ -80,6 +80,8 @@ const Register = ({ onSuccess }) => {
           variant="filled"
           size="small"
           color="sky"
+          dir="ltr"
+          sx={{ ".MuiInputBase-input": { textAlign: "end" } }}
         />
       </div>
       <div className="mb-6">

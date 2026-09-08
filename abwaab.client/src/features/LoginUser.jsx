@@ -69,6 +69,8 @@ const LoginUser = ({ btnLabel = "دخول", onSuccess }) => {
           fullWidth
           variant="filled"
           size="small"
+          dir="ltr"
+          sx={{ ".MuiInputBase-input": { textAlign: "end" } }}
         />
       </div>
       <div className="mb-2">

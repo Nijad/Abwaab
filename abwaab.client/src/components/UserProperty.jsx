@@ -46,7 +46,7 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
           <div className="">
             <p className="text-neutral-700 text-xs">السعر</p>
             <p className="text-navy-700 text-base">
-              {data.price.toLocaleString()} دولار امريكي
+              {data.price?.toLocaleString()} دولار امريكي
             </p>
           </div>
         </div>
