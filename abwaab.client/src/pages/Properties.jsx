@@ -3,6 +3,7 @@ import { PropertyCard } from "../components/PropertyCard";
 import {
   Button,
   Divider,
+  Pagination,
   Slider,
   TextField,
   ToggleButton,
@@ -12,9 +13,10 @@ import { visitorApi } from "../api";
 import { ORIENTATIONS } from "../dataTypes/propertis";
 import { enqueueSnackbar, useSnackbar } from "notistack";
 import { SEARCH_DATA, SEARCH_VALUES } from "../dataTypes/visitor";
+import { useParams } from "react-router";
 
 const ToggleButtonGroup = memo(
-  ({ items, selectedId, onSelect, valueKey, labelKey }) => (
+  ({ items, name, selectedId, onSelect, valueKey, labelKey }) => (
     <div className="flex flex-wrap gap-2 my-4">
       {items.map((item) => (
         <ToggleButton
@@ -30,7 +32,7 @@ const ToggleButtonGroup = memo(
           value={item[valueKey]}
           className="!rounded-full"
           selected={item[valueKey] === selectedId}
-          onChange={() => onSelect(item[valueKey])}
+          onChange={() => onSelect(name, item[valueKey])}
         >
           {item[labelKey]}
         </ToggleButton>
@@ -67,33 +69,100 @@ const BoolToggleButtonGroup = memo(({ items, selectedIds, onToggle }) => (
 
 const Properties = () => {
   const [searchData, setSearchData] = useState({
-    price: [0, 0],
-    area: [0, 0],
+    price: [null, null],
+    area: [null, null],
     ...SEARCH_DATA,
   });
   const [form, setForm] = useState({ ...SEARCH_VALUES });
   const [resutls, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
-  const signalRef = useRef();
+  const [searching, setSearching] = useState(false);
+  const formSignalRef = useRef();
+  const dataSignalRef = useRef();
+  const getType = useParams("id");
   const { enqueueSnackbar } = useSnackbar();
 
-  console.log(searchData);
+  console.log(getType);
 
   const fetchSearchForm = async () => {
     // setLoading(true);
-    if (signalRef.current) {
-      signalRef.current.abort();
+    if (formSignalRef.current) {
+      formSignalRef.current.abort();
     }
     try {
-      signalRef.current = new AbortController();
-      const resp = await visitorApi.getSearchForm(signalRef.current.signal);
+      formSignalRef.current = new AbortController();
+      const resp = await visitorApi.getSearchForm(formSignalRef.current.signal);
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
+      // debugger;
       setForm(resp.data);
       setSearchData({
         ...searchData,
         price: [resp.data.minPrice, resp.data.maxPrice],
         area: [resp.data.minArea, resp.data.maxArea],
       });
+    } catch (err) {
+      if (err.detail) enqueueSnackbar(err.detail, { variant: "error" });
+      if (!err.detail) enqueueSnackbar(err, { variant: "error" });
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  const fetchInitialData = async () => {
+    // setLoading(true);
+    if (dataSignalRef.current) {
+      dataSignalRef.current.abort();
+    }
+    try {
+      dataSignalRef.current = new AbortController();
+      const resp = await visitorApi.getMostViewed(
+        1,
+        dataSignalRef.current.signal
+      );
+      //   enqueueSnackbar(resp.data.message, { variant: "success" });
+      // debugger;
+      setResults(resp.data);
+    } catch (err) {
+      if (err.detail) enqueueSnackbar(err.detail, { variant: "error" });
+      if (!err.detail) enqueueSnackbar(err, { variant: "error" });
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  const fetchPromoted = async () => {
+    // setLoading(true);
+    if (dataSignalRef.current) {
+      dataSignalRef.current.abort();
+    }
+    try {
+      dataSignalRef.current = new AbortController();
+      const resp = await visitorApi.getPremium(1, dataSignalRef.current.signal);
+      //   enqueueSnackbar(resp.data.message, { variant: "success" });
+      // debugger;
+      setResults(resp.data);
+    } catch (err) {
+      if (err.detail) enqueueSnackbar(err.detail, { variant: "error" });
+      if (!err.detail) enqueueSnackbar(err, { variant: "error" });
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  const fetchMostViewed = async () => {
+    // setLoading(true);
+    if (dataSignalRef.current) {
+      dataSignalRef.current.abort();
+    }
+    try {
+      dataSignalRef.current = new AbortController();
+      const resp = await visitorApi.getRecentlyAdded(
+        1,
+        dataSignalRef.current.signal
+      );
+      //   enqueueSnackbar(resp.data.message, { variant: "success" });
+      // debugger;
+      setResults(resp.data);
     } catch (err) {
       if (err.detail) enqueueSnackbar(err.detail, { variant: "error" });
       if (!err.detail) enqueueSnackbar(err, { variant: "error" });
@@ -111,22 +180,23 @@ const Properties = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    if (signalRef.current) {
-      signalRef.current.abort();
+    if (formSignalRef.current) {
+      formSignalRef.current.abort();
     }
     const data = {
       minArea: searchData.area[0],
       maxArea: searchData.area[1],
-      minPrice: searchData.area[0],
-      maxPrice: searchData.area[1],
+      minPrice: searchData.price[0],
+      maxPrice: searchData.price[1],
       textSearch: searchData.textSearch,
       propertyType: searchData.propertyType,
       propertyFinishing: searchData.propertyFinishing,
       viewSides: searchData.viewSides,
     };
     try {
-      signalRef.current = new AbortController();
-      const resp = await visitorApi.search(data, signalRef.current.signal);
+      formSignalRef.current = new AbortController();
+      const resp = await visitorApi.search(data, formSignalRef.current.signal);
+      setResults(resp.data);
       // enqueueSnackbar(resp.data.message, { variant: "success" });
       // if (onSuccess) onSuccess(data, resp.data);
     } catch (err) {
@@ -154,9 +224,35 @@ const Properties = () => {
     });
   };
 
+  const handleToggleButtons = (name, id) => {
+    const exist = searchData[name] === id;
+    if (exist) {
+      setSearchData({ ...searchData, [name]: null });
+    } else {
+      setSearchData({ ...searchData, [name]: id });
+    }
+  };
+
   useEffect(() => {
     setTimeout(() => {
       fetchSearchForm();
+      switch (getType["id"]) {
+        case undefined:
+          fetchInitialData();
+          break;
+        case "recent-properties":
+          fetchInitialData();
+          break;
+        case "promoted-properties":
+          fetchPromoted();
+          break;
+        case "most-viewed":
+          fetchMostViewed();
+          break;
+
+        default:
+          break;
+      }
     }, 0);
   }, []);
 
@@ -164,26 +260,39 @@ const Properties = () => {
     <div className="bg-neutral-50 flex max-w-[85%] mx-auto pb-24 mt-24 gap-3">
       {/* <section className="flex flex-1 gap-6"> */}
       <main className="rounded-xl w-9/12 ">
-        <h3 className="font-semibold text-[32px] text-navy-700 mb-3">
-          العقارات
-        </h3>
-        <h3 className="font-semibold text-[32px] text-navy-700 mb-3">
-          15 عقاراً مشابهاً
-        </h3>
+        {!searching && (
+          <h3 className="font-semibold text-[32px] text-navy-700 mb-3">
+            العقارات
+          </h3>
+        )}
+        {searching && (
+          <h3 className="font-semibold text-[32px] text-navy-700 mb-3">
+            تم العثور على {resutls.length} عقاراً مشابهاً
+          </h3>
+        )}
         <p className="text-neutral-500 text-base">
           ابحث عن العقار وفقاً لاحتياجاتك
         </p>
-        <p className="text-neutral-500 text-base">نتائج البحث عن "سيكب"</p>
-        <div className="flex flex-wrap justify-start gap-5">
-          <PropertyCard />
-          <PropertyCard />
-          <PropertyCard />
-          <PropertyCard />
-          <PropertyCard />
-          <PropertyCard />
-          <PropertyCard />
-          <PropertyCard />
+        {/* <p className="text-neutral-500 text-base">نتائج البحث عن "سيكب"</p> */}
+        <div className="flex flex-wrap justify-start gap-5 mt-5">
+          {resutls &&
+            resutls.properties.map((prop) => (
+              <PropertyCard
+                area={prop.area}
+                currency={"دولار أمريكي"}
+                image={`${import.meta.env.VITE_API_BASE_URL}${prop.coverImage}`}
+                key={`prop-${prop.propertyId}`}
+                // orientationTag={prop.}
+                price={prop.price}
+                location={prop.address}
+                statusTag={prop.propertyFinishing}
+                title={prop.title}
+                typeTag={prop.propertyType}
+                onClick={null}
+              />
+            ))}
         </div>
+        <Pagination count={resutls.pagesCount} shape="rounded" />
       </main>
       <aside className="border border-neutral-200 rounded-xl w-3/12 h-fit py-3 px-6 bg-white sticky top-7 overflow-hidden">
         <h5 className="font-semibold text-lg text-navy-700">خيارات البحث</h5>
@@ -194,6 +303,7 @@ const Properties = () => {
             variant="outlined"
             size="small"
             margin="normal"
+            fullWidth
             value={searchData.textSearch}
             onChange={(e) =>
               setSearchData({ ...searchData, [e.target.name]: e.target.value })
@@ -209,11 +319,10 @@ const Properties = () => {
           <ToggleButtonGroup
             items={form.propertyTypes}
             selectedId={searchData.propertyType}
-            onSelect={(val) =>
-              setSearchData((prev) => ({ ...prev, propertyType: val }))
-            }
+            onSelect={handleToggleButtons}
             valueKey="typeId"
             labelKey="typeName"
+            name="propertyType"
           />
           <Typography
             variant="body2"
@@ -256,11 +365,10 @@ const Properties = () => {
           <ToggleButtonGroup
             items={form.propertyFinishings}
             selectedId={searchData.propertyFinishing}
-            onSelect={(val) =>
-              setSearchData((prev) => ({ ...prev, propertyFinishing: val }))
-            }
+            onSelect={handleToggleButtons}
             valueKey="finishingId"
             labelKey="finishingName"
+            name="propertyFinishing"
           />
           <Typography
             variant="body2"

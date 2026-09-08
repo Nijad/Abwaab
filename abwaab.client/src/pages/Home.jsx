@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HeroSlider } from "../components/HeroSlider";
 import { PropertyCard } from "../components/PropertyCard";
 import HomePageSection from "../components/HomePageSection";
@@ -9,7 +9,7 @@ import { CardsSectionLoading } from "../components/CardsSectionLoading";
 
 const Home = () => {
   const [data, setData] = useState(null);
-  const [errors, setErrors] = useState({});
+  // const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const signalRef = useRef();
   const { enqueueSnackbar } = useSnackbar();
@@ -43,6 +43,10 @@ const Home = () => {
     }
   };
 
+  const handleShowAll = (type) => {
+    navigate(`properties/category/${type}`);
+  };
+
   useEffect(() => {
     setTimeout(() => {
       fetchProperties();
@@ -73,6 +77,8 @@ const Home = () => {
           key={"recent"}
           title="أضيفت حديثاً"
           description="استعرض العقارات المضافة حديثاً"
+          type="recent-properties"
+          showAllBtn={handleShowAll}
         >
           {data &&
             data.recentlyAddedList.map((item) => (
@@ -96,6 +102,8 @@ const Home = () => {
           key={"special"}
           title="العقارات المميزة"
           description="استعرض العقارات التي تم الترويج لها"
+          type="promoted-properties"
+          showAllBtn={handleShowAll}
         >
           {data &&
             data.premiumPropertiesList.map((item) => (
@@ -119,6 +127,8 @@ const Home = () => {
           key={"mostviews"}
           title="الأكثر  مشاهدةً"
           description="ألق نظرة على اكثر العقارات مشاهدة من الزوار"
+          type="most-viewed"
+          showAllBtn={handleShowAll}
         >
           {data &&
             data.mostViewedList.map((item) => (

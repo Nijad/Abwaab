@@ -45,6 +45,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "properties", element: <Properties /> },
       { path: "properties/:id", element: <PropertyDetails /> },
+      { path: "properties/category/:id", element: <Properties /> },
       { path: "subscriptions", element: <Subscriptions /> },
       { path: "about-us", element: <AboutUs /> },
       { path: "test", element: <Profile /> },
@@ -82,6 +83,7 @@ const router = createBrowserRouter([
       { path: "pending-advertisements", element: <MyProperties /> },
       { path: "properties", element: <Properties /> },
       { path: "properties/:id", element: <PropertyDetails /> },
+      { path: "properties/category/:id", element: <Properties /> },
     ],
   },
 
@@ -110,6 +112,7 @@ const router = createBrowserRouter([
       { path: "my-properties/edit/:id", element: <EditProperty /> },
       { path: "my-properties/add/:id", element: <EditProperty /> },
       { path: "my-appointments", element: <Appointments /> },
+      { path: "properties/category/:id", element: <Properties /> },
     ],
   },
   // ----------------------------------------------------------------------

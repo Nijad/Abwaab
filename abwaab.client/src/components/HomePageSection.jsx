@@ -5,6 +5,7 @@ const HomePageSection = ({
   title = "",
   description = "",
   showAllBtn,
+  type = "",
   children,
 }) => {
   return (
@@ -18,7 +19,7 @@ const HomePageSection = ({
           variant="outlined"
           color="navy"
           size="medium"
-          onClick={() => showAllBtn && showAllBtn()}
+          onClick={() => showAllBtn && showAllBtn(type)}
         >
           عرض الكل
         </Button>
