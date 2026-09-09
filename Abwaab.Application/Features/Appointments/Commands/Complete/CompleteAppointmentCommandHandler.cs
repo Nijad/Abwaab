@@ -76,7 +76,11 @@ public class CompleteAppointmentCommandHandler : IRequestHandler<CompleteAppoint
         List<ApplicationUser> users = new() { secondParty };
         List<Notification> notifications = await _notificationService.InitiateNotifications("لقد تم تسجيل إتمام الموعد، يمكنكم الاطلاع على مزيد من التفاصيل على الموقع الالكتروني", users, errorTitle);
 
-        await _notifyHandler.NotifyAsync(errorTitle);
+        //notify the user asynchronously without blocking the main thread
+        _ = Task.Run(async () =>
+        {
+            await _notifyHandler.NotifyAsync(errorTitle);
+        });
 
         //return response
         return new CompleteAppointmentResponse() { Success = true, Message = "تم إتمام الموعد بنجاح." };

@@ -67,7 +67,11 @@ public class RefuseAppointmentCommandHandler : IRequestHandler<RefuseAppointment
         List<ApplicationUser> users = new() { appointment.User };
         List<Notification> notifications = await _notificationService.InitiateNotifications("مالك العقار رفض طلبك بحجز موعد زيارة، يمكنكم الاطلاع على مزيد من التفاصيل على الموقع الالكتروني", users, errorTitle);
 
-        await _notifyHandler.NotifyAsync(errorTitle);
+        //notify the user asynchronously without blocking the main thread
+        _ = Task.Run(async () =>
+        {
+            await _notifyHandler.NotifyAsync(errorTitle);
+        });
 
         //return response
         return new RefuseAppointmentResponse() { Success = true, Message = "تم رفض الموعد بنجاح." };

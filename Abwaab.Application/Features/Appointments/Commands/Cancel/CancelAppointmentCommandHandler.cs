@@ -83,7 +83,11 @@ public class CancelAppointmentCommandHandler : IRequestHandler<CancelAppointment
         List<ApplicationUser> users = new() { secondParty };
         List<Notification> notifications = await _notificationService.InitiateNotifications("لقد تم إلغاء الموعد، يمكنكم الاطلاع على مزيد من التفاصيل على الموقع الالكتروني", users, errorTitle);
 
-        await _notifyHandler.NotifyAsync(errorTitle);
+        //notify the user asynchronously without blocking the main thread
+        _ = Task.Run(async () =>
+        {
+            await _notifyHandler.NotifyAsync(errorTitle);
+        });
 
         //return response
         return new CancelAppointmentResponse() { Success = true, Message = "تم إلغاء الموعد بنجاح." };
