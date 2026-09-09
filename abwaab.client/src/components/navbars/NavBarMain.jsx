@@ -109,7 +109,7 @@ const NavBarMain = () => {
   };
   const logoutHandler = () => {
     logout();
-    // navigate("/portal/profile", { replace });
+    navigate("/");
   };
 
   const navigateToAppointments = () => {
@@ -239,7 +239,7 @@ const NavBarMain = () => {
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
-                    alt={user.name}
+                    alt={user.fullName}
                     src="/static/images/avatar/2.jpg"
                     className="!bg-navy-600"
                   />

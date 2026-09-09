@@ -6,6 +6,8 @@ import PromoteIcon from "./PromoteIcon";
 import PromoteProperty from "../features/properties/PromoteProperty";
 import PreviewPropertyVisits from "../features/properties/PreviewPropertyVisits";
 import { Link } from "react-router";
+import StarOutlineRoundedIcon from "@mui/icons-material/StarOutlineRounded";
+import StarRateRoundedIcon from "@mui/icons-material/StarRateRounded";
 
 const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
   return (
@@ -28,6 +30,11 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
             className="text-3xl text-neutral-900 text-ellipsis "
           >
             {data.title}
+            {data.isStar && data.isStar ? (
+              <StarRateRoundedIcon />
+            ) : (
+              <StarOutlineRoundedIcon />
+            )}
           </Link>
         </div>
         <div className="min-w-[30%] flex flex-wrap items-center justify-between">

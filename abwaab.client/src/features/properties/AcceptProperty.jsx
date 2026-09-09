@@ -35,6 +35,7 @@ const AcceptProperty = ({ propertyId }) => {
         data.note,
         signalRef.current.signal
       );
+      enqueueSnackbar(resp.data.message, { variant: "success" });
       navigate("/admin/pending-advertisements");
       setAcceptDialog(false);
 
