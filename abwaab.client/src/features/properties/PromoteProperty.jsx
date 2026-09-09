@@ -4,7 +4,7 @@ import PromoteIcon from "../../components/PromoteIcon";
 import { useSnackbar } from "notistack";
 import { propertyApi } from "../../api";
 
-const PromoteProperty = ({ propertyId }) => {
+const PromoteProperty = ({ onChange, propertyId, isPromoted }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const signalRef = useRef();
@@ -23,7 +23,7 @@ const PromoteProperty = ({ propertyId }) => {
         signalRef.current.signal
       );
       enqueueSnackbar(resp.data.message, { variant: "success" });
-      //   if (onSuccess) onSuccess(data.newEmail, resp.data);
+      if (onChange) onChange(propertyId, true);
     } catch (err) {
       //list related error codes
       if (err.errorCode === "VALIDATION_FAILED") {
@@ -39,6 +39,36 @@ const PromoteProperty = ({ propertyId }) => {
       setLoading(false);
     }
   };
+  const UnPromote = async () => {
+    setLoading(true);
+    if (signalRef.current) {
+      signalRef.current.abort();
+    }
+
+    try {
+      signalRef.current = new AbortController();
+      const resp = await propertyApi.unStarProperty(
+        { propertyId },
+        signalRef.current.signal
+      );
+      enqueueSnackbar(resp.data.message, { variant: "success" });
+      if (onChange) onChange(propertyId, false);
+    } catch (err) {
+      //list related error codes
+      if (err.errorCode === "VALIDATION_FAILED") {
+        // setErrors(err.errors);
+        enqueueSnackbar(err.detail, { variant: "error" });
+        return;
+      } else if (err.errorCode) {
+        enqueueSnackbar(err.detail, { variant: "error" });
+      } else {
+        enqueueSnackbar(err, { variant: "error" });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     // <div>
     <Button
@@ -49,9 +79,11 @@ const PromoteProperty = ({ propertyId }) => {
       variant="contained"
       color="sky"
       startIcon={<PromoteIcon />}
-      onClick={() => Promote()}
+      onClick={() => {
+        isPromoted ? UnPromote() : Promote();
+      }}
     >
-      ترويج العقار
+      {isPromoted ? "إلغاء ترويج العقار" : "ترويج العقار"}
     </Button>
     // </div>
   );

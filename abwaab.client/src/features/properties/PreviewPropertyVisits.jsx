@@ -14,12 +14,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
 import { propertyApi } from "../../api";
 
-const dataTest = {
-  title: "دمشق – مشروع دمر، شارع الجلاء",
-  id: "10248",
-  propertyType: "شقة سكنية",
+const datas = {
+  propertyTitle: "دمشق – مشروع دمر، شارع الجلاء",
+  propertyId: "10248",
+  propertyType1: "شقة سكنية",
   area: "180 م²",
-  imageUrl:
+  coverPath:
     "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=300&q=80",
   requests: [
     {
@@ -60,10 +60,10 @@ const dataTest = {
   ],
 };
 
-const PreviewPropertyVisits = ({ disabled = false, onReject }) => {
+const PreviewPropertyVisits = ({ propertyId, disabled = false, onReject }) => {
   const [show, setShow] = useState(false);
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const signalRef = useRef();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -79,7 +79,45 @@ const PreviewPropertyVisits = ({ disabled = false, onReject }) => {
       const resp = await propertyApi.getPropertyVisitRequests(
         signalRef.current.signal
       );
-      setData(resp.data);
+      const result = {
+        // propertyTitle: "",
+        // propertyId: "",
+        // area: "",
+        // coverPath: "",
+        // requests: [],
+      };
+      const appt = [
+        // {
+        //   id: 1,
+        //   name: "لينا الخطيب",
+        //   phone: "0935-123-456",
+        //   date: "الأحد، 23 آب",
+        //   time: "3:30 م",
+        // },
+      ];
+      // debugger;
+      for (const day of resp.data.receivedAppointments) {
+        // const appt = day.appointments.filter(
+        //   (a) => a.propertyId === propertyId
+        // );
+        for (const time of day.appointments) {
+          if (time.propertyId === propertyId) {
+            result.area = time.area;
+            result.propertyId = time.propertyId;
+            result.propertyTitle = time.propertyTitle;
+            result.coverPath = time.coverPath;
+            appt.push({
+              id: time.appointmentId,
+              date: day.appointmentDate,
+              name: `${time.firstname} ${time.lastname}`,
+              phone: time.phoneNo,
+              time: time.fromTime,
+            });
+          }
+        }
+      }
+      result.requests = appt;
+      setData(result);
     } catch (err) {
       //list related error codes
       enqueueSnackbar(err, { variant: "error" });
@@ -137,8 +175,8 @@ const PreviewPropertyVisits = ({ disabled = false, onReject }) => {
 
             {/* Property Image */}
             <img
-              src={dataTest.imageUrl}
-              alt={dataTest.title}
+              src={`${import.meta.env.VITE_API_BASE_URL}${data?.coverPath}`}
+              alt={data?.propertyTitle}
               className="size-24 rounded-xl object-cover shadow-sm border border-neutral-200"
             />
             <Box className="flex flex-col items-start gap-0">
@@ -146,19 +184,19 @@ const PreviewPropertyVisits = ({ disabled = false, onReject }) => {
                 variant="h6"
                 className="font-bold text-neutral-900 text-lg"
               >
-                {dataTest.title}
+                {data?.propertyTitle}
               </Typography>
               <Box className="flex items-center gap-2 flex-wrap">
                 <LabelTag
-                  label={dataTest.id}
+                  label={data?.propertyId}
                   classes="border border-neutral-300 px-4 rounded-full"
                 />
                 <LabelTag
-                  label={dataTest.propertyType}
+                  label={data?.propertyType}
                   classes="border border-neutral-300 px-4 rounded-full"
                 />
                 <LabelTag
-                  label={dataTest.area}
+                  label={data?.area}
                   classes="border border-neutral-300 px-4 rounded-full"
                 />
               </Box>
@@ -171,7 +209,7 @@ const PreviewPropertyVisits = ({ disabled = false, onReject }) => {
               variant="h6"
               className="font-bold text-neutral-900 text-lg mb-4 text-end"
             >
-              طلبات المعاينة ({dataTest.requests.length})
+              طلبات المعاينة ({data?.requests.length})
             </Typography>
             {loading &&
               ["", "", ""].map((a) => (
@@ -179,9 +217,9 @@ const PreviewPropertyVisits = ({ disabled = false, onReject }) => {
               ))}
 
             {/* Requests List */}
-            {!loading && (
+            {!loading && data && (
               <Box className="space-y-3">
-                {dataTest.requests.map((request) => (
+                {data.requests.map((request) => (
                   <Box
                     key={request.id}
                     className="border border-neutral-200 rounded-xl p-4 flex items-center justify-between hover:border-neutral-300 transition-colors bg-white"

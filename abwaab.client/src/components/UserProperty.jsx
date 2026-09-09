@@ -9,7 +9,9 @@ import { Link } from "react-router";
 import StarOutlineRoundedIcon from "@mui/icons-material/StarOutlineRounded";
 import StarRateRoundedIcon from "@mui/icons-material/StarRateRounded";
 
-const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
+const UserProperty = ({ data, onChange, onEdit, onVisitPreview }) => {
+  console.log(data.visitRequest);
+
   return (
     <div className="p-4 my-4 border border-neutral-400 w-full rounded-lg">
       <div className="flex items-center border-b border-b-neutral-400 gap-3 py-3">
@@ -23,18 +25,20 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
         <div className="flex-1">
           <LabelTag
             label={data.propertyType}
-            classes="bg-sky-100 text-navy-700 px-3 min-w-10"
+            classes="bg-sky-100 text-navy-700 px-3 min-w-10 inline-block"
           />
+          <span>
+            {data.isStard && data.isStard ? (
+              <StarRateRoundedIcon color="warning" />
+            ) : (
+              <StarOutlineRoundedIcon color="warning" />
+            )}
+          </span>
           <Link
             to={`/portal/properties/${data.propertyId}`}
-            className="text-3xl text-neutral-900 text-ellipsis "
+            className="text-3xl text-neutral-900 text-ellipsis block"
           >
             {data.title}
-            {data.isStar && data.isStar ? (
-              <StarRateRoundedIcon />
-            ) : (
-              <StarOutlineRoundedIcon />
-            )}
           </Link>
         </div>
         <div className="min-w-[30%] flex flex-wrap items-center justify-between">
@@ -53,12 +57,16 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
           <div className="">
             <p className="text-neutral-700 text-xs">السعر</p>
             <p className="text-navy-700 text-base">
-              {data.price.toLocaleString()} دولار امريكي
+              {data.price?.toLocaleString()} دولار امريكي
             </p>
           </div>
         </div>
         <div className="">
-          <PromoteProperty propertyId={data.propertyId} />
+          <PromoteProperty
+            propertyId={data.propertyId}
+            isPromoted={data.isStard}
+            onChange={onChange}
+          />
           {/* <Button
             sx={{ marginX: "4px" }}
             size="medium"
@@ -84,13 +92,16 @@ const UserProperty = ({ data, onPromote, onEdit, onVisitPreview }) => {
       <div className="flex justify-between items-center mt-4">
         {data.visitRequest > 0 && (
           <p className="text-neutral-900 text-base">
-            لديك {data.visitRequests} طلبات لمعاينة هذا العقار
+            لديك {data.visitRequest} طلبات لمعاينة هذا العقار
           </p>
         )}
         {data.visitRequest == 0 && (
           <p className="">لا توجد طلبات معاينة لهذا العقار</p>
         )}
-        <PreviewPropertyVisits disabled />
+        <PreviewPropertyVisits
+          propertyId={data.propertyId}
+          disabled={data.visitRequest == 0}
+        />
       </div>
     </div>
   );

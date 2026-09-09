@@ -45,6 +45,15 @@ const MyPropertiesList = ({
     }
   };
 
+  const handlePromote = (id, value) => {
+    setData((prv) =>
+      prv.map((itm) => {
+        if (itm.propertyId == id) {
+          return { ...itm, isStard: value };
+        } else return itm;
+      })
+    );
+  };
   useEffect(() => {
     setTimeout(() => {
       fetchMyProperties();
@@ -87,9 +96,10 @@ const MyPropertiesList = ({
       )}
       {data.map((itm) => (
         <UserProperty
+          key={`prop-${itm.propertyId}`}
           data={itm}
           onEdit={() => navigate(`edit/${itm.propertyId}`)}
-          onPromote={onPromote}
+          onChange={handlePromote}
           onVisitPreview={onVisitPreview}
         />
       ))}
