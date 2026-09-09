@@ -96,8 +96,11 @@ public class SubmitPropertyCommandHandler : IRequestHandler<SubmitPropertyComman
 
         List<Notification> notifications = await _notificationService.InitiateNotifications("هناك عقاراً جديداً بانتظار الموافقة", admins.ToList(), errorTitle);
 
-        await _notifyHandler.NotifyAsync(errorTitle);
-
+        //notify the user asynchronously without blocking the main thread
+        _ = Task.Run(async () =>
+        {
+            await _notifyHandler.NotifyAsync(errorTitle);
+        });
 
         return new SubmitPropertyResponse() { Success = true, Message = "تم حفظ العقار بنجاح وهو الآن قيد انتظار موافقة الإدارة، سيتم إعلامكم بذلك في غضون 48 ساعة كحد أقصى." };
     }

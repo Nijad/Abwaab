@@ -59,7 +59,12 @@ public class RejectPropertyCommandHandler : IRequestHandler<RejectPropertyComman
 
         List<Notification> notifications = await _notificationService.InitiateNotifications("تم رفض العقار الخاص بك من قبل إدارة الموقع. يمكنك الاطلاع على التفاصيل من خلال الموقع الالكتروني", users, errorTitle);
 
-        await _notifyHandler.NotifyAsync(errorTitle);
+        //notify the user asynchronously without blocking the main thread
+        _ = Task.Run(async () =>
+        {
+            await _notifyHandler.NotifyAsync(errorTitle);
+        });
+
         return new RejectPropertyResponse() { Success = true , Message = "تم رفض العقار بنجاح."};
     }
 }
