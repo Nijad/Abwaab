@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
-import { profileApi, propertyApi } from "../../api";
+import { appointmentsApi, profileApi, propertyApi } from "../../api";
 import UserProperty from "../../components/UserProperty";
 import { useNavigate } from "react-router";
 import HomeIcon from "../../components/HomeIcon";
@@ -101,6 +101,8 @@ const MyPropertiesList = ({
           onEdit={() => navigate(`edit/${itm.propertyId}`)}
           onChange={handlePromote}
           onVisitPreview={onVisitPreview}
+          onAccept={acceptAppointment}
+          onReject={rejectAppointment}
         />
       ))}
     </>

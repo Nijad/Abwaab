@@ -9,7 +9,7 @@ import { Link } from "react-router";
 import StarOutlineRoundedIcon from "@mui/icons-material/StarOutlineRounded";
 import StarRateRoundedIcon from "@mui/icons-material/StarRateRounded";
 
-const UserProperty = ({ data, onChange, onEdit, onVisitPreview }) => {
+const UserProperty = ({ data, onChange, onEdit, onAccept, onReject }) => {
   console.log(data.visitRequest);
 
   return (
@@ -101,6 +101,9 @@ const UserProperty = ({ data, onChange, onEdit, onVisitPreview }) => {
         <PreviewPropertyVisits
           propertyId={data.propertyId}
           disabled={data.visitRequest == 0}
+          propertyType={data.propertyType}
+          onAccept={onAccept}
+          onReject={onReject}
         />
       </div>
     </div>

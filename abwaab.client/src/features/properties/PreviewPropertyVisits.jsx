@@ -12,7 +12,7 @@ import {
 import LabelTag from "../../components/LabelTag";
 import React, { useEffect, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
-import { propertyApi } from "../../api";
+import { appointmentsApi, propertyApi } from "../../api";
 
 const datas = {
   propertyTitle: "دمشق – مشروع دمر، شارع الجلاء",
@@ -60,7 +60,13 @@ const datas = {
   ],
 };
 
-const PreviewPropertyVisits = ({ propertyId, disabled = false, onReject }) => {
+const PreviewPropertyVisits = ({
+  propertyId,
+  propertyType,
+  disabled = false,
+  onAccept,
+  onReject,
+}) => {
   const [show, setShow] = useState(false);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -121,6 +127,62 @@ const PreviewPropertyVisits = ({ propertyId, disabled = false, onReject }) => {
     } catch (err) {
       //list related error codes
       enqueueSnackbar(err, { variant: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const acceptAppointment = async (id) => {
+    setLoading(true);
+    if (signalRef.current) {
+      signalRef.current.abort();
+    }
+    try {
+      signalRef.current = new AbortController();
+      const resp = await appointmentsApi.confirmAppointments(
+        id,
+        signalRef.current.signal
+      );
+      //   enqueueSnackbar(resp.data.message, { variant: "success" });
+      setData(resp.data);
+      // if (onSuccess) onSuccess(resp.data);
+    } catch (err) {
+      //list related error codes
+      enqueueSnackbar(err.detail, { variant: "error" });
+      // if (err.errorCode === "VALIDATION_FAILED") {
+      //   setErrors(err.errors);
+      //   return;
+      // } else if (err.errorCode === "") {
+      //   enqueueSnackbar(err.response.data.message, { variant: "error" });
+      // }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const rejectAppointment = async (id) => {
+    setLoading(true);
+    if (signalRef.current) {
+      signalRef.current.abort();
+    }
+    try {
+      signalRef.current = new AbortController();
+      const resp = await appointmentsApi.refuseAppointments(
+        id,
+        signalRef.current.signal
+      );
+      enqueueSnackbar(resp.data.message, { variant: "success" });
+      setData(resp.data);
+      // if (onSuccess) onSuccess(resp.data);
+    } catch (err) {
+      //list related error codes
+      enqueueSnackbar(err.detail, { variant: "error" });
+      // if (err.errorCode === "VALIDATION_FAILED") {
+      //   setErrors(err.errors);
+      //   return;
+      // } else if (err.errorCode === "") {
+      //   enqueueSnackbar(err.response.data.message, { variant: "error" });
+      // }
     } finally {
       setLoading(false);
     }
@@ -187,16 +249,20 @@ const PreviewPropertyVisits = ({ propertyId, disabled = false, onReject }) => {
                 {data?.propertyTitle}
               </Typography>
               <Box className="flex items-center gap-2 flex-wrap">
-                <LabelTag
+                {/* <LabelTag
                   label={data?.propertyId}
                   classes="border border-neutral-300 px-4 rounded-full"
-                />
+                /> */}
                 <LabelTag
-                  label={data?.propertyType}
+                  label={propertyType}
                   classes="border border-neutral-300 px-4 rounded-full"
                 />
                 <LabelTag
-                  label={data?.area}
+                  label={
+                    <span>
+                      {data?.area} م <sup>2</sup>
+                    </span>
+                  }
                   classes="border border-neutral-300 px-4 rounded-full"
                 />
               </Box>
@@ -212,7 +278,7 @@ const PreviewPropertyVisits = ({ propertyId, disabled = false, onReject }) => {
               طلبات المعاينة ({data?.requests.length})
             </Typography>
             {loading &&
-              ["", "", ""].map((a) => (
+              ["", "", ""].map(() => (
                 <Skeleton variant="rounded" height={80} className="my-3" />
               ))}
 
@@ -253,14 +319,24 @@ const PreviewPropertyVisits = ({ propertyId, disabled = false, onReject }) => {
                       />
                     </Box>
                     {/* Reject Button */}
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => onReject && onReject(request.id)}
-                      className="border-red-700 text-red-700 hover:bg-red-50 hover:border-red-800 font-medium text-sm rounded-lg px-4 py-1.5 capitalize"
-                    >
-                      رفض الطلب
-                    </Button>
+                    <Box className="flex gap-2">
+                      <Button
+                        variant="contained"
+                        color="navy"
+                        onClick={() => acceptAppointment(request.id)}
+                        className="border-red-700 text-red-700 hover:bg-red-50 hover:border-red-800 font-medium text-sm rounded-lg px-4 py-1.5 capitalize"
+                      >
+                        قبول الطلب
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => rejectAppointment(request.id)}
+                        className="border-red-700 text-red-700 hover:bg-red-50 hover:border-red-800 font-medium text-sm rounded-lg px-4 py-1.5 capitalize"
+                      >
+                        رفض الطلب
+                      </Button>
+                    </Box>
                   </Box>
                 ))}
               </Box>
