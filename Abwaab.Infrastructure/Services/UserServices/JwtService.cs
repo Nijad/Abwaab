@@ -40,7 +40,8 @@ namespace Abwaab.Infrastructure.Services.UserServices
                 new Claim(JwtRegisteredClaimNames.PhoneNumber, user.PhoneNumber ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Name, user.UserName ?? user.Id.ToString()),
-                new Claim("LoginIdentifier", loginIdentifier)
+                new Claim("LoginIdentifier", loginIdentifier),
+                new Claim("FullName", $"{user.FirstName ?? string.Empty} {user.LastName ?? string.Empty}"),
             };
 
             foreach (var role in roles)
