@@ -11,5 +11,6 @@
         public decimal? AreaInSquareMeter { get; set; }
         public int? VisitRequest { get; set; }
         public string? PropertyState { get; set; } = string.Empty;
+        public bool IsStard { get; set; }
     }
 }

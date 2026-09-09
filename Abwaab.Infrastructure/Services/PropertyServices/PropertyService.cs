@@ -93,7 +93,8 @@ public class PropertyService : IPropertyService
                 PropertyFinishing = property.Finishing?.FinishingName,
                 PropertyType = property.PropertyType?.TypeName,
                 PropertyState = property.PropertyState.StateName,
-                Title = property.Title!
+                Title = property.Title!,
+                IsStard = property.IsStard
             });
 
         return response;
