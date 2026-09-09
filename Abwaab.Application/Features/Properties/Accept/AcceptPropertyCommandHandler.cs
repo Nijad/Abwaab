@@ -67,6 +67,6 @@ public class AcceptPropertyCommandHandler : IRequestHandler<AcceptPropertyComman
         List<Notification> notifications = await _notificationService.InitiateNotifications("تم نشر العقار الخاص بك، وأصبح متاحاً للاستعراض على الموقع الالكتروني.", users, errorTitle);
 
         await _notifyHandler.NotifyAsync(errorTitle);
-        return new AcceptPropertyResponse() { Success = true, Message = "تم رفض العقار بنجاح." };
+        return new AcceptPropertyResponse() { Success = true, Message = "تم نشر العقار بنجاح." };
     }
 }
