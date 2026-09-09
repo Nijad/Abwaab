@@ -76,7 +76,7 @@ export const HeroSlider = () => {
             </div>
 
             {/* Content Box (LTR Aligned) */}
-            <div className="relative h-full max-w-7xl mx-auto px-6 md:px-16 flex flex-col justify-center items-start text-right text-white">
+            <div className="relative h-full max-w-6xl mx-auto px-6 md:px-16 flex flex-col justify-center items-start text-right text-white">
               <div className="max-w-2xl space-y-4">
                 {/* Tag / Chip */}
                 <span className="inline-block bg-teal-500 text-slate-950 text-xs md:text-sm font-semibold px-4 py-1.5 rounded-full shadow-md">
