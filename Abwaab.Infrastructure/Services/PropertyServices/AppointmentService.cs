@@ -174,7 +174,7 @@ public class AppointmentService : IAppointmentService
             Requests = new List<AppointmentRequestDTO>()
         };
 
-        if (property.Appointments == null || property.Appointments.Count == 0)
+        if (property.Appointments != null && property.Appointments.Count > 0)
             foreach (Appointment item in property.Appointments)
             {
                 response.Requests.Add(new AppointmentRequestDTO()
@@ -190,5 +190,12 @@ public class AppointmentService : IAppointmentService
             }
 
         return response;
+    }
+
+    public async Task CancelMissedِppointments(string errorTitle)
+    {
+        AppointmentState pendingAppointments = await GetPendingAppointmentStateAsync(errorTitle);
+        AppointmentState canceledAppointments = await GetCanceledAppointmentStateAsync(errorTitle);
+        await _appointmentRepository.CancelMissedAppointments(pendingAppointments, canceledAppointments);
     }
 }

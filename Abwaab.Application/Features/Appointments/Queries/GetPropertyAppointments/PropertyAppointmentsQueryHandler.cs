@@ -17,10 +17,12 @@ public class PropertyAppointmentsQueryHandler : IRequestHandler<PropertyAppointm
 
     public async Task<PropertyAppointmentsResponse> Handle(PropertyAppointmentsQuery request, CancellationToken cancellationToken)
     {
-        AppointmentState confirmedAppointments = await _appointmentService.GetConfirmedAppointmentStateAsync(errorTitle);
+        await _appointmentService.CancelMissedِppointments(errorTitle);
+
         AppointmentState pendingAppointments = await _appointmentService.GetPendingAppointmentStateAsync(errorTitle);
+        AppointmentState confirmedAppointments = await _appointmentService.GetConfirmedAppointmentStateAsync(errorTitle);
         List<AppointmentState> states = new() { confirmedAppointments, pendingAppointments };
-        
+
 
         PropertyAppointmentsResponse response = await _appointmentService.GetPropertyAppointments(request.PropertyId, states, errorTitle);
 
