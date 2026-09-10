@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Features.Appointments.Queries.GetUserAppointments;
+﻿using Abwaab.Application.Features.Appointments.Queries.GetPropertyAppointments;
+using Abwaab.Application.Features.Appointments.Queries.GetUserAppointments;
 using Abwaab.Domain.Entities.AppointmentEntities;
 
 namespace Abwaab.Application.Contracts.Properties;
@@ -18,4 +19,5 @@ public interface IAppointmentService
     Task<Appointment> FindAppointmentByIdAsync(Guid appointmentId, string errorTitle, CancellationToken cancellationToken);
     Task UpdateAppointmentAsync(Appointment appointment, CancellationToken cancellationToken);
     Task<GetUserAppointmentsResponse> GetUserAppointmentsByUserIdAsync(Guid userId, string errorTitle);
+    Task<PropertyAppointmentsResponse> GetPropertyAppointments(Guid propertyId, List<AppointmentState> states, string errorTitle);
 }

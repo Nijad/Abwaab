@@ -7,6 +7,7 @@ public class AppointmentDetailsDTO
     public TimeOnly FromTime { get; set; }
     public TimeOnly EndTime { get; set; }
     public string AppointmentState { get; set; } = string.Empty;
+    public string ArabicAppointmentState { get; set; } = string.Empty;
     public string AppointmentDirection { get; set; } = string.Empty;
     public bool Cancelable { get; set; }
     public string Comments { get; set; } = string.Empty;

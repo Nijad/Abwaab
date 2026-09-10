@@ -50,4 +50,5 @@ public static class ErrorTitle
     public const string PendingProperties = "العقارات المعلقة";
     public const string SearchForm = "إنشاء نموذج البحث";
     public const string Search = "البحث";
+    public const string PropertyAppointments = "الاستعلام عن مواعيد العقار";
 }

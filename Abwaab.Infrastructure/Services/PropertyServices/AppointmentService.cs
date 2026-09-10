@@ -2,10 +2,12 @@
 using Abwaab.Application.Common.Exceptions.Appointments;
 using Abwaab.Application.Common.Mappings;
 using Abwaab.Application.Contracts.Properties;
+using Abwaab.Application.Features.Appointments.Queries.GetPropertyAppointments;
 using Abwaab.Application.Features.Appointments.Queries.GetUserAppointments;
 using Abwaab.Application.Features.Appointments.Queries.GetUserAppointments.DTOs;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.AppointmentEntities;
+using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
 using Azure;
 
@@ -117,15 +119,16 @@ public class AppointmentService : IAppointmentService
             foreach (Appointment appointment in date)
             {
                 AppointmentDetailsDTO details = new();
-                ApplicationUser user = 
-                    appointment.UserId == userId ? 
-                    appointment.User : 
+                ApplicationUser user =
+                    appointment.UserId == userId ?
+                    appointment.User :
                     appointment.Property.UserPlan.User;
 
                 details.AppointmentId = appointment.Id;
                 details.FromTime = TimeOnly.FromDateTime(appointment.Date);
                 details.EndTime = appointment.EndTime;
-                details.AppointmentState = AppointmentStatesMapping.Map(appointment.AppointmentState.StateName);
+                details.AppointmentState = appointment.AppointmentState.StateName;
+                details.ArabicAppointmentState = AppointmentStatesMapping.Map(appointment.AppointmentState.StateName);
                 details.AppointmentDirection = appointment.UserId == userId ? "requested" : "received";
                 details.Cancelable =
                     appointment.AppointmentState == pending ||
@@ -155,5 +158,37 @@ public class AppointmentService : IAppointmentService
             ReceivedAppointments = appointmentsGroup.Where(x => x.Appointments.Any(y => y.AppointmentDirection == "received")).OrderBy(x => x.AppointmentDate).ToList(),
             RequestedAppointments = appointmentsGroup.Where(x => x.Appointments.Any(y => y.AppointmentDirection == "requested")).OrderBy(x => x.AppointmentDate).ToList()
         };
+    }
+
+    public async Task<PropertyAppointmentsResponse> GetPropertyAppointments(Guid propertyId, List<AppointmentState> states, string errorTitle)
+    {
+        Property property = await _appointmentRepository.GetPropertyWithAppointments(propertyId, states);
+
+        PropertyAppointmentsResponse response = new()
+        {
+            PropertyId = property.Id,
+            PropertyTitle = property.Title ?? "",
+            PropertyType = property.PropertyType?.TypeName ?? "",
+            Area = property.AreaInSquareMeter?.ToString() ?? "",
+            CoverPath = property.MediaList?.Where(x => x.IsCover).FirstOrDefault()?.FilePath ?? "",
+            Requests = new List<AppointmentRequestDTO>()
+        };
+
+        if (property.Appointments == null || property.Appointments.Count == 0)
+            foreach (Appointment item in property.Appointments)
+            {
+                response.Requests.Add(new AppointmentRequestDTO()
+                {
+                    Id = item.Id,
+                    Name = $"{item.User.FirstName} {item.User.LastName}",
+                    Identifier = item.User.PhoneNumber ?? item.User.Email ?? "",
+                    Date = DateOnly.FromDateTime(item.Date),
+                    Time = TimeOnly.FromDateTime(item.Date),
+                    StateName = item.AppointmentState.StateName,
+                    ArabicStateName = AppointmentStatesMapping.Map(item.AppointmentState.StateName)
+                });
+            }
+
+        return response;
     }
 }

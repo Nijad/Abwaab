@@ -92,8 +92,11 @@ public class BookAppointmentCommandHandler : IRequestHandler<BookAppointmentComm
 
         List<Notification> notifications = await _notificationService.InitiateNotifications("تم طلب حجز موعد لزيارة أحد عقاراتك يرجى الاطلاع على تفاصيل الموعد في الموقع الالكتروني", users, errorTitle);
 
-        await _notifyHandler.NotifyAsync(errorTitle);
-
+        //notify the user asynchronously without blocking the main thread
+        _ = Task.Run(async () =>
+        {
+            await _notifyHandler.NotifyAsync(errorTitle);
+        });
 
         return new BookAppointmentResponse() { Success = true, Message = "تم طلب حجز الموعد بنجاح، انتظر موافقة صاحب العقار."};
     }
