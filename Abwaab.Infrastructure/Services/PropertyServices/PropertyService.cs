@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Common.Exceptions.Properties.Attributes;
 using Abwaab.Application.Contracts.Properties;
+using Abwaab.Application.Features.Appointments.Queries.GetPropertyAppointments;
 using Abwaab.Application.Features.Properties.Queries.GetPendingProperties;
 using Abwaab.Application.Features.Properties.Queries.UserProperties;
 using Abwaab.Application.Features.Visitors.DTOs.MainPage;
@@ -241,5 +242,21 @@ public class PropertyService : IPropertyService
     public async Task<int> SearchPropertiesCountAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState)
     {
         return await _propertyRepository.SearchPropertiesCountAsync(request, viewSides, propertyState);
+    }
+
+    public async Task<PropertyAppointmentsResponse> FindPropertyByIdForAppointmentsAsync(Guid propertyId, string errorTitle)
+    {
+        Property? property = await _propertyRepository.FindPropertyByIdForAppointmentsAsync(propertyId);
+        if (property == null)
+            throw new PropertyNotFoundException(errorTitle);
+
+        return new PropertyAppointmentsResponse
+        {
+            PropertyId = property.Id,
+            Area = property.AreaInSquareMeter.ToString()!,
+            CoverPath = property.MediaList?.Where(x => x.IsCover).FirstOrDefault()?.FilePath ?? "",
+            PropertyTitle = property.Title ?? "",
+            PropertyType = property.PropertyType?.TypeName ?? ""
+        };
     }
 }

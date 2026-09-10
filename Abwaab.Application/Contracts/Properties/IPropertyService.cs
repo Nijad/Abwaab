@@ -1,4 +1,5 @@
-﻿using Abwaab.Application.Features.Properties.Queries.GetPendingProperties;
+﻿using Abwaab.Application.Features.Appointments.Queries.GetPropertyAppointments;
+using Abwaab.Application.Features.Properties.Queries.GetPendingProperties;
 using Abwaab.Application.Features.Properties.Queries.UserProperties;
 using Abwaab.Application.Features.Visitors.DTOs.MainPage;
 using Abwaab.Application.Features.Visitors.Search;
@@ -31,4 +32,5 @@ public interface IPropertyService
     Task<List<PendingPropertiesResponse>> GetPropertiesByStateAsync(PropertyState pendingProperties);
     Task<List<SearchDTO>> SearchPropertiesAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState, int skip, int take);
     Task<int> SearchPropertiesCountAsync(SearchQuery request, List<Attribute> viewSides, PropertyState propertyState);
+    Task<PropertyAppointmentsResponse> FindPropertyByIdForAppointmentsAsync(Guid propertyId, string errorTitle);
 }

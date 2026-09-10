@@ -1,6 +1,5 @@
 ﻿using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.AppointmentEntities;
-using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,10 +42,10 @@ public class AppointmentRepository : IAppointmentRepository
         IQueryable<Appointment> appointments = _context.Appointments
             .Where(
             x => x.PropertyId == propertyId &&
-            x.Date >= new DateTime(startDate, new TimeOnly(00,00)) &&
-            x.Date <= new DateTime(endDate, new TimeOnly(23,59)));
+            x.Date >= new DateTime(startDate, new TimeOnly(00, 00)) &&
+            x.Date <= new DateTime(endDate, new TimeOnly(23, 59)));
 
-        if(states != null && states.Length > 0)
+        if (states != null && states.Length > 0)
             appointments = appointments.Where(x => states.Contains(x.AppointmentState));
 
         return await appointments.ToListAsync(cancellationToken);
@@ -55,11 +54,11 @@ public class AppointmentRepository : IAppointmentRepository
     public async Task<Appointment?> FindAppointmentByIdAsync(Guid appointmentId, CancellationToken cancellationToken)
     {
         return await _context.Appointments
-            .Include(x=>x.User)
-            .Include(x=>x.Property)
-            .ThenInclude(x=>x.UserPlan)
-            .ThenInclude(x=>x.User)
-            .Where(x=>x.Id== appointmentId)
+            .Include(x => x.User)
+            .Include(x => x.Property)
+            .ThenInclude(x => x.UserPlan)
+            .ThenInclude(x => x.User)
+            .Where(x => x.Id == appointmentId)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -72,30 +71,39 @@ public class AppointmentRepository : IAppointmentRepository
     public async Task<List<Appointment>> GetUserAppointmentsByUserIdAsync(Guid userId)
     {
         return await _context.Appointments
-            .Include(x=>x.AppointmentState)
-            .Include(x=>x.User)
-            .Include(x=>x.Property)
-            .ThenInclude(x=>x.UserPlan)
-            .ThenInclude(x=>x.User)
-            .Include(x=>x.Property)
-            .ThenInclude(x=>x.MediaList)
-            .Where(x=>x.UserId== userId || x.Property.UserPlan.UserId==userId)
+            .Include(x => x.AppointmentState)
+            .Include(x => x.User)
+            .Include(x => x.Property)
+            .ThenInclude(x => x.UserPlan)
+            .ThenInclude(x => x.User)
+            .Include(x => x.Property)
+            .ThenInclude(x => x.MediaList)
+            .Where(x => x.UserId == userId || x.Property.UserPlan.UserId == userId)
             .ToListAsync();
     }
 
-    public async Task<Property> GetPropertyWithAppointments(Guid propertyId, List<AppointmentState> states)
+    public async Task CancelMissedAppointments(AppointmentState pendingAppointments, AppointmentState canceledAppointments)
     {
-        return await _context.Properties
-            .Include(x => x.Appointments)
-            .ThenInclude(x => x.User)
-            .Include(x => x.Appointments)
-            .ThenInclude(x => x.AppointmentState)
-            .Include(x=>x.PropertyType)
-            .Include(x=>x.MediaList)
-            .Where(x => x.Id == propertyId)
-            .Where(x => 
-                x.Appointments.Any(a => states.Contains(a.AppointmentState)) && 
-                x.Appointments.Any(a => a.Date > DateTime.Now))
-            .FirstOrDefaultAsync();
+        List<Appointment> appointmentsToCancel = _context.Appointments
+            .Where(x => x.Date < DateTime.Now && x.AppointmentState == pendingAppointments)
+            .ToList();
+
+        foreach (var appointment in appointmentsToCancel)
+            appointment.AppointmentState = canceledAppointments;
+
+        _context.Appointments.UpdateRange(appointmentsToCancel);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<Appointment>?> GetPropertyAppointmentsRequests(Guid propertyId, List<AppointmentState> states)
+    {
+        return await _context.Appointments
+            .Include(x=>x.User)
+            .Include(x=>x.AppointmentState)
+            .Where(x =>
+                x.Property.Id == propertyId && 
+                states.Contains(x.AppointmentState) && 
+                x.Date > DateTime.Now)
+            .ToListAsync();
     }
 }

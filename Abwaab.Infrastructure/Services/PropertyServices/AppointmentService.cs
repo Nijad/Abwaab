@@ -7,9 +7,7 @@ using Abwaab.Application.Features.Appointments.Queries.GetUserAppointments;
 using Abwaab.Application.Features.Appointments.Queries.GetUserAppointments.DTOs;
 using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.AppointmentEntities;
-using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Domain.Entities.UserEntities;
-using Azure;
 
 namespace Abwaab.Infrastructure.Services.PropertyServices;
 
@@ -160,24 +158,22 @@ public class AppointmentService : IAppointmentService
         };
     }
 
-    public async Task<PropertyAppointmentsResponse> GetPropertyAppointments(Guid propertyId, List<AppointmentState> states, string errorTitle)
+    public async Task CancelMissedِppointments(string errorTitle)
     {
-        Property property = await _appointmentRepository.GetPropertyWithAppointments(propertyId, states);
+        AppointmentState pendingAppointments = await GetPendingAppointmentStateAsync(errorTitle);
+        AppointmentState canceledAppointments = await GetCanceledAppointmentStateAsync(errorTitle);
+        await _appointmentRepository.CancelMissedAppointments(pendingAppointments, canceledAppointments);
+    }
 
-        PropertyAppointmentsResponse response = new()
-        {
-            PropertyId = property.Id,
-            PropertyTitle = property.Title ?? "",
-            PropertyType = property.PropertyType?.TypeName ?? "",
-            Area = property.AreaInSquareMeter?.ToString() ?? "",
-            CoverPath = property.MediaList?.Where(x => x.IsCover).FirstOrDefault()?.FilePath ?? "",
-            Requests = new List<AppointmentRequestDTO>()
-        };
+    public async Task<List<AppointmentRequestDTO>> GetPropertyAppointmentsRequests(Guid propertyId, List<AppointmentState> states, string errorTitle)
+    {
+        List<Appointment>? appointments = await _appointmentRepository.GetPropertyAppointmentsRequests(propertyId, states);
+        List<AppointmentRequestDTO> response = new();
 
-        if (property.Appointments == null || property.Appointments.Count == 0)
-            foreach (Appointment item in property.Appointments)
+        if(appointments != null && appointments.Count > 0)
+            foreach (Appointment item in appointments)
             {
-                response.Requests.Add(new AppointmentRequestDTO()
+                response.Add(new AppointmentRequestDTO()
                 {
                     Id = item.Id,
                     Name = $"{item.User.FirstName} {item.User.LastName}",
@@ -188,7 +184,6 @@ public class AppointmentService : IAppointmentService
                     ArabicStateName = AppointmentStatesMapping.Map(item.AppointmentState.StateName)
                 });
             }
-
         return response;
     }
 }

@@ -8,22 +8,27 @@ namespace Abwaab.Application.Features.Appointments.Queries.GetPropertyAppointmen
 public class PropertyAppointmentsQueryHandler : IRequestHandler<PropertyAppointmentsQuery, PropertyAppointmentsResponse>
 {
     private readonly IAppointmentService _appointmentService;
+    private readonly IPropertyService _propertyService;
     private readonly string errorTitle = ErrorTitle.PropertyAppointments;
 
-    public PropertyAppointmentsQueryHandler(IAppointmentService appointmentService)
+    public PropertyAppointmentsQueryHandler(IAppointmentService appointmentService, IPropertyService propertyService)
     {
         _appointmentService = appointmentService;
+        _propertyService = propertyService;
     }
 
     public async Task<PropertyAppointmentsResponse> Handle(PropertyAppointmentsQuery request, CancellationToken cancellationToken)
     {
-        AppointmentState confirmedAppointments = await _appointmentService.GetConfirmedAppointmentStateAsync(errorTitle);
+        await _appointmentService.CancelMissedِppointments(errorTitle);
+
         AppointmentState pendingAppointments = await _appointmentService.GetPendingAppointmentStateAsync(errorTitle);
+        AppointmentState confirmedAppointments = await _appointmentService.GetConfirmedAppointmentStateAsync(errorTitle);
         List<AppointmentState> states = new() { confirmedAppointments, pendingAppointments };
-        
 
-        PropertyAppointmentsResponse response = await _appointmentService.GetPropertyAppointments(request.PropertyId, states, errorTitle);
+        PropertyAppointmentsResponse propertyAppointments = await _propertyService.FindPropertyByIdForAppointmentsAsync(request.PropertyId, errorTitle);
 
-        return response;
+        propertyAppointments.Requests = await _appointmentService.GetPropertyAppointmentsRequests(request.PropertyId, states, errorTitle);
+
+        return propertyAppointments;
     }
 }

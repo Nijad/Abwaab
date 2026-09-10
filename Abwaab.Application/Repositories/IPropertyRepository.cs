@@ -8,6 +8,7 @@ public interface IPropertyRepository
 {
     Task CreateProperty(Property property);
     Task<Property?> FindPropertyByIdAsync(Guid propertyId);
+    Task<Property?> FindPropertyByIdForAppointmentsAsync(Guid propertyId);
     Task<Property?> FindPropertyByIdForUpdateAsync(Guid propertyId);
     Task<Finishing?> FindPropertyFinishingByIdAsync(Guid finishingId);
     Task<PropertyState?> FindPropertyStateByStateNameAsync(string propertyStateName);
