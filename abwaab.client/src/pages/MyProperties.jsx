@@ -69,7 +69,7 @@ const MyProperties = () => {
   };
 
   return (
-    <div className="flex flex-col items-center py-8 px-28 flex-grow">
+    <div className="flex flex-col items-center py-8 px-28 max-w-[1480px] mx-auto flex-grow">
       <div className="flex justify-between items-center w-full">
         <div className="">
           <h4 className="text-navy-700 font-semibold text-[32px]">
