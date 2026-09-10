@@ -1,5 +1,6 @@
 ﻿using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.AppointmentEntities;
+using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -80,5 +81,21 @@ public class AppointmentRepository : IAppointmentRepository
             .ThenInclude(x=>x.MediaList)
             .Where(x=>x.UserId== userId || x.Property.UserPlan.UserId==userId)
             .ToListAsync();
+    }
+
+    public async Task<Property> GetPropertyWithAppointments(Guid propertyId, List<AppointmentState> states)
+    {
+        return await _context.Properties
+            .Include(x => x.Appointments)
+            .ThenInclude(x => x.User)
+            .Include(x => x.Appointments)
+            .ThenInclude(x => x.AppointmentState)
+            .Include(x=>x.PropertyType)
+            .Include(x=>x.MediaList)
+            .Where(x => x.Id == propertyId)
+            .Where(x => 
+                x.Appointments.Any(a => states.Contains(a.AppointmentState)) && 
+                x.Appointments.Any(a => a.Date > DateTime.Now))
+            .FirstOrDefaultAsync();
     }
 }
