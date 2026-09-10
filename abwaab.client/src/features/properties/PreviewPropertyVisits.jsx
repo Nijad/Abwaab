@@ -60,13 +60,7 @@ const datas = {
   ],
 };
 
-const PreviewPropertyVisits = ({
-  propertyId,
-  propertyType,
-  disabled = false,
-  onAccept,
-  onReject,
-}) => {
+const PreviewPropertyVisits = ({ propertyId, disabled = false }) => {
   const [show, setShow] = useState(false);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -85,45 +79,9 @@ const PreviewPropertyVisits = ({
       const resp = await propertyApi.getPropertyVisitRequests(
         signalRef.current.signal
       );
-      const result = {
-        // propertyTitle: "",
-        // propertyId: "",
-        // area: "",
-        // coverPath: "",
-        // requests: [],
-      };
-      const appt = [
-        // {
-        //   id: 1,
-        //   name: "لينا الخطيب",
-        //   phone: "0935-123-456",
-        //   date: "الأحد، 23 آب",
-        //   time: "3:30 م",
-        // },
-      ];
+
       // debugger;
-      for (const day of resp.data.receivedAppointments) {
-        // const appt = day.appointments.filter(
-        //   (a) => a.propertyId === propertyId
-        // );
-        for (const time of day.appointments) {
-          if (time.propertyId === propertyId) {
-            result.area = time.area;
-            result.propertyId = time.propertyId;
-            result.propertyTitle = time.propertyTitle;
-            result.coverPath = time.coverPath;
-            appt.push({
-              id: time.appointmentId,
-              date: day.appointmentDate,
-              name: `${time.firstname} ${time.lastname}`,
-              phone: time.phoneNo,
-              time: time.fromTime,
-            });
-          }
-        }
-      }
-      result.requests = appt;
-      setData(result);
+      setData(resp.data);
     } catch (err) {
       //list related error codes
       enqueueSnackbar(err, { variant: "error" });
@@ -143,8 +101,8 @@ const PreviewPropertyVisits = ({
         id,
         signalRef.current.signal
       );
-      //   enqueueSnackbar(resp.data.message, { variant: "success" });
-      setData(resp.data);
+      enqueueSnackbar(resp.data.message, { variant: "success" });
+      getPropVisits();
       // if (onSuccess) onSuccess(resp.data);
     } catch (err) {
       //list related error codes
@@ -172,7 +130,35 @@ const PreviewPropertyVisits = ({
         signalRef.current.signal
       );
       enqueueSnackbar(resp.data.message, { variant: "success" });
-      setData(resp.data);
+      getPropVisits();
+      // if (onSuccess) onSuccess(resp.data);
+    } catch (err) {
+      //list related error codes
+      enqueueSnackbar(err.detail, { variant: "error" });
+      // if (err.errorCode === "VALIDATION_FAILED") {
+      //   setErrors(err.errors);
+      //   return;
+      // } else if (err.errorCode === "") {
+      //   enqueueSnackbar(err.response.data.message, { variant: "error" });
+      // }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelAppointment = async (id) => {
+    setLoading(true);
+    if (signalRef.current) {
+      signalRef.current.abort();
+    }
+    try {
+      signalRef.current = new AbortController();
+      const resp = await appointmentsApi.cancelAppointments(
+        id,
+        signalRef.current.signal
+      );
+      enqueueSnackbar(resp.data.message, { variant: "success" });
+      getPropVisits();
       // if (onSuccess) onSuccess(resp.data);
     } catch (err) {
       //list related error codes
@@ -254,7 +240,7 @@ const PreviewPropertyVisits = ({
                   classes="border border-neutral-300 px-4 rounded-full"
                 /> */}
                 <LabelTag
-                  label={propertyType}
+                  label={data?.propertyType}
                   classes="border border-neutral-300 px-4 rounded-full"
                 />
                 <LabelTag
@@ -303,7 +289,7 @@ const PreviewPropertyVisits = ({
                         sx={{ direction: "ltr" }}
                         className="text-neutral-400 font-medium text-sm "
                       >
-                        {request.phone}
+                        {request.identifier}
                       </Typography>
                     </Box>
 
@@ -320,22 +306,36 @@ const PreviewPropertyVisits = ({
                     </Box>
                     {/* Reject Button */}
                     <Box className="flex gap-2">
-                      <Button
-                        variant="contained"
-                        color="navy"
-                        onClick={() => acceptAppointment(request.id)}
-                        className="border-red-700 text-red-700 hover:bg-red-50 hover:border-red-800 font-medium text-sm rounded-lg px-4 py-1.5 capitalize"
-                      >
-                        قبول الطلب
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => rejectAppointment(request.id)}
-                        className="border-red-700 text-red-700 hover:bg-red-50 hover:border-red-800 font-medium text-sm rounded-lg px-4 py-1.5 capitalize"
-                      >
-                        رفض الطلب
-                      </Button>
+                      {request.stateName === "Pending" && (
+                        <>
+                          <Button
+                            variant="contained"
+                            color="navy"
+                            onClick={() => acceptAppointment(request.id)}
+                            className="border-red-700 text-red-700 hover:bg-red-50 hover:border-red-800 font-medium text-sm rounded-lg px-4 py-1.5 capitalize"
+                          >
+                            قبول الطلب
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={() => rejectAppointment(request.id)}
+                            className="border-red-700 text-red-700 hover:bg-red-50 hover:border-red-800 font-medium text-sm rounded-lg px-4 py-1.5 capitalize"
+                          >
+                            رفض الطلب
+                          </Button>
+                        </>
+                      )}
+                      {request.stateName === "Accepted" && (
+                        <Button
+                          variant="outlined"
+                          color="navy"
+                          onClick={() => cancelAppointment(request.id)}
+                          className="border-red-700 text-red-700 hover:bg-red-50 hover:border-red-800 font-medium text-sm rounded-lg px-4 py-1.5 capitalize"
+                        >
+                          الغاء الطلب
+                        </Button>
+                      )}
                     </Box>
                   </Box>
                 ))}

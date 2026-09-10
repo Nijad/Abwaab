@@ -20,4 +20,12 @@ export const appointmentsApi = {
         signal: signal,
       }
     ),
+  cancelAppointments: (appointmentId, signal) =>
+    axiosPrivate.put(
+      "/api/Appointment/CancelAppointment",
+      { appointmentId, comment: "" },
+      {
+        signal: signal,
+      }
+    ),
 };

@@ -101,8 +101,6 @@ const MyPropertiesList = ({
           onEdit={() => navigate(`edit/${itm.propertyId}`)}
           onChange={handlePromote}
           onVisitPreview={onVisitPreview}
-          onAccept={acceptAppointment}
-          onReject={rejectAppointment}
         />
       ))}
     </>

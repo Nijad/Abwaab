@@ -101,9 +101,6 @@ const UserProperty = ({ data, onChange, onEdit, onAccept, onReject }) => {
         <PreviewPropertyVisits
           propertyId={data.propertyId}
           disabled={data.visitRequest == 0}
-          propertyType={data.propertyType}
-          onAccept={onAccept}
-          onReject={onReject}
         />
       </div>
     </div>

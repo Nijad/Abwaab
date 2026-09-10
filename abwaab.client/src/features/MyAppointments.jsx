@@ -145,8 +145,92 @@ const MyAppointmnets = ({
         signalRef.current.signal
       );
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
-      // setData(resp.data);
+      setData(resp.data);
       if (onSuccess) onSuccess(resp.data);
+    } catch (err) {
+      //list related error codes
+      enqueueSnackbar(err.detail, { variant: "error" });
+      // if (err.errorCode === "VALIDATION_FAILED") {
+      //   setErrors(err.errors);
+      //   return;
+      // } else if (err.errorCode === "") {
+      //   enqueueSnackbar(err.response.data.message, { variant: "error" });
+      // }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const acceptAppointment = async (id) => {
+    setLoading(true);
+    if (signalRef.current) {
+      signalRef.current.abort();
+    }
+    try {
+      signalRef.current = new AbortController();
+      const resp = await appointmentsApi.confirmAppointments(
+        id,
+        signalRef.current.signal
+      );
+      enqueueSnackbar(resp.data.message, { variant: "success" });
+      fetchMyAppointments();
+      // if (onSuccess) onSuccess(resp.data);
+    } catch (err) {
+      //list related error codes
+      enqueueSnackbar(err.detail, { variant: "error" });
+      // if (err.errorCode === "VALIDATION_FAILED") {
+      //   setErrors(err.errors);
+      //   return;
+      // } else if (err.errorCode === "") {
+      //   enqueueSnackbar(err.response.data.message, { variant: "error" });
+      // }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const rejectAppointment = async (id) => {
+    setLoading(true);
+    if (signalRef.current) {
+      signalRef.current.abort();
+    }
+    try {
+      signalRef.current = new AbortController();
+      const resp = await appointmentsApi.refuseAppointments(
+        id,
+        signalRef.current.signal
+      );
+      enqueueSnackbar(resp.data.message, { variant: "success" });
+      fetchMyAppointments();
+      // if (onSuccess) onSuccess(resp.data);
+    } catch (err) {
+      //list related error codes
+      enqueueSnackbar(err.detail, { variant: "error" });
+      // if (err.errorCode === "VALIDATION_FAILED") {
+      //   setErrors(err.errors);
+      //   return;
+      // } else if (err.errorCode === "") {
+      //   enqueueSnackbar(err.response.data.message, { variant: "error" });
+      // }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelAppointment = async (id) => {
+    setLoading(true);
+    if (signalRef.current) {
+      signalRef.current.abort();
+    }
+    try {
+      signalRef.current = new AbortController();
+      const resp = await appointmentsApi.cancelAppointments(
+        id,
+        signalRef.current.signal
+      );
+      enqueueSnackbar(resp.data.message, { variant: "success" });
+      fetchMyAppointments();
+      // if (onSuccess) onSuccess(resp.data);
     } catch (err) {
       //list related error codes
       enqueueSnackbar(err.detail, { variant: "error" });
@@ -188,13 +272,27 @@ const MyAppointmnets = ({
         </Box>
 
         <CustomTabPanel value={value} index={0}>
-          {data.requestedAppointments.map((day) => (
-            <AppointmentCard key={day.dayName} day={day} />
+          {data.requestedAppointments.map((day, index) => (
+            <AppointmentCard
+              key={`day-${index}`}
+              day={day}
+              type={"requested"}
+              onAccept={acceptAppointment}
+              onReject={rejectAppointment}
+              onCancel={cancelAppointment}
+            />
           ))}
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          {data.receivedAppointments.map((day) => (
-            <AppointmentCard key={day.dayName} day={day} approveButton />
+          {data.receivedAppointments.map((day, index) => (
+            <AppointmentCard
+              key={`day-${index}`}
+              day={day}
+              type={"received"}
+              onAccept={acceptAppointment}
+              onReject={rejectAppointment}
+              onCancel={cancelAppointment}
+            />
           ))}
         </CustomTabPanel>
       </Box>
