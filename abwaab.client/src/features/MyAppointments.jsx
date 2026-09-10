@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router";
 import { appointmentsApi } from "../api";
-import { appointments } from "../dataTypes/appointments";
 import { Box, Tab, Tabs } from "@mui/material";
 import AppointmentCard from "../components/AppintmentCard";
 
@@ -121,7 +120,7 @@ const MyAppointmnets = ({
   onVisitPreview,
   onSuccess,
 }) => {
-  const [data, setData] = useState({ ...appointments });
+  const [data, setData] = useState();
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const signalRef = useRef();
@@ -145,6 +144,10 @@ const MyAppointmnets = ({
         signalRef.current.signal
       );
       //   enqueueSnackbar(resp.data.message, { variant: "success" });
+      // const d = [...resp.data.receivedAppointments];
+      // const f = { ...resp.data };
+      // f.requestedAppointments = d;
+      // setData(f);
       setData(resp.data);
       if (onSuccess) onSuccess(resp.data);
     } catch (err) {
@@ -266,27 +269,37 @@ const MyAppointmnets = ({
             aria-label="appointmentTypes"
             variant="standard"
           >
-            <Tab label="مواعيدي" {...a11yProps(0)} />
-            <Tab label="طلبات معاينة" {...a11yProps(1)} />
+            <Tab key={"tab1"} label="مواعيدي" {...a11yProps(0)} />
+            <Tab key={"tab2"} label="طلبات معاينة" {...a11yProps(1)} />
           </Tabs>
         </Box>
 
-        <CustomTabPanel value={value} index={0}>
-          {data.requestedAppointments.map((day, index) => (
+        <CustomTabPanel key="requested" value={value} index={0}>
+          {data?.requestedAppointments?.length === 0 && (
+            <div className="">
+              <p className="">لا يوجد لديك طلبات بعد</p>
+            </div>
+          )}
+          {data?.requestedAppointments?.map((day, ind) => (
             <AppointmentCard
-              key={`day-${index}`}
+              key={`day-${ind}`}
               day={day}
-              type={"requested"}
+              type={"received"}
               onAccept={acceptAppointment}
               onReject={rejectAppointment}
               onCancel={cancelAppointment}
             />
           ))}
         </CustomTabPanel>
-        <CustomTabPanel value={value} index={1}>
-          {data.receivedAppointments.map((day, index) => (
+        <CustomTabPanel key="received" value={value} index={1}>
+          {data?.receivedAppointments?.length === 0 && (
+            <div className="">
+              <p className="">لا يوجد لديك طلبات بعد</p>
+            </div>
+          )}
+          {data?.receivedAppointments?.map((day, ind) => (
             <AppointmentCard
-              key={`day-${index}`}
+              key={`day-${ind}`}
               day={day}
               type={"received"}
               onAccept={acceptAppointment}

@@ -4,6 +4,13 @@ export const appointmentsApi = {
     axiosPrivate.get("/api/Appointment/UserAppointments", {
       signal: signal,
     }),
+  propertyAppointments: (propertyId, signal) =>
+    axiosPrivate.get(
+      `/api/Appointment/PropertyAppointments?propertyId=${propertyId}`,
+      {
+        signal: signal,
+      }
+    ),
   confirmAppointments: (appointmentId, signal) =>
     axiosPrivate.put(
       "/api/Appointment/ConfirmAppointment",

@@ -76,7 +76,8 @@ const PreviewPropertyVisits = ({ propertyId, disabled = false }) => {
 
     try {
       signalRef.current = new AbortController();
-      const resp = await propertyApi.getPropertyVisitRequests(
+      const resp = await appointmentsApi.propertyAppointments(
+        propertyId,
         signalRef.current.signal
       );
 
@@ -261,7 +262,7 @@ const PreviewPropertyVisits = ({ propertyId, disabled = false }) => {
               variant="h6"
               className="font-bold text-neutral-900 text-lg mb-4 text-end"
             >
-              طلبات المعاينة ({data?.requests.length})
+              طلبات المعاينة ({data?.requests?.length})
             </Typography>
             {loading &&
               ["", "", ""].map(() => (
@@ -271,13 +272,17 @@ const PreviewPropertyVisits = ({ propertyId, disabled = false }) => {
             {/* Requests List */}
             {!loading && data && (
               <Box className="space-y-3">
-                {data.requests.map((request) => (
+                {data?.requests?.map((request) => (
                   <Box
                     key={request.id}
-                    className="border border-neutral-200 rounded-xl p-4 flex items-center justify-between hover:border-neutral-300 transition-colors bg-white"
+                    className="border border-neutral-200 rounded-xl px-4 py-2 flex items-center justify-between hover:border-neutral-300 transition-colors bg-white"
                   >
                     {/* User Info */}
                     <Box className="text-right">
+                      <LabelTag
+                        label={request.arabicStateName}
+                        classes="px-3 bg-sky-100 rounded-2xl text-sm"
+                      />
                       <Typography
                         variant="body1"
                         className="font-bold text-neutral-900"
@@ -287,7 +292,7 @@ const PreviewPropertyVisits = ({ propertyId, disabled = false }) => {
                       <Typography
                         variant="body2"
                         sx={{ direction: "ltr" }}
-                        className="text-neutral-400 font-medium text-sm "
+                        className="text-neutral-600 font-medium text-sm "
                       >
                         {request.identifier}
                       </Typography>
