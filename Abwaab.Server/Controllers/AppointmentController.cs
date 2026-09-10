@@ -4,6 +4,7 @@ using Abwaab.Application.Features.Appointments.Commands.Complete;
 using Abwaab.Application.Features.Appointments.Commands.Confirm;
 using Abwaab.Application.Features.Appointments.Commands.Refuse;
 using Abwaab.Application.Features.Appointments.Commands.Report;
+using Abwaab.Application.Features.Appointments.Queries.GetPropertyAppointments;
 using Abwaab.Application.Features.Appointments.Queries.GetUserAppointments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -93,6 +94,14 @@ public class AppointmentController : ControllerBase
     public async Task<IActionResult> UserAppointments()
     {
         GetUserAppointmentsResponse response = await _mediator.Send(new GetUserAppointmentsQuery());
+
+        return Ok(response);
+    }
+
+    [HttpGet("PropertyAppointments")]
+    public async Task<IActionResult> PropertyAppointments(Guid propertyId)
+    {
+        PropertyAppointmentsResponse response = await _mediator.Send(new PropertyAppointmentsQuery() { PropertyId = propertyId });
 
         return Ok(response);
     }
