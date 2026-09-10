@@ -1,6 +1,5 @@
 ﻿using Abwaab.Application.Repositories;
 using Abwaab.Domain.Entities.AppointmentEntities;
-using Abwaab.Domain.Entities.PropertyEntities;
 using Abwaab.Infrastructure.Presistence.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -83,22 +82,6 @@ public class AppointmentRepository : IAppointmentRepository
             .ToListAsync();
     }
 
-    public async Task<Property> GetPropertyWithAppointments(Guid propertyId, List<AppointmentState> states)
-    {
-        return await _context.Properties
-            .Include(x => x.Appointments)
-            .ThenInclude(x => x.User)
-            .Include(x => x.Appointments)
-            .ThenInclude(x => x.AppointmentState)
-            .Include(x => x.PropertyType)
-            .Include(x => x.MediaList)
-            .Where(x => x.Id == propertyId)
-            .Where(x =>
-                x.Appointments.Any(a => states.Contains(a.AppointmentState)) &&
-                x.Appointments.Any(a => a.Date > DateTime.Now))
-            .FirstOrDefaultAsync();
-    }
-
     public async Task CancelMissedAppointments(AppointmentState pendingAppointments, AppointmentState canceledAppointments)
     {
         List<Appointment> appointmentsToCancel = _context.Appointments
@@ -110,5 +93,17 @@ public class AppointmentRepository : IAppointmentRepository
 
         _context.Appointments.UpdateRange(appointmentsToCancel);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<Appointment>?> GetPropertyAppointmentsRequests(Guid propertyId, List<AppointmentState> states)
+    {
+        return await _context.Appointments
+            .Include(x=>x.User)
+            .Include(x=>x.AppointmentState)
+            .Where(x =>
+                x.Property.Id == propertyId && 
+                states.Contains(x.AppointmentState) && 
+                x.Date > DateTime.Now)
+            .ToListAsync();
     }
 }

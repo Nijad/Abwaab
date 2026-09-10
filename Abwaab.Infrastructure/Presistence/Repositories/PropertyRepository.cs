@@ -109,7 +109,7 @@ public class PropertyRepository : IPropertyRepository
             .Where(x => x.PropertyState == propertyState)
             .MinAsync(x => x.Price) ?? 0;
     }
-    
+
 
     public async Task<List<Property>> GetMostViewedPropertiesAsync(PropertyState publishedProperties, int skip, int take)
     {
@@ -257,5 +257,14 @@ public class PropertyRepository : IPropertyRepository
     {
         _context.Properties.Update(property);
         await _context.SaveChangesAsync();
+    }
+
+    public Task<Property?> FindPropertyByIdForAppointmentsAsync(Guid propertyId)
+    {
+        return _context.Properties
+            .Include(x => x.PropertyType)
+            .Include(x => x.MediaList)
+            .Where(x => x.Id == propertyId)
+            .FirstOrDefaultAsync();
     }
 }
